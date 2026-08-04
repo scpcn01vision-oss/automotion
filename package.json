@@ -1,0 +1,11 @@
+{
+  "name": "automotion-v7",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server",
+    "lenses",
+    "match"
+  ]
+}
