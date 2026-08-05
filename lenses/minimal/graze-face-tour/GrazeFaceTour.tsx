@@ -2,6 +2,7 @@
 // DURATION: 150（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 展开
+// props: workspaceName（工作区名）、recentCards（Recent 区卡内容）、tasks（任务行）
 // === 时间特性 ===
 // 刚性（不可压缩）: 刚性:每段50f×3段
 // 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
@@ -13,6 +14,7 @@
 // 投模糊同形软影；随镜头推进先后落贴回界面，影子随高度收敛消失。
 import React from 'react';
 import { AbsoluteFill, interpolate, useCurrentFrame, Easing } from 'remotion';
+import { G } from '../../_fixtures/Fixtures';
 
 const FONT = 'Helvetica, Arial, sans-serif';
 const INK = '#3a3a40';
@@ -114,7 +116,13 @@ const RecentCard: React.FC<{ title: string; sub: string; w?: number }> = ({ titl
 
 /* 场景 A：侧栏 SPACES 树 + 右侧 Recent 卡（对标截图 1/2/4）
  * v2：树行/卡片按镜头行进方向（自上而下）先后从空中落贴回界面 */
-const SceneTree: React.FC<{ t?: number }> = ({ t = 1 }) => {
+export interface GrazeFaceTourProps {
+  workspaceName?: string;
+  recentCards?: { title: string; sub: string }[];
+  tasks?: string[];
+}
+
+const SceneTree: React.FC<{ t?: number; recentCards: { title: string; sub: string }[] }> = ({ t = 1, recentCards }) => {
   // 树行落地时刻：镜头由树顶滑向树底，行 index 越大越晚落
   const L = (i: number, n = 14) => liftOf(t, 0.22 + (i / n) * 0.62, 130);
   const rows: [number, string, 'tri' | 'triOpen' | 'doc' | 'folder' | 'dash' | undefined, string | undefined, string | undefined][] = [
@@ -162,10 +170,10 @@ const SceneTree: React.FC<{ t?: number }> = ({ t = 1 }) => {
         <div style={{ height: 64 }} />
         <div style={{ display: 'flex', flexDirection: 'column', gap: 44 }}>
           <FloatWrap h={liftOf(t, 0.42, 170)}>
-            <RecentCard title="Logo" sub="Brand refresh" />
+          <RecentCard title={recentCards[0].title} sub={recentCards[0].sub} />
           </FloatWrap>
           <FloatWrap h={liftOf(t, 0.55, 170)}>
-            <RecentCard title="Split.io Access for Oleg" sub="Team credentials" />
+          <RecentCard title={recentCards[1].title} sub={recentCards[1].sub} />
           </FloatWrap>
         </div>
         <div style={{ height: 110 }} />
@@ -193,13 +201,13 @@ const SceneTree: React.FC<{ t?: number }> = ({ t = 1 }) => {
 
 /* 场景 B：顶部 tab 条 + 左上侧栏导航（对标截图 6/7）
  * v2：tab 条、logo、Home 行、侧栏项先后从空中贴落 */
-const SceneTopNav: React.FC<{ t?: number }> = ({ t = 1 }) => (
-  <div style={{ width: 3000, height: 2100, background: '#f5f5f4', borderRadius: 48 }}>
+const SceneTopNav: React.FC<{ t?: number; workspaceName: string }> = ({ t = 1, workspaceName }) => (
+  <div style={{ width: 3000, height: 2100, background: G.bg, borderRadius: 48 }}>
     <div style={{
       height: 150, borderBottom: `4px solid ${FAINT}`, display: 'flex', alignItems: 'center',
       gap: 120, paddingLeft: 90, fontFamily: FONT, fontSize: 54, color: INK,
     }}>
-      {['Product analytics', 'ClickUp 3.0', 'Widget brainstorm', 'Design system'].map((tb, i) => (
+      {['Product analytics', `${workspaceName} 3.0`, 'Widget brainstorm', 'Design system'].map((tb, i) => (
         <FloatWrap key={tb} h={liftOf(t, 0.2 + i * 0.1, 140)}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 26, fontWeight: i === 1 ? 700 : 400, opacity: i > 1 ? 0.75 : 1 }}>
             <div style={{
@@ -217,7 +225,7 @@ const SceneTopNav: React.FC<{ t?: number }> = ({ t = 1 }) => (
         <FloatWrap h={liftOf(t, 0.34, 150)}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 30 }}>
             <div style={{ width: 74, height: 74, borderRadius: 20, background: 'linear-gradient(135deg,#a9a9af,#6f6f76)' }} />
-            <div style={{ fontFamily: FONT, fontSize: 66, fontWeight: 800, color: INK }}>ClickUp</div>
+            <div style={{ fontFamily: FONT, fontSize: 66, fontWeight: 800, color: INK }}>{workspaceName}</div>
             <div style={{ marginLeft: 'auto', width: 130, height: 90, border: `4px solid ${FAINT}`, borderRadius: 22, background: '#fff' }} />
           </div>
         </FloatWrap>
@@ -274,8 +282,8 @@ const SceneTopNav: React.FC<{ t?: number }> = ({ t = 1 }) => (
 
 /* 场景 C：列表行（对标截图 4 右下 TODAY/TASK NAME 区）
  * v2：Todo 头/TODAY 徽章/任务行自上而下先后贴落 */
-const SceneListRows: React.FC<{ t?: number }> = ({ t = 1 }) => (
-  <div style={{ width: 2900, height: 2200, background: '#f6f6f5', paddingTop: 60 }}>
+const SceneListRows: React.FC<{ t?: number; tasks: string[] }> = ({ t = 1, tasks }) => (
+  <div style={{ width: 2900, height: 2200, background: G.bg, paddingTop: 60 }}>
     <FloatWrap h={liftOf(t, 0.22, 150)}>
       <div style={{ display: 'flex', gap: 100, paddingLeft: 120, fontFamily: FONT, fontSize: 54 }}>
         <div style={{ color: INK, fontWeight: 700 }}>Todo</div>
@@ -310,7 +318,7 @@ const SceneListRows: React.FC<{ t?: number }> = ({ t = 1 }) => (
       <div style={{ paddingLeft: 120, fontFamily: FONT, fontSize: 42, letterSpacing: 5, color: MID }}>TASK NAME</div>
     </FloatWrap>
     <div style={{ height: 30 }} />
-    {['New Bugs Per Week', 'Designer handbook', 'Mobile screens', 'Product roadmap'].map((tb, i) => (
+    {tasks.map((tb, i) => (
       <FloatWrap key={tb} h={liftOf(t, 0.62 + i * 0.09, 160)}>
         <div style={{
           display: 'flex', alignItems: 'center', gap: 44, height: 170, marginLeft: 120, marginRight: 120,
@@ -407,39 +415,41 @@ const NeonRects: React.FC<{ drift: number }> = ({ drift }) => (
   </AbsoluteFill>
 );
 
+type SegCtx = { workspaceName: string; recentCards: { title: string; sub: string }[]; tasks: string[] };
+
 // 平移目标以内容坐标 (cx,cy) 给出：translate = (W/2-cx, H/2-cy)
-const SEGS: { cam: Cam; edge: 'left' | 'top'; render: (t: number) => React.ReactNode }[] = [
+const SEGS: { cam: Cam; edge: 'left' | 'top'; render: (t: number, ctx: SegCtx) => React.ReactNode }[] = [
   {
     // 侧栏树：从树顶（SPACES 附近）贴面滑到树底（Components/Patterns/Tokens）
     cam: { rx: 12, ry: 30, rz: -6, scale: 0.95, x: [1450 - 950, 1450 - 880], y: [1200 - 1050, 1200 - 1850] },
-    edge: 'left', render: (t) => <SceneTree t={t} />,
+    edge: 'left', render: (t, ctx) => <SceneTree t={t} recentCards={ctx.recentCards} />,
   },
   {
     // 顶栏 tab 条 → 右区 Home 大标题
     cam: { rx: 20, ry: -20, rz: 6, scale: 0.95, x: [1500 - 800, 1500 - 2000], y: [1050 - 350, 1050 - 800] },
-    edge: 'top', render: (t) => <SceneTopNav t={t} />,
+    edge: 'top', render: (t, ctx) => <SceneTopNav t={t} workspaceName={ctx.workspaceName} />,
   },
   {
     // 列表行：沿 TASK NAME 行右扫
     cam: { rx: 14, ry: 28, rz: -5, scale: 1.05, x: [1450 - 900, 1450 - 680], y: [1100 - 620, 1100 - 1240] },
-    edge: 'left', render: (t) => <SceneListRows t={t} />,
+    edge: 'left', render: (t, ctx) => <SceneListRows t={t} tasks={ctx.tasks} />,
   },
 ];
 
 const SEG_LEN = 50; // 每段 50 帧，总 150
 const FADE = 7;
 
-const Stage: React.FC = () => {
+const Stage: React.FC<{ segs: typeof SEGS }> = ({ segs }) => {
   const frame = useCurrentFrame();
   return (
-    <AbsoluteFill style={{ background: '#2c2416' }}>
-      {SEGS.map((s, i) => {
+    <AbsoluteFill style={{ background: G.ink }}>
+      {segs.map((s, i) => {
         const start = i * SEG_LEN;
         const local = frame - start;
         if (local < -FADE || local > SEG_LEN + FADE) return null;
         const t = Math.min(1, Math.max(0, local / SEG_LEN));
         // 相邻段交叉淡化：后段在边界前 [-FADE,0] 淡入、前段在 [SEG_LEN-FADE, SEG_LEN] 淡出，边界帧无纯黑
-        const opacity = interpolate(local, [-FADE, 0, SEG_LEN - FADE, SEG_LEN], [i === 0 ? 1 : 0, 1, 1, i === SEGS.length - 1 ? 1 : 0]);
+        const opacity = interpolate(local, [-FADE, 0, SEG_LEN - FADE, SEG_LEN], [i === 0 ? 1 : 0, 1, 1, i === segs.length - 1 ? 1 : 0]);
         return (
           <AbsoluteFill key={i} style={{ opacity }}>
             <NeonRects drift={t} />
@@ -451,22 +461,33 @@ const Stage: React.FC = () => {
   );
 };
 
-export const GrazeFaceTour: React.FC = () => {
+export const GrazeFaceTour: React.FC<GrazeFaceTourProps> = ({
+  workspaceName = 'Workspace',
+  recentCards = [
+    { title: 'Logo', sub: 'Brand refresh' },
+    { title: 'Design handbook', sub: 'Team docs' },
+  ],
+  tasks = ['New Bugs Per Week', 'Designer handbook', 'Mobile screens', 'Product roadmap'],
+}) => {
   const frame = useCurrentFrame();
+  const segs = SEGS.map((s) => ({
+    ...s,
+    render: (t: number) => s.render(t, { workspaceName, recentCards, tasks }),
+  }));
   // 呼吸感的焦点带（浅景深）：焦点椭圆随段落略移
   const seg = Math.min(2, Math.floor(frame / SEG_LEN));
   const focusX = [44, 40, 46][seg];
   const focusY = [46, 40, 50][seg];
   return (
-    <AbsoluteFill style={{ background: '#2c2416' }}>
-      <Stage />
+    <AbsoluteFill style={{ background: G.ink }}>
+      <Stage segs={segs} />
       {/* 屏幕空间浅景深：焦点带外整体模糊 */}
       <AbsoluteFill style={{
         filter: 'blur(16px) brightness(0.92)',
         WebkitMaskImage: `radial-gradient(ellipse 58% 52% at ${focusX}% ${focusY}%, transparent 34%, rgba(0,0,0,0.85) 72%, black 92%)`,
         maskImage: `radial-gradient(ellipse 58% 52% at ${focusX}% ${focusY}%, transparent 34%, rgba(0,0,0,0.85) 72%, black 92%)`,
       }}>
-        <Stage />
+        <Stage segs={segs} />
       </AbsoluteFill>
       {/* 暗角 + 冷调压暗 */}
       <AbsoluteFill style={{
