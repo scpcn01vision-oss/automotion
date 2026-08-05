@@ -2,13 +2,14 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 转折,承接
+// props: sceneA / sceneB（前后页内容承载 rows/image，共享 _system/scene-content 渲染器）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 // 立方体空间翻转（cube-rotate）——cube transition 转场自实现。
-// FakeDashboard A / B 各缩放 0.82 居中，当立方体相邻两面：perspective 1400px，
+// sceneA / sceneB 各缩放 0.82 居中，当立方体相邻两面：perspective 1400px，
 // 面宽 W=1920*0.82，两面各 rotateY(面角) translateZ(W/2)，场景整体先
 // translateZ(-W/2) 再 rotateY(θ)（把正面拉回 z=0，保证 hold 时精确 0.82 尺度）。
 // 旧面 A 转出画面 brightness 1→0.55 压暗，新面 B 从 +90° 侧转入 0.55→1 亮起；
@@ -17,20 +18,21 @@
 // 关键帧：0–30 静止展示 A → 30–68 θ 0→-90°（inOut cubic）翻转 → 68–140 B 真静止 72f。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, FakeDashboard, TitleBlock } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 const S = 0.82;
 const W = 1920 * S; // 面宽 = 立方体棱长
 const H = 1080 * S;
 
-// 单个立方体面：W×H 视口内放缩放 0.82 的整幅 dashboard
+// 单个立方体面：W×H 视口内放缩放 0.82 的整幅内容
 const Face: React.FC<{
-  variant: 'A' | 'B';
+  content: SceneContentData;
   rot: number; // 面自身的 rotateY（A=0，B=90）
   brightness: number;
   seam: number; // 接缝阴影不透明度 0–1
   seamSide: 'right' | 'left'; // 阴影贴在哪条竖边（即共享棱一侧）
-}> = ({ variant, rot, brightness, seam, seamSide }) => (
+}> = ({ content, rot, brightness, seam, seamSide }) => (
   <div
     style={{
       position: 'absolute',
@@ -44,7 +46,7 @@ const Face: React.FC<{
     }}
   >
     <div style={{ transform: `scale(${S})`, transformOrigin: '0 0' }}>
-      <FakeDashboard variant={variant} />
+      <SceneContent content={content} />
     </div>
     {seam > 0.01 && (
       <div
@@ -65,7 +67,31 @@ const Face: React.FC<{
   </div>
 );
 
-export const CubeRotate: React.FC = () => {
+export interface CubeRotateProps {
+  sceneA?: SceneContentData;
+  sceneB?: SceneContentData;
+}
+
+export const CubeRotate: React.FC<CubeRotateProps> = ({
+  sceneA = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+      { label: '指标三', value: '96.4%' },
+    ],
+  },
+  sceneB = {
+    title: '状态',
+    type: 'rows',
+    rows: [
+      { label: '节点', value: '4/4' },
+      { label: '延迟', value: '42ms' },
+      { label: '可用性', value: '99.98%' },
+    ],
+  },
+}) => {
   const frame = useCurrentFrame();
   // 翻转进度：30–68f，inOut cubic；两端 clamp 保证 hold 段逐帧恒定
   const p = interpolate(frame, [30, 68], [0, 1], {
@@ -109,14 +135,11 @@ export const CubeRotate: React.FC = () => {
             }}
           >
             {/* 面 A：正面出发，绕左而去；接缝棱在其右边 */}
-            <Face variant="A" rot={0} brightness={brightA} seam={seam} seamSide="right" />
+            <Face content={sceneA} rot={0} brightness={brightA} seam={seam} seamSide="right" />
             {/* 面 B：从 +90° 侧面转进来；接缝棱在其左边 */}
-            <Face variant="B" rot={90} brightness={brightB} seam={seam} seamSide="left" />
+            <Face content={sceneB} rot={90} brightness={brightB} seam={seam} seamSide="left" />
           </div>
         </div>
-      </div>
-      <div style={{ position: 'absolute', left: 120, top: 60 }}>
-        <TitleBlock text="CUBE ROTATE" size={54} />
       </div>
     </div>
   );
