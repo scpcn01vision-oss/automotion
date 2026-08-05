@@ -14,6 +14,7 @@
 //    （trailing-window 增亮层，填充结束后淡出到稳态呼吸）。
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
+import { G } from '../../_fixtures/Fixtures';
 
 const mulberry32 = (a: number) => () => {
   let t = (a += 0x6d2b79f5);
