@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 展开
+// props: 无内容可变项（图标点亮表现，色板统一）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
@@ -11,6 +12,7 @@
 // 蓝色整场极快扫翻，随后橙/绿/红三道色波依次向下扫过，终态四色横带。
 // 对标 bear-app.mp4 0–3s（密帧核实：非同帧硬翻，是极快多道波纹翻色）。
 import React from 'react';
+import { G } from '../../_fixtures/Fixtures';
 import { AbsoluteFill, interpolate, useCurrentFrame } from 'remotion';
 
 const mulberry32 = (a: number) => () => {
@@ -98,5 +100,5 @@ export const IconFieldColorize: React.FC = () => {
     }
   }
 
-  return <AbsoluteFill style={{ background: '#ffffff' }}>{icons}</AbsoluteFill>;
+  return <AbsoluteFill style={{ background: G.card }}>{icons}</AbsoluteFill>;
 };
