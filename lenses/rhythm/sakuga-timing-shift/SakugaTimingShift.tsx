@@ -16,7 +16,7 @@
 // （boil 在 f=108 后冻结）。收尾真静止 ≥40f。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, Card, TitleBlock } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
 
 const W = 1920;
 const CARD_W = 420;
@@ -31,6 +31,39 @@ const OVERSHOOT = 36;
 const SWITCH = 48; // 打拍切换帧
 const ARRIVE = 70; // 冲刺到过冲点
 const SETTLE = 75; // 回弹落位完成
+
+export interface SakugaTimingShiftProps {
+  cardTitle?: string;
+  cardRows?: { label: string; value: string }[];
+}
+
+// 移动卡片内容：白卡 + 标题 + 行列表
+const CardContent: React.FC<{ cardTitle: string; cardRows: { label: string; value: string }[] }> = ({
+  cardTitle,
+  cardRows,
+}) => (
+  <div
+    style={{
+      width: CARD_W, height: CARD_H, background: G.card, border: `2px solid ${G.border}`,
+      borderRadius: 14, boxSizing: 'border-box', padding: '20px 24px',
+      display: 'flex', flexDirection: 'column', boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+    }}
+  >
+    <div style={{ fontSize: 24, fontWeight: 700, color: G.ink, marginBottom: 12 }}>{cardTitle}</div>
+    {cardRows.map((r, i) => (
+      <div
+        key={i}
+        style={{
+          display: 'flex', alignItems: 'center', padding: '7px 0',
+          borderBottom: i < cardRows.length - 1 ? `1px solid ${G.line}` : 'none',
+        }}
+      >
+        <span style={{ fontSize: 16, color: G.ink, fontWeight: 600 }}>{r.label}</span>
+        <span style={{ marginLeft: 'auto', fontSize: 16, color: G.accent, fontWeight: 800 }}>{r.value}</span>
+      </div>
+    ))}
+  </div>
+);
 
 // 段一：一拍三。位置函数线性，但只在 q = floor(f/3)*3 上取值。
 const pos1 = (t: number): number =>
@@ -47,7 +80,14 @@ const pos2 = (t: number): number =>
     extrapolateRight: 'clamp',
   });
 
-export const SakugaTimingShift: React.FC = () => {
+export const SakugaTimingShift: React.FC<SakugaTimingShiftProps> = ({
+  cardTitle = 'PROJECT BRIEF',
+  cardRows = [
+    { label: 'Scope', value: 'Locked' },
+    { label: 'Budget', value: 'Approved' },
+    { label: 'Ship', value: 'Ready' },
+  ],
+}) => {
   const f = useCurrentFrame();
   const onThrees = f < SWITCH;
 
@@ -90,33 +130,8 @@ export const SakugaTimingShift: React.FC = () => {
         ]
       : [];
 
-  // ---- 角标 "on 3s" / "on 1s"，line-boil，f=108 后冻结 ----
-  const h = (n: number) => {
-    const s = Math.sin(n * 127.3) * 43758.5453;
-    return s - Math.floor(s);
-  };
-  const qb = Math.min(Math.floor(f / 4) * 4, 108); // boil 驱动帧，108 后冻结
-  const bx = (h(qb + 1) - 0.5) * 7;
-  const by = (h(qb + 2) - 0.5) * 7;
-  const brot = (h(qb + 3) - 0.5) * 3;
-  // 切换瞬间角标弹一下
-  const pop = interpolate(f, [SWITCH, SWITCH + 3, SWITCH + 9], [1, 1.35, 1], {
-    easing: Easing.out(Easing.cubic),
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
-
-  const titleOp = interpolate(f, [0, 10], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
-
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', top: 90, width: '100%', textAlign: 'center', opacity: titleOp }}>
-        <TitleBlock text="SAKUGA TIMING SHIFT" size={64} />
-      </div>
-
       {/* 轨道基线 + 中央落位虚线槽 */}
       <div
         style={{
@@ -148,7 +163,7 @@ export const SakugaTimingShift: React.FC = () => {
           key={`ghost-${i}`}
           style={{ position: 'absolute', left: 0, top: CARD_Y, opacity: g.op, transform: `translateX(${g.xg}px)` }}
         >
-          <Card w={CARD_W} h={CARD_H} seed={4} />
+          <CardContent cardTitle={cardTitle} cardRows={cardRows} />
         </div>
       ))}
 
@@ -162,26 +177,7 @@ export const SakugaTimingShift: React.FC = () => {
           transformOrigin: '50% 50%',
         }}
       >
-        <Card w={CARD_W} h={CARD_H} seed={4} />
-      </div>
-
-      {/* 角标：on 3s / on 1s */}
-      <div
-        style={{
-          position: 'absolute',
-          left: 120,
-          top: 160,
-          transform: `translate(${bx}px, ${by}px) rotate(${brot}deg) scale(${pop})`,
-          transformOrigin: '0% 50%',
-          fontFamily: 'Courier New, monospace',
-          fontWeight: 700,
-          fontSize: 84,
-          color: G.ink,
-          borderBottom: `6px solid ${G.ink}`,
-          paddingBottom: 6,
-        }}
-      >
-        {onThrees ? 'on 3s' : 'on 1s'}
+        <CardContent cardTitle={cardTitle} cardRows={cardRows} />
       </div>
     </div>
   );
