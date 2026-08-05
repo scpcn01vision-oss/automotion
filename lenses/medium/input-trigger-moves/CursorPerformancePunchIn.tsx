@@ -13,7 +13,8 @@
 // 推近"有去有回"区别 crash-zoom。收尾真静止 ≥35f。全灰阶。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { FakeDashboard, G } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 // 时间轴（30fps，共 150f）
 const T = {
@@ -64,7 +65,21 @@ const Cursor: React.FC<{ x: number; y: number }> = ({ x, y }) => (
   </svg>
 );
 
-export const CursorPerformancePunchIn: React.FC = () => {
+export interface CursorPerformancePunchInProps {
+  scene?: SceneContentData;
+}
+
+export const CursorPerformancePunchIn: React.FC<CursorPerformancePunchInProps> = ({
+  scene = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+      { label: '指标三', value: '96.4%' },
+    ],
+  },
+}) => {
   const frame = useCurrentFrame();
 
   // —— 光标：路径参数 t，f24 过冲到 1.05（沿切线甩过按钮），f24–30 拐回 1.0 ——
@@ -129,7 +144,7 @@ export const CursorPerformancePunchIn: React.FC = () => {
         transform: `scale(${zoom})`,
         transformOrigin: `${CLICK.x}px ${CLICK.y}px`,
       }}>
-        <FakeDashboard variant="A" />
+        <SceneContent content={scene} />
 
         {/* 右上自绘 Deploy 按钮（叠在页面上） */}
         <div style={{
@@ -139,7 +154,7 @@ export const CursorPerformancePunchIn: React.FC = () => {
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           transform: `scale(${hoverScale * press})`,
           fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 700,
-          fontSize: 27, color: '#ffffff', letterSpacing: 0.5,
+          fontSize: 27, color: G.card, letterSpacing: 0.5,
         }}>
           Deploy
         </div>
