@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 钩子,宣告
+// props: footage（连闪素材内容承载）、value（数字特写大号）
 // === 时间特性 ===
 // 刚性（不可压缩）: 刚性:间隔16→4f加速
 // 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
@@ -9,7 +10,8 @@
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
-import { FakeDashboard, TitleBlock, G } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 // paparazzi flash 连闪定格：高光时刻三连白闪，每闪硬切同一素材的不同裁切
 // （全景→卡片特写→数字特写），每闪切入画面带 1.03→1 回落 + 半格沉降像快门
@@ -27,12 +29,22 @@ const hash = (i: number) => {
   return (s - Math.floor(s)) * 2 - 1;
 };
 
-// 同一"素材"：全景 dashboard，顶行中间卡片上叠一个大数字，供数字特写裁切
-const Footage: React.FC = () => (
+// 同一"素材"：全景内容，顶行中间卡片上叠一个大数字，供数字特写裁切
+const Footage: React.FC<{ footage: SceneContentData; value: string }> = ({ footage, value }) => (
   <div style={{ position: 'absolute', width: 1920, height: 1080 }}>
-    <FakeDashboard variant="A" />
+    <SceneContent content={footage} />
     <div style={{ position: 'absolute', left: 1070, top: 350, transform: 'translate(-50%, -50%)' }}>
-      <TitleBlock text="84,213" size={104} />
+      <div
+        style={{
+          fontFamily: 'Helvetica, Arial, sans-serif',
+          fontWeight: 800,
+          fontSize: 104,
+          color: G.accent,
+          letterSpacing: -1,
+        }}
+      >
+        {value}
+      </div>
     </div>
   </div>
 );
@@ -43,7 +55,23 @@ const VIEW_WIDE: View = { scale: 1.0, origin: '960px 540px' };
 const VIEW_CARD: View = { scale: 2.3, origin: '1070px 335px' };
 const VIEW_DIGIT: View = { scale: 4.0, origin: '1070px 350px' };
 
-export const PaparazziFlash: React.FC = () => {
+export interface PaparazziFlashProps {
+  footage?: SceneContentData;
+  value?: string;
+}
+
+export const PaparazziFlash: React.FC<PaparazziFlashProps> = ({
+  footage = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+      { label: '指标三', value: '96.4%' },
+    ],
+  },
+  value = '84,213',
+}) => {
   const frame = useCurrentFrame();
 
   // 当前处于哪一段：-1 = 闪前活素材段
@@ -112,7 +140,7 @@ export const PaparazziFlash: React.FC = () => {
             transformOrigin: origin,
           }}
         >
-          <Footage />
+          <Footage footage={footage} value={value} />
         </div>
       </div>
       {/* 白闪层 */}
