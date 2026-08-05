@@ -11,15 +11,16 @@
 // 聚光灯从左向右"扫过"斜置面板；一条带辉光的紫色光线贴着 UI 顶边/边框/
 // logo 划过，光到即亮、光走即暗，尾段沉回黑暗（右缘残留蓝紫）。
 import React from 'react';
+import { G } from '../../_fixtures/Fixtures';
 import { AbsoluteFill, useCurrentFrame, interpolate } from 'remotion';
 
 const W = 1250;
 const H = 860;
 const R = 26;
 
-const ink = '#3a3a3a';
-const mid = '#9a9a98';
-const line = '#e2e2e0';
+const ink = G.ink;
+const mid = G.mid;
+const line = G.line;
 
 const Row: React.FC<{ w: number; icon?: boolean }> = ({ w, icon = true }) => (
   <div style={{ display: 'flex', alignItems: 'center', gap: 12, height: 30 }}>
