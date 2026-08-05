@@ -12,11 +12,12 @@
 // 聚光头匀速右移，照到处显影、离开处沉暗；面板匀速左滑（相机右摇感）。
 // 用户裁决："紫色的光线是贴着ui界面泛光的，聚光的移动是匀速的"。
 import React from 'react';
+import { G } from '../../_fixtures/Fixtures';
 import { AbsoluteFill, useCurrentFrame, interpolate } from 'remotion';
 
-const ink = '#3c3c3a';
-const mid = '#98989a';
-const line = '#e4e4e2';
+const ink = G.ink;
+const mid = G.mid;
+const line = G.line;
 
 const PW = 3000;
 const PH = 1400;
@@ -26,7 +27,7 @@ const CR = 60;     // 面板圆角
 const SideRow: React.FC<{ w: number }> = ({ w }) => (
   <div style={{ display: 'flex', alignItems: 'center', gap: 16, height: 44 }}>
     <div style={{ width: 26, height: 26, borderRadius: 7, background: mid }} />
-    <div style={{ height: 15, width: w, background: '#c6c6c4', borderRadius: 7 }} />
+    <div style={{ height: 15, width: w, background: G.bar, borderRadius: 7 }} />
   </div>
 );
 
