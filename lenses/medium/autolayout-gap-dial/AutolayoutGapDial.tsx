@@ -15,7 +15,6 @@ import React from 'react';
 import { AbsoluteFill, useCurrentFrame, interpolate, spring, useVideoConfig, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 
-const BLOCK_WIDTHS = [230, 190, 265, 210, 245];
 const BLOCK_H = 100;
 const ROW_Y = 540; // 行中心
 const G_MIN = 12;
@@ -25,8 +24,15 @@ const GROW_START = 14;
 const GROW_END = 52;
 const HOLD_END = 66;
 
-export const AutolayoutGapDial: React.FC = () => {
+export interface AutolayoutGapDialProps {
+  blocks?: number[];
+}
+
+export const AutolayoutGapDial: React.FC<AutolayoutGapDialProps> = ({
+  blocks = [230, 190, 265, 210, 245],
+}) => {
   const frame = useCurrentFrame();
+  const BLOCK_WIDTHS = blocks;
   const { fps } = useVideoConfig();
 
   // 间距参数曲线：紧 → 松（easeInOut）→ hold → 弹簧回弹归位（带过冲）
@@ -77,7 +83,7 @@ export const AutolayoutGapDial: React.FC = () => {
       {/* 标题字块（讲清这是"参数驱动布局"） */}
       <div style={{ position: 'absolute', top: 250, width: '100%', textAlign: 'center', fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 44, color: G.mid, letterSpacing: 2 }}>
         GAP
-        <span style={{ display: 'inline-block', minWidth: 130, marginLeft: 24, padding: '4px 22px', borderRadius: 12, background: G.ink, color: '#f2f2f0', fontVariantNumeric: 'tabular-nums', transform: `scale(${tickPulse})` }}>
+        <span style={{ display: 'inline-block', minWidth: 130, marginLeft: 24, padding: '4px 22px', borderRadius: 12, background: G.ink, color: G.card, fontVariantNumeric: 'tabular-nums', transform: `scale(${tickPulse})` }}>
           {gapShown}
         </span>
       </div>
@@ -111,7 +117,7 @@ export const AutolayoutGapDial: React.FC = () => {
               height: 16,
               marginLeft: -8,
               marginTop: -8,
-              background: '#fff',
+              background: G.card,
               border: `3px solid ${G.ink}`,
               borderRadius: 3,
               boxSizing: 'border-box',
@@ -166,7 +172,7 @@ export const AutolayoutGapDial: React.FC = () => {
                 padding: '5px 14px',
                 borderRadius: 10,
                 background: G.ink,
-                color: '#f2f2f0',
+                color: G.card,
                 fontFamily: 'Helvetica, Arial, sans-serif',
                 fontWeight: 700,
                 fontSize: 24,
