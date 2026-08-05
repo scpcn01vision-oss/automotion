@@ -16,9 +16,7 @@
 // 帧确定性：波形与尖峰包络都是纯 worldX 函数，无 Math.random / Date.now。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, TitleBlock } from '../../_fixtures/Fixtures';
-
-const AMBER = '#b45309';
+import { G } from '../../_fixtures/Fixtures';
 
 const CARD_W = 1080;
 const CARD_H = 560;
@@ -71,17 +69,29 @@ const wave = (x: number): number =>
 
 const signal = (x: number): number => wave(x) * env(x) * AMP; // ∈ ~[-1.6, 1.6]，常态 [-0.65, 0.65]
 const yOf = (x: number): number => PLOT_H / 2 - signal(x) * (PLOT_H / 2);
-// 读数映射：绘图区中线 = 1,000 req/s，上下沿 = 2,000 / 0
-const valueOf = (x: number): number => Math.round(1000 + signal(x) * 1000);
-
 const fmt = (n: number): string => n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-const Y_TICKS = ['2.0k', '1.5k', '1.0k', '0.5k', '0'];
 const X_TICKS = ['-60s', '-50s', '-40s', '-30s', '-20s', '-10s', 'now'];
 
-export const OscilloscopeStream: React.FC = () => {
+export interface OscilloscopeStreamProps {
+  title?: string;
+  subtitle?: string;
+  unit?: string;
+  baseValue?: number;
+}
+
+export const OscilloscopeStream: React.FC<OscilloscopeStreamProps> = ({
+  title = 'Requests per second',
+  subtitle = 'api-gateway · production · last 60 s',
+  unit = 'req/s',
+  baseValue = 1000,
+}) => {
   const frame = useCurrentFrame();
   const T = effTime(frame);
+  // 读数映射：绘图区中线 = baseValue，上下沿 = 2× / 0
+  const valueOf = (x: number): number => Math.round(baseValue + signal(x) * baseValue);
+  // y 轴刻度按 baseValue 生成
+  const Y_TICKS = [2, 1.5, 1, 0.5, 0].map((m) => fmt(Math.round(m * baseValue)));
 
   const N = 270;
   const pts: string[] = [];
@@ -114,14 +124,10 @@ export const OscilloscopeStream: React.FC = () => {
   const hot = spikeK > 0.22;
   const readout = fmt(valueOf(T));
   const readScale = 1 + 0.32 * spikeK;
-  const dotColor = spikeK > 0.15 ? AMBER : G.ink;
+  const dotColor = spikeK > 0.15 ? G.accent : G.ink;
 
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', top: 110, width: '100%', textAlign: 'center' }}>
-        <TitleBlock text="OSCILLOSCOPE STREAM" size={72} />
-      </div>
-
       <div
         style={{
           position: 'absolute',
@@ -138,8 +144,8 @@ export const OscilloscopeStream: React.FC = () => {
       >
         {/* 真卡头：标题 + 副题 + 实时读数 */}
         <div style={{ position: 'absolute', left: PAD, top: 38, fontFamily: 'Helvetica, Arial, sans-serif' }}>
-          <div style={{ fontSize: 30, fontWeight: 700, color: G.ink }}>Requests per second</div>
-          <div style={{ fontSize: 20, fontWeight: 500, color: G.mid, marginTop: 8 }}>api-gateway · production · last 60 s</div>
+          <div style={{ fontSize: 30, fontWeight: 700, color: G.ink }}>{title}</div>
+          <div style={{ fontSize: 20, fontWeight: 500, color: G.mid, marginTop: 8 }}>{subtitle}</div>
         </div>
         <div
           style={{
@@ -152,10 +158,10 @@ export const OscilloscopeStream: React.FC = () => {
             transformOrigin: 'right top',
           }}
         >
-          <div style={{ fontSize: 46, fontWeight: 800, color: hot ? AMBER : G.ink, fontVariantNumeric: 'tabular-nums', letterSpacing: -1 }}>
+          <div style={{ fontSize: 46, fontWeight: 800, color: hot ? G.accent : G.ink, fontVariantNumeric: 'tabular-nums', letterSpacing: -1 }}>
             {readout}
           </div>
-          <div style={{ fontSize: 18, fontWeight: 600, color: hot ? AMBER : G.mid, marginTop: 2 }}>req/s · live</div>
+          <div style={{ fontSize: 18, fontWeight: 600, color: hot ? G.accent : G.mid, marginTop: 2 }}>{unit} · live</div>
         </div>
 
         {/* y 轴真刻度 */}
@@ -204,7 +210,7 @@ export const OscilloscopeStream: React.FC = () => {
             {/* 写入点亮点（1.5×） */}
             {!frozen && glowOp > 0 && (
               <>
-                <circle cx={PLOT_W} cy={headY} r={24} fill={spikeK > 0.15 ? AMBER : '#8f8f8d'} opacity={0.35 * glowOp} style={{ filter: 'blur(5px)' }} />
+                <circle cx={PLOT_W} cy={headY} r={24} fill={spikeK > 0.15 ? G.accent : G.mid} opacity={0.35 * glowOp} style={{ filter: 'blur(5px)' }} />
                 <circle cx={PLOT_W} cy={headY} r={10.5} fill={dotColor} opacity={glowOp} />
               </>
             )}

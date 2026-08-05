@@ -131,7 +131,7 @@ export interface OdometerDigitRollProps {
 }
 
 export const OdometerDigitRoll: React.FC<OdometerDigitRollProps> = ({
-  value = '99.98',
+  value = '99.98%',
   label = 'TARGET METRIC',
   sublabel = 'ACHIEVED',
 }) => {
