@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 收束
+// props: inputText（输入框文字）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
@@ -20,8 +21,9 @@ import {
   spring,
   Easing,
 } from 'remotion';
+import { G } from '../../_fixtures/Fixtures';
 
-const BG = '#4a3b28'; // 深梅紫
+const BG = G.side; // 深棕墨色
 const CX = 960;
 const CY = 560;
 
@@ -34,7 +36,13 @@ const FINAL = {
   smallDot: { x: CX + 150, y: CY - 226, d: 76 },                // 竖胶囊顶上的小圆
 };
 
-export const InputMorphsIntoLogo: React.FC = () => {
+export interface InputMorphsIntoLogoProps {
+  inputText?: string;
+}
+
+export const InputMorphsIntoLogo: React.FC<InputMorphsIntoLogoProps> = ({
+  inputText = 'Ready, set, go!',
+}) => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
 
@@ -90,7 +98,7 @@ export const InputMorphsIntoLogo: React.FC = () => {
   const s1 = dropSpring(1);
   const s2 = dropSpring(2);
 
-  const WHITE = '#fdf6ee';
+  const WHITE = G.card;
 
   return (
     <AbsoluteFill style={{ background: BG, fontFamily: 'Helvetica, Arial, sans-serif', overflow: 'hidden' }}>
@@ -123,7 +131,7 @@ export const InputMorphsIntoLogo: React.FC = () => {
               transform: `translate(${flyT * 700}px, ${-flyT * 380}px) rotate(${-flyT * 10}deg)`,
             }}
           >
-            Ready, set, go!
+            {inputText}
             {/* 光标闪烁 */}
             <span style={{ opacity: Math.floor(f / 8) % 2 === 0 && f < FLY ? 1 : 0 }}>|</span>
           </div>
@@ -134,7 +142,7 @@ export const InputMorphsIntoLogo: React.FC = () => {
               width: 72,
               height: 72,
               borderRadius: 18,
-              background: btnFlash ? '#ffffff' : 'rgba(253,246,238,0.9)',
+              background: btnFlash ? G.card : 'rgba(253,246,238,0.9)',
               opacity: 1 - m,
               display: 'flex',
               alignItems: 'center',
@@ -192,7 +200,7 @@ export const InputMorphsIntoLogo: React.FC = () => {
               width: FINAL.smallDot.d,
               height: FINAL.smallDot.d,
               borderRadius: '50%',
-              background: '#e8b84b',
+              background: G.accent,
               boxShadow: '0 0 40px rgba(232,184,75,0.35)',
             }}
           />
@@ -213,7 +221,7 @@ export const InputMorphsIntoLogo: React.FC = () => {
         <svg width={40} height={44} viewBox="0 0 40 44">
           <path
             d="M4 2 L4 34 L13 26 L19 40 L26 37 L20 23 L32 22 Z"
-            fill="#ffffff"
+            fill={G.card}
             stroke={BG}
             strokeWidth={2}
           />
