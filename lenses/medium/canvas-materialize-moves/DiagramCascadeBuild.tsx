@@ -170,7 +170,7 @@ export const DiagramCascadeBuild: React.FC = () => {
                 padding: '0 24px',
               }}
             >
-              <div style={{ height: 16, width: `${44 + (n.id * 17) % 34}%`, background: n.level === 0 ? '#9a9a98' : G.bar, borderRadius: 8 }} />
+              <div style={{ height: 16, width: `${44 + (n.id * 17) % 34}%`, background: n.level === 0 ? G.mid : G.bar, borderRadius: 8 }} />
               <div style={{ height: 10, width: `${70 - (n.id * 13) % 26}%`, background: n.level === 0 ? G.sideBar : G.line, borderRadius: 5 }} />
             </div>
           );
