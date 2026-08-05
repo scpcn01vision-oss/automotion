@@ -14,7 +14,8 @@
 // 成为满屏页面。收尾真静止 ≥40f。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, Card, FakeDashboard } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 const h = (n: number) => {
   const s = Math.sin(n * 127.3) * 43758.5453;
@@ -59,7 +60,7 @@ const CROPS: Array<{ x: number; y: number; v: 'A' | 'B' } | null> = [
   { x: -900, y: -680, v: 'A' },
 ];
 
-const CellContent: React.FC<{ i: number }> = ({ i }) => {
+const CellContent: React.FC<{ i: number; sceneA: SceneContentData; sceneB: SceneContentData }> = ({ i, sceneA, sceneB }) => {
   if (i === 4) {
     // 中心格：整页 dashboard 缩到格内
     return (
@@ -72,7 +73,7 @@ const CellContent: React.FC<{ i: number }> = ({ i }) => {
           transformOrigin: 'top left',
         }}
       >
-        <FakeDashboard variant="A" />
+        <SceneContent content={sceneA} />
       </div>
     );
   }
@@ -90,19 +91,61 @@ const CellContent: React.FC<{ i: number }> = ({ i }) => {
           justifyContent: 'center',
         }}
       >
-        <Card w={430} h={240} seed={i * 3 + 2} />
+        <div
+          style={{
+            width: 430,
+            height: 240,
+            background: G.card,
+            border: `2px solid ${G.border}`,
+            borderRadius: 12,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 10,
+          }}
+        >
+          <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 24, fontWeight: 800, color: G.ink }}>
+            指标 {i + 1}
+          </div>
+          <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 34, fontWeight: 800, color: G.accent }}>
+            +{(i + 1) * 9}%
+          </div>
+        </div>
       </div>
     );
   }
   // 裁切片：整页 dashboard 以不同偏移塞进格子(相当于 backgroundPosition 各异)
   return (
     <div style={{ position: 'absolute', left: crop.x, top: crop.y }}>
-      <FakeDashboard variant={crop.v} />
+      <SceneContent content={crop.v === 'A' ? sceneA : sceneB} />
     </div>
   );
 };
 
-export const GridFlashMosaic: React.FC = () => {
+export interface GridFlashMosaicProps {
+  sceneA?: SceneContentData;
+  sceneB?: SceneContentData;
+}
+
+export const GridFlashMosaic: React.FC<GridFlashMosaicProps> = ({
+  sceneA = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+    ],
+  },
+  sceneB = {
+    title: '状态',
+    type: 'rows',
+    rows: [
+      { label: '节点', value: '4/4' },
+      { label: '可用性', value: '99.98%' },
+    ],
+  },
+}) => {
   const f = useCurrentFrame();
 
   // 整墙微呼吸：仅在填满后的 14f 停顿段，一个正弦来回 1→1.008→1
@@ -171,7 +214,7 @@ export const GridFlashMosaic: React.FC = () => {
                 zIndex: isCenter ? 10 : 1,
               }}
             >
-              <CellContent i={i} />
+              <CellContent i={i} sceneA={sceneA} sceneB={sceneB} />
               {darken > 0.001 && (
                 <div
                   style={{
