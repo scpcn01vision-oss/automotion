@@ -12,7 +12,8 @@
 // 遮蔽峰值处藏场景切换，气泡散开后已是新场景。混入 i18n 文字胶囊变体元素。
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
-import { FakeDashboard } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 const mulberry32 = (a: number) => () => {
   let t = (a += 0x6d2b79f5);
@@ -139,7 +140,29 @@ const Bubble: React.FC<{ spec: BubbleSpec; frame: number }> = ({ spec, frame }) 
   );
 };
 
-export const BubbleSwarmTakeover: React.FC = () => {
+export interface BubbleSwarmTakeoverProps {
+  sceneA?: SceneContentData;
+  sceneB?: SceneContentData;
+}
+
+export const BubbleSwarmTakeover: React.FC<BubbleSwarmTakeoverProps> = ({
+  sceneA = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+    ],
+  },
+  sceneB = {
+    title: '状态',
+    type: 'rows',
+    rows: [
+      { label: '节点', value: '4/4' },
+      { label: '可用性', value: '99.98%' },
+    ],
+  },
+}) => {
   const frame = useCurrentFrame();
   // 页面"洗白"：靠近峰值时整体亮度提升
   const whiteout = interpolate(frame, [42, 68, 82, 104], [0, 0.92, 0.92, 0], {
@@ -150,7 +173,7 @@ export const BubbleSwarmTakeover: React.FC = () => {
   return (
     <AbsoluteFill style={{ background: '#ececea', overflow: 'hidden' }}>
       <AbsoluteFill style={{ transform: `scale(${breathe})` }}>
-        {frame < PEAK ? <FakeDashboard variant="A" /> : <FakeDashboard variant="B" />}
+        {frame < PEAK ? <SceneContent content={sceneA} /> : <SceneContent content={sceneB} />}
       </AbsoluteFill>
       {/* 洗白层压在页面之上、气泡之下 */}
       <AbsoluteFill style={{ background: '#ffffff', opacity: whiteout }} />
