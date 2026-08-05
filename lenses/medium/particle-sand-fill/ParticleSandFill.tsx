@@ -17,7 +17,7 @@ import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G, TitleBlock } from '../../_fixtures/Fixtures';
 
-const AMBER = '#b45309';
+const AMBER = G.accent;
 const frac = (x: number) => x - Math.floor(x);
 const rnd = (i: number, salt: number) => frac(Math.sin(i * 12.9898 + salt * 78.233) * 43758.5453);
 
@@ -41,13 +41,19 @@ const BARS = [
 const fallTime = (dist: number) => Math.sqrt((2 * dist) / GRAV);
 const departOf = (bar: number, i: number) => 8 + bar * STAGGER + i * RATE + rnd(i, bar * 7 + 1) * 1.5;
 
-export const ParticleSandFill: React.FC = () => {
+export interface ParticleSandFillProps {
+  label?: string;
+}
+
+export const ParticleSandFill: React.FC<ParticleSandFillProps> = ({
+  label = 'FILL',
+}) => {
   const frame = useCurrentFrame();
 
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: 110, width: '100%', textAlign: 'center' }}>
-        <TitleBlock text="PARTICLE SAND FILL" size={72} />
+        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1 }}>{label}</div>
       </div>
 
       {/* 图表卡 */}
