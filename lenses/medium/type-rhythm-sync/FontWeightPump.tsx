@@ -28,7 +28,13 @@ const envAt = (frame: number, beat: number) => {
   return Math.pow(1 - t / DECAY, 0.8);
 };
 
-export const FontWeightPump: React.FC = () => {
+export interface FontWeightPumpProps {
+  text?: string;
+}
+
+export const FontWeightPump: React.FC<FontWeightPumpProps> = ({
+  text = 'POWER',
+}) => {
   const frame = useCurrentFrame();
 
   // 只可能有一个活跃拍（拍距 20f > 衰减 10f），取最大包络及其拍序号
@@ -83,7 +89,7 @@ export const FontWeightPump: React.FC = () => {
             transformOrigin: 'center center',
           }}
         >
-          PUMP IT UP
+          {text}
         </div>
       </div>
 
