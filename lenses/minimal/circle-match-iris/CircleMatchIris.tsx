@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 承接,转折
+// props: scene（景 A 内容承载，光圈圆心 = 画面中心）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
@@ -15,13 +16,28 @@
 // 命门:两景的圆严格同心——CX/CY 写死为 FakeDashboard B 第 2 行头像的屏幕坐标常量。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { FakeDashboard, G } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
-// FakeDashboard variant B 第 2 行左侧 44px 头像的圆心(手算自 fixture 布局)
-const CX = 308;
-const CY = 384.8;
+// 光圈圆心 = 画面中心（景 A 内容承载的面板中心）
+const CX = 960;
+const CY = 540;
 
-export const CircleMatchIris: React.FC = () => {
+export interface CircleMatchIrisProps {
+  scene?: SceneContentData;
+}
+
+export const CircleMatchIris: React.FC<CircleMatchIrisProps> = ({
+  scene = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+      { label: '指标三', value: '96.4%' },
+    ],
+  },
+}) => {
   const f = useCurrentFrame();
 
   // ---- 景 A:头像脉冲(帧 0–30,两次呼吸) ----
@@ -65,10 +81,9 @@ export const CircleMatchIris: React.FC = () => {
 
   return (
     <div style={{ width: 1920, height: 1080, position: 'relative', overflow: 'hidden', background: G.bg }}>
-      {/* ===== 景 A:列表面板 ===== */}
-      <FakeDashboard variant="B" />
-      {/* 白色补丁盖住 fixture 自带的圆角方块,再叠真正的圆形头像 */}
-      <div style={{ position: 'absolute', left: CX - 23, top: CY - 23, width: 46, height: 46, background: G.card }} />
+      {/* ===== 景 A:内容承载 ===== */}
+      <SceneContent content={scene} />
+      {/* 圆形脉冲头像（光圈起点） */}
       <div style={{
         position: 'absolute', left: CX - 22, top: CY - 22, width: 44, height: 44,
         borderRadius: 22, background: G.mid, border: `3px solid ${G.ink}`,
