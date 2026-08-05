@@ -32,7 +32,7 @@ const serveUrl = await bundle({
 });
 
 console.log("getCompositions...");
-let comps = await getCompositions(serveUrl);
+let comps = await getCompositions(serveUrl, { browserExecutable: CHROME });
 if (only) {
   comps = comps.filter((c) => c.id === only);
 }
