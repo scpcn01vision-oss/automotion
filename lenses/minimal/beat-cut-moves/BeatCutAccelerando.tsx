@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 钩子,宣告
+// props: sceneA / sceneB（两套内容承载，6 视图交替硬切）
 // === 时间特性 ===
 // 刚性（不可压缩）: 刚性:间隔16→4f加速
 // 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
@@ -9,13 +10,14 @@
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
-import { FakeDashboard, G } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 // beat-cut-accelerando：六个不同构图按 16→12→8→6→4 帧递减间隔全屏硬切，
 // 加速逼近，最后一切戛然定格回主画面并 1→1.06 慢推收住。
 // 真硬切：frame 落在哪个区间就渲染哪个视图，无任何过渡。
 
-// 一个视图 = FakeDashboard 变体 + 缩放 + 对焦点（画面上要被推到屏幕中心的点）
+// 一个视图 = 内容变体（A/B）+ 缩放 + 对焦点（画面上要被推到屏幕中心的点）
 type View = { variant: 'A' | 'B'; scale: number; cx: number; cy: number };
 
 const VIEWS: View[] = [
@@ -32,7 +34,12 @@ const VIEWS: View[] = [
 const CUTS = [0, 49, 65, 77, 85, 91, 95];
 const FINAL = 95; // 最后一切：戛然定格回主画面
 
-const ViewShot: React.FC<{ view: View; extraScale?: number }> = ({ view, extraScale = 1 }) => {
+const ViewShot: React.FC<{
+  view: View;
+  sceneA: SceneContentData;
+  sceneB: SceneContentData;
+  extraScale?: number;
+}> = ({ view, sceneA, sceneB, extraScale = 1 }) => {
   const s = view.scale * extraScale;
   return (
     <div
@@ -43,12 +50,36 @@ const ViewShot: React.FC<{ view: View; extraScale?: number }> = ({ view, extraSc
         transform: `translate(${960 - view.cx}px, ${540 - view.cy}px) scale(${s})`,
       }}
     >
-      <FakeDashboard variant={view.variant} />
+      <SceneContent content={view.variant === 'A' ? sceneA : sceneB} />
     </div>
   );
 };
 
-export const BeatCutAccelerando: React.FC = () => {
+export interface BeatCutAccelerandoProps {
+  sceneA?: SceneContentData;
+  sceneB?: SceneContentData;
+}
+
+export const BeatCutAccelerando: React.FC<BeatCutAccelerandoProps> = ({
+  sceneA = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+      { label: '指标三', value: '96.4%' },
+    ],
+  },
+  sceneB = {
+    title: '状态',
+    type: 'rows',
+    rows: [
+      { label: '节点', value: '4/4' },
+      { label: '延迟', value: '42ms' },
+      { label: '可用性', value: '99.98%' },
+    ],
+  },
+}) => {
   const frame = useCurrentFrame();
 
   // 当前落在哪个区间（末段 = 主画面 v0）
@@ -75,7 +106,7 @@ export const BeatCutAccelerando: React.FC = () => {
   return (
     <AbsoluteFill style={{ background: G.bg, overflow: 'hidden' }}>
       <div style={{ position: 'absolute', inset: 0, filter: `brightness(${flash})` }}>
-        <ViewShot view={view} extraScale={push} />
+        <ViewShot view={view} sceneA={sceneA} sceneB={sceneB} extraScale={push} />
       </div>
       {/* 切帧再叠一层极薄白闪，保证肉眼可感 */}
       {isCutFrame && (
