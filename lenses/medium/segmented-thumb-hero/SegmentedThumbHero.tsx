@@ -145,7 +145,7 @@ export const SegmentedThumbHero: React.FC = () => {
           width: CW,
           height: CH,
           borderRadius: CH / 2,
-          background: '#e4e4e2',
+          background: G.line,
           border: `3px solid ${G.border}`,
           boxShadow: `0 ${24 - floatT * 12}px ${70 - floatT * 20}px rgba(0,0,0,0.22)`,
           transform: `translateY(${ctrlY}px)`,
