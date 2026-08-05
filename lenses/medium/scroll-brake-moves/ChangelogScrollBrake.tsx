@@ -89,7 +89,7 @@ const Row: React.FC<{ i: number; frame: number }> = ({ i, frame }) => {
         zIndex: isTarget ? 2 : 1,
       }}
     >
-      <div style={{ width: 88, height: 26, borderRadius: 13, background: isTarget ? '#4a4a48' : G.mid, flexShrink: 0 }} />
+      <div style={{ width: 88, height: 26, borderRadius: 13, background: isTarget ? G.ink : G.mid, flexShrink: 0 }} />
       <div style={{ height: 16, width: `${titleW}%`, background: G.bar, borderRadius: 8 }} />
       <div style={{ marginLeft: 'auto', height: 12, width: 110, background: G.line, borderRadius: 6, flexShrink: 0 }} />
     </div>
