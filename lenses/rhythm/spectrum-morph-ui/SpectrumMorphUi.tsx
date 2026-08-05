@@ -42,7 +42,11 @@ const AMP = 92; // 理论峰值 8 + 92 = 100px；wobble×jitter×env 很少同�
 // 低频端高、高频端矮的包络
 const env = (i: number) => 0.4 + 0.6 * Math.pow(1 - i / (N_BARS - 1), 1.1);
 
-export const SpectrumMorphUi: React.FC = () => {
+export interface SpectrumMorphUiProps {
+  title?: string;
+}
+
+export const SpectrumMorphUi: React.FC<SpectrumMorphUiProps> = ({ title = 'LAUNCH WEEK' }) => {
   const frame = useCurrentFrame();
 
   const titleOp = interpolate(frame, [0, 10], [0, 1], {
@@ -96,7 +100,7 @@ export const SpectrumMorphUi: React.FC = () => {
           letterSpacing: -1,
         }}
       >
-        LAUNCH WEEK
+        {title}
       </div>
 
       {!barsActive && (
