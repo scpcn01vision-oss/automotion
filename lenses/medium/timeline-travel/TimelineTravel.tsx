@@ -89,14 +89,41 @@ const TickStop: React.FC<{ i: number; frame: number }> = ({ i, frame }) => {
             opacity: Math.min(1, s * 2),
           }}
         >
-          <Card w={CARD_W} h={CARD_H} seed={i + 2} />
+          <div
+            style={{
+              width: CARD_W,
+              height: CARD_H,
+              background: G.card,
+              border: `2px solid ${G.border}`,
+              borderRadius: 14,
+              boxSizing: 'border-box',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 10,
+            }}
+          >
+            <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 22, fontWeight: 800, color: G.ink }}>
+              阶段 {i + 1}
+            </div>
+            <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 30, fontWeight: 800, color: G.accent }}>
+              Day {(i + 1) * 7}
+            </div>
+          </div>
         </div>
       )}
     </div>
   );
 };
 
-export const TimelineTravel: React.FC = () => {
+export interface TimelineTravelProps {
+  title?: string;
+}
+
+export const TimelineTravel: React.FC<TimelineTravelProps> = ({
+  title = 'TIMELINE',
+}) => {
   const frame = useCurrentFrame();
   const camX = camXAt(frame);
 
@@ -125,7 +152,7 @@ export const TimelineTravel: React.FC = () => {
         </div>
       </div>
       <div style={{ position: 'absolute', top: 90, width: '100%', textAlign: 'center' }}>
-        <TitleBlock text="TIMELINE TRAVEL" size={64} />
+        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 64, color: G.ink, letterSpacing: -1 }}>{title}</div>
       </div>
     </div>
   );
