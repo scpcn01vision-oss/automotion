@@ -16,7 +16,7 @@ import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G, TitleBlock } from '../../_fixtures/Fixtures';
 
-const AMBER = '#b45309';
+const AMBER = G.accent;
 const FIRE = 16; // 揭晓帧 = 发射帧
 const DECAY = 0.9;
 const GRAV = 1.5; // px/f² （等效重力；decay 下终端落速 = GRAV/(1-d) = 15px/f）
@@ -56,7 +56,13 @@ const RIGHT_GUN = makeGun(120, 9); // 右下炮朝 120°（偏左上）
 const LEFT_POS = { x: 140, y: 1040 };
 const RIGHT_POS = { x: 1780, y: 1040 };
 
-export const ConfettiCrossfire: React.FC = () => {
+export interface ConfettiCrossfireProps {
+  label?: string;
+}
+
+export const ConfettiCrossfire: React.FC<ConfettiCrossfireProps> = ({
+  label = 'CELEBRATE',
+}) => {
   const frame = useCurrentFrame();
   const age = frame - FIRE;
 
@@ -96,7 +102,7 @@ export const ConfettiCrossfire: React.FC = () => {
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: 110, width: '100%', textAlign: 'center' }}>
-        <TitleBlock text="CONFETTI CROSSFIRE" size={72} />
+        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1 }}>{label}</div>
       </div>
 
       {/* 中央 KPI 卡 */}
