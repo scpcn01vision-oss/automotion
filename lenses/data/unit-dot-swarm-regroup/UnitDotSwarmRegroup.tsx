@@ -19,7 +19,7 @@ import React from 'react';
 import { useCurrentFrame, spring, interpolate } from 'remotion';
 import { G, TitleBlock } from '../../_fixtures/Fixtures';
 
-const AMBER = '#b45309';
+const AMBER = G.accent;
 const FPS = 30;
 const N = 320;
 const DOT_R = 9;
@@ -129,7 +129,15 @@ const fade = (frame: number, inA: number, inB: number, outA?: number, outB?: num
 
 const LABEL_FONT = 'Helvetica, Arial, sans-serif';
 
-export const UnitDotSwarmRegroup: React.FC = () => {
+export interface UnitDotSwarmRegroupProps {
+  label?: string;
+  groups?: string[];
+}
+
+export const UnitDotSwarmRegroup: React.FC<UnitDotSwarmRegroupProps> = ({
+  label = 'REGROUP',
+  groups = ['Free', 'Pro', 'Enterprise'],
+}) => {
   const frame = useCurrentFrame();
 
   const dots = Array.from({ length: N }, (_, i) => {
@@ -157,7 +165,7 @@ export const UnitDotSwarmRegroup: React.FC = () => {
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: 110, width: '100%', textAlign: 'center' }}>
-        <TitleBlock text="UNIT DOT SWARM REGROUP" size={72} />
+        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1 }}>{label}</div>
       </div>
 
       {/* 图例：每点的含义（全程挂角） */}
@@ -227,7 +235,7 @@ export const UnitDotSwarmRegroup: React.FC = () => {
                 opacity: barLabelOp,
               }}
             >
-              {['Free', 'Pro', 'Enterprise'][g]}
+              {groups[g] ?? ''}
             </div>
           ))}
         </>
