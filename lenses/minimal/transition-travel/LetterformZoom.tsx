@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 承接
+// props: text（字腔标题）、origin（字腔推进中心）、sceneB（新页面内容承载）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
@@ -9,9 +10,10 @@
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
-import { FakeDashboard, G } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
-// letterform-zoom〔转场〕：巨型标题 "DASH" 字腔透出新页面，镜头急速推进
+// letterform-zoom〔转场〕：巨型标题字腔透出新页面，镜头急速推进
 // 字母 A 的三角字腔，洞被撑满全屏的瞬间新页面接管，残余笔画滑出画外。
 // 结构：底层 FakeDashboard B 静置全屏（微 dolly）；上层"米灰盖板"用
 // SVG <mask>（白底 + 黑字）在字形处挖洞——洞里即透出 B；对盖板整组做
@@ -32,7 +34,25 @@ const titleFont: React.CSSProperties = {
   fontSize: FS,
 };
 
-export const LetterformZoom: React.FC = () => {
+export interface LetterformZoomProps {
+  text?: string;
+  origin?: { x: number; y: number };
+  sceneB?: SceneContentData;
+}
+
+export const LetterformZoom: React.FC<LetterformZoomProps> = ({
+  text = 'DASH',
+  origin = ORIGIN,
+  sceneB = {
+    title: '状态',
+    type: 'rows',
+    rows: [
+      { label: '节点', value: '4/4' },
+      { label: '延迟', value: '42ms' },
+      { label: '可用性', value: '99.98%' },
+    ],
+  },
+}) => {
   const frame = useCurrentFrame();
 
   // 0–25f 建立 hold；25–85f 推进。慢起 bezier 叠指数尺度 = 前段慢、后段陡
@@ -75,10 +95,10 @@ export const LetterformZoom: React.FC = () => {
           position: 'absolute',
           inset: 0,
           transform: `scale(${bScale})`,
-          transformOrigin: `${ORIGIN.x}px ${ORIGIN.y}px`,
+          transformOrigin: `${origin.x}px ${origin.y}px`,
         }}
       >
-        <FakeDashboard variant="B" />
+        <SceneContent content={sceneB} />
       </div>
 
       {/* 米灰盖板（字形挖洞）+ 字缘描边 + 副标灰条：整组指数推进后飞出画外 */}
@@ -88,7 +108,7 @@ export const LetterformZoom: React.FC = () => {
             position: 'absolute',
             inset: 0,
             transform: `scale(${scale})`,
-            transformOrigin: `${ORIGIN.x}px ${ORIGIN.y}px`,
+            transformOrigin: `${origin.x}px ${origin.y}px`,
             opacity: plateOpacity,
             filter: blurCss > 0.02 ? `blur(${blurCss}px)` : undefined,
           }}
@@ -109,7 +129,7 @@ export const LetterformZoom: React.FC = () => {
                   fill="#000"
                   style={titleFont}
                 >
-                  DASH
+                  {text}
                 </text>
               </mask>
             </defs>
@@ -125,7 +145,7 @@ export const LetterformZoom: React.FC = () => {
               opacity={0.3}
               style={titleFont}
             >
-              DASH
+              {text}
             </text>
           </svg>
           {/* 副标灰条：随盖板一起被甩出画外，强化"页面元素残余"感 */}
