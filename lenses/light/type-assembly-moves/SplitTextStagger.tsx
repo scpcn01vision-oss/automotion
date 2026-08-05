@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 宣告,展开
+// props: text（逐字裂升的标题）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
@@ -17,9 +18,8 @@
 // 56–130 全静止（74f ≥ 40f，无逐帧噪声层）。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, TitleBlock } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
 
-const TEXT = 'MOTION SYSTEM';
 const START = 12; // 首字起跳帧
 const RISE = 14; // 升起时长
 const SETTLE = 6; // 过冲回落时长
@@ -43,9 +43,15 @@ const charY = (f: number, idx: number): number => {
   });
 };
 
-export const SplitTextStagger: React.FC = () => {
+export interface SplitTextStaggerProps {
+  text?: string;
+}
+
+export const SplitTextStagger: React.FC<SplitTextStaggerProps> = ({
+  text = 'MOTION SYSTEM',
+}) => {
   const frame = useCurrentFrame();
-  const chars = TEXT.split('');
+  const chars = text.split('');
   // 基线：首字起跳同帧开始，从左向右生长到 100%
   const lineW = interpolate(frame, [START, START + 26], [0, 100], {
     extrapolateLeft: 'clamp',
@@ -55,9 +61,6 @@ export const SplitTextStagger: React.FC = () => {
 
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', left: 120, top: 96 }}>
-        <TitleBlock text="SPLIT TEXT STAGGER" size={54} />
-      </div>
       <div
         style={{
           position: 'absolute',
