@@ -9,15 +9,15 @@
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
-import { Card, TitleBlock } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
 
 // bento-light-up：暗场里 3×2 bento 墙压暗待命，随节拍逐格点亮——
 // 边框流光先描一圈（琥珀），格内内容随后提亮上浮弹出；六格全亮后整体微推收住。
 // 节拍：0–20 建立(hold) → 每格间隔 12f 依次激活(描边 8f + 内容弹出 8f)
 //       → ~96f 全亮 → 96–121 scale 1→1.04 缓推 → 121–150 静止收尾。
 
-const BG = '#2a2a28';
-const AMBER = '#e8b45e';
+const BG = G.side;
+const AMBER = G.accent;
 const FIRST = 20; // 首格激活帧
 const GAP = 12; // 格间节拍
 const CELL_W = 480;
@@ -74,7 +74,25 @@ const Cell: React.FC<{ i: number; frame: number }> = ({ i, frame }) => {
           borderRadius: 14,
         }}
       >
-        <Card w={CELL_W} h={CELL_H} seed={i + 1} />
+        <div
+          style={{
+            width: CELL_W,
+            height: CELL_H,
+            background: G.card,
+            border: `2px solid ${G.border}`,
+            borderRadius: 16,
+            boxSizing: 'border-box',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 8,
+          }}
+        >
+          <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 22, fontWeight: 800, color: G.ink }}>
+            功能 {i + 1}
+          </div>
+        </div>
       </div>
       {/* 边框流光：SVG rect 描边一圈 */}
       {draw > 0 && (
@@ -105,7 +123,13 @@ const Cell: React.FC<{ i: number; frame: number }> = ({ i, frame }) => {
   );
 };
 
-export const BentoLightUp: React.FC = () => {
+export interface BentoLightUpProps {
+  title?: string;
+}
+
+export const BentoLightUp: React.FC<BentoLightUpProps> = ({
+  title = 'Features',
+}) => {
   const frame = useCurrentFrame();
 
   // ③ 六格全亮(~96f)后整体缓推 scale 1→1.04，25f 收住，之后真静止
@@ -132,8 +156,8 @@ export const BentoLightUp: React.FC = () => {
           transformOrigin: '960px 540px',
         }}
       >
-        <div style={{ position: 'absolute', left: LEFT, top: TOP - 110, opacity: titleLit, filter: 'invert(1)' }}>
-          <TitleBlock text="Features" size={64} />
+        <div style={{ position: 'absolute', left: LEFT, top: TOP - 110, opacity: titleLit, filter: 'invert(1)', fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 64, color: G.ink, letterSpacing: -1 }}>
+          {title}
         </div>
         {Array.from({ length: 6 }).map((_, i) => (
           <Cell key={i} i={i} frame={frame} />
