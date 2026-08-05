@@ -41,7 +41,15 @@ const useStrip = (frame: number, start: number, dx: number, dy: number) => {
   };
 };
 
-export const UiStripAwayOutro: React.FC = () => {
+export interface UiStripAwayOutroProps {
+  buttonText?: string;
+  wordmark?: string;
+}
+
+export const UiStripAwayOutro: React.FC<UiStripAwayOutroProps> = ({
+  buttonText = 'Publish',
+  wordmark = 'WORDMARK',
+}) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
@@ -182,7 +190,7 @@ export const UiStripAwayOutro: React.FC = () => {
             color: '#161615',
           }}
         >
-          Publish
+          {buttonText}
         </div>
       </div>
 
@@ -200,7 +208,7 @@ export const UiStripAwayOutro: React.FC = () => {
               color: '#f2f2f0',
             }}
           >
-            WORDMARK
+            {wordmark}
           </div>
         </AbsoluteFill>
       )}
