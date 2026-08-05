@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 宣告,举证
+// props: title（套印标题）、cards（底部 3 张卡内容）
 // === 时间特性 ===
 // 刚性（不可压缩）: 刚性:节拍4拍,套准72f
 // 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
@@ -15,15 +16,15 @@
 // ③ 底部对应节拍刻度点闪深并常驻。结构：0–29f hold；30–115f 四拍；116–139f 真静止。
 import React from 'react';
 import { useCurrentFrame } from 'remotion';
-import { G, Card, TitleBlock } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
 
 const HITS = [30, 54, 78, 102]; // 节拍命中帧
 const AMP = [4, 7, 11, 16]; // 每拍单版初始错位（px），逐拍加码
 const PUMP_WIN = 14; // scale 泵窗口：14f 后精确归 1（保证结尾真静止）
 const SPLIT_WIN = 12; // 错位窗口：12f 后精确归 0（余量 <0.4px，硬切套准）
 
-// 与 TitleBlock 同字形的单色印版（错位需要可调色副本）
-const Plate: React.FC<{ color: string; dx: number; dy: number }> = ({ color, dx, dy }) => (
+// 与正体标题同字形的单色印版（错位需要可调色副本）
+const Plate: React.FC<{ text: string; color: string; dx: number; dy: number }> = ({ text, color, dx, dy }) => (
   <div
     style={{
       position: 'absolute',
@@ -45,12 +46,24 @@ const Plate: React.FC<{ color: string; dx: number; dy: number }> = ({ color, dx,
         whiteSpace: 'nowrap',
       }}
     >
-      ON THE BEAT
+      {text}
     </div>
   </div>
 );
 
-export const RisoBeatPump: React.FC = () => {
+export interface RisoBeatPumpProps {
+  title?: string;
+  cards?: { label: string; value: string }[];
+}
+
+export const RisoBeatPump: React.FC<RisoBeatPumpProps> = ({
+  title = 'ON THE BEAT',
+  cards = [
+    { label: '指标一', value: '+18%' },
+    { label: '指标二', value: '2.1×' },
+    { label: '指标三', value: '96.4%' },
+  ],
+}) => {
   const frame = useCurrentFrame();
 
   // 找最近一次已命中的节拍（24f 间隔 > 14f 窗口，永远只有一拍在作用）
@@ -100,18 +113,29 @@ export const RisoBeatPump: React.FC = () => {
                 justifyContent: 'center',
               }}
             >
-              <TitleBlock text="ON THE BEAT" size={160} />
+              <div
+                style={{
+                  fontFamily: 'Helvetica, Arial, sans-serif',
+                  fontWeight: 800,
+                  fontSize: 160,
+                  color: G.ink,
+                  letterSpacing: -1,
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {title}
+              </div>
             </div>
           )}
           {split && (
             <>
-              <Plate color={G.mid} dx={-dx} dy={dy} />
-              <Plate color={G.ink} dx={dx} dy={-dy} />
+              <Plate text={title} color={G.mid} dx={-dx} dy={dy} />
+              <Plate text={title} color={G.ink} dx={dx} dy={-dy} />
             </>
           )}
         </div>
 
-        {/* 底下一排 3 张小卡 */}
+        {/* 底下一排卡（默认 3 张，数量随 cards） */}
         <div
           style={{
             position: 'absolute',
@@ -123,9 +147,31 @@ export const RisoBeatPump: React.FC = () => {
             gap: 44,
           }}
         >
-          <Card w={330} h={200} seed={2} />
-          <Card w={330} h={200} seed={5} />
-          <Card w={330} h={200} seed={8} />
+          {cards.map((c, i) => (
+            <div
+              key={i}
+              style={{
+                width: 330,
+                height: 200,
+                background: G.card,
+                border: `2px solid ${G.border}`,
+                borderRadius: 14,
+                padding: 22,
+                boxSizing: 'border-box',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                gap: 10,
+              }}
+            >
+              <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 24, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
+                {c.label}
+              </div>
+              <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 34, fontWeight: 800, color: G.accent }}>
+                {c.value}
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* 节拍刻度：命中即闪深（8f 缩放脉冲 1.8→1）并常驻深色 */}
