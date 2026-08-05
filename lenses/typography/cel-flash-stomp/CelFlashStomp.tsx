@@ -31,15 +31,19 @@ type Word = {
 };
 
 const LAND = 6; // 入场弹落时长：start+6 落定，同帧起闪
-const WORDS: Word[] = [
-  { text: 'SHIP', start: 0, end: 30, rot: 2.5, flashLen: 6, flashDark: '#cfcfca' },
-  { text: 'FASTER', start: 30, end: 60, rot: -2.5, flashLen: 6, flashDark: '#cfcfca' },
-  { text: 'TODAY', start: 60, end: 9999, rot: 0, flashLen: 8, flashDark: '#c4c4c0' },
-];
+export interface CelFlashStompProps {
+  words?: Word[];
+}
 
-export const CelFlashStomp: React.FC = () => {
+export const CelFlashStomp: React.FC<CelFlashStompProps> = ({
+  words = [
+    { text: 'READY', start: 0, end: 30, rot: 2.5, flashLen: 6, flashDark: '#cfcfca' },
+    { text: 'GO', start: 30, end: 60, rot: -2.5, flashLen: 6, flashDark: '#cfcfca' },
+    { text: 'NOW', start: 60, end: 9999, rot: 0, flashLen: 8, flashDark: '#c4c4c0' },
+  ],
+}) => {
   const frame = useCurrentFrame();
-  const word = WORDS.find((w) => frame >= w.start && frame < w.end)!;
+  const word = words.find((w) => frame >= w.start && frame < w.end)!;
   const t = frame - word.start;
 
   // 弹落：scale 1.18 → 0.98(2% 过冲) → 1，6f 内完成，poly(5) 出缓
