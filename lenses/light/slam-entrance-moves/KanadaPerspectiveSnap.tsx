@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 钩子,宣告
+// props: card（甩入卡内容）
 // === 时间特性 ===
 // 刚性（不可压缩）: 刚性:impact 20f,score 14f
 // 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
@@ -17,7 +18,7 @@
 // 18–22 回弹归 0 + 震屏衰减 + 阴影收正 → 22–130 全静止（≥45f）。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, Card, TitleBlock } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
 
 // 确定性伪随机（震屏抖动用）
 const h = (n: number): number => {
@@ -32,7 +33,38 @@ const CARD_H = 340;
 const CX = (1920 - CARD_W) / 2; // 700
 const CY = (1080 - CARD_H) / 2; // 370
 
-export const KanadaPerspectiveSnap: React.FC = () => {
+export interface KanadaPerspectiveSnapProps {
+  card?: { label: string; value: string };
+}
+
+const MiniCard: React.FC<{ w: number; h: number; label: string; value: string }> = ({ w, h, label, value }) => (
+  <div
+    style={{
+      width: w,
+      height: h,
+      background: G.card,
+      border: `2px solid ${G.border}`,
+      borderRadius: 14,
+      padding: 26,
+      boxSizing: 'border-box',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      gap: 12,
+    }}
+  >
+    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 28, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
+      {label}
+    </div>
+    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 40, fontWeight: 800, color: G.accent }}>
+      {value}
+    </div>
+  </div>
+);
+
+export const KanadaPerspectiveSnap: React.FC<KanadaPerspectiveSnapProps> = ({
+  card = { label: '指标一', value: '+18%' },
+}) => {
   const frame = useCurrentFrame();
 
   // 0–18f 甩入主通道（out cubic：先猛后缓，急停感）
@@ -67,7 +99,7 @@ export const KanadaPerspectiveSnap: React.FC = () => {
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', left: shakeX, top: shakeY, width: 1920, height: 1080 }}>
         <div style={{ position: 'absolute', left: 120, top: 96 }}>
-          <TitleBlock text="KANADA PERSPECTIVE SNAP" size={54} />
+          {null}
         </div>
         {/* 落点槽位（虚线框，给"甩到哪"一个参照） */}
         <div
@@ -91,7 +123,7 @@ export const KanadaPerspectiveSnap: React.FC = () => {
               filter: `drop-shadow(${shX}px ${shY}px ${shBlur}px rgba(0,0,0,${shAlpha}))${blur ? ` blur(${blur}px)` : ''}`,
             }}
           >
-            <Card w={CARD_W} h={CARD_H} seed={3} />
+            <MiniCard w={CARD_W} h={CARD_H} label={card.label} value={card.value} />
           </div>
         </div>
       </div>
