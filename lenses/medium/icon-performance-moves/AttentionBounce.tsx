@@ -16,9 +16,10 @@
 // 92–104 面板卡弹出 → 110 后真静止 40f。帧确定，尘点用 sin 散列。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { G } from '../../_fixtures/Fixtures';
 import { G, Card } from '../../_fixtures/Fixtures';
 
-const AMBER = '#b45309';
+const AMBER = G.accent;
 const ICON = 400; // icon 边长（半屏级）
 const GROUND = 940; // 地面线 y（末跳 1.2x 顶点 + 8% 推近后仍贴画面上沿不出框）
 const CX = 760; // icon 中心 x（右侧留面板位）
