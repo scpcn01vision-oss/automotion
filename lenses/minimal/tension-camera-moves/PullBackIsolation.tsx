@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 宣告,举证
+// props: value（主卡数字）、cards（8 张兄弟卡内容）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
@@ -14,19 +15,19 @@
 // 背景 60–110f 从 #ececea 沉入 #141414；主卡白光晕 60–100f 淡入。
 // 帧 110–150 完全静止：暗场中央孤悬一张发光小卡——全片只为这一个数字。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, Card } from '../../_fixtures/Fixtures';
+import { useCurrentFrame, interpolate, interpolateColors, Easing } from 'remotion';
+import { G } from '../../_fixtures/Fixtures';
 
 // 8 张兄弟卡：相对主卡中心 (960,540) 的偏移 + 尺寸 + seed
 const SIBS = [
-  { dx: -620, dy: -330, w: 360, h: 240, seed: 3 },
-  { dx: 10, dy: -390, w: 420, h: 220, seed: 4 },
-  { dx: 620, dy: -320, w: 380, h: 260, seed: 5 },
-  { dx: -680, dy: 20, w: 340, h: 230, seed: 6 },
-  { dx: 700, dy: 40, w: 360, h: 250, seed: 7 },
-  { dx: -600, dy: 360, w: 400, h: 240, seed: 8 },
-  { dx: 40, dy: 400, w: 440, h: 220, seed: 9 },
-  { dx: 640, dy: 350, w: 370, h: 250, seed: 10 },
+  { dx: -620, dy: -330, w: 360, h: 240 },
+  { dx: 10, dy: -390, w: 420, h: 220 },
+  { dx: 620, dy: -320, w: 380, h: 260 },
+  { dx: -680, dy: 20, w: 340, h: 230 },
+  { dx: 700, dy: 40, w: 360, h: 250 },
+  { dx: -600, dy: 360, w: 400, h: 240 },
+  { dx: 40, dy: 400, w: 440, h: 220 },
+  { dx: 640, dy: 350, w: 370, h: 250 },
 ].map((s) => ({ ...s, dist: Math.hypot(s.dx, s.dy) }));
 
 // 按离主卡距离排名 → 错峰熄灭顺序（近的先灭）
@@ -39,7 +40,49 @@ const FADE_DUR = 16;
 
 const clamp = { extrapolateLeft: 'clamp' as const, extrapolateRight: 'clamp' as const };
 
-export const PullBackIsolation: React.FC = () => {
+const MiniCard: React.FC<{ w: number; h: number; label: string; value: string }> = ({ w, h, label, value }) => (
+  <div
+    style={{
+      width: w,
+      height: h,
+      background: G.card,
+      border: `2px solid ${G.border}`,
+      borderRadius: 14,
+      padding: 16,
+      boxSizing: 'border-box',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      gap: 8,
+    }}
+  >
+    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 18, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
+      {label}
+    </div>
+    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 26, fontWeight: 800, color: G.accent }}>
+      {value}
+    </div>
+  </div>
+);
+
+export interface PullBackIsolationProps {
+  value?: string;
+  cards?: { label: string; value: string }[];
+}
+
+export const PullBackIsolation: React.FC<PullBackIsolationProps> = ({
+  value = '99.9%',
+  cards = [
+    { label: '指标一', value: '+18%' },
+    { label: '指标二', value: '2.1×' },
+    { label: '指标三', value: '96.4%' },
+    { label: '节点', value: '4/4' },
+    { label: '延迟', value: '42ms' },
+    { label: '可用性', value: '99.98%' },
+    { label: '覆盖率', value: '87%' },
+    { label: '吞吐', value: '1.2k/s' },
+  ],
+}) => {
   const frame = useCurrentFrame();
 
   // 相机后拉：2.2（怼脸特写）→ 0.62（大远景孤悬）
@@ -48,10 +91,9 @@ export const PullBackIsolation: React.FC = () => {
     ...clamp,
   });
 
-  // 背景沉入黑暗：#ececea → #141414（60–110f）
+  // 背景沉入黑暗：G.panel → G.side（60–110f）
   const bgT = interpolate(frame, [60, 110], [0, 1], { easing: Easing.inOut(Easing.quad), ...clamp });
-  const bgC = Math.round(236 + (20 - 236) * bgT);
-  const bg = `rgb(${bgC},${bgC},${bgC})`;
+  const bg = interpolateColors(bgT, [0, 1], [G.panel, G.side]);
 
   // 主卡白光晕淡入（60–100f）
   const glow = interpolate(frame, [60, 100], [0, 0.35], { ...clamp });
@@ -86,7 +128,7 @@ export const PullBackIsolation: React.FC = () => {
                 filter: `brightness(${bright})`,
               }}
             >
-              <Card w={s.w} h={s.h} seed={s.seed} />
+              <MiniCard w={s.w} h={s.h} label={cards[i]?.label ?? ''} value={cards[i]?.value ?? ''} />
             </div>
           );
         })}
@@ -103,7 +145,7 @@ export const PullBackIsolation: React.FC = () => {
             boxShadow: `0 0 80px rgba(255,255,255,${glow}), 0 0 160px rgba(255,255,255,${glow * 0.6})`,
           }}
         >
-          <Card w={520} h={340} seed={2} />
+          <MiniCard w={520} h={340} label={cards[0]?.label ?? ''} value={cards[0]?.value ?? ''} />
           <div
             style={{
               position: 'absolute',
@@ -116,11 +158,11 @@ export const PullBackIsolation: React.FC = () => {
               fontSize: 128,
               letterSpacing: -3,
               color: G.ink,
-              background: 'rgba(255,255,255,0.72)',
+              background: G.card,
               borderRadius: 14,
             }}
           >
-            99.9%
+            {value}
           </div>
         </div>
       </div>
