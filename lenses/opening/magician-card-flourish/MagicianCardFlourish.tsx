@@ -20,6 +20,7 @@
 //    急加速弹射，弧线段整体减速抵达中心硬定格）。
 // v5 其余保留：中心极远飞出+13 圈自旋+94% 定格+sheen 扫光。总长 141 帧。
 import React from 'react';
+import { G } from '../../_fixtures/Fixtures';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { CameraMotionBlur } from '@remotion/motion-blur';
 import { G } from '../../_fixtures/Fixtures';
@@ -69,7 +70,7 @@ const CardFace: React.FC = () => (
 // 卡背：深灰斜纹
 const CardBack: React.FC = () => (
   <div style={{
-    position: 'absolute', inset: 0, borderRadius: 22, background: '#3c3c40',
+    position: 'absolute', inset: 0, borderRadius: 22, background: G.mid,
     border: '2px solid #55555a', boxSizing: 'border-box', overflow: 'hidden',
   }}>
     <div style={{
@@ -228,7 +229,7 @@ const Scene: React.FC = () => {
   const sheenLift = sheenVisible ? 0.07 * Math.sin(sheenP * Math.PI) : 0;
 
   return (
-    <div style={{ width: 1920, height: 1080, background: '#000000', position: 'relative', overflow: 'hidden' }}>
+    <div style={{ width: 1920, height: 1080, background: G.side, position: 'relative', overflow: 'hidden' }}>
       {/* —— 卡片：闪光过后从中心飞出，纯黑空间中飞行 —— */}
       <div style={{
         position: 'absolute', left: cx - CARD_W / 2, top: cy - CARD_H / 2,
