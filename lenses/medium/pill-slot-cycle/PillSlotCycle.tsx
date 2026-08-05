@@ -16,18 +16,8 @@ import { G } from '../../_fixtures/Fixtures';
 
 const FONT = 'Helvetica, Arial, sans-serif';
 
-const PILLS = [
-  { label: 'Ask a question', icon: '?' },
-  { label: 'Find in Drive', icon: '▲' },
-  { label: 'Find in Slack', icon: '#' },
-  { label: 'Summarize', icon: '≡' },
-  { label: 'Improve writing', icon: '✎' },
-  { label: 'Draft an agenda', icon: '☰' },
-];
-
 const BEAT = 21; // ~0.7s @30fps
 const INTRO = 12; // 句干入场
-const CYCLES = PILLS.length;
 
 const Pill: React.FC<{ label: string; icon: string; style?: React.CSSProperties }> = ({
   label,
@@ -41,7 +31,7 @@ const Pill: React.FC<{ label: string; icon: string; style?: React.CSSProperties 
       gap: 16,
       padding: '14px 36px 14px 24px',
       borderRadius: 999,
-      background: '#fff',
+      background: G.card,
       border: `3px solid ${G.border}`,
       boxShadow: '0 6px 18px rgba(0,0,0,0.10)',
       fontFamily: FONT,
@@ -72,8 +62,26 @@ const Pill: React.FC<{ label: string; icon: string; style?: React.CSSProperties 
   </div>
 );
 
-export const PillSlotCycle: React.FC = () => {
+export interface PillSlotCycleProps {
+  stem?: string;
+  pills?: { label: string; icon: string }[];
+  finale?: string;
+}
+
+export const PillSlotCycle: React.FC<PillSlotCycleProps> = ({
+  stem = 'One AI tool to',
+  pills = [
+    { label: 'Ask a question', icon: '?' },
+    { label: 'Find in Drive', icon: '▲' },
+    { label: 'Find in Slack', icon: '#' },
+    { label: 'Summarize', icon: '≡' },
+    { label: 'Improve writing', icon: '✎' },
+    { label: 'Draft an agenda', icon: '☰' },
+  ],
+  finale = 'do it all.',
+}) => {
   const frame = useCurrentFrame();
+  const CYCLES = pills.length;
 
   // 句干入场：ease-out 上浮淡入
   const stemT = interpolate(frame, [0, INTRO], [0, 1], {
@@ -102,8 +110,8 @@ export const PillSlotCycle: React.FC = () => {
   // 槽内容渲染
   let slot: React.ReactNode = null;
   if (!isFinale && rel >= 0) {
-    const incoming = PILLS[idx];
-    const outgoing = idx > 0 ? PILLS[idx - 1] : null;
+    const incoming = pills[idx];
+    const outgoing = idx > 0 ? pills[idx - 1] : null;
 
     // 新 pill：从下 +120px 带 blur 滑入，ease-out
     const inT = interpolate(beatFrame, [0, SWAP], [0, 1], {
@@ -175,7 +183,7 @@ export const PillSlotCycle: React.FC = () => {
             whiteSpace: 'nowrap',
           }}
         >
-          do it all.
+          {finale}
         </span>
         {lastOutT < 1 && (
           <div
@@ -188,7 +196,7 @@ export const PillSlotCycle: React.FC = () => {
               filter: `blur(${lastOutT * 10}px)`,
             }}
           >
-            <Pill label={PILLS[CYCLES - 1].label} icon={PILLS[CYCLES - 1].icon} />
+            <Pill label={pills[CYCLES - 1].label} icon={pills[CYCLES - 1].icon} />
           </div>
         )}
       </div>
@@ -220,7 +228,7 @@ export const PillSlotCycle: React.FC = () => {
             whiteSpace: 'nowrap',
           }}
         >
-          One AI tool to
+          {stem}
         </span>
         {slot}
       </div>
