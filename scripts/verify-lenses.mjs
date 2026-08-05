@@ -6,7 +6,7 @@ import {
   renderStill,
   openBrowser,
 } from "@remotion/renderer";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync, readFileSync, existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -19,6 +19,10 @@ const CHROME = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 
 const only = process.argv[2];
 const frameArg = process.argv[3];
+const propsArg = process.argv[4];
+const inputProps = propsArg && existsSync(propsArg)
+  ? JSON.parse(readFileSync(propsArg, "utf8"))
+  : undefined;
 
 console.log("bundle...");
 const serveUrl = await bundle({
@@ -53,6 +57,7 @@ for (const comp of comps) {
       output: out,
       frame,
       browser,
+      inputProps,
     });
     ok++;
     console.log(`ok ${ok}/${comps.length} ${comp.id} frame=${frame}`);
