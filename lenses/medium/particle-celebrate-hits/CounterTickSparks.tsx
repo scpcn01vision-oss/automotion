@@ -17,7 +17,7 @@ import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G, TitleBlock } from '../../_fixtures/Fixtures';
 
-const AMBER = '#b45309';
+const AMBER = G.accent;
 const TARGET = 12847;
 const COUNT_END = 78; // 计数结束帧
 const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
@@ -42,7 +42,15 @@ const TICKS: { f: number; big: boolean }[] = (() => {
 const SPARK_LIFE = 18;
 const GRAV = 0.9;
 
-export const CounterTickSparks: React.FC = () => {
+export interface CounterTickSparksProps {
+  target?: string;
+  label?: string;
+}
+
+export const CounterTickSparks: React.FC<CounterTickSparksProps> = ({
+  target = '42',
+  label = 'COUNT',
+}) => {
   const frame = useCurrentFrame();
   const value = valueAt(frame);
 
@@ -62,7 +70,7 @@ export const CounterTickSparks: React.FC = () => {
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: 110, width: '100%', textAlign: 'center' }}>
-        <TitleBlock text="COUNTER TICK SPARKS" size={72} />
+        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1 }}>{label}</div>
       </div>
 
       {/* 计数卡 */}
