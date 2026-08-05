@@ -13,6 +13,7 @@
 // 多正弦叠加做有机漂移；中央深色描边卡的边缘辉光随最近光斑距离呼吸。
 // 0–20f 光斑淡入，中段正常速度漂移，90–120f 缓动收敛到静止，末 30f 真静止。
 import React from 'react';
+import { G } from '../../_fixtures/Fixtures';
 import { AbsoluteFill, interpolate, useCurrentFrame, Easing } from 'remotion';
 
 // 库内标准伪随机（帧确定）
@@ -92,7 +93,7 @@ export const GlowOrbAmbient: React.FC = () => {
   const shadowAlpha = 0.25 * glow;
 
   return (
-    <AbsoluteFill style={{ background: '#2c2416', overflow: 'hidden' }}>
+    <AbsoluteFill style={{ background: G.ink, overflow: 'hidden' }}>
       {ORBS.map((o, i) => (
         <div
           key={i}
@@ -118,7 +119,7 @@ export const GlowOrbAmbient: React.FC = () => {
           width: 560,
           height: 330,
           boxSizing: 'border-box',
-          background: '#3d3022',
+          background: G.side,
           border: '1.5px solid #8b7355',
           borderRadius: 16,
           boxShadow: `0 0 ${shadowBlur}px ${shadowSpread}px rgba(255,255,255,${shadowAlpha})`,
@@ -128,9 +129,9 @@ export const GlowOrbAmbient: React.FC = () => {
           gap: 16,
         }}
       >
-        <div style={{ height: 18, width: '55%', background: '#3d3022', borderRadius: 9 }} />
-        <div style={{ height: 11, width: '82%', background: '#3d3022', borderRadius: 6 }} />
-        <div style={{ height: 11, width: '68%', background: '#3d3022', borderRadius: 6 }} />
+        <div style={{ height: 18, width: '55%', background: G.side, borderRadius: 9 }} />
+        <div style={{ height: 11, width: '82%', background: G.side, borderRadius: 6 }} />
+        <div style={{ height: 11, width: '68%', background: G.side, borderRadius: 6 }} />
         <div style={{ marginTop: 'auto', display: 'flex', gap: 10, alignItems: 'center' }}>
           <div style={{ width: 28, height: 28, borderRadius: 14, background: '#3d3022' }} />
           <div style={{ height: 11, width: 90, background: '#3d3022', borderRadius: 6 }} />
