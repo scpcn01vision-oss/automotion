@@ -12,10 +12,11 @@
 // 相互靠近 → 绕位交换 → 名牌一亮一暗交接 → 一枚放大成巨箭头当转场。
 import React from 'react';
 import { useCurrentFrame, interpolate } from 'remotion';
+import { G } from '../../_fixtures/Fixtures';
 
 const BLUE = '#b87a2e';
 const GREEN = '#d3923c';
-const DARK = '#101012';
+const DARK = G.ink;
 
 const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
 const easeInOutCubic = (t: number) =>
@@ -60,7 +61,15 @@ const Cursor: React.FC<{
   </div>
 );
 
-export const CursorDialogueDuet: React.FC = () => {
+export interface CursorDialogueDuetProps {
+  designer?: string;
+  developer?: string;
+}
+
+export const CursorDialogueDuet: React.FC<CursorDialogueDuetProps> = ({
+  designer = 'Designer',
+  developer = 'Developer',
+}) => {
   const f = useCurrentFrame();
   const CX = 960; const CY = 520;
   const R = 270;
@@ -144,10 +153,10 @@ export const CursorDialogueDuet: React.FC = () => {
         background: `radial-gradient(ellipse 1100px 700px at 50% 48%, rgba(255,255,255,0.045), transparent 70%)`,
       }} />
       {f <= 132 && (
-        <Cursor x={dx} y={dy} scale={2.8 * dPulse} color={BLUE} name="Designer"
+        <Cursor x={dx} y={dy} scale={2.8 * dPulse} color={BLUE} name={designer}
           badgeLit={dLit} badgeOpacity={dBadgeIn * (f > 104 ? 1 - easeInCubic(clamp01((f - 104) / 18)) : 1)} />
       )}
-      <Cursor x={gx} y={gy} scale={gScale} color={GREEN} name="Developer"
+      <Cursor x={gx} y={gy} scale={gScale} color={GREEN} name={developer}
         badgeLit={gLit} badgeOpacity={gBadgeIn * (1 - clamp01((f - 102) / 12))} />
     </div>
   );
