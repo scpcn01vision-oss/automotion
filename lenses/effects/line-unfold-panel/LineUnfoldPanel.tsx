@@ -14,6 +14,7 @@
 // 静置展示后反向退场：压扁成线（7f）→ 线缩成点 → 熄灭，像老 CRT 关机。
 // f0–12 空场静置；入场 f12–34；持面板至 f78；退场 f78–98；末静止 ≥42f（140f）。
 import React from 'react';
+import { G } from '../../_fixtures/Fixtures';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G, Card } from '../../_fixtures/Fixtures';
 
@@ -81,7 +82,7 @@ export const LineUnfoldPanel: React.FC = () => {
   const isPanel = sy > 0.15;
 
   return (
-    <div style={{ width: 1920, height: 1080, background: '#1c1c1b', overflow: 'hidden', position: 'relative' }}>
+    <div style={{ width: 1920, height: 1080, background: G.side, overflow: 'hidden', position: 'relative' }}>
       <div
         style={{
           position: 'absolute',
@@ -126,7 +127,7 @@ export const LineUnfoldPanel: React.FC = () => {
             </>
           ) : (
             // 线/点阶段：白色发光条填满整个盒（被 scale 压成线）
-            <div style={{ width: '100%', height: '100%', background: '#ffffff', boxShadow: '0 0 60px rgba(255,255,255,0.9)', borderRadius: 2 }} />
+            <div style={{ width: '100%', height: '100%', background: G.card, boxShadow: '0 0 60px rgba(255,255,255,0.9)', borderRadius: 2 }} />
           )}
         </div>
       )}
