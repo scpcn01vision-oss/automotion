@@ -11,6 +11,7 @@
 // 黑场上，左上角径向聚光从小到大扩张，把白色 Inbox 界面逐步"点亮"，
 // 照到的区域显影、照不到的沉黑，最终全屏亮起。光即转场。
 import React from 'react';
+import { G } from '../../_fixtures/Fixtures';
 import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
 
 const FONT = '"Avenir Next", "Helvetica Neue", Helvetica, sans-serif';
@@ -21,11 +22,11 @@ const InboxPanel: React.FC = () => (
     style={{
       width: 1920,
       height: 1080,
-      background: '#f6f6f5',
+      background: G.bg,
       fontFamily: FONT,
       padding: '90px 120px',
       boxSizing: 'border-box',
-      color: '#2c2c2c',
+      color: G.ink,
     }}
   >
     <div style={{ display: 'flex', alignItems: 'center', gap: 26 }}>
@@ -40,7 +41,7 @@ const InboxPanel: React.FC = () => (
       />
     </div>
     <div style={{ display: 'flex', gap: 64, marginTop: 90, fontSize: 44, color: '#555' }}>
-      <div style={{ background: '#e9e8f6', color: '#b87a2e', padding: '10px 34px', borderRadius: 14, fontWeight: 600 }}>All</div>
+      <div style={{ background: G.nav, color: G.accent, padding: '10px 34px', borderRadius: 14, fontWeight: 600 }}>All</div>
       <div style={{ padding: '10px 0' }}>Tasks</div>
       <div style={{ padding: '10px 0' }}>Docs</div>
       <div style={{ padding: '10px 0' }}>People</div>
@@ -49,8 +50,8 @@ const InboxPanel: React.FC = () => (
     {[0, 1, 2].map((row) => (
       <div key={row} style={{ display: 'flex', alignItems: 'center', gap: 30, marginTop: row === 0 ? 96 : 64 }}>
         <div style={{ width: 42, height: 42, border: '3px solid #c9c9c7', borderRadius: 10 }} />
-        <div style={{ width: 14, height: 14, borderRadius: 7, background: '#b87a2e' }} />
-        <div style={{ width: 56, height: 56, borderRadius: 28, background: '#efe4e2' }} />
+        <div style={{ width: 14, height: 14, borderRadius: 7, background: G.accent }} />
+        <div style={{ width: 56, height: 56, borderRadius: 28, background: G.panel }} />
         <div>
           <div style={{ display: 'flex', gap: 22, alignItems: 'center' }}>
             <div style={{ height: 22, width: 220 + ((row * 67) % 90), background: '#3f3f3f', borderRadius: 11 }} />
