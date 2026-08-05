@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 展开
+// props: cards（三张飞行卡内容）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
@@ -13,7 +14,7 @@
 // 速度用位置差分 p(f)-p(f-1) 驱动，低于阈值不拉伸。收尾真静止 ≥35f。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, Card, TitleBlock } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
 
 const W = 1920;
 const CARD_W = 380;
@@ -44,7 +45,7 @@ const posAt = (f: number, start: number, targetX: number): number =>
     extrapolateRight: 'clamp',
   });
 
-const FlyCard: React.FC<{ i: number; frame: number }> = ({ i, frame }) => {
+const FlyCard: React.FC<{ i: number; frame: number; label: string; value: string }> = ({ i, frame, label, value }) => {
   const start = FIRST + i * STAGGER;
   const targetX = ROW_X0 + i * (CARD_W + GAP);
   const land = start + FLIGHT;
@@ -80,23 +81,50 @@ const FlyCard: React.FC<{ i: number; frame: number }> = ({ i, frame }) => {
         transformOrigin: '100% 50%',
       }}
     >
-      <Card w={CARD_W} h={CARD_H} seed={i + 1} />
+      <MiniCard w={CARD_W} h={CARD_H} label={label} value={value} />
     </div>
   );
 };
 
-export const AxialStretch: React.FC = () => {
-  const frame = useCurrentFrame();
-  const titleOp = interpolate(frame, [0, 10], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
+export interface AxialStretchProps {
+  cards?: { label: string; value: string }[];
+}
 
+const MiniCard: React.FC<{ w: number; h: number; label: string; value: string }> = ({ w, h, label, value }) => (
+  <div
+    style={{
+      width: w,
+      height: h,
+      background: G.card,
+      border: `2px solid ${G.border}`,
+      borderRadius: 14,
+      padding: 20,
+      boxSizing: 'border-box',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      gap: 10,
+    }}
+  >
+    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 22, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
+      {label}
+    </div>
+    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 30, fontWeight: 800, color: G.accent }}>
+      {value}
+    </div>
+  </div>
+);
+
+export const AxialStretch: React.FC<AxialStretchProps> = ({
+  cards = [
+    { label: '指标一', value: '+18%' },
+    { label: '指标二', value: '2.1×' },
+    { label: '指标三', value: '96.4%' },
+  ],
+}) => {
+  const frame = useCurrentFrame();
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', top: 120, width: '100%', textAlign: 'center', opacity: titleOp }}>
-        <TitleBlock text="AXIAL STRETCH" size={72} />
-      </div>
       {/* 落位虚线槽，标出目标位置 */}
       {[0, 1, 2].map((i) => (
         <div
@@ -114,7 +142,7 @@ export const AxialStretch: React.FC = () => {
         />
       ))}
       {[0, 1, 2].map((i) => (
-        <FlyCard key={i} i={i} frame={frame} />
+        <FlyCard key={i} i={i} frame={frame} label={cards[i]?.label ?? ''} value={cards[i]?.value ?? ''} />
       ))}
     </div>
   );
