@@ -67,8 +67,6 @@
 | CircleMatchIris | 圆心虹膜 |
 | ColorBlockStepWipe | 色块分吞 |
 | CraneRiseReveal | 吊臂升起 |
-| CrashImpactReal | 疾推冲撞 |
-| CrashZoomReal | 急推变焦 |
 | DollyZoomReal | 滑动变焦 |
 | MultiplaneReal | 多层视差 |
 | LogoStingButton | Logo 闪现 |

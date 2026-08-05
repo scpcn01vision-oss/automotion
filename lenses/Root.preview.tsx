@@ -28,8 +28,6 @@ import { BottomPushStackWipe } from "./minimal/bottom-push-stack-wipe/BottomPush
 import { CircleMatchIris } from "./minimal/circle-match-iris/CircleMatchIris.tsx";
 import { ColorBlockStepWipe } from "./minimal/color-block-step-wipe/ColorBlockStepWipe.tsx";
 import { CraneRiseReveal } from "./minimal/crane-rise-reveal/CraneRiseReveal.tsx";
-import { CrashImpactReal } from "./minimal/crash-zoom-punch/CrashImpactReal.tsx";
-import { CrashZoomReal } from "./minimal/crash-zoom-punch/CrashZoomReal.tsx";
 import { DollyZoomReal } from "./minimal/depth-layer-moves/DollyZoomReal.tsx";
 import { MultiplaneReal } from "./minimal/depth-layer-moves/MultiplaneReal.tsx";
 import { LogoStingButton } from "./minimal/edit-hook-moves/LogoStingButton.tsx";
@@ -202,8 +200,6 @@ export const RemotionRoot: React.FC = () => {
       <Composition id="CircleMatchIris" component={CircleMatchIris} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="ColorBlockStepWipe" component={ColorBlockStepWipe} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="CraneRiseReveal" component={CraneRiseReveal} width={1920} height={1080} fps={30} durationInFrames={180} />
-      <Composition id="CrashImpactReal" component={CrashImpactReal} width={1920} height={1080} fps={30} durationInFrames={120} />
-      <Composition id="CrashZoomReal" component={CrashZoomReal} width={1920} height={1080} fps={30} durationInFrames={120} />
       <Composition id="DollyZoomReal" component={DollyZoomReal} width={1920} height={1080} fps={30} durationInFrames={135} />
       <Composition id="MultiplaneReal" component={MultiplaneReal} width={1920} height={1080} fps={30} durationInFrames={135} />
       <Composition id="LogoStingButton" component={LogoStingButton} width={1920} height={1080} fps={30} durationInFrames={180} />
