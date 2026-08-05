@@ -51,7 +51,11 @@ const angleAt = (frame: number, row: number, col: number): number => {
   return main + settle;
 };
 
-export const GridWaveFlip: React.FC = () => {
+export interface GridWaveFlipProps {
+  // ??????????/?????????? G
+}
+
+export const GridWaveFlip: React.FC<GridWaveFlipProps> = () => {
   const frame = useCurrentFrame();
   const wallW = COLS * CELL_W + (COLS - 1) * GAP;
   const wallH = ROWS * CELL_H + (ROWS - 1) * GAP;

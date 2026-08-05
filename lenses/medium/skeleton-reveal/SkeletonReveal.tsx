@@ -184,7 +184,11 @@ const Row: React.FC<{ i: number; dev: number; wordAt: (w: number, n: number) => 
   );
 };
 
-export const SkeletonReveal: React.FC = () => {
+export interface SkeletonRevealProps {
+  // ??????????/?????????? G
+}
+
+export const SkeletonReveal: React.FC<SkeletonRevealProps> = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
 

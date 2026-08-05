@@ -158,7 +158,11 @@ const BG_FRAMES: BgFrame[] = Array.from({ length: 18 }).map(() => ({
   skew: -14 + rng() * 10,
 }));
 
-export const NeonFrameForerunOrbit: React.FC = () => {
+export interface NeonFrameForerunOrbitProps {
+  // ??????????/?????????? G
+}
+
+export const NeonFrameForerunOrbit: React.FC<NeonFrameForerunOrbitProps> = () => {
   const frame = useCurrentFrame();
   // 开场快速描框（同款左缘中点两头奔画，14 帧成型——样式与 v3 一致）
   const trace = interpolate(frame, [0, 14], [0, 1], {

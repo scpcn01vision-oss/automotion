@@ -52,7 +52,11 @@ const WAVES = [
   { color: '#e2606b', fromRow: 9, start: 110 },
 ];
 
-export const IconFieldColorize: React.FC = () => {
+export interface IconFieldColorizeProps {
+  // ??????????/?????????? G
+}
+
+export const IconFieldColorize: React.FC<IconFieldColorizeProps> = () => {
   const frame = useCurrentFrame();
   const rand = mulberry32(20260718);
   const icons: React.ReactNode[] = [];

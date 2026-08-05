@@ -202,7 +202,11 @@ const DarkCard: React.FC<{
   );
 };
 
-export const OrbFlylineRelay: React.FC = () => {
+export interface OrbFlylineRelayProps {
+  // ??????????/?????????? G
+}
+
+export const OrbFlylineRelay: React.FC<OrbFlylineRelayProps> = () => {
   const frame = useCurrentFrame();
 
   // 光斑有效时间：0–95f 匀速漂移，95–120f out-sine 减速收敛，f≥120 恒定 → 末 35f 真静止

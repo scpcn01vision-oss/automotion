@@ -132,7 +132,11 @@ const LABELS: LabelSpec[] = [
 const CONV: Pt = {x: 1850, y: trunkY(1850)};
 
 // ---------- component ----------
-export const DatavizLandscapeOpen: React.FC = () => {
+export interface DatavizLandscapeOpenProps {
+  // ??????????/?????????? G
+}
+
+export const DatavizLandscapeOpen: React.FC<DatavizLandscapeOpenProps> = () => {
   const frame = useCurrentFrame();
 
   // 相机: 匀稳横移 3.2px/f (2–5 区间), 全程斜率恒定 (不急刹)

@@ -12,7 +12,11 @@
 import { AbsoluteFill, interpolate, useCurrentFrame } from 'remotion';
 
 /** Bright-field cut: a warm-white bloom that flashes over the hard cut. */
-export const FlashCut: React.FC<{ duration?: number }> = ({ duration = 10 }) => {
+export interface FlashCutProps {
+  duration?: number;
+}
+
+export const FlashCut: React.FC<FlashCutProps> = ({ duration = 10 }) => {
   const frame = useCurrentFrame();
   const o = interpolate(frame, [0, duration * 0.4, duration], [0, 0.85, 0], {
     extrapolateLeft: 'clamp',

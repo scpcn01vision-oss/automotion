@@ -54,7 +54,11 @@ const orbPos = (o: Orb, t: number) => {
   return { x, y };
 };
 
-export const GlowOrbAmbient: React.FC = () => {
+export interface GlowOrbAmbientProps {
+  // ??????????/?????????? G
+}
+
+export const GlowOrbAmbient: React.FC<GlowOrbAmbientProps> = () => {
   const f = useCurrentFrame();
 
   // 有效时间：0–90f 匀速，90–120f 用 out-sine 减速收敛（起始斜率≈0.94，近似连续），

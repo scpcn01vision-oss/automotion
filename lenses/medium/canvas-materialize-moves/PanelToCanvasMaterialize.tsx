@@ -33,7 +33,11 @@ const CHECK_FRAMES = [12, 22, 32]; // 三个复选框打勾时刻
 const BUTTON_FRAME = 46; // 按钮按下
 const FLY_START = [54, 60, 66]; // 三行错峰起飞
 
-export const PanelToCanvasMaterialize: React.FC = () => {
+export interface PanelToCanvasMaterializeProps {
+  // ??????????/?????????? G
+}
+
+export const PanelToCanvasMaterialize: React.FC<PanelToCanvasMaterializeProps> = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 

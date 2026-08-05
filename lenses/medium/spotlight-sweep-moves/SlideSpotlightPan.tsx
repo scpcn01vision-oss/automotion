@@ -87,7 +87,11 @@ const WidePanel: React.FC = () => (
   </div>
 );
 
-export const SlideSpotlightPan: React.FC = () => {
+export interface SlideSpotlightPanProps {
+  // ??????????/?????????? G
+}
+
+export const SlideSpotlightPan: React.FC<SlideSpotlightPanProps> = () => {
   const frame = useCurrentFrame();
   // 面板匀速左滑（相机右摇）——严格 linear
   const slide = interpolate(frame, [0, 132], [180, -1100]);

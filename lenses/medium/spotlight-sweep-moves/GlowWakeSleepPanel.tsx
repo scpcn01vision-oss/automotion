@@ -105,7 +105,11 @@ const EdgeStreak: React.FC<{ cx: number; y: number; len: number; opacity: number
     );
   };
 
-export const GlowWakeSleepPanel: React.FC = () => {
+export interface GlowWakeSleepPanelProps {
+  // ??????????/?????????? G
+}
+
+export const GlowWakeSleepPanel: React.FC<GlowWakeSleepPanelProps> = () => {
   const frame = useCurrentFrame();
 
   // 聚光沿面板顶边从左向右匀速扫过（面板本地座标）

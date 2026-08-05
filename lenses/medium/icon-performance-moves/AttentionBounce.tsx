@@ -32,7 +32,11 @@ const JUMPS = [
   { start: 72, dur: 24, peak: 1.2 * ICON },
 ];
 
-export const AttentionBounce: React.FC = () => {
+export interface AttentionBounceProps {
+  // ??????????/?????????? G
+}
+
+export const AttentionBounce: React.FC<AttentionBounceProps> = () => {
   const f = useCurrentFrame();
 
   // 弹跳高度 + 落地挤压

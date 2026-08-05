@@ -42,7 +42,11 @@ const TitleText: React.FC = () => (
   </AbsoluteFill>
 );
 
-export const SpotlightSweepReveal: React.FC = () => {
+export interface SpotlightSweepRevealProps {
+  // ??????????/?????????? G
+}
+
+export const SpotlightSweepReveal: React.FC<SpotlightSweepRevealProps> = () => {
   const f = useCurrentFrame();
 
   // 光斑 x：sin 摆动，两个来回后停在中心

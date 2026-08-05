@@ -157,7 +157,11 @@ const BG_FRAMES: BgFrame[] = Array.from({ length: 18 }).map(() => ({
   skew: -14 + rng() * 10,
 }));
 
-export const NeonFrameForerun: React.FC = () => {
+export interface NeonFrameForerunProps {
+  // ??????????/?????????? G
+}
+
+export const NeonFrameForerun: React.FC<NeonFrameForerunProps> = () => {
   const frame = useCurrentFrame();
   // 主框描画：左缘中点向两头奔跑，26 帧成型（截图①→②）
   const trace = interpolate(frame, [2, 28], [0, 1], {

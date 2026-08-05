@@ -60,7 +60,11 @@ const edgeLen = (p: (typeof NODES)[number], c: (typeof NODES)[number]) => {
   return Math.abs(y2 - y1) + Math.abs(c.x - p.x);
 };
 
-export const DiagramCascadeBuild: React.FC = () => {
+export interface DiagramCascadeBuildProps {
+  // ??????????/?????????? G
+}
+
+export const DiagramCascadeBuild: React.FC<DiagramCascadeBuildProps> = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 

@@ -68,7 +68,11 @@ const InboxPanel: React.FC = () => (
   </div>
 );
 
-export const CornerSpotlightReveal: React.FC = () => {
+export interface CornerSpotlightRevealProps {
+  // ??????????/?????????? G
+}
+
+export const CornerSpotlightReveal: React.FC<CornerSpotlightRevealProps> = () => {
   const frame = useCurrentFrame();
 
   // 聚光半径扩张：全程匀速（用户裁决"整个过程要匀速"——严格 linear，无缓动）

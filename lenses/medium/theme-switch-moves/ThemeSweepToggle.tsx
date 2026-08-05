@@ -76,7 +76,11 @@ const SETTLE1 = 64; // 坐实结束 → 之后全静止
 
 const SLANT = 1080 * Math.tan((15 * Math.PI) / 180); // ≈ 289px，15° 斜边
 
-export const ThemeSweepToggle: React.FC = () => {
+export interface ThemeSweepToggleProps {
+  // ??????????/?????????? G
+}
+
+export const ThemeSweepToggle: React.FC<ThemeSweepToggleProps> = () => {
   const frame = useCurrentFrame();
 
   // 边界顶端 x：先快后缓（poly(3) out）；从左外扫到右外+SLANT 保证底边也扫尽

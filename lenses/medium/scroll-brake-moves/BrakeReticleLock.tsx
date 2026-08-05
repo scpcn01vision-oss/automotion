@@ -86,7 +86,11 @@ const Corner: React.FC<{ flip: [number, number]; style: React.CSSProperties }> =
   </div>
 );
 
-export const BrakeReticleLock: React.FC = () => {
+export interface BrakeReticleLockProps {
+  // ??????????/?????????? G
+}
+
+export const BrakeReticleLock: React.FC<BrakeReticleLockProps> = () => {
   const f = useCurrentFrame();
   const scroll = scrollAt(f);
 

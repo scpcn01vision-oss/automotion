@@ -118,7 +118,11 @@ const FlipCard: React.FC<{ i: number; frame: number }> = ({ i, frame }) => {
   );
 };
 
-export const FlipGridReflow: React.FC = () => {
+export interface FlipGridReflowProps {
+  // ??????????/?????????? G
+}
+
+export const FlipGridReflow: React.FC<FlipGridReflowProps> = () => {
   const frame = useCurrentFrame();
 
   // 加深脉冲：仅脉冲窗口内挂载 filter，窗口外完全不挂（摘罩）

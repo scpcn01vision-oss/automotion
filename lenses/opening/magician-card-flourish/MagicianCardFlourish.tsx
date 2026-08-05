@@ -295,7 +295,11 @@ const FlashLayer: React.FC = () => {
   );
 };
 
-export const MagicianCardFlourish: React.FC = () => (
+export interface MagicianCardFlourishProps {
+  // ??????????/?????????? G
+}
+
+export const MagicianCardFlourish: React.FC<MagicianCardFlourishProps> = () => (
   <>
     <CameraMotionBlur shutterAngle={150} samples={7}>
       <Scene />

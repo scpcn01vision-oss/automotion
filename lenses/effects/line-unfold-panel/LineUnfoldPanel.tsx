@@ -37,7 +37,11 @@ const OFF = SHRINK_END + 4; // 点熄灭 f95
 
 const clamp = { extrapolateLeft: 'clamp' as const, extrapolateRight: 'clamp' as const };
 
-export const LineUnfoldPanel: React.FC = () => {
+export interface LineUnfoldPanelProps {
+  // ??????????/?????????? G
+}
+
+export const LineUnfoldPanel: React.FC<LineUnfoldPanelProps> = () => {
   const frame = useCurrentFrame();
 
   // 入场：scaleX（线抽出）快进快停，入场后保持 1

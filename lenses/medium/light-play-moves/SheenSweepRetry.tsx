@@ -19,7 +19,11 @@ const CARD_W = 760;
 const CARD_H = 420;
 const SHEEN_W = CARD_W * 1.6; // 1216
 
-export const SheenSweepRetry: React.FC = () => {
+export interface SheenSweepRetryProps {
+  // ??????????/?????????? G
+}
+
+export const SheenSweepRetry: React.FC<SheenSweepRetryProps> = () => {
   const frame = useCurrentFrame();
 
   // 扫光：40–68f，从卡左外(-SHEEN_W)扫到卡右外(CARD_W)，inOut(cubic)，只一次

@@ -19,12 +19,14 @@ const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
  * Paper title card: warm paper field, serif statement letterpressed word by
  * word, amber italic accent word, amber underline growing beneath.
  */
-export const PaperTitleCard: React.FC<{
+export interface PaperTitleCardProps {
   duration?: number;
   words?: { text: string; accent?: boolean }[];
   sub?: string;
   subDigits?: string;
-}> = ({ duration = 180, words = [{ text: 'READY', accent: false }, { text: 'GO', accent: true }], sub = '', subDigits = '' }) => {
+}
+
+export const PaperTitleCard: React.FC<PaperTitleCardProps> = ({ duration = 180, words = [{ text: 'READY', accent: false }, { text: 'GO', accent: true }], sub = '', subDigits = '' }) => {
   const frame = useCurrentFrame();
   const fadeOut = interpolate(frame, [duration - 8, duration], [1, 0], {
     extrapolateLeft: 'clamp',

@@ -60,7 +60,11 @@ const AskIcon: React.FC<{ size: number }> = ({ size }) => (
   </svg>
 );
 
-export const SegmentedThumbHero: React.FC = () => {
+export interface SegmentedThumbHeroProps {
+  // ??????????/?????????? G
+}
+
+export const SegmentedThumbHero: React.FC<SegmentedThumbHeroProps> = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
