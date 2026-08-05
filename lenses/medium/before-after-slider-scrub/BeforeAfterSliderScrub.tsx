@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 对比,举证
+// props: scene（前后对比内容承载）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
@@ -14,7 +15,8 @@
 // 先快甩后慢扫速度对比是节奏关键。f=110 后全静止（40f）。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, FakeDashboard } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 const CL = { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' } as const;
 
@@ -34,7 +36,21 @@ const posAt = (f: number): number => {
   return interpolate(f, [HOLD, SCRUB], [70, 40], { easing: Easing.inOut(Easing.quad), ...CL });
 };
 
-export const BeforeAfterSliderScrub: React.FC = () => {
+export interface BeforeAfterSliderScrubProps {
+  scene?: SceneContentData;
+}
+
+export const BeforeAfterSliderScrub: React.FC<BeforeAfterSliderScrubProps> = ({
+  scene = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+      { label: '指标三', value: '96.4%' },
+    ],
+  },
+}) => {
   const frame = useCurrentFrame();
   const p = posAt(frame); // 杆位置 %
   const x = (p / 100) * 1920;
@@ -47,13 +63,13 @@ export const BeforeAfterSliderScrub: React.FC = () => {
     <div style={{ width: 1920, height: 1080, position: 'relative', overflow: 'hidden', background: G.bg }}>
       {/* before：低对比灰蒙版模拟"处理前" */}
       <div style={{ position: 'absolute', inset: 0, filter: 'contrast(0.55) brightness(1.06) grayscale(1)' }}>
-        <FakeDashboard variant="A" />
+        <SceneContent content={scene} />
       </div>
       <div style={{ position: 'absolute', inset: 0, background: 'rgba(160,160,158,0.35)' }} />
 
       {/* after：正常清晰版，杆左侧揭出 */}
       <div style={{ position: 'absolute', inset: 0, clipPath: `inset(0 ${1920 - x}px 0 0)` }}>
-        <FakeDashboard variant="A" />
+        <SceneContent content={scene} />
       </div>
 
       {/* 分割杆 + 圆手柄 */}
@@ -64,7 +80,7 @@ export const BeforeAfterSliderScrub: React.FC = () => {
           top: 0,
           width: 6,
           height: 1080,
-          background: '#ffffff',
+          background: G.card,
           boxShadow: '0 0 14px rgba(0,0,0,0.35)',
         }}
       />
@@ -76,7 +92,7 @@ export const BeforeAfterSliderScrub: React.FC = () => {
           width: 88,
           height: 88,
           borderRadius: 44,
-          background: '#ffffff',
+          background: G.card,
           border: `3px solid ${G.border}`,
           boxShadow: '0 6px 24px rgba(0,0,0,0.3)',
           transform: `scaleX(${squish})`,
