@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 展开
+// props: scene（背景内容承载）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
@@ -13,7 +14,8 @@
 // → 高亮首条。f=110 后全静止（40f）。光标 f<104 闪烁、之后常亮。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, FakeDashboard } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 const CL = { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' } as const;
 
@@ -96,7 +98,21 @@ const PaletteRow: React.FC<{ i: number; frame: number }> = ({ i, frame }) => {
   );
 };
 
-export const CommandPaletteSummon: React.FC = () => {
+export interface CommandPaletteSummonProps {
+  scene?: SceneContentData;
+}
+
+export const CommandPaletteSummon: React.FC<CommandPaletteSummonProps> = ({
+  scene = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+      { label: '指标三', value: '96.4%' },
+    ],
+  },
+}) => {
   const frame = useCurrentFrame();
 
   // 背景压暗 + blur
@@ -124,7 +140,7 @@ export const CommandPaletteSummon: React.FC = () => {
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       <div style={{ filter: frame < DIM0 ? undefined : `blur(${blur}px)` }}>
-        <FakeDashboard variant="A" />
+        <SceneContent content={scene} />
       </div>
       <div style={{ position: 'absolute', inset: 0, background: `rgba(20,20,20,${dim})` }} />
 
@@ -160,7 +176,7 @@ export const CommandPaletteSummon: React.FC = () => {
             <div style={{ width: 32, height: 32, borderRadius: 8, background: G.bar }} />
             {/* 已敲入的字符灰块 */}
             {Array.from({ length: typed }).map((_, c) => (
-              <div key={c} style={{ width: 28, height: 38, borderRadius: 6, background: '#4a4a48' }} />
+              <div key={c} style={{ width: 28, height: 38, borderRadius: 6, background: G.mid }} />
             ))}
             {/* 光标 */}
             {cursorOn && <div style={{ width: 4, height: 42, background: G.ink, borderRadius: 2 }} />}
