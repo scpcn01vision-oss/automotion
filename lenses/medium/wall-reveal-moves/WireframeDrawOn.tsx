@@ -9,7 +9,8 @@
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
-import { FakeDashboard, G } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 // wireframe-draw-on〔入场退场〕：界面先以蓝图细线描画成形（stroke-dashoffset
 // 分组错峰），随后一条发光竖线从左向右扫过，扫过之处线框实体化为真实灰阶界面。
@@ -28,7 +29,21 @@ const seedFrac = (i: number) => {
   return v - Math.floor(v);
 };
 
-export const WireframeDrawOn: React.FC = () => {
+export interface WireframeDrawOnProps {
+  scene?: SceneContentData;
+}
+
+export const WireframeDrawOn: React.FC<WireframeDrawOnProps> = ({
+  scene = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+      { label: '指标三', value: '96.4%' },
+    ],
+  },
+}) => {
   const frame = useCurrentFrame();
 
   // 描线进度：每组 30f 画完，start 错峰
@@ -137,7 +152,7 @@ export const WireframeDrawOn: React.FC = () => {
           clipPath: `inset(0 ${(1 - scan) * 100}% 0 0)`,
         }}
       >
-        <FakeDashboard variant="A" />
+        <SceneContent content={scene} />
       </div>
 
       {/* —— 4px 发光扫描竖线（琥珀微光） —— */}
