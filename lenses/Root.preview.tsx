@@ -306,7 +306,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition id="GridWaveFlip" component={GridWaveFlip} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="WireframeDrawOn" component={WireframeDrawOn} width={1920} height={1080} fps={30} durationInFrames={180} />
       {/* === v7 新增（video-shotcraft 纸墨化）=== */}
-      <Composition id="MagicianCardFlourish" component={MagicianCardFlourish} width={1920} height={1080} fps={30} durationInFrames={180} />
+      <Composition id="MagicianCardFlourish" component={MagicianCardFlourish} width={1920} height={1080} fps={30} durationInFrames={141} />
       <Composition id="PaperTitleCard" component={PaperTitleCard} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="DatavizLandscapeOpen" component={DatavizLandscapeOpen} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="NeonFrameForerun" component={NeonFrameForerun} width={1920} height={1080} fps={30} durationInFrames={180} />
@@ -323,7 +323,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition id="LineUnfoldPanel" component={LineUnfoldPanel} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="ReticleLockOn" component={ReticleLockOn} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="GlitchDisplace" component={GlitchDisplace} width={1920} height={1080} fps={30} durationInFrames={180} />
-      <Composition id="FlashCut" component={FlashCut} width={1920} height={1080} fps={30} durationInFrames={180} />
+      <Composition id="FlashCut" component={FlashCut} width={1920} height={1080} fps={30} durationInFrames={10} />
       <Composition id="OscilloscopeStream" component={OscilloscopeStream} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="UnitDotSwarmRegroup" component={UnitDotSwarmRegroup} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="AxisRescaleShock" component={AxisRescaleShock} width={1920} height={1080} fps={30} durationInFrames={180} />
