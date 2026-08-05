@@ -10,7 +10,8 @@
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
-import { FakeDashboard, Card, TitleBlock, G } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 // hit-counter 连招计数：三张功能卡接连砸入槽位，每次命中 = 全局顿帧 2f
 // + 落点伤害数字上浮渐隐 + 右上角 ×N 计数跳字（脉冲/倾斜逐次加码）。
@@ -29,11 +30,25 @@ const SLOT_H = 300;
 const SLOT_Y = 430;
 const SLOT_XS = [390, 890, 1390].map((cx) => cx - SLOT_W / 2);
 
-const DMG_TEXT = ['+1.2k', '+2.4k', '+4.8k'];
 const PULSE = [1.3, 1.45, 1.6]; // 计数器脉冲峰值，逐次递增
 const TILT = [-2, -4, -6]; // 计数器倾斜，逐次递增并保持
 
-export const HitCounter: React.FC = () => {
+export interface HitCounterProps {
+  scene?: SceneContentData;
+  dmgText?: string[];
+}
+
+export const HitCounter: React.FC<HitCounterProps> = ({
+  scene = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+    ],
+  },
+  dmgText = ['+1.2k', '+2.4k', '+4.8k'],
+}) => {
   const frame = useCurrentFrame();
 
   // —— 全局帧 remap：每个真实命中帧起冻结 2f（全画面顿帧）——
@@ -60,7 +75,7 @@ export const HitCounter: React.FC = () => {
     <AbsoluteFill style={{ background: G.bg, overflow: 'hidden' }}>
       {/* 背景 dashboard 压暗，突出前景连招 */}
       <div style={{ filter: 'saturate(0.9)', opacity: 0.4 }}>
-        <FakeDashboard variant="B" />
+        <SceneContent content={scene} />
       </div>
 
       {/* 三个槽位虚线框（全程可见，建立期先立预期） */}
@@ -126,7 +141,7 @@ export const HitCounter: React.FC = () => {
               opacity,
             }}
           >
-            <TitleBlock text={DMG_TEXT[i]} size={72} />
+            <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1 }}>{dmgText[i] ?? ''}</div>
           </div>
         );
       })}
