@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 宣告,承接
+// props: titleA / titleB（两段"降格"标题）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
@@ -160,12 +161,20 @@ const DemoteScene: React.FC<{
   );
 };
 
-export const TitleDemoteToLabel: React.FC = () => {
+export interface TitleDemoteToLabelProps {
+  titleA?: string;
+  titleB?: string;
+}
+
+export const TitleDemoteToLabel: React.FC<TitleDemoteToLabelProps> = ({
+  titleA = 'Overview',
+  titleB = 'Details',
+}) => {
   const frame = useCurrentFrame();
   const SPLIT = 92; // 变体 A 时长
 
   if (frame < SPLIT) {
-    return <DemoteScene frame={frame} title="Running Subagents" withSelection={false} />;
+    return <DemoteScene frame={frame} title={titleA} withSelection={false} />;
   }
   // 变体 B：文本选中态高亮登场
   const f = frame - SPLIT;
@@ -176,8 +185,8 @@ export const TitleDemoteToLabel: React.FC = () => {
   });
   return (
     <AbsoluteFill>
-      <DemoteScene frame={f} title="Select the Answer" withSelection={true} />
-      <AbsoluteFill style={{ background: '#fff', opacity: flash, pointerEvents: 'none' }} />
+      <DemoteScene frame={f} title={titleB} withSelection={true} />
+      <AbsoluteFill style={{ background: G.card, opacity: flash, pointerEvents: 'none' }} />
     </AbsoluteFill>
   );
 };
