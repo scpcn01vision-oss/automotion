@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 展开
+// props: workspaceName（工作区名）、cards（Recent 卡内容，7 张默认）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
@@ -15,6 +16,7 @@
 // （距离∝t²）、贴落完成后页面立起转正收尾。
 import React from 'react';
 import { AbsoluteFill, interpolate, useCurrentFrame, Easing } from 'remotion';
+import { G } from '../../_fixtures/Fixtures';
 
 const FONT = 'Helvetica, Arial, sans-serif';
 const INK = '#3c3c42';
@@ -46,14 +48,14 @@ const MiniCardFace: React.FC<{ title: string; sub: string }> = ({ title, sub }) 
 );
 
 /* 界面位置顺序 = 数组顺序：第一行左→右，再第二行左→右 */
-const CARDS: { title: string; sub: string; col: number; row: number }[] = [
-  { title: 'Creative Refresh', sub: 'New logo exploration', col: 0, row: 0 },
-  { title: 'New Bugs Per Week', sub: 'Bug tracker Dashboard', col: 1, row: 0 },
-  { title: 'Tiger Team Roadmap', sub: 'Roadmap Outline', col: 2, row: 0 },
-  { title: 'Design System', sub: 'Design Handbook Inspo', col: 3, row: 0 },
-  { title: 'Development Sprint Dashboard', sub: 'Dev Team Sprints', col: 0, row: 1 },
-  { title: 'CSS Bug Tracker', sub: 'Query Reports', col: 1, row: 1 },
-  { title: 'Platform', sub: 'System Health Monitor', col: 2, row: 1 },
+const CARD_SLOTS: { col: number; row: number }[] = [
+  { col: 0, row: 0 },
+  { col: 1, row: 0 },
+  { col: 2, row: 0 },
+  { col: 3, row: 0 },
+  { col: 0, row: 1 },
+  { col: 1, row: 1 },
+  { col: 2, row: 1 },
 ];
 
 /* Recent 网格槽位（面板内容坐标） */
@@ -61,14 +63,14 @@ const GRID_X = 1180, GRID_Y = 760, COL_GAP = 850, ROW_GAP = 250;
 const slotPos = (col: number, row: number) => ({ x: GRID_X + col * COL_GAP, y: GRID_Y + row * ROW_GAP });
 
 /* 平躺地面：Home 仪表盘（卡片槽位留空，由悬浮卡片落入） */
-const Ground: React.FC = () => (
-  <div style={{ width: 4600, height: 2600, background: '#f6f6f5', borderRadius: 60, position: 'relative', overflow: 'hidden' }}>
+const Ground: React.FC<{ workspaceName: string }> = ({ workspaceName }) => (
+  <div style={{ width: 4600, height: 2600, background: G.bg, borderRadius: 60, position: 'relative', overflow: 'hidden' }}>
     <div style={{ display: 'flex', height: '100%' }}>
       {/* 左侧栏 */}
       <div style={{ width: 860, borderRight: `4px solid ${FAINT}`, padding: '70px 60px 0', background: '#f1f1f0' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 26 }}>
           <div style={{ width: 64, height: 64, borderRadius: 18, background: 'linear-gradient(135deg,#adadb3,#6b6b72)' }} />
-          <div style={{ fontFamily: FONT, fontSize: 56, fontWeight: 800, color: INK }}>ClickUp</div>
+          <div style={{ fontFamily: FONT, fontSize: 56, fontWeight: 800, color: INK }}>{workspaceName}</div>
         </div>
         <div style={{ height: 46 }} />
         {['Home', 'Inbox', 'Company', 'People & Teams', 'Goals', 'Docs', 'More'].map((t, i) => (
@@ -94,7 +96,7 @@ const Ground: React.FC = () => (
       <div style={{ flex: 1, padding: '70px 100px 0', position: 'relative' }}>
         {/* 顶部 tab 条 */}
         <div style={{ display: 'flex', gap: 110, fontFamily: FONT, fontSize: 42, color: MID, marginBottom: 60 }}>
-          <div>Product analytics</div><div style={{ fontWeight: 700, color: INK }}>ClickUp 3.0</div>
+          <div>Product analytics</div><div style={{ fontWeight: 700, color: INK }}>{workspaceName} 3.0</div>
           <div>Widget brainstorm</div><div>Design system</div><div>Design</div>
         </div>
         <div style={{ fontFamily: FONT, fontSize: 110, fontWeight: 750, color: INK }}>Home</div>
@@ -130,7 +132,7 @@ const Ground: React.FC = () => (
             display: 'flex', alignItems: 'center', gap: 34, height: 118,
             borderBottom: '3px solid #e5e5e3', width: 2600,
           }}>
-            <div style={{ width: 32, height: 32, borderRadius: 9, background: '#c04a6e' }} />
+            <div style={{ width: 32, height: 32, borderRadius: 9, background: G.accent }} />
             <div style={{ fontFamily: FONT, fontSize: 46, color: INK, fontWeight: 550 }}>{t}</div>
             <div style={{ marginLeft: 'auto', width: 180, height: 16, background: '#e3e3e8', borderRadius: 8 }} />
           </div>
@@ -140,9 +142,26 @@ const Ground: React.FC = () => (
   </div>
 );
 
-export const RunwayGroundSkim: React.FC = () => {
+export interface RunwayGroundSkimProps {
+  workspaceName?: string;
+  cards?: { title: string; sub: string }[];
+}
+
+export const RunwayGroundSkim: React.FC<RunwayGroundSkimProps> = ({
+  workspaceName = 'Workspace',
+  cards = [
+    { title: 'Creative Refresh', sub: 'New logo exploration' },
+    { title: 'New Bugs Per Week', sub: 'Bug tracker Dashboard' },
+    { title: 'Tiger Team Roadmap', sub: 'Roadmap Outline' },
+    { title: 'Design System', sub: 'Design Handbook Inspo' },
+    { title: 'Development Sprint Dashboard', sub: 'Dev Team Sprints' },
+    { title: 'CSS Bug Tracker', sub: 'Query Reports' },
+    { title: 'Platform', sub: 'System Health Monitor' },
+  ],
+}) => {
   const frame = useCurrentFrame();
   const rand = mulberry32(20260718);
+  const CARDS = cards.map((c, i) => ({ ...c, ...CARD_SLOTS[i] }));
   const jit = CARDS.map(() => rand() * 1.2); // ≤1.2 帧微差 < 3 帧错峰，顺序绝不乱
 
   /* ---- 节奏（掉落提速+着地即停版，118 帧）----
@@ -195,7 +214,7 @@ export const RunwayGroundSkim: React.FC = () => {
     <div style={{ position: 'absolute', transformStyle: 'preserve-3d', transform: 'translate(-2300px, -1500px)' }}>
       {/* 地面 */}
       <div style={{ filter: `brightness(${bright})` }}>
-        <Ground />
+        <Ground workspaceName={workspaceName} />
       </div>
       {/* 地面上的软影（z≈0，卡片同形，随悬浮高度变化大小/偏移/浓度） */}
       {CARDS.map((c, i) => {
@@ -236,7 +255,7 @@ export const RunwayGroundSkim: React.FC = () => {
   const airOp = 1 - riseP;
 
   return (
-    <AbsoluteFill style={{ background: '#07060a' }}>
+    <AbsoluteFill style={{ background: G.ink }}>
       {/* 地平线微光（转正后消失） */}
       <AbsoluteFill style={{
         background: `radial-gradient(ellipse 60% 14% at 50% 40%, rgba(190,170,255,${(0.16 + landP * 0.1) * airOp}), transparent 75%)`,
