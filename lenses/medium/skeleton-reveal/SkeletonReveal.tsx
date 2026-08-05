@@ -20,6 +20,7 @@ import {
   spring,
   Easing,
 } from 'remotion';
+import { G } from '../../_fixtures/Fixtures';
 
 const mulberry32 = (a: number) => () => {
   let t = (a += 0x6d2b79f5);
@@ -28,8 +29,8 @@ const mulberry32 = (a: number) => () => {
   return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
 };
 
-const INK = '#2f2f2f';
-const PAPER = '#f2f0ea';
+const INK = G.ink;
+const PAPER = G.panel;
 
 // ——— 手绘涂鸦工具：把折线/圆加种子抖动，画粗圆头 stroke ———
 const wobbleLine = (
