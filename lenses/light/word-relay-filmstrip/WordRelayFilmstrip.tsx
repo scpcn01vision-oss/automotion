@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 展开,序列
+// props: subject（固定第一行主题词）、words（接力动词序列）
 // === 时间特性 ===
 // 刚性（不可压缩）: 刚性:切词16f
 // 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
@@ -16,6 +17,7 @@
 //    Didot 系衬线 116px，"Computer" 固定第一行，动词第二行原位灰化淡出换词。
 import React from 'react';
 import { AbsoluteFill, interpolate, useCurrentFrame } from 'remotion';
+import { G } from '../../_fixtures/Fixtures';
 
 const mulberry32 = (a: number) => () => {
   let t = (a += 0x6d2b79f5);
@@ -212,13 +214,20 @@ const CARDS: React.FC<{ seed: number }>[] = [
   () => <LightPortfolio />,
 ];
 
-const WORDS = ['researches', 'builds', 'codes'];
 // 切词窗口：第一个词入场 f14–30；换词 f62–78、f108–124
 const SWITCHES = [14, 62, 108];
 const SW_DUR = 16;
 const SERIF = '"Didot", "Bodoni 72", "Playfair Display", Georgia, serif';
 
-export const WordRelayFilmstrip: React.FC = () => {
+export interface WordRelayFilmstripProps {
+  subject?: string;
+  words?: string[];
+}
+
+export const WordRelayFilmstrip: React.FC<WordRelayFilmstripProps> = ({
+  subject = 'Computer',
+  words = ['researches', 'builds', 'codes'],
+}) => {
   const frame = useCurrentFrame();
 
   // —— 滚动步进：平时静止，仅在切词窗口内滚一格（ease-in-out）——
@@ -260,7 +269,7 @@ export const WordRelayFilmstrip: React.FC = () => {
   // 每个词的生命周期：入场淡入（黑）→ 常驻黑 → 下个切点前 14 帧灰化
   //（截图 4/6 捕捉到的就是"旧词已灰、新词未现"的状态）→ 切点起淡出。
   const smooth = (x: number) => x * x * (3 - 2 * x);
-  const wordNodes = WORDS.map((w, i) => {
+  const wordNodes = words.map((w, i) => {
     const sIn = SWITCHES[i];
     const sOut = i + 1 < SWITCHES.length ? SWITCHES[i + 1] : null;
     // 新词后半窗口淡入（避免与旧词叠影）
@@ -295,13 +304,13 @@ export const WordRelayFilmstrip: React.FC = () => {
   });
 
   return (
-    <AbsoluteFill style={{ background: '#faf8f3' }}>
+    <AbsoluteFill style={{ background: G.bg }}>
       <div style={{ position: 'absolute', inset: 0 }}>{cards}</div>
       {/* 右侧词组：Computer 固定第一行，动词第二行原位换词。
           v3：块总高≈137(Computer 行)+140(词行容器)=277，垂直中心须对齐
           当前页面卡中点 y=540（卡顶 275 + 卡高 530/2）→ top=540-277/2≈402 */}
       <div style={{ position: 'absolute', right: 210, top: 402 }}>
-        <div style={{ ...wordStyle, color: '#191919' }}>Computer</div>
+        <div style={{ ...wordStyle, color: G.ink }}>{subject}</div>
         <div style={{ position: 'relative', height: 140 }}>{wordNodes}</div>
       </div>
     </AbsoluteFill>
