@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 宣告,展开
+// props: word（漂移合拢的字标，默认 ASSEMBLE）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
@@ -18,21 +19,26 @@
 // 锁定帧 i*3+45 起 8f 加深脉冲（最后一字 69–77）→ 80–104 整词呼吸 →
 // 104–150 全静止（46f，无逐帧滤镜）。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, TitleBlock } from '../../_fixtures/Fixtures';
+import { useCurrentFrame, interpolate, interpolateColors, Easing } from 'remotion';
+import { G } from '../../_fixtures/Fixtures';
 
 const h = (n: number) => {
   const s = Math.sin(n * 127.3) * 43758.5453;
   return s - Math.floor(s);
 };
 
-const WORD = 'ASSEMBLE';
 const TRAVEL = 45; // 每字漂入行程帧数
 const STAG = 3; // 错峰间隔
 
-export const LetterformDriftAssembly: React.FC = () => {
+export interface LetterformDriftAssemblyProps {
+  word?: string;
+}
+
+export const LetterformDriftAssembly: React.FC<LetterformDriftAssemblyProps> = ({
+  word = 'ASSEMBLE',
+}) => {
   const frame = useCurrentFrame();
-  const chars = WORD.split('');
+  const chars = word.split('');
   const lastLock = (chars.length - 1) * STAG + TRAVEL; // 69
 
   // 整词收束呼吸：80–92 放大到 1.04，92–104 回落，之后恒 1 → 帧确定
@@ -51,9 +57,6 @@ export const LetterformDriftAssembly: React.FC = () => {
 
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', left: 120, top: 96 }}>
-        <TitleBlock text="LETTERFORM DRIFT ASSEMBLY" size={54} />
-      </div>
       <div
         style={{
           position: 'absolute',
@@ -87,8 +90,7 @@ export const LetterformDriftAssembly: React.FC = () => {
               : frame < lock + 4
                 ? (frame - lock) / 4
                 : (lock + 8 - frame) / 4;
-          const shade = Math.round(47 * (1 - pulse)); // #2f(47)→#00
-          const color = `rgb(${shade},${shade},${shade})`;
+          const color = interpolateColors(pulse, [0, 1], [G.ink, '#000000']);
           const strokeW = 3 * pulse;
           return (
             <span
@@ -103,7 +105,7 @@ export const LetterformDriftAssembly: React.FC = () => {
                 transform: `translate(${dx}px, ${dy}px)`,
                 opacity: op,
                 filter: blur > 0.01 ? `blur(${blur}px)` : undefined,
-                WebkitTextStroke: strokeW > 0.01 ? `${strokeW}px #000` : undefined,
+                WebkitTextStroke: strokeW > 0.01 ? `${strokeW}px ${G.ink}` : undefined,
               }}
             >
               {c}
