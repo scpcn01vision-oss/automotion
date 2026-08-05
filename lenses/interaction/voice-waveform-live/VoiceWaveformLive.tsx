@@ -14,6 +14,7 @@
 // 演：说(0.5–1.9s) → 停(1.9–2.7s) → 说(2.7–4.1s) → 提交(4.1–5s)。
 import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
+import { G } from '../../_fixtures/Fixtures';
 
 const mulberry32 = (a: number) => () => {
   let t = (a += 0x6d2b79f5);
@@ -46,7 +47,11 @@ const envelope = (t: number) => {
 
 const N_BARS = 64;
 
-export const VoiceWaveformLive: React.FC = () => {
+export interface VoiceWaveformLiveProps {
+  statusText?: string;
+}
+
+export const VoiceWaveformLive: React.FC<VoiceWaveformLiveProps> = ({ statusText }) => {
   const f = useCurrentFrame();
 
   // 提交动作
@@ -94,31 +99,42 @@ export const VoiceWaveformLive: React.FC = () => {
   const micGlow = submitted ? 0 : nowEnv;
 
   return (
-    <AbsoluteFill style={{ background: '#2c2416', overflow: 'hidden' }}>
-      {/* 暗场绸缎底光 */}
+    <AbsoluteFill style={{ background: G.bg, overflow: 'hidden' }}>
+      {/* 纸色淡光 */}
       <div style={{
         position: 'absolute', left: -300, top: -200, width: 2600, height: 1700,
-        background: 'radial-gradient(closest-side, rgba(130,131,140,0.16), rgba(0,0,0,0) 70%)',
+        background: 'radial-gradient(closest-side, rgba(211,146,60,0.12), rgba(0,0,0,0) 70%)',
         transform: `translate(${f * 0.6}px, ${f * 0.25}px)`,
       }} />
 
       <AbsoluteFill style={{ alignItems: 'center', justifyContent: 'center' }}>
+        {statusText ? (
+          <div
+            style={{
+              position: 'absolute', top: 250, width: '100%', textAlign: 'center',
+              fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 26,
+              fontWeight: 700, letterSpacing: 4, color: G.mid, opacity: inOp,
+            }}
+          >
+            {statusText}
+          </div>
+        ) : null}
         <div
           style={{
             width: 1320, height: 300, borderRadius: 150,
             opacity: inOp,
             transform: `scale(${inScale * capsuleScale})`,
             background:
-              'linear-gradient(180deg, rgba(255,255,255,0.5), rgba(255,255,255,0.08) 40%, rgba(0,0,0,0.3))',
+              `linear-gradient(180deg, ${G.card}, ${G.panel})`,
+            border: `2px solid ${G.border}`,
             padding: 2.5, boxSizing: 'border-box',
           }}
         >
           <div
             style={{
               width: '100%', height: '100%', borderRadius: 148,
-              background: 'rgba(24,25,29,0.72)',
-              backdropFilter: 'blur(24px)',
-              boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.10), 0 40px 100px rgba(0,0,0,0.55)',
+              background: G.bg,
+              boxShadow: '0 20px 50px rgba(0,0,0,0.10)',
               display: 'flex', alignItems: 'center', gap: 36,
               padding: '0 44px', boxSizing: 'border-box',
             }}
@@ -127,11 +143,11 @@ export const VoiceWaveformLive: React.FC = () => {
             <div
               style={{
                 width: 96, height: 96, borderRadius: 48, flexShrink: 0,
-                background: `rgba(255,255,255,${0.08 + micGlow * 0.14})`,
-                border: '2.5px solid rgba(255,255,255,0.28)',
-                boxShadow: `0 0 ${28 * micGlow}px rgba(235,235,245,${micGlow * 0.5})`,
+                background: `rgba(211,146,60,${0.06 + micGlow * 0.14})`,
+                border: `2.5px solid ${G.border}`,
+                boxShadow: `0 0 ${28 * micGlow}px rgba(211,146,60,${micGlow * 0.5})`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 46, filter: 'grayscale(1)', boxSizing: 'border-box',
+                fontSize: 46, boxSizing: 'border-box',
               }}
             >
               🎙️
@@ -147,7 +163,7 @@ export const VoiceWaveformLive: React.FC = () => {
                   key={i}
                   style={{
                     flex: 1, height: h, borderRadius: 4,
-                    background: `rgba(240,240,248,${0.4 + (h / 235) * 0.6})`,
+                    background: `rgba(44,36,22,${0.15 + (h / 235) * 0.55})`,
                   }}
                 />
               ))}
@@ -157,18 +173,18 @@ export const VoiceWaveformLive: React.FC = () => {
             <div
               style={{
                 width: 96, height: 96, borderRadius: 48, flexShrink: 0,
-                background: submitted ? '#fefcf8' : 'rgba(255,255,255,0.92)',
+                background: submitted ? G.accent : G.ink,
                 transform: `scale(${btnPress})`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 boxShadow: submitted
-                  ? '0 0 60px rgba(255,255,255,0.55)'
-                  : '0 8px 24px rgba(0,0,0,0.4)',
+                  ? `0 0 60px rgba(211,146,60,0.55)`
+                  : '0 8px 24px rgba(0,0,0,0.18)',
               }}
             >
               <svg width="44" height="44" viewBox="0 0 24 24">
                 <path
                   d="M12 20V5M12 5l-6.5 6.5M12 5l6.5 6.5"
-                  stroke="#2c2416" strokeWidth="3" strokeLinecap="round"
+                  stroke={G.card} strokeWidth="3" strokeLinecap="round"
                   strokeLinejoin="round" fill="none"
                 />
               </svg>
