@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 钩子,宣告
+// props: word（字标内容，仅内置字形 S/U/P/E/R/H/M/A/N，未收录字母渲染为圆点）
 // === 时间特性 ===
 // 刚性（不可压缩）: 刚性:52f
 // 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
@@ -14,6 +15,7 @@
 //    pathLength 归一保证不同笔画长度的字母在同一帧齐收（截图 2/3 的全行并行半截态）。
 import React from 'react';
 import { AbsoluteFill, interpolate, useCurrentFrame } from 'remotion';
+import { G } from '../../_fixtures/Fixtures';
 
 // 78x64 视框内的方正略宽细骨架字形（子笔画顺序=描画顺序）
 const GLYPHS: Record<string, string> = {
@@ -28,11 +30,16 @@ const GLYPHS: Record<string, string> = {
   N: 'M 12 59 L 12 5 L 66 59 L 66 5',
 };
 
-const WORD = 'SUPERHUMAN';
 const START = 16;   // 全字符统一起画帧（无错峰）
 const DUR = 52;     // 全字符统一画完帧数（pathLength 归一→同帧齐收）
 
-export const LetterspaceMaterialize: React.FC = () => {
+export interface LetterspaceMaterializeProps {
+  word?: string;
+}
+
+export const LetterspaceMaterialize: React.FC<LetterspaceMaterializeProps> = ({
+  word = 'SUPREME',
+}) => {
   const frame = useCurrentFrame();
 
   // 全字符共享同一进度：同时开始、同时完成
@@ -47,31 +54,44 @@ export const LetterspaceMaterialize: React.FC = () => {
   });
   const glowAmt = p >= 1 ? doneGlow : p > 0.7 ? (p - 0.7) / 0.3 : 0;
 
-  const letters = WORD.split('').map((ch, li) => (
+  const letters = word.split('').map((ch, li) => (
     <svg key={li} width={78} height={64} viewBox="0 0 78 64"
       style={{ overflow: 'visible', display: 'block' }}>
       {p > 0 && (
-        <path
-          d={GLYPHS[ch]}
-          fill="none"
-          stroke="#2c2416"
-          strokeWidth={5.5}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          pathLength={1}
-          strokeDasharray={1}
-          strokeDashoffset={1 - e}
-          style={{
-            filter: `drop-shadow(0 0 ${6 + glowAmt * 10}px rgba(211,146,60,${0.35 + glowAmt * 0.35}))`,
-          }}
-        />
+        GLYPHS[ch] ? (
+          <path
+            d={GLYPHS[ch]}
+            fill="none"
+            stroke={G.ink}
+            strokeWidth={5.5}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            pathLength={1}
+            strokeDasharray={1}
+            strokeDashoffset={1 - e}
+            style={{
+              filter: `drop-shadow(0 0 ${6 + glowAmt * 10}px rgba(211,146,60,${0.35 + glowAmt * 0.35}))`,
+            }}
+          />
+        ) : (
+          // 未收录字形兜底：中性圆点，保证任意词不空白
+          <circle
+            cx={39} cy={32} r={9}
+            fill="none"
+            stroke={G.ink}
+            strokeWidth={5.5}
+            pathLength={1}
+            strokeDasharray={1}
+            strokeDashoffset={1 - e}
+          />
+        )
       )}
     </svg>
   ));
 
   return (
     <AbsoluteFill style={{
-      background: 'linear-gradient(178deg, #faf7f2 0%, #f0ebe0 30%, #e8e0d2 58%, #d9d3c7 100%)',
+      background: `linear-gradient(178deg, ${G.bg} 0%, ${G.panel} 30%, ${G.nav} 58%, ${G.line} 100%)`,
       alignItems: 'center', justifyContent: 'center',
     }}>
       {/* 暮色地平线光带（山影/晚霞近似） */}
