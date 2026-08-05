@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 钩子,宣告
+// props: title（开场大标题）、sceneA / sceneB（速剪前后景内容承载）
 // === 时间特性 ===
 // 刚性（不可压缩）: 刚性:每镜9f等长硬切
 // 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
@@ -13,7 +14,8 @@
 // 收尾真静止：49f 后所有动画结束，静止 91f（>40f）。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, FakeDashboard } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 // 时间轴（帧）
 const CUT_1 = 0;   // 镜头1：variant A 整页
@@ -30,7 +32,31 @@ const push = (frame: number, start: number) =>
     extrapolateRight: 'clamp',
   });
 
-export const TrailerBumper: React.FC = () => {
+export interface TrailerBumperProps {
+  title?: string;
+  sceneA?: SceneContentData;
+  sceneB?: SceneContentData;
+}
+
+export const TrailerBumper: React.FC<TrailerBumperProps> = ({
+  title = 'THE LAUNCH',
+  sceneA = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+    ],
+  },
+  sceneB = {
+    title: '状态',
+    type: 'rows',
+    rows: [
+      { label: '节点', value: '4/4' },
+      { label: '可用性', value: '99.98%' },
+    ],
+  },
+}) => {
   const frame = useCurrentFrame();
 
   // —— 段落 1–3：三连速剪 ——
@@ -40,14 +66,14 @@ export const TrailerBumper: React.FC = () => {
       // 镜头1：A 整页 + 轻推近
       inner = (
         <div style={{ width: 1920, height: 1080, transform: `scale(${push(frame, CUT_1)})`, transformOrigin: '50% 50%' }}>
-          <FakeDashboard variant="A" />
+          <SceneContent content={sceneA} />
         </div>
       );
     } else if (frame < CUT_3) {
       // 镜头2：B 整页 + 轻推近
       inner = (
         <div style={{ width: 1920, height: 1080, transform: `scale(${push(frame, CUT_2)})`, transformOrigin: '50% 50%' }}>
-          <FakeDashboard variant="B" />
+          <SceneContent content={sceneB} />
         </div>
       );
     } else {
@@ -55,7 +81,7 @@ export const TrailerBumper: React.FC = () => {
       const s = 2.2 * push(frame, CUT_3);
       inner = (
         <div style={{ width: 1920, height: 1080, transform: `scale(${s})`, transformOrigin: '58% 40%' }}>
-          <FakeDashboard variant="A" />
+          <SceneContent content={sceneA} />
         </div>
       );
     }
@@ -68,7 +94,7 @@ export const TrailerBumper: React.FC = () => {
 
   // —— 段落 4：纯黑静默 6f，必须纯黑无物 ——
   if (frame < TITLE) {
-    return <div style={{ width: 1920, height: 1080, background: '#000000' }} />;
+    return <div style={{ width: 1920, height: 1080, background: G.side }} />;
   }
 
   // —— 段落 5：正式开场——浅底大标题淡入+微升 16f 后定格 ——
@@ -105,7 +131,7 @@ export const TrailerBumper: React.FC = () => {
           textAlign: 'center',
         }}
       >
-        THE LAUNCH
+        {title}
       </div>
     </div>
   );
