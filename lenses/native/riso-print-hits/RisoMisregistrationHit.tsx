@@ -25,7 +25,7 @@ const OMEGA = (2 * Math.PI) / 18; // 震荡周期 18f，44f 内抖两下半
 const TAU = 60; // 缓衰减：帧 72 前仍余 ~14px 总分离，被"啪地"硬切归零
 
 // 与 TitleBlock 同字形的可调色标题（错位印版需要单色副本）
-const Plate: React.FC<{ color: string; dx: number; dy: number }> = ({ color, dx, dy }) => (
+const Plate: React.FC<{ color: string; dx: number; dy: number; text: string }> = ({ color, dx, dy, text }) => (
   <div
     style={{
       position: 'absolute',
@@ -47,12 +47,16 @@ const Plate: React.FC<{ color: string; dx: number; dy: number }> = ({ color, dx,
         whiteSpace: 'nowrap',
       }}
     >
-      IMPACT
+      {text}
     </div>
   </div>
 );
 
-export const RisoMisregistrationHit: React.FC = () => {
+export interface RisoMisregistrationHitProps {
+  text?: string;
+}
+
+export const RisoMisregistrationHit: React.FC<RisoMisregistrationHitProps> = ({ text = 'IMPACT' }) => {
   const frame = useCurrentFrame();
 
   // 阶段判定
@@ -113,15 +117,15 @@ export const RisoMisregistrationHit: React.FC = () => {
             transformOrigin: 'center center',
           }}
         >
-          <TitleBlock text="IMPACT" size={200} />
+          <TitleBlock text={text} size={200} />
         </div>
       )}
 
       {/* 双版错位：浅灰版与深墨版反向偏移，multiply 叠加出"重影套印" */}
       {split && (
         <>
-          <Plate color={G.mid} dx={-dx} dy={dy} />
-          <Plate color={G.ink} dx={dx} dy={-dy} />
+          <Plate color={G.mid} dx={-dx} dy={dy} text={text} />
+          <Plate color={G.ink} dx={dx} dy={-dy} text={text} />
         </>
       )}
     </div>
