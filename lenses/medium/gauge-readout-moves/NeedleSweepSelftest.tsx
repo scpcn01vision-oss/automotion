@@ -16,8 +16,8 @@ import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G, TitleBlock } from '../../_fixtures/Fixtures';
 
-const AMBER = '#b45309';
-const RED = '#7c2d12';
+const AMBER = G.accent;
+const RED = G.mid;
 
 const CARD_W = 1500;
 const CARD_H = 640;
@@ -132,11 +132,17 @@ const Gauge: React.FC<{ start: number; target: number }> = ({ start, target }) =
   );
 };
 
-export const NeedleSweepSelftest: React.FC = () => {
+export interface NeedleSweepSelftestProps {
+  label?: string;
+}
+
+export const NeedleSweepSelftest: React.FC<NeedleSweepSelftestProps> = ({
+  label = 'SELF-TEST',
+}) => {
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: 110, width: '100%', textAlign: 'center' }}>
-        <TitleBlock text="NEEDLE SWEEP SELF-TEST" size={72} />
+        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1 }}>{label}</div>
       </div>
       <div style={{
         position: 'absolute', left: CARD_X, top: CARD_Y, width: CARD_W, height: CARD_H,
