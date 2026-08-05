@@ -1,15 +1,34 @@
+// === 可调参数 ===
+// DURATION: 120（总帧数，可调；弹性段随 DURATION 等比缩放）
+// 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
+// 功能: 承接,转折
+// props: pageImage（全景素材）、subjectImage（项目卡素材，几何取 live-layout 卡 4）
+// === 时间特性 ===
+// 刚性（不可压缩）: 无（全程弹性）
+// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
+// === 适配注意 ===
+// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 // mask-wipe 元素遮罩擦除（轮 D）——真实项目卡（card4-hires）放大成
 // 全屏窗口，projects 全景从窗内长出接管："点开一张卡进入它的世界"。
 // 节拍：0–40 全景 hold → 40–85 卡放大成窗（窗内新景反向补偿）→ 85–120 hold。
 import { AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame, Easing } from 'remotion';
 import layout from '../../_textures/live-layout.json';
+import { G } from '../../_fixtures/Fixtures';
 
 export const MASKWIPE_DUR = 120;
 
 const C4 = layout.projects.cards[3]; // 页面空间 x=781,y=616,w=357,h=312
 const VIEW_Y = 180; // 全景观察窗：页面 y=180 起
 
-export const MaskWipeReal: React.FC = () => {
+export interface MaskWipeRealProps {
+  pageImage?: string;
+  subjectImage?: string;
+}
+
+export const MaskWipeReal: React.FC<MaskWipeRealProps> = ({
+  pageImage = 'textures/live/projects-full.png',
+  subjectImage = 'textures/live/card4-hires.png',
+}) => {
   const frame = useCurrentFrame();
   const t = interpolate(frame, [40, 85], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
@@ -25,10 +44,10 @@ export const MaskWipeReal: React.FC = () => {
   // 窗内新景（detail 视角用 papers 页顶部模拟）：从 0.42 缩放反向长到 1
   const innerScale = interpolate(t, [0, 1], [0.42, 1]);
   return (
-    <AbsoluteFill style={{ backgroundColor: '#f9f6f1', overflow: 'hidden' }}>
+    <AbsoluteFill style={{ backgroundColor: G.panel, overflow: 'hidden' }}>
       {/* 背景：projects 全景 */}
       <Img
-        src={staticFile('textures/live/projects-full.png')}
+        src={staticFile(pageImage)}
         style={{ position: 'absolute', left: 0, top: -VIEW_Y, width: 1920 }}
       />
       {/* 卡片即窗口 */}
@@ -45,17 +64,17 @@ export const MaskWipeReal: React.FC = () => {
             position: 'absolute', width: 1920, height: 1080,
             left: '50%', top: '50%',
             transform: `translate(-50%, -50%) scale(${innerScale})`,
-            overflow: 'hidden', background: '#f9f6f1',
+            overflow: 'hidden', background: G.panel,
           }}
         >
           <Img
-            src={staticFile('textures/live/projects-full.png')}
+            src={staticFile(pageImage)}
             style={{ position: 'absolute', left: 0, top: -846, width: 1920 }}
           />
         </div>
         {/* 卡片脸：随放大渐隐露出窗内景 */}
         <Img
-          src={staticFile('textures/live/card4-hires.png')}
+          src={staticFile(subjectImage)}
           style={{
             position: 'absolute', inset: 0, width: '100%', height: '100%',
             opacity: Math.max(0, 1 - t * 2.2),
