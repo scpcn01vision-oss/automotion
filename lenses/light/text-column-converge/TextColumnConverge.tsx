@@ -15,9 +15,10 @@
 // 定格后约 0.6s，斜体 "COMING 2026" 在下方近乎硬切浮现。
 import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
+import { G } from '../../_fixtures/Fixtures';
 
-// 词轮换表：停留帧数不均（机器节奏），全程钉在右缘，不做间距收缩
-const STEPS: { word: string; dur: number }[] = [
+// 词轮换表默认（原版）：停留帧数不均（机器节奏），全程钉在右缘，不做间距收缩
+const DEFAULT_STEPS: { word: string; dur: number }[] = [
   { word: 'LAUNCHER DESIGN', dur: 16 },
   { word: 'COMPACT MODE', dur: 12 },
   { word: 'HOTKEY RECORDER', dur: 9 },
@@ -39,17 +40,32 @@ const FS = 42; // 原片字高很小（720p 下 cap ~20px → 1080p ~30px → �
 const LSP = 3; // letterSpacing
 // 合拢终点按本字体实际步进计算（监视器等宽：0.6em + letterSpacing），
 // 保证 "NEW RAYCAST" 恰好一个空格咬合、整行居中于 960，不会重叠
-const ADV = 0.6 * FS + LSP; // 每字符步进
-const LINE_W = 11 * ADV; // "NEW RAYCAST" 共 11 字符
-const MERGED_LEFT = 960 - LINE_W / 2; // 合拢后 NEW 左缘
-const MERGED_RIGHT = 960 + LINE_W / 2; // 合拢后 RAYCAST 右缘
 const CONVERGE_DUR = 36; // 合拢时长：原片 ~1.2s ≈ 36 帧
 const CONVERGE_DELAY = 10; // RAYCAST 停稳后先静置 10 帧再合拢（原片 32.4→32.7s）
 const SUB_DELAY = 18; // 合拢定格后 ~0.6s 出斜体小字
 
-export const TextColumnConverge: React.FC = () => {
+export interface TextColumnConvergeProps {
+  leftWord?: string;
+  rightWords?: { word: string; dur: number }[];
+  subtitle?: string;
+}
+
+export const TextColumnConverge: React.FC<TextColumnConvergeProps> = ({
+  leftWord = 'NEW',
+  rightWords = DEFAULT_STEPS,
+  subtitle = 'COMING 2026',
+}) => {
   const f = useCurrentFrame();
   const t = f - START;
+  const STEPS = rightWords;
+
+  // 合拢终点按实际字符数动态计算（左词 + 空格 + 末词）
+  const ADV = 0.6 * FS + LSP; // 每字符步进
+  const lastWord = STEPS[STEPS.length - 1].word;
+  const CHAR_COUNT = leftWord.length + 1 + lastWord.length;
+  const LINE_W = CHAR_COUNT * ADV;
+  const MERGED_LEFT = 960 - LINE_W / 2; // 合拢后左词左缘
+  const MERGED_RIGHT = 960 + LINE_W / 2; // 合拢后末词右缘
 
   // 定位当前步
   let acc = 0;
@@ -89,21 +105,21 @@ export const TextColumnConverge: React.FC = () => {
     fontWeight: 500,
     fontSize: FS,
     letterSpacing: 3,
-    color: '#f5f0e8',
+    color: G.panel,
     whiteSpace: 'nowrap',
     lineHeight: 1,
   };
 
   return (
-    <AbsoluteFill style={{ background: '#2c2416', overflow: 'hidden' }}>
+    <AbsoluteFill style={{ background: G.ink, overflow: 'hidden' }}>
       {visible && (
         <div style={{ position: 'absolute', inset: 0 }}>
-          {/* NEW：左缘定位（轮换期间钉死在左屏边距处） */}
+          {/* 左固定词：左缘定位（轮换期间钉死在左屏边距处） */}
           <div style={{
             ...font, position: 'absolute',
             left: newLeft, top: 519,
           }}>
-            NEW
+            {leftWord}
           </div>
           {/* 特性词：右缘定位（词换长换短，右缘不动） */}
           <div style={{
@@ -117,12 +133,12 @@ export const TextColumnConverge: React.FC = () => {
           <div style={{
             ...font,
             fontStyle: 'italic',
-            color: '#d9d3c7',
+            color: G.line,
             position: 'absolute',
             left: MERGED_LEFT, top: 519 + FS + 14,
             opacity: subOp,
           }}>
-            COMING 2026
+            {subtitle}
           </div>
         </div>
       )}

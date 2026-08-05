@@ -12,6 +12,7 @@
 // 对标 notion-ai.mp4 2.3–3.6s。与库内 draw-svg-trace 撞车，本版做马克笔质感。
 import React from 'react';
 import { AbsoluteFill, interpolate, useCurrentFrame } from 'remotion';
+import { G } from '../../_fixtures/Fixtures';
 
 const mulberry32 = (a: number) => () => {
   let t = (a += 0x6d2b79f5);
@@ -42,9 +43,20 @@ const buildStroke = (len: number, seed: number) => {
   return `M${top.join('L')}L${bot.reverse().join('L')}Z`;
 };
 
-export const MarkerUnderlineTitle: React.FC = () => {
+export interface MarkerUnderlineTitleProps {
+  prefix?: string;
+  highlight?: string;
+  title?: string;
+}
+
+export const MarkerUnderlineTitle: React.FC<MarkerUnderlineTitleProps> = ({
+  prefix = 'Meet the ',
+  highlight = 'new',
+  title = 'Notion AI',
+}) => {
   const frame = useCurrentFrame();
-  const LEN = 252;
+  // 下划线长度：跟随强调词宽度自适应（斜体约 84px/字符 @118px 字号，下限 60）
+  const LEN = Math.max(60, highlight.length * 84);
 
   // 标题落定：整块从下方 30px 弹入（ease-out），24 帧内完成
   const enter = interpolate(frame, [0, 22], [0, 1], {
@@ -62,17 +74,17 @@ export const MarkerUnderlineTitle: React.FC = () => {
   const path = buildStroke(LEN, 77);
 
   return (
-    <AbsoluteFill style={{ background: '#f4f4f2', alignItems: 'center', justifyContent: 'center' }}>
+    <AbsoluteFill style={{ background: G.bg, alignItems: 'center', justifyContent: 'center' }}>
       <div style={{
         opacity: titleOp, transform: `translateY(${titleY}px)`,
         fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif',
-        fontWeight: 700, fontSize: 118, color: '#191919',
+        fontWeight: 700, fontSize: 118, color: G.ink,
         textAlign: 'center', lineHeight: 1.12, letterSpacing: '-0.02em',
       }}>
         <div>
-          Meet the{' '}
+          {prefix}
           <span style={{ fontStyle: 'italic', position: 'relative', display: 'inline-block' }}>
-            new
+            {highlight}
             {/* 马克笔下划线：clip 从左到右揭示，保留笔形本身的粗细变化 */}
             <svg
               width={LEN} height={44} viewBox={`0 0 ${LEN} 44`}
@@ -84,12 +96,12 @@ export const MarkerUnderlineTitle: React.FC = () => {
                 </clipPath>
               </defs>
               {draw > 0 && (
-                <path d={path} fill="#111111" clipPath="url(#reveal)" />
+                <path d={path} fill={G.ink} clipPath="url(#reveal)" />
               )}
             </svg>
           </span>
         </div>
-        <div>Notion AI</div>
+        <div>{title}</div>
       </div>
     </AbsoluteFill>
   );
