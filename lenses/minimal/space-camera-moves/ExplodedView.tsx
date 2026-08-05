@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 展开
+// props: cards（爆炸层六卡内容）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
@@ -9,7 +10,7 @@
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
-import { Card, G } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
 
 // exploded-view：整页 dashboard 带 3D 倾斜，咔地沿 Z 轴炸开——顶栏/侧栏/六卡
 // 各自浮到不同深度悬停（近大而实、远略暗），层间透出投影；hold 一拍后
@@ -46,7 +47,7 @@ type Layer = {
 
 const Sidebar: React.FC = () => (
   <div style={{ width: SIDE_W, height: 1080, background: G.side, padding: '28px 22px', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: 18 }}>
-    <div style={{ width: 40, height: 40, borderRadius: 10, background: '#777775' }} />
+    <div style={{ width: 40, height: 40, borderRadius: 10, background: G.bar }} />
     {Array.from({ length: 7 }).map((_, i) => (
       <div key={i} style={{ height: 12, width: `${60 + ((i * 29) % 35)}%`, background: G.sideBar, borderRadius: 6 }} />
     ))}
@@ -56,7 +57,7 @@ const Sidebar: React.FC = () => (
 const Topbar: React.FC = () => (
   <div style={{ width: 1920 - SIDE_W, height: TOP_H, background: G.panel, borderBottom: `2px solid ${G.line}`, display: 'flex', alignItems: 'center', padding: '0 32px', gap: 20, boxSizing: 'border-box' }}>
     <div style={{ height: 18, width: 180, background: G.bar, borderRadius: 9 }} />
-    <div style={{ marginLeft: 'auto', height: 36, width: 320, background: '#fff', border: `2px solid ${G.line}`, borderRadius: 18, boxSizing: 'border-box' }} />
+    <div style={{ marginLeft: 'auto', height: 36, width: 320, background: G.card, border: `2px solid ${G.line}`, borderRadius: 18, boxSizing: 'border-box' }} />
     <div style={{ width: 36, height: 36, borderRadius: 18, background: G.mid }} />
   </div>
 );
@@ -64,12 +65,38 @@ const Topbar: React.FC = () => (
 // 六卡深度：错落分布在 60–320，近的自然更大（perspective 缩放）
 const CARD_Z = [150, 300, 80, 230, 320, 110];
 
-const LAYERS: Layer[] = [
+const MiniCard: React.FC<{ w: number; h: number; label: string; value: string }> = ({ w, h, label, value }) => (
+  <div
+    style={{
+      width: w,
+      height: h,
+      background: G.card,
+      border: `2px solid ${G.border}`,
+      borderRadius: 14,
+      padding: 22,
+      boxSizing: 'border-box',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      gap: 10,
+    }}
+  >
+    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 26, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
+      {label}
+    </div>
+    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 38, fontWeight: 800, color: G.accent }}>
+      {value}
+    </div>
+  </div>
+);
+
+const buildLayers = (cards: { label: string; value: string }[]): Layer[] => [
   { key: 'top', x: SIDE_W, y: 0, w: 1920 - SIDE_W, h: TOP_H, z: 260, order: 0, radius: 0, node: <Topbar /> },
   { key: 'side', x: 0, y: 0, w: SIDE_W, h: 1080, z: 190, order: 1, radius: 0, node: <Sidebar /> },
   ...Array.from({ length: 6 }).map((_, i) => {
     const col = i % 3;
     const row = Math.floor(i / 3);
+    const c = cards[i] ?? { label: '', value: '' };
     return {
       key: `card${i}`,
       x: SIDE_W + PAD + col * (CARD_W + GAP),
@@ -79,13 +106,27 @@ const LAYERS: Layer[] = [
       z: CARD_Z[i],
       order: 2 + i,
       radius: 14,
-      node: <Card w={CARD_W} h={CARD_H} seed={i + 1} />,
+      node: <MiniCard w={CARD_W} h={CARD_H} label={c.label} value={c.value} />,
     };
   }),
 ];
 
-export const ExplodedView: React.FC = () => {
+export interface ExplodedViewProps {
+  cards?: { label: string; value: string }[];
+}
+
+export const ExplodedView: React.FC<ExplodedViewProps> = ({
+  cards = [
+    { label: '指标一', value: '+18%' },
+    { label: '指标二', value: '2.1×' },
+    { label: '指标三', value: '96.4%' },
+    { label: '节点', value: '4/4' },
+    { label: '延迟', value: '42ms' },
+    { label: '可用性', value: '99.98%' },
+  ],
+}) => {
   const frame = useCurrentFrame();
+  const LAYERS = buildLayers(cards);
 
   // 每层进度：炸开 ease-out-back（带一点回弹的“咔”）× 合体逆序 ease-in
   const layerP = (order: number) => {
@@ -116,7 +157,7 @@ export const ExplodedView: React.FC = () => {
   const shakeY = env * 0.7 * Math.sin(since * 4.7 + 1.1);
 
   return (
-    <AbsoluteFill style={{ background: '#dedddb', overflow: 'hidden' }}>
+    <AbsoluteFill style={{ background: G.panel, overflow: 'hidden' }}>
       <AbsoluteFill style={{ perspective: 1600, transform: `translate(${shakeX}px, ${shakeY}px)` }}>
         <div
           style={{
