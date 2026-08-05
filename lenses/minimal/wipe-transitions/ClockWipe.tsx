@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 转折,承接
+// props: sceneA / sceneB（时钟扫描前后景内容承载）
 // === 时间特性 ===
 // 刚性（不可压缩）: 弹性(clock),刚性:wave 20f(blinds)
 // 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
@@ -14,7 +15,8 @@
 // 96–150f 真静止 54f ≥ 40f。帧确定，无随机。
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, interpolate } from 'remotion';
-import { FakeDashboard } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 const CX = 960;
 const CY = 540;
@@ -36,7 +38,29 @@ const fanClip = (theta: number): string => {
   return `polygon(${pts.join(', ')})`;
 };
 
-export const ClockWipe: React.FC = () => {
+export interface ClockWipeProps {
+  sceneA?: SceneContentData;
+  sceneB?: SceneContentData;
+}
+
+export const ClockWipe: React.FC<ClockWipeProps> = ({
+  sceneA = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+    ],
+  },
+  sceneB = {
+    title: '状态',
+    type: 'rows',
+    rows: [
+      { label: '节点', value: '4/4' },
+      { label: '可用性', value: '99.98%' },
+    ],
+  },
+}) => {
   const frame = useCurrentFrame();
 
   // 30–90f 指针 0→360°，linear（时钟扫描要匀速才像雷达）
@@ -56,18 +80,18 @@ export const ClockWipe: React.FC = () => {
   const [x2, y2] = polar(theta, R);
 
   return (
-    <AbsoluteFill style={{ background: '#ececea' }}>
+    <AbsoluteFill style={{ background: G.panel }}>
       {/* 底层：A 页。擦完后卸载（上层 B 已满屏） */}
       {!wipeDone && (
         <AbsoluteFill>
-          <FakeDashboard variant="A" />
+          <SceneContent content={sceneA} />
         </AbsoluteFill>
       )}
 
       {/* 上层：B 页。扫描期挂扇形 clip-path，擦完后摘罩直出 */}
       {frame >= 30 && (
         <AbsoluteFill style={wipeDone ? undefined : { clipPath: fanClip(theta) }}>
-          <FakeDashboard variant="B" />
+          <SceneContent content={sceneB} />
         </AbsoluteFill>
       )}
 
