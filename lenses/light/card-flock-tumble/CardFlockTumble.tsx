@@ -238,9 +238,8 @@ const splinePose = (keys: Pose[], u: number): Pose => {
 // 三卡（v4 再加码）：间距再收紧（±125/±85 级，三卡大幅重叠成一叠阶梯）
 // + 站定再放大（s≈1.5-1.6，对齐截图 3/4 里卡片群占满画面中部）
 // k0 侧棱（近 90° 薄边）→ k1 翻飞中段 → k2 阶梯站定
-const CARDS: { title: string; k: [Pose, Pose, Pose]; conv: Pose }[] = [
+const CARD_POSES: { k: [Pose, Pose, Pose]; conv: Pose }[] = [
   {
-    title: 'Inbox',
     k: [
       { x: -8, y: -16, rx: 9, ry: 88, rz: 12, s: 1.05 },
       { x: -135, y: -92, rx: 16, ry: 44, rz: -8, s: 1.38 },
@@ -249,7 +248,6 @@ const CARDS: { title: string; k: [Pose, Pose, Pose]; conv: Pose }[] = [
     conv: { x: -20, y: -12, rx: 0, ry: 55, rz: 4, s: 0.12 },
   },
   {
-    title: 'List view',
     k: [
       { x: 0, y: 0, rx: 8, ry: 89, rz: 12, s: 1.0 },
       { x: -16, y: -7, rx: 13, ry: 38, rz: -7, s: 1.42 },
@@ -258,7 +256,6 @@ const CARDS: { title: string; k: [Pose, Pose, Pose]; conv: Pose }[] = [
     conv: { x: 0, y: 0, rx: 0, ry: 60, rz: 4, s: 0.12 },
   },
   {
-    title: 'Home',
     k: [
       { x: 8, y: 16, rx: 7, ry: 90, rz: 12, s: 0.95 },
       { x: 112, y: 78, rx: 11, ry: 34, rz: -6, s: 1.46 },
@@ -273,8 +270,17 @@ const lerpPose = (a: Pose, b: Pose, t: number): Pose => {
   return out;
 };
 
-export const CardFlockTumble: React.FC = () => {
+export interface CardFlockTumbleProps {
+  word?: string;
+  cards?: string[];
+}
+
+export const CardFlockTumble: React.FC<CardFlockTumbleProps> = ({
+  word = 'STRONGER',
+  cards = ['Inbox', 'List view', 'Home'],
+}) => {
   const frame = useCurrentFrame();
+  const CARDS = CARD_POSES.map((p, i) => ({ ...p, title: cards[i] ?? '' }));
 
   // STRONGER 巨字
   const st = frame - TEXT_T0;
@@ -381,7 +387,7 @@ export const CardFlockTumble: React.FC = () => {
               stroke="url(#strokeGrad)"
               strokeWidth={4.5}
             >
-              STRONGER
+              {word}
             </text>
           </svg>
         </AbsoluteFill>
