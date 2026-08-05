@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 钩子,宣告
+// props: sceneA / sceneB（轰鸣/死寂前后景内容承载）、cards（飞掠卡内容）
 // === 时间特性 ===
 // 刚性（不可压缩）: 刚性:每镜9f等长硬切
 // 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
@@ -15,7 +16,8 @@
 // 停满 93f（>50f）。反差即手法本体。总 135f。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, Card, FakeDashboard } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 const CUT = 42; // 硬切帧：>=42 全静止
 
@@ -25,17 +27,16 @@ type Fly = {
   from: [number, number];
   to: [number, number];
   rot: [number, number]; // 微旋转 起→终
-  seed: number;
   w: number;
   h: number;
 };
 
 const FLIES: Fly[] = [
-  { from: [-1400, -120], to: [1400, 60], rot: [-6, 5], seed: 1, w: 440, h: 290 },
-  { from: [1400, 180], to: [-1400, -100], rot: [7, -4], seed: 2, w: 400, h: 260 },
-  { from: [-300, -900], to: [200, 900], rot: [-3, 8], seed: 3, w: 460, h: 300 },
-  { from: [-1300, 800], to: [1300, -750], rot: [5, -7], seed: 4, w: 420, h: 280 },
-  { from: [1350, -780], to: [-1350, 820], rot: [-8, 4], seed: 5, w: 480, h: 310 },
+  { from: [-1400, -120], to: [1400, 60], rot: [-6, 5], w: 440, h: 290 },
+  { from: [1400, 180], to: [-1400, -100], rot: [7, -4], w: 400, h: 260 },
+  { from: [-300, -900], to: [200, 900], rot: [-3, 8], w: 460, h: 300 },
+  { from: [-1300, 800], to: [1300, -750], rot: [5, -7], w: 420, h: 280 },
+  { from: [1350, -780], to: [-1350, 820], rot: [-8, 4], w: 480, h: 310 },
 ];
 
 // 卡 i 的第 k 轮：start = i*4 + k*20，时长 16 / 12（第二轮更快）。
@@ -46,7 +47,13 @@ const passWindow = (i: number, k: number): [number, number] => {
   return [start, start + dur];
 };
 
-const FlyCard: React.FC<{ fly: Fly; i: number; frame: number }> = ({ fly, i, frame }) => {
+const FlyCard: React.FC<{
+  fly: Fly;
+  i: number;
+  frame: number;
+  label: string;
+  value: string;
+}> = ({ fly, i, frame, label, value }) => {
   // 找当前活跃的 pass（两轮）
   let active: [number, number] | null = null;
   for (let k = 0; k < 2; k++) {
@@ -72,18 +79,69 @@ const FlyCard: React.FC<{ fly: Fly; i: number; frame: number }> = ({ fly, i, fra
       transform: `translate(${x}px, ${y}px) rotate(${rot}deg) scale(${scale})`,
       filter: `blur(${blur}px)`,
     }}>
-      <Card w={fly.w} h={fly.h} seed={fly.seed}
-        style={{ boxShadow: '0 12px 40px rgba(0,0,0,0.25)' }} />
+      <div
+        style={{
+          width: fly.w,
+          height: fly.h,
+          background: G.card,
+          border: `2px solid ${G.border}`,
+          borderRadius: 14,
+          boxShadow: '0 12px 40px rgba(0,0,0,0.25)',
+          padding: 18,
+          boxSizing: 'border-box',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          gap: 8,
+        }}
+      >
+        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 24, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
+          {label}
+        </div>
+        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 34, fontWeight: 800, color: G.accent }}>
+          {value}
+        </div>
+      </div>
     </div>
   );
 };
 
-export const SmashCut: React.FC = () => {
+export interface SmashCutProps {
+  sceneA?: SceneContentData;
+  sceneB?: SceneContentData;
+  cards?: { label: string; value: string }[];
+}
+
+export const SmashCut: React.FC<SmashCutProps> = ({
+  sceneA = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+    ],
+  },
+  sceneB = {
+    title: '状态',
+    type: 'rows',
+    rows: [
+      { label: '节点', value: '4/4' },
+      { label: '可用性', value: '99.98%' },
+    ],
+  },
+  cards = [
+    { label: '指标一', value: '+18%' },
+    { label: '指标二', value: '2.1×' },
+    { label: '指标三', value: '96.4%' },
+    { label: '节点', value: '4/4' },
+    { label: '延迟', value: '42ms' },
+  ],
+}) => {
   const frame = useCurrentFrame();
 
   // —— 死寂段：42f 起 variant B 整齐静止全景，无任何动画属性 ——
   if (frame >= CUT) {
-    return <FakeDashboard variant="B" />;
+    return <SceneContent content={sceneB} />;
   }
 
   // —— 轰鸣段：背景 ease-in 加速推近 + 滚动，切点前 3f 仍在加速 ——
@@ -104,10 +162,10 @@ export const SmashCut: React.FC = () => {
         transformOrigin: '50% 50%',
         filter: 'blur(1.5px)', // 背景轻糊，衬前景飞卡
       }}>
-        <FakeDashboard variant="A" />
+        <SceneContent content={sceneA} />
       </div>
       {FLIES.map((fly, i) => (
-        <FlyCard key={i} fly={fly} i={i} frame={frame} />
+        <FlyCard key={i} fly={fly} i={i} frame={frame} label={cards[i]?.label ?? ''} value={cards[i]?.value ?? ''} />
       ))}
     </div>
   );
