@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 转折
+// props: sceneA / sceneB（遮挡切前后景内容承载）、card（遮挡卡内容）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
@@ -10,7 +11,8 @@
 import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
 import { CameraMotionBlur } from '@remotion/motion-blur';
-import { FakeDashboard, Card, G } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 // invisible-cut：前景遮挡隐形切——一张放大到超出画幅的卡片带重运动模糊
 // 从左侧贴脸扫过，糊满屏幕的瞬间背景从 A 无痕换成 B，卡片飞出右侧时
@@ -29,7 +31,11 @@ const xAt = (f: number) =>
     easing: Easing.bezier(0.3, 0, 0.7, 1),
   });
 
-const Scene: React.FC = () => {
+const Scene: React.FC<{
+  sceneA: SceneContentData;
+  sceneB: SceneContentData;
+  card: { label: string; value: string };
+}> = ({ sceneA, sceneB, card }) => {
   const frame = useCurrentFrame();
   const x = xAt(frame);
   // 瞬时速度（px/帧），驱动斜切与残影强度
@@ -52,7 +58,7 @@ const Scene: React.FC = () => {
     <AbsoluteFill style={{ background: G.bg, overflow: 'hidden' }}>
       {/* 背景层：硬切藏在遮挡帧内 */}
       <div style={{ position: 'absolute', inset: 0, transform: `translateX(${shove}px)` }}>
-        {frame < CUT ? <FakeDashboard variant="A" /> : <FakeDashboard variant="B" />}
+        {frame < CUT ? <SceneContent content={sceneA} /> : <SceneContent content={sceneB} />}
       </div>
       {/* 手动残影：4 层拖尾（在主卡身后），保证遮挡窗口糊满全屏 */}
       {sweeping &&
@@ -70,7 +76,7 @@ const Scene: React.FC = () => {
               filter: 'blur(14px)',
             }}
           >
-            <Card w={1600} h={1000} seed={9} style={{ width: '100%', height: '100%' }} />
+            <OcclusionCard label={card.label} value={card.value} />
           </div>
         ))}
       {/* 主卡：1600x1000 放大 1.6 倍（2560x1600 超出画幅），自带 blur 加强糊感 */}
@@ -88,15 +94,64 @@ const Scene: React.FC = () => {
             borderRadius: 20,
           }}
         >
-          <Card w={1600} h={1000} seed={9} style={{ width: '100%', height: '100%' }} />
+          <OcclusionCard label={card.label} value={card.value} />
         </div>
       )}
     </AbsoluteFill>
   );
 };
 
-export const InvisibleCut: React.FC = () => (
+export interface InvisibleCutProps {
+  sceneA?: SceneContentData;
+  sceneB?: SceneContentData;
+  card?: { label: string; value: string };
+}
+
+const OcclusionCard: React.FC<{ label: string; value: string }> = ({ label, value }) => (
+  <div
+    style={{
+      width: '100%',
+      height: '100%',
+      background: G.card,
+      border: `2px solid ${G.border}`,
+      borderRadius: 20,
+      boxSizing: 'border-box',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 24,
+    }}
+  >
+    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 96, fontWeight: 800, color: G.ink }}>
+      {label}
+    </div>
+    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 140, fontWeight: 800, color: G.accent }}>
+      {value}
+    </div>
+  </div>
+);
+
+export const InvisibleCut: React.FC<InvisibleCutProps> = ({
+  sceneA = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+    ],
+  },
+  sceneB = {
+    title: '状态',
+    type: 'rows',
+    rows: [
+      { label: '节点', value: '4/4' },
+      { label: '可用性', value: '99.98%' },
+    ],
+  },
+  card = { label: '指标', value: '+18%' },
+}) => (
   <CameraMotionBlur shutterAngle={300} samples={12}>
-    <Scene />
+    <Scene sceneA={sceneA} sceneB={sceneB} card={card} />
   </CameraMotionBlur>
 );
