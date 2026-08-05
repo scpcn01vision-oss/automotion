@@ -11,6 +11,7 @@
 // 深墨大卡居中，一道 45° 高光带在 40–68f 从左外扫到右外，仅此一次。
 // 约束：单点(只扫主角卡)、圆角裁剪(overflow hidden)、扫前扫后完全静止。
 import React from 'react';
+import { G } from '../../_fixtures/Fixtures';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 
@@ -62,7 +63,7 @@ export const SheenSweepRetry: React.FC = () => {
           style={{
             fontSize: 130,
             fontWeight: 800,
-            color: '#f5f5f3',
+            color: G.card,
             letterSpacing: 2,
             lineHeight: 1,
           }}
