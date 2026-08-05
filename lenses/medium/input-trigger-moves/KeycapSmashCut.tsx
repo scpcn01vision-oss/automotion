@@ -17,7 +17,8 @@
 // 顶栏角落（引信呼应），死寂 82f（>50f）。总 140f。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, Card, FakeDashboard } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 const T = {
   press: 25,      // 按下起始（呼吸周期 25f，此帧位移恰好归零）
@@ -134,7 +135,21 @@ const FlyItem: React.FC<{ fly: Fly; i: number; frame: number }> = ({ fly, i, fra
   );
 };
 
-export const KeycapSmashCut: React.FC = () => {
+export interface KeycapSmashCutProps {
+  scene?: SceneContentData;
+}
+
+export const KeycapSmashCut: React.FC<KeycapSmashCutProps> = ({
+  scene = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+      { label: '指标三', value: '96.4%' },
+    ],
+  },
+}) => {
   const frame = useCurrentFrame();
 
   // —— 死寂段：58f 起 variant A 整齐静止全景 + 键帽小元素嵌顶栏角落，
@@ -142,7 +157,7 @@ export const KeycapSmashCut: React.FC = () => {
   if (frame >= T.cut) {
     return (
       <div style={{ width: 1920, height: 1080, position: 'relative' }}>
-        <FakeDashboard variant="A" />
+        <SceneContent content={scene} />
         {/* 键帽句号：稳稳嵌在顶栏（标题条右侧空档），呼应引信 */}
         <div style={{ position: 'absolute', left: 464, top: 12 }}>
           <Keycap size={44} thick={4} bright={1} />
