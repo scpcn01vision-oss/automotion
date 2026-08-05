@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 收束
+// props: logoText（LOGO 文字）、sceneA / sceneB（彩蛋/上一镜内容承载）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
@@ -12,7 +13,8 @@
 // 硬切回黑底 LOGO 定格。节奏是全部：彩蛋段短促像眨眼。收尾真静止 ≥40f。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { FakeDashboard } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 // 时间轴（30fps，共 142f）
 const T = {
@@ -25,9 +27,9 @@ const T = {
   total: 142,       // 82–142f 黑底 LOGO 真静止 60f
 };
 
-const LogoLockup: React.FC<{ opacity: number; scale: number }> = ({ opacity, scale }) => (
+const LogoLockup: React.FC<{ opacity: number; scale: number; logoText: string }> = ({ opacity, scale, logoText }) => (
   <div style={{
-    width: 1920, height: 1080, background: '#000',
+    width: 1920, height: 1080, background: G.side,
     display: 'flex', alignItems: 'center', justifyContent: 'center',
   }}>
     <div style={{
@@ -35,23 +37,47 @@ const LogoLockup: React.FC<{ opacity: number; scale: number }> = ({ opacity, sca
       opacity, transform: `scale(${scale})`,
     }}>
       <div style={{
-        width: 120, height: 120, borderRadius: 28, background: '#fff',
+        width: 120, height: 120, borderRadius: 28, background: G.card,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}>
         {/* 方块内一个黑色小标记，避免纯白块太空 */}
-        <div style={{ width: 44, height: 44, borderRadius: 12, background: '#000' }} />
+        <div style={{ width: 44, height: 44, borderRadius: 12, background: G.side }} />
       </div>
       <div style={{
         fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800,
-        fontSize: 90, color: '#fff', letterSpacing: 2,
+        fontSize: 90, color: G.card, letterSpacing: 2,
       }}>
-        ACME
+        {logoText}
       </div>
     </div>
   </div>
 );
 
-export const LogoStingButton: React.FC = () => {
+export interface LogoStingButtonProps {
+  logoText?: string;
+  sceneA?: SceneContentData;
+  sceneB?: SceneContentData;
+}
+
+export const LogoStingButton: React.FC<LogoStingButtonProps> = ({
+  logoText = 'ACME',
+  sceneA = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+    ],
+  },
+  sceneB = {
+    title: '状态',
+    type: 'rows',
+    rows: [
+      { label: '节点', value: '4/4' },
+      { label: '可用性', value: '99.98%' },
+    ],
+  },
+}) => {
   const frame = useCurrentFrame();
 
   // —— 段 1：上一镜（FakeDashboard B）压暗收黑 ——
@@ -61,16 +87,16 @@ export const LogoStingButton: React.FC = () => {
       easing: Easing.in(Easing.cubic),
     });
     return (
-      <div style={{ width: 1920, height: 1080, background: '#000', position: 'relative', overflow: 'hidden' }}>
-        <FakeDashboard variant="B" />
-        <div style={{ position: 'absolute', inset: 0, background: '#000', opacity: dark }} />
+      <div style={{ width: 1920, height: 1080, background: G.side, position: 'relative', overflow: 'hidden' }}>
+        <SceneContent content={sceneB} />
+        <div style={{ position: 'absolute', inset: 0, background: G.side, opacity: dark }} />
       </div>
     );
   }
 
   // —— 段 2：黑场 6f ——
   if (frame < T.blackEnd) {
-    return <div style={{ width: 1920, height: 1080, background: '#000' }} />;
+    return <div style={{ width: 1920, height: 1080, background: G.side }} />;
   }
 
   // —— 段 4：彩蛋硬切 12f（variant A 按钮区 2.4x 裁切 + 角落小圆点 tick 闪 2f）——
@@ -79,7 +105,7 @@ export const LogoStingButton: React.FC = () => {
     // tick 圆点：第 4–5f 亮 2f，像眨眼
     const tickOn = egg >= 4 && egg < 6;
     return (
-      <div style={{ width: 1920, height: 1080, background: '#ececea', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ width: 1920, height: 1080, background: G.panel, position: 'relative', overflow: 'hidden' }}>
         <div style={{
           position: 'absolute', inset: 0,
           // 2.4x 放大：把第 1 张卡片底部"按钮行"（头像圆+文字条）平移到画面中心
@@ -87,15 +113,15 @@ export const LogoStingButton: React.FC = () => {
           // 选中列卡片可把左侧深色 sidebar 完全推出画面，特写更纯粹
           transform: 'translate(-1054px, -734px) scale(2.4)', transformOrigin: '0 0',
         }}>
-          <FakeDashboard variant="A" />
+          <SceneContent content={sceneA} />
         </div>
         {tickOn && (
           <div style={{
             position: 'absolute', right: 90, bottom: 80,
-            width: 56, height: 56, borderRadius: 28, background: '#2f2f2f',
+            width: 56, height: 56, borderRadius: 28, background: G.ink,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
-            <div style={{ width: 20, height: 20, borderRadius: 10, background: '#fff' }} />
+            <div style={{ width: 20, height: 20, borderRadius: 10, background: G.card }} />
           </div>
         )}
       </div>
@@ -111,5 +137,5 @@ export const LogoStingButton: React.FC = () => {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
     easing: Easing.out(Easing.cubic),
   });
-  return <LogoLockup opacity={opacity} scale={scale} />;
+  return <LogoLockup opacity={opacity} scale={scale} logoText={logoText} />;
 };
