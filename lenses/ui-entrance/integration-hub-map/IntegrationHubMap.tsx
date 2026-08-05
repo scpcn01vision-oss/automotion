@@ -24,6 +24,7 @@
 // S3/S4 侧棱白热爆发+图标浮现 → S5/S6 新页转正、光管连入 → S7/S8 稳定输送。
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
+import { G } from '../../_fixtures/Fixtures';
 
 const mulberry32 = (a: number) => () => {
   let t = (a += 0x6d2b79f5);
@@ -36,100 +37,130 @@ const NOISE: number[] = Array.from({ length: 200 }, () => rand());
 
 const FONT = '"Avenir Next", "Helvetica Neue", Helvetica, sans-serif';
 
-// ---------- 中枢面板（Enterprise MQLs，内容对照截图 1/7） ----------
-const LIST: { icon: string; title: string; sub: string }[] = [
-  { icon: '#4a9fd8', title: 'Q3 Enterprise Deal', sub: 'Revenue · Pipeline · Q3 Quota' },
-  { icon: '#4a9fd8', title: 'Major Enterprise Account - UK', sub: 'Revenue · MQL · International' },
-  { icon: '#34a853', title: 'Enterprise Pitch Deck', sub: 'Open in GDrive' },
-  { icon: '#a259ff', title: 'MQL Lead Form Design', sub: 'Figma File · Last Edited' },
-  { icon: '#f2c744', title: 'Enterprise Sales', sub: 'ClickUp Space' },
-  { icon: '#8b7355', title: 'Enterprise Closed Archive', sub: 'Archived · In Enterprise Sales' },
-  { icon: '#b8ae9e', title: 'Open Enterprise Lead - Follow up', sub: 'In Progress · In Enterprise Sales · Yesterday' },
+export interface IntegrationHubRow {
+  color?: string;
+  title: string;
+  sub?: string;
+}
+
+export interface IntegrationHubStyle {
+  panelColor?: string;
+  accent?: string;
+  radius?: number;
+}
+
+export interface IntegrationHubMapProps {
+  frontTitle?: string;
+  hubTitle?: string;
+  rows?: IntegrationHubRow[];
+  icons?: string[];
+  hubStyle?: IntegrationHubStyle;
+}
+
+// ---------- 中枢面板（默认内容保留原版，可参数化） ----------
+const DEFAULT_ROWS: IntegrationHubRow[] = [
+  { color: '#4a9fd8', title: 'Q3 Enterprise Deal', sub: 'Revenue · Pipeline · Q3 Quota' },
+  { color: '#4a9fd8', title: 'Major Enterprise Account - UK', sub: 'Revenue · MQL · International' },
+  { color: '#34a853', title: 'Enterprise Pitch Deck', sub: 'Open in GDrive' },
+  { color: '#a259ff', title: 'MQL Lead Form Design', sub: 'Figma File · Last Edited' },
+  { color: '#f2c744', title: 'Enterprise Sales', sub: 'ClickUp Space' },
+  { color: '#8b7355', title: 'Enterprise Closed Archive', sub: 'Archived · In Enterprise Sales' },
+  { color: '#b8ae9e', title: 'Open Enterprise Lead - Follow up', sub: 'In Progress · In Enterprise Sales · Yesterday' },
 ];
 
-const HubPanel: React.FC<{ glow: number }> = ({ glow }) => (
-  <div
-    style={{
-      width: 820,
-      height: 520,
-      background: '#fefcf8',
-      borderRadius: 14,
-      padding: '26px 30px',
-      boxSizing: 'border-box',
-      fontFamily: FONT,
-      boxShadow: `0 0 ${40 + glow * 110}px rgba(255,255,255,${0.3 + glow * 0.55}), 0 0 ${130 + glow * 140}px rgba(215,150,255,${0.22 + glow * 0.35})`,
-      display: 'flex',
-      gap: 26,
-      overflow: 'hidden',
-    }}
-  >
-    <div style={{ flex: 2 }}>
-      <div style={{ fontSize: 27, fontWeight: 600, color: '#3d3022' }}>Enterprise MQLs</div>
-      <div style={{ display: 'flex', gap: 16, marginTop: 12 }}>
-        {['All', 'Tasks', 'Docs', 'Whiteboards', 'Dashboards', 'Files', 'Chat', 'People'].map((t, i) => (
-          <div key={t} style={{ fontSize: 12, color: i === 0 ? '#5b55c8' : '#8b7355', fontWeight: i === 0 ? 700 : 400 }}>
-            {t}
+const HubPanel: React.FC<{
+  glow: number;
+  hubTitle: string;
+  rows: IntegrationHubRow[];
+  hubStyle: IntegrationHubStyle;
+}> = ({ glow, hubTitle, rows, hubStyle }) => {
+  const panelColor = hubStyle.panelColor ?? G.card;
+  const accent = hubStyle.accent ?? G.accent;
+  const radius = hubStyle.radius ?? 14;
+  return (
+    <div
+      style={{
+        width: 820,
+        height: 520,
+        background: panelColor,
+        borderRadius: radius,
+        padding: '26px 30px',
+        boxSizing: 'border-box',
+        fontFamily: FONT,
+        boxShadow: `0 0 ${24 + glow * 60}px rgba(211,146,60,${0.18 + glow * 0.3}), 0 0 ${70 + glow * 70}px rgba(211,146,60,${0.12 + glow * 0.2})`,
+        display: 'flex',
+        gap: 26,
+        overflow: 'hidden',
+      }}
+    >
+      <div style={{ flex: 2 }}>
+        <div style={{ fontSize: 27, fontWeight: 600, color: G.ink }}>{hubTitle}</div>
+        <div style={{ display: 'flex', gap: 16, marginTop: 12 }}>
+          {['All', 'Tasks', 'Docs', 'Whiteboards', 'Dashboards', 'Files', 'Chat', 'People'].map((t, i) => (
+            <div key={t} style={{ fontSize: 12, color: i === 0 ? accent : G.mid, fontWeight: i === 0 ? 700 : 400 }}>
+              {t}
+            </div>
+          ))}
+        </div>
+        <div style={{ fontSize: 12, color: G.mid, marginTop: 14 }}>Recent</div>
+        {rows.map((it, i) => (
+          <div key={i} style={{ display: 'flex', gap: 11, alignItems: 'center', marginTop: 13.5 }}>
+            <div style={{ width: 22, height: 22, borderRadius: 6, background: it.color ?? accent, opacity: 0.85 }} />
+            <div>
+              <div style={{ fontSize: 13.5, fontWeight: 600, color: G.ink }}>{it.title}</div>
+              <div style={{ fontSize: 11, color: G.mid, marginTop: 1 }}>{it.sub}</div>
+            </div>
           </div>
         ))}
       </div>
-      <div style={{ fontSize: 12, color: '#8b7355', marginTop: 14 }}>Recent</div>
-      {LIST.map((it, i) => (
-        <div key={i} style={{ display: 'flex', gap: 11, alignItems: 'center', marginTop: 13.5 }}>
-          <div style={{ width: 22, height: 22, borderRadius: 6, background: it.icon, opacity: 0.85 }} />
-          <div>
-            <div style={{ fontSize: 13.5, fontWeight: 600, color: '#3d3022' }}>{it.title}</div>
-            <div style={{ fontSize: 11, color: '#8b7355', marginTop: 1 }}>{it.sub}</div>
-          </div>
+      <div style={{ flex: 1, borderLeft: `1px solid ${G.line}`, paddingLeft: 22 }}>
+        <div
+          style={{
+            height: 30,
+            width: 168,
+            border: `1.5px solid ${G.bar}`,
+            borderRadius: 8,
+            marginTop: 4,
+            fontSize: 12,
+            color: G.mid,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          + Add Location Filter
         </div>
-      ))}
-    </div>
-    <div style={{ flex: 1, borderLeft: '1px solid #d9d3c7', paddingLeft: 22 }}>
-      <div
-        style={{
-          height: 30,
-          width: 168,
-          border: '1.5px solid #b8ae9e',
-          borderRadius: 8,
-          marginTop: 4,
-          fontSize: 12,
-          color: '#8b7355',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        + Add Location Filter
+        <div style={{ fontSize: 10.5, color: G.mid, marginTop: 24, letterSpacing: 1 }}>QUICK FILTERS</div>
+        {['Assigned to Me', 'Created by Me'].map((t) => (
+          <div key={t} style={{ fontSize: 13.5, color: G.ink, marginTop: 11 }}>{t}</div>
+        ))}
+        <div style={{ fontSize: 10.5, color: G.mid, marginTop: 24, letterSpacing: 1 }}>TASK FILTERS</div>
+        {['Open', 'Closed', 'Archived'].map((t) => (
+          <div key={t} style={{ fontSize: 13.5, color: G.ink, marginTop: 11 }}>{t}</div>
+        ))}
       </div>
-      <div style={{ fontSize: 10.5, color: '#8b7355', marginTop: 24, letterSpacing: 1 }}>QUICK FILTERS</div>
-      {['Assigned to Me', 'Created by Me'].map((t) => (
-        <div key={t} style={{ fontSize: 13.5, color: '#3d3022', marginTop: 11 }}>{t}</div>
-      ))}
-      <div style={{ fontSize: 10.5, color: '#8b7355', marginTop: 24, letterSpacing: 1 }}>TASK FILTERS</div>
-      {['Open', 'Closed', 'Archived'].map((t) => (
-        <div key={t} style={{ fontSize: 13.5, color: '#3d3022', marginTop: 11 }}>{t}</div>
-      ))}
     </div>
-  </div>
-);
+  );
+};
 
 // ---------- 翻转前的旧页面（正面）：另一张页面，翻面后才得到中枢页 ----------
-const FrontPanel: React.FC<{ glow: number }> = ({ glow }) => (
+const FrontPanel: React.FC<{ glow: number; frontTitle: string }> = ({ glow, frontTitle }) => (
   <div
     style={{
       width: 820,
       height: 520,
-      background: '#fefcf8',
+      background: G.card,
       borderRadius: 14,
       padding: '30px 34px',
       boxSizing: 'border-box',
       fontFamily: FONT,
-      boxShadow: `0 0 ${40 + glow * 110}px rgba(255,255,255,${0.3 + glow * 0.55})`,
+      boxShadow: `0 0 ${24 + glow * 55}px rgba(211,146,60,${0.15 + glow * 0.28})`,
       overflow: 'hidden',
     }}
   >
     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
       <div style={{ width: 26, height: 26, borderRadius: 7, background: '#4a9fd8', opacity: 0.9 }} />
-      <div style={{ fontSize: 26, fontWeight: 600, color: '#3d3022' }}>Q3 Enterprise Deal</div>
+      <div style={{ fontSize: 26, fontWeight: 600, color: G.ink }}>{frontTitle}</div>
     </div>
     <div style={{ display: 'flex', gap: 14, marginTop: 10 }}>
       {['Revenue', 'Pipeline', 'Q3 Quota'].map((t) => (
@@ -218,11 +249,11 @@ const Tile: React.FC<{ kind: string; on: number }> = ({ kind, on }) => {
         width: 112,
         height: 112,
         borderRadius: 26,
-        background: '#fefcf8',
+        background: G.card,
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        boxShadow: `0 0 ${16 + on * 46}px rgba(255,255,255,${0.2 + on * 0.55})`,
+        boxShadow: `0 0 ${8 + on * 22}px rgba(211,146,60,${0.15 + on * 0.35})`,
         transform: `scale(${0.9 + on * 0.1})`,
       }}
     >
@@ -248,12 +279,20 @@ const RECTS = Array.from({ length: 9 }, (_, i) => ({
   y: [255, 355, 545, 850, 935, 985, 830, 555, 760][i],
   w: 90 + NOISE[i * 3] * 160,
   h: 60 + NOISE[i * 3 + 1] * 70,
-  hue: [265, 285, 300, 255, 275, 210, 320, 240, 40][i],
+  hue: [42, 38, 45, 40, 36, 30, 48, 34, 42][i],
   ph: NOISE[i * 3 + 2] * Math.PI * 2,
 }));
 
-export const IntegrationHubMap: React.FC = () => {
+export const IntegrationHubMap: React.FC<IntegrationHubMapProps> = ({
+  frontTitle = 'Q3 Enterprise Deal',
+  hubTitle = 'Enterprise MQLs',
+  rows = DEFAULT_ROWS,
+  icons = ['figma', 'github', 'salesforce', 'gdrive', 'dropbox'],
+  hubStyle = {},
+}) => {
   const frame = useCurrentFrame();
+  const activePipes = PIPES.filter((p) => icons.includes(p.kind));
+  const activeCount = activePipes.length;
 
   // --- 相机/面板轨迹：近景正视旧页 → 整体翻转 180°（翻到背面=新页）+ 拉远落定 ---
   const zoom = interpolate(frame, [0, 14, 58, 96], [2.05, 1.95, 1.1, 1.0], {
@@ -279,14 +318,14 @@ export const IntegrationHubMap: React.FC = () => {
 
   // v6：用户意见"中间不需要长时间的光晕，翻到中间闪一下就行"——
   // 长光晕平台删除，改为 90° 侧棱时刻（~f21）2 帧脉冲亮闪即回落
-  const bloom = interpolate(frame, [19, 21, 23, 27], [0, 1, 0.25, 0], {
+  const bloom = interpolate(frame, [19, 21, 23, 27], [0, 0.55, 0.15, 0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
   const noise = NOISE[Math.min(frame, NOISE.length - 1)];
 
   // 全连通后呼吸
-  const allOn = Math.max(...PIPES.map((p) => p.tPipe)) + GROW;
+  const allOn = Math.max(...activePipes.map((p) => p.tPipe)) + GROW;
   const breathe = frame > allOn ? 0.5 + 0.5 * Math.sin((frame - allOn) * 0.16) : 0;
   const panelGlow = bloom * 1.1 + breathe * 0.2;
 
@@ -294,12 +333,11 @@ export const IntegrationHubMap: React.FC = () => {
   const mapIn = interpolate(frame, [34, 60], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
 
   return (
-    <AbsoluteFill style={{ background: '#2c2416' }}>
-      {/* 暗紫底噪 */}
+    <AbsoluteFill style={{ background: G.bg }}>
+      {/* 淡琥珀光晕 */}
       <AbsoluteFill
         style={{
-          background:
-            'radial-gradient(ellipse at 50% 50%, rgba(90,50,140,0.25), transparent 62%), radial-gradient(ellipse at 18% 78%, rgba(140,50,120,0.12), transparent 50%)',
+          background: 'radial-gradient(ellipse at 50% 50%, rgba(211,146,60,0.10), transparent 62%)',
         }}
       />
 
@@ -321,8 +359,8 @@ export const IntegrationHubMap: React.FC = () => {
               width: r.w,
               height: r.h,
               borderRadius: 12,
-              border: `2.5px solid hsla(${r.hue} 90% 70% / ${0.75 * on * flick * settle})`,
-              boxShadow: `0 0 18px hsla(${r.hue} 90% 65% / ${0.55 * on * flick * settle}), inset 0 0 14px hsla(${r.hue} 90% 65% / ${0.3 * on * flick * settle})`,
+              border: `2.5px solid hsla(${r.hue} 60% 55% / ${0.5 * on * flick * settle})`,
+              boxShadow: `0 0 12px hsla(${r.hue} 60% 50% / ${0.28 * on * flick * settle}), inset 0 0 8px hsla(${r.hue} 60% 50% / ${0.15 * on * flick * settle})`,
             }}
           />
         );
@@ -333,31 +371,31 @@ export const IntegrationHubMap: React.FC = () => {
         <defs>
           {/* 每条管一个 userSpaceOnUse 渐变（沿管起终点），彩虹沿管线方向铺开。
               objectBoundingBox 在纯水平/垂直线上宽或高为 0 会禁用 paint，必须用户坐标。 */}
-          {PIPES.map((p, i) => {
+          {activePipes.map((p, i) => {
             const nums = p.path.match(/-?[\d.]+/g)!.map(Number);
             const [x1, y1] = [nums[0], nums[1]];
             const [x2, y2] = [nums[nums.length - 2], nums[nums.length - 1]];
             return (
               <linearGradient key={i} id={`rainbow-${i}`} gradientUnits="userSpaceOnUse" x1={x1} y1={y1} x2={x2} y2={y2}>
-                <stop offset="0%" stopColor="#ffe14d" />
-                <stop offset="28%" stopColor="#ff8a5a" />
-                <stop offset="52%" stopColor="#ff5ad0" />
-                <stop offset="76%" stopColor="#b46bff" />
-                <stop offset="100%" stopColor="#5ad0ff" />
+                <stop offset="0%" stopColor="#f0b06a" />
+                <stop offset="28%" stopColor="#d3923c" />
+                <stop offset="52%" stopColor="#c47f2e" />
+                <stop offset="76%" stopColor="#a86a24" />
+                <stop offset="100%" stopColor="#8b5a1e" />
               </linearGradient>
             );
           })}
           {/* userSpaceOnUse：纯水平/垂直直线管的 bbox 为零，百分比滤镜区域会
               坍缩成 0 导致整条管不渲染（github/salesforce/dropbox 三管消失） */}
           <filter id="pipeGlow" filterUnits="userSpaceOnUse" x="0" y="0" width="1920" height="1080">
-            <feGaussianBlur stdDeviation="8" result="b" />
+            <feGaussianBlur stdDeviation="4" result="b" />
             <feMerge>
               <feMergeNode in="b" />
               <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
         </defs>
-        {PIPES.map((p, i) => {
+        {activePipes.map((p, i) => {
           const grow = interpolate(frame, [p.tPipe, p.tPipe + GROW], [0, 1], {
             extrapolateLeft: 'clamp',
             extrapolateRight: 'clamp',
@@ -470,7 +508,7 @@ export const IntegrationHubMap: React.FC = () => {
               backfaceVisibility: 'hidden',
             }}
           >
-            <FrontPanel glow={panelGlow} />
+            <FrontPanel glow={panelGlow} frontTitle={frontTitle} />
           </div>
           {/* 背面：翻正后得到的新中枢页（预转 180° 使翻完时朝向镜头且不镜像） */}
           <div
@@ -481,7 +519,7 @@ export const IntegrationHubMap: React.FC = () => {
               transform: 'rotateY(180deg)',
             }}
           >
-            <HubPanel glow={panelGlow} />
+            <HubPanel glow={panelGlow} hubTitle={hubTitle} rows={rows} hubStyle={hubStyle} />
           </div>
           {/* 面板过曝罩：爆发期盖白 */}
           <div
@@ -489,7 +527,7 @@ export const IntegrationHubMap: React.FC = () => {
               position: 'absolute',
               inset: -6,
               borderRadius: 18,
-              background: '#fefcf8',
+              background: G.card,
               opacity: Math.min(0.96, bloom * 1.05),
               filter: 'blur(5px)',
               pointerEvents: 'none',
@@ -511,9 +549,9 @@ export const IntegrationHubMap: React.FC = () => {
               width: 1100,
               height: 900,
               background:
-                'radial-gradient(closest-side, rgba(255,255,255,0.98), rgba(255,235,255,0.75) 42%, rgba(255,120,230,0.4) 68%, transparent 88%)',
+                'radial-gradient(closest-side, rgba(255,252,246,0.95), rgba(248,238,220,0.65) 42%, rgba(211,146,60,0.3) 68%, transparent 88%)',
               filter: 'blur(26px)',
-              opacity: Math.min(1, bloom * (0.94 + 0.06 * noise)),
+              opacity: Math.min(0.7, bloom * (0.5 + 0.05 * noise)),
             }}
           />
           <div
@@ -523,9 +561,9 @@ export const IntegrationHubMap: React.FC = () => {
               top: 150,
               width: 700,
               height: 620,
-              background: 'radial-gradient(closest-side, rgba(255,90,208,0.85), rgba(200,70,255,0.4) 60%, transparent 85%)',
+              background: 'radial-gradient(closest-side, rgba(211,146,60,0.7), rgba(184,174,158,0.25) 60%, transparent 85%)',
               filter: 'blur(34px)',
-              opacity: bloom * 0.9,
+              opacity: bloom * 0.45,
             }}
           />
           <div
@@ -535,9 +573,9 @@ export const IntegrationHubMap: React.FC = () => {
               top: 480,
               width: 620,
               height: 520,
-              background: 'radial-gradient(closest-side, rgba(140,210,255,0.8), rgba(90,120,255,0.35) 60%, transparent 85%)',
+              background: 'radial-gradient(closest-side, rgba(211,146,60,0.6), rgba(184,174,158,0.2) 60%, transparent 85%)',
               filter: 'blur(30px)',
-              opacity: bloom * 0.85,
+              opacity: bloom * 0.4,
             }}
           />
           {/* 横向紫白光条（S2 左侧光痕） */}
@@ -549,9 +587,9 @@ export const IntegrationHubMap: React.FC = () => {
               width: 420,
               height: 46,
               borderRadius: 23,
-              background: 'linear-gradient(90deg, rgba(255,255,255,0.95), rgba(170,90,255,0.8), transparent)',
+              background: 'linear-gradient(90deg, rgba(255,252,246,0.9), rgba(211,146,60,0.7), transparent)',
               filter: 'blur(14px)',
-              opacity: interpolate(frame, [20, 34, 70, 92], [0, 0.9, 0.5, 0], {
+              opacity: interpolate(frame, [20, 34, 70, 92], [0, 0.5, 0.3, 0], {
                 extrapolateLeft: 'clamp',
                 extrapolateRight: 'clamp',
               }),
