@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 展开
+// props: card（残像卡片内容：标题 + 数值）
 // === 时间特性 ===
 // 刚性（不可压缩）: 刚性:过冲27f
 // 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
@@ -15,7 +16,7 @@
 // 35–38 分身延迟收缩至 0 合拢进本体 + opacity 归零 → 37–43 过冲回弹 → 43–130 全静止。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, Card, TitleBlock } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
 
 const X0 = 240; // 左槽卡片左边缘
 const X1 = 1140; // 右槽卡片左边缘（横移 900px）
@@ -51,7 +52,39 @@ const Slot: React.FC<{ x: number }> = ({ x }) => (
   />
 );
 
-export const SmearMultiples: React.FC = () => {
+const SmearCard: React.FC<{ label: string; value: string }> = ({ label, value }) => (
+  <div
+    style={{
+      width: 480,
+      height: 320,
+      background: G.card,
+      border: `2px solid ${G.border}`,
+      borderRadius: 16,
+      padding: 28,
+      boxSizing: 'border-box',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      gap: 14,
+      boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
+    }}
+  >
+    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 34, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
+      {label}
+    </div>
+    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 56, fontWeight: 800, color: G.accent }}>
+      {value}
+    </div>
+  </div>
+);
+
+export interface SmearMultiplesProps {
+  card?: { label: string; value: string };
+}
+
+export const SmearMultiples: React.FC<SmearMultiplesProps> = ({
+  card = { label: '指标一', value: '+18%' },
+}) => {
   const frame = useCurrentFrame();
   const bodyX = posAt(frame);
   // 本体速度 = 相邻帧位置差；>25px/f 才渲染分身
@@ -72,9 +105,6 @@ export const SmearMultiples: React.FC = () => {
 
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', left: 120, top: 96 }}>
-        <TitleBlock text="SMEAR MULTIPLES" size={54} />
-      </div>
       <Slot x={X0} />
       <Slot x={X1} />
       {/* 4 个分身：第 k 个取 frame - k*2 帧时刻的位置；合拢期延迟×(1-cv) 收缩到 0 */}
@@ -85,12 +115,12 @@ export const SmearMultiples: React.FC = () => {
         if (op <= 0.001) return null;
         return (
           <div key={k} style={{ position: 'absolute', left: gx, top: Y, opacity: op }}>
-            <Card w={480} h={320} seed={5} />
+            <SmearCard label={card.label} value={card.value} />
           </div>
         );
       })}
       <div style={{ position: 'absolute', left: bodyX, top: Y }}>
-        <Card w={480} h={320} seed={5} />
+        <SmearCard label={card.label} value={card.value} />
       </div>
     </div>
   );
