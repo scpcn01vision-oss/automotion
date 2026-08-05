@@ -18,6 +18,7 @@
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
 
 const SCROLL_START = 12;
 const BRAKE = 59;
@@ -59,7 +60,7 @@ const Row: React.FC<{ i: number; highlight: number }> = ({ i, highlight }) => (
       left: 0,
       width: LIST_W,
       height: ROW_H,
-      background: highlight > 0 ? '#ffffff' : G.card,
+      background: highlight > 0 ? G.card : G.card,
       border: `${highlight > 0 ? 3 : 2}px solid ${highlight > 0 ? G.ink : G.border}`,
       borderRadius: 14,
       display: 'flex',
@@ -165,7 +166,7 @@ export const BrakeReticleLock: React.FC = () => {
             padding: '12px 26px',
             borderRadius: 27,
             background: G.ink,
-            color: '#ffffff',
+            color: G.card,
             fontFamily: 'Helvetica, Arial, sans-serif',
             fontWeight: 800,
             fontSize: 26,
