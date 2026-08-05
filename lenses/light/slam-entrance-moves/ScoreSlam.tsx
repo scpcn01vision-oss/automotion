@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 钩子,宣告
+// props: value（KPI 大数字）、scene（背景内容承载）
 // === 时间特性 ===
 // 刚性（不可压缩）: 刚性:impact 20f,score 14f
 // 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
@@ -17,7 +18,8 @@
 // → 30–135 全静止（≥45f，无逐帧噪声层）。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, FakeDashboard, TitleBlock } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 // 库规伪随机
 const h = (n: number) => {
@@ -31,7 +33,22 @@ const CY = 540;
 const CARD_W = 460;
 const CARD_H = 260;
 
-export const ScoreSlam: React.FC = () => {
+export interface ScoreSlamProps {
+  value?: string;
+  scene?: SceneContentData;
+}
+
+export const ScoreSlam: React.FC<ScoreSlamProps> = ({
+  value = '42',
+  scene = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+    ],
+  },
+}) => {
   const frame = useCurrentFrame();
 
   // —— 卡片砸落：8–14 加速下砸到 0.97（压缩过冲），14–22 回弹到 1 ——
@@ -128,12 +145,9 @@ export const ScoreSlam: React.FC = () => {
             transformOrigin: '50% 50%',
           }}
         >
-          <FakeDashboard variant="B" />
+          <SceneContent content={scene} />
         </div>
 
-        <div style={{ position: 'absolute', left: 120, top: 96 }}>
-          <TitleBlock text="SCORE SLAM" size={54} />
-        </div>
 
         {/* ② 尘点飞散 */}
         {dustOn &&
@@ -213,7 +227,7 @@ export const ScoreSlam: React.FC = () => {
                 lineHeight: 1,
               }}
             >
-              +247%
+              {value}
             </div>
             <div
               style={{
