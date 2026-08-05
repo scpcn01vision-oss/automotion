@@ -14,7 +14,7 @@
 // 全部落定后整体加深脉冲收束。收尾真静止 ≥40f。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, Card, TitleBlock } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
 
 const CARD_W = 280;
 const CARD_H = 170;
@@ -92,7 +92,28 @@ const FlipCard: React.FC<{ i: number; frame: number }> = ({ i, frame }) => {
         zIndex: i,
       }}
     >
-      <Card w={CARD_W} h={CARD_H} seed={i + 1} />
+      <div
+        style={{
+          width: CARD_W,
+          height: CARD_H,
+          background: G.card,
+          border: `2px solid ${G.border}`,
+          borderRadius: 12,
+          boxSizing: 'border-box',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 8,
+        }}
+      >
+        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 20, fontWeight: 800, color: G.ink }}>
+          指标 {i + 1}
+        </div>
+        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 28, fontWeight: 800, color: G.accent }}>
+          +{(i + 1) * 7}%
+        </div>
+      </div>
     </div>
   );
 };
@@ -119,9 +140,6 @@ export const FlipGridReflow: React.FC = () => {
         ...(pulsing ? { filter: `brightness(${bright})` } : {}),
       }}
     >
-      <div style={{ position: 'absolute', left: 70, top: 56 }}>
-        <TitleBlock text="FLIP GRID REFLOW" size={44} />
-      </div>
       {Array.from({ length: N }).map((_, i) => (
         <FlipCard key={i} i={i} frame={frame} />
       ))}
