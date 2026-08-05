@@ -14,16 +14,67 @@
 // 同时无遮罩全屏层淡入接管，dashboard 1.15→1.0 归位；130–150f 全屏静止收尾。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { FakeDashboard, G } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
 
-const MASK_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080"><text x="960" y="666" font-family="Helvetica, Arial, sans-serif" font-size="360" font-weight="900" letter-spacing="-8" text-anchor="middle" fill="white">SCALE</text></svg>`;
-const MASK_URL = `url("data:image/svg+xml,${encodeURIComponent(MASK_SVG)}")`;
-// mask 放大原点：取字母 L 的竖笔位置（约 61.5% 处），保证放大时原点落在实心笔画内
-const ORIGIN = '61.5% 50%';
+// mask 放大原点：内容通用时取画面中心（字母 L 竖笔位置仅为演示字形优化）
+const ORIGIN = '50% 50%';
 
-export const TextAsMask: React.FC = () => {
+// 遮罩内中性纹理：主题词重复网格 + 中央大字（内容即词本身，替代演示占位）
+const MaskTexture: React.FC<{ word: string; driftX: number; scale: number }> = ({ word, driftX, scale }) => {
+  const CELL_W = 480;
+  const CELL_H = 270;
+  const cols = 4;
+  const rows = 4;
+  return (
+    <div style={{ width: 1920, height: 1080, background: G.bg, overflow: 'hidden' }}>
+      <div
+        style={{
+          position: 'absolute',
+          inset: -200,
+          transform: `translateX(${driftX}px) scale(${scale})`,
+          transformOrigin: '50% 50%',
+          display: 'grid',
+          gridTemplateColumns: `repeat(${cols}, ${CELL_W}px)`,
+          gridTemplateRows: `repeat(${rows}, ${CELL_H}px)`,
+        }}
+      >
+        {Array.from({ length: cols * rows }).map((_, i) => (
+          <div
+            key={i}
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 96,
+              letterSpacing: 4, color: i % 2 === 0 ? G.mid : G.bar,
+            }}
+          >
+            {word}
+          </div>
+        ))}
+      </div>
+      <div
+        style={{
+          position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)',
+          fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 900, fontSize: 220,
+          letterSpacing: -6, color: G.ink, textShadow: '0 6px 24px rgba(211,146,60,0.35)',
+        }}
+      >
+        {word}
+      </div>
+    </div>
+  );
+};
+
+export interface TextAsMaskProps {
+  text?: string;
+}
+
+export const TextAsMask: React.FC<TextAsMaskProps> = ({ text = 'SCALE' }) => {
   const f = useCurrentFrame();
   const clamp = { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' } as const;
+  // 字号自适应：超粗大字按字符数缩放，上限 360
+  const FONT = Math.min(360, Math.floor(1800 / Math.max(text.length, 1)));
+  const MASK_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080"><text x="960" y="666" font-family="Helvetica, Arial, sans-serif" font-size="${FONT}" font-weight="900" letter-spacing="-8" text-anchor="middle" fill="white">${text}</text></svg>`;
+  const MASK_URL = `url("data:image/svg+xml,${encodeURIComponent(MASK_SVG)}")`;
 
   // 结尾撤场进度：100–130f 单段 bezier
   const endT = interpolate(f, [100, 130], [0, 1], {
@@ -40,9 +91,6 @@ export const TextAsMask: React.FC = () => {
   const maskS = interpolate(endT, [0, 1], [1, 26]);
   // 无遮罩全屏层淡入，保证接管彻底
   const cover = interpolate(endT, [0.25, 0.9], [0, 1], clamp);
-  // 底部小注释：撤场时淡出
-  const caption = interpolate(f, [100, 114], [1, 0], clamp);
-
   const dashMotion: React.CSSProperties = {
     position: 'absolute',
     inset: 0,
@@ -69,7 +117,7 @@ export const TextAsMask: React.FC = () => {
       >
         <div style={{ position: 'absolute', inset: 0, transform: `scale(${1 / maskS})`, transformOrigin: ORIGIN }}>
           <div style={dashMotion}>
-            <FakeDashboard variant="A" />
+            <MaskTexture word={text} driftX={dx} scale={dashS} />
           </div>
         </div>
       </div>
@@ -77,26 +125,8 @@ export const TextAsMask: React.FC = () => {
       {/* 接管层：同一运动变换的全屏 dashboard，撤场时淡入到 1 */}
       <div style={{ position: 'absolute', inset: 0, opacity: cover }}>
         <div style={dashMotion}>
-          <FakeDashboard variant="A" />
+          <MaskTexture word={text} driftX={dx} scale={dashS} />
         </div>
-      </div>
-
-      {/* 底部小注释 */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: 90,
-          width: '100%',
-          textAlign: 'center',
-          fontFamily: 'Helvetica, Arial, sans-serif',
-          fontWeight: 700,
-          fontSize: 30,
-          letterSpacing: 10,
-          color: G.mid,
-          opacity: caption,
-        }}
-      >
-        TEXT AS MASK
       </div>
     </div>
   );
