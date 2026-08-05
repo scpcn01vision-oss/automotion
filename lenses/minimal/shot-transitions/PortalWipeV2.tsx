@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 转折,承接
+// props: sceneA / sceneB（穿窗前旧景/窗内新景内容承载）、cards（近景卡内容）
 // === 时间特性 ===
 // 刚性（不可压缩）: 刚性:maskwipe 120f,whippan 120f
 // 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
@@ -9,7 +10,8 @@
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
-import { FakeDashboard, Card, TitleBlock, G } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 // portal-wipe 穿窗入景·改〔批次 1 重做〕
 // 批次 1 弱点：3 层 7 卡散开幅度大(0.85)+blur，穿窗后画面碎读不清。
@@ -22,7 +24,59 @@ import { FakeDashboard, Card, TitleBlock, G } from '../../_fixtures/Fixtures';
 //   25–65  窗放大 40f：卡放大成全屏窗，窗内新场景随之显形
 //   65–73  缓停 8f：近/远两层视差余势收干（Easing.out 自然归零）
 //   73–150 静止 hold：新场景完整可读
-export const PortalWipeV2: React.FC = () => {
+export interface PortalWipeV2Props {
+  sceneA?: SceneContentData;
+  sceneB?: SceneContentData;
+  cards?: { label: string; value: string }[];
+}
+
+const MiniCard: React.FC<{ w: number; h: number; label: string; value: string }> = ({ w, h, label, value }) => (
+  <div
+    style={{
+      width: w,
+      height: h,
+      background: G.card,
+      border: `2px solid ${G.border}`,
+      borderRadius: 14,
+      padding: 20,
+      boxSizing: 'border-box',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      gap: 10,
+    }}
+  >
+    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 22, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
+      {label}
+    </div>
+    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 30, fontWeight: 800, color: G.accent }}>
+      {value}
+    </div>
+  </div>
+);
+
+export const PortalWipeV2: React.FC<PortalWipeV2Props> = ({
+  sceneA = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+    ],
+  },
+  sceneB = {
+    title: '状态',
+    type: 'rows',
+    rows: [
+      { label: '节点', value: '4/4' },
+      { label: '可用性', value: '99.98%' },
+    ],
+  },
+  cards = [
+    { label: '指标一', value: '+18%' },
+    { label: '指标二', value: '2.1×' },
+  ],
+}) => {
   const frame = useCurrentFrame();
 
   // ── 窗放大：40f，先慢后快再缓收 ──
@@ -50,8 +104,8 @@ export const PortalWipeV2: React.FC = () => {
 
   return (
     <AbsoluteFill style={{ background: G.bg, overflow: 'hidden' }}>
-      {/* 旧场景：dashboard A */}
-      <FakeDashboard variant="A" />
+      {/* 旧场景：sceneA */}
+      <SceneContent content={sceneA} />
 
       {/* 窗（放大的卡）——内藏新场景 */}
       <div
@@ -75,7 +129,7 @@ export const PortalWipeV2: React.FC = () => {
             left: '50%',
             top: '50%',
             transform: `translate(-50%, -50%) scale(${innerScale})`,
-            background: '#e4e4e2',
+            background: G.panel,
           }}
         >
           {/* 远景层（系数 0.08，不加 blur）：新场景整页 dashboard 缩略 */}
@@ -102,10 +156,12 @@ export const PortalWipeV2: React.FC = () => {
                 boxShadow: '0 8px 32px rgba(0,0,0,0.10)',
               }}
             >
-              <FakeDashboard variant="B" />
+              <SceneContent content={sceneB} />
             </div>
             <div style={{ position: 'absolute', left: 250, top: 100 }}>
-              <TitleBlock text="Scene B" size={64} />
+              <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 64, color: G.ink, letterSpacing: -1 }}>
+                {sceneB.title ?? 'Scene B'}
+              </div>
             </div>
           </div>
 
@@ -119,17 +175,17 @@ export const PortalWipeV2: React.FC = () => {
             }}
           >
             <div style={{ position: 'absolute', left: 150, top: 660 }}>
-              <Card w={380} h={250} seed={71} />
+              <MiniCard w={380} h={250} label={cards[0]?.label ?? ''} value={cards[0]?.value ?? ''} />
             </div>
             <div style={{ position: 'absolute', left: 1420, top: 160 }}>
-              <Card w={340} h={220} seed={72} />
+              <MiniCard w={340} h={220} label={cards[1]?.label ?? ''} value={cards[1]?.value ?? ''} />
             </div>
           </div>
         </div>
 
         {/* 卡正面：放大初期渐隐，露出窗内新场景 */}
         <div style={{ position: 'absolute', inset: 0, opacity: Math.max(0, 1 - t * 2.4) }}>
-          <Card w={c0.w} h={c0.h} seed={5} style={{ width: '100%', height: '100%' }} />
+          <MiniCard w={c0.w} h={c0.h} label={sceneA.title ?? ''} value={cards[0]?.value ?? ''} />
         </div>
       </div>
     </AbsoluteFill>
