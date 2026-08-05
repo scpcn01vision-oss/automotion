@@ -15,6 +15,7 @@
 // 错峰是巡礼镜的语法。其余全部保留：同款霓虹渐变框+灰面板+背景霓虹管
 // 框群；镜头视角 rotateY 从左侧(+38°) 连续弧线旋到右侧(-26°)。
 import React from 'react';
+import { G } from '../../_fixtures/Fixtures';
 import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
 
 const easeFall = Easing.bezier(0.5, 0.05, 0.6, 1); // 加速下落、末端软着陆
@@ -53,9 +54,9 @@ const mulberry32 = (a: number) => () => {
   return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
 };
 
-const ink = '#3d3022';
-const mid = '#8b7355';
-const line = '#d9d3c7';
+const ink = G.side;
+const mid = G.mid;
+const line = G.line;
 
 const PW = 1330;
 const PH = 900;
@@ -65,11 +66,11 @@ const FRAME_D = `M 0 ${PH / 2} L 0 0 L ${PW} 0 L ${PW} ${PH} L 0 ${PH} Z`;
 
 const Chip: React.FC<{ w: number }> = ({ w }) => (
   <div style={{
-    width: w, height: 74, background: '#fefcf8', border: `2px solid ${line}`,
+    width: w, height: 74, background: G.card, border: `2px solid ${line}`,
     borderRadius: 10, padding: '12px 14px', boxSizing: 'border-box',
     display: 'flex', flexDirection: 'column', gap: 9,
   }}>
-    <div style={{ height: 11, width: '70%', background: '#b8ae9e', borderRadius: 5 }} />
+    <div style={{ height: 11, width: '70%', background: G.bar, borderRadius: 5 }} />
     <div style={{ height: 9, width: '48%', background: line, borderRadius: 5 }} />
   </div>
 );
