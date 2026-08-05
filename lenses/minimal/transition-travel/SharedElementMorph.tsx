@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 承接
+// props: scene（背景内容承载）、card（共享元素卡内容，落点 = 画面中心）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
@@ -9,17 +10,15 @@
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
-import { FakeDashboard, Card, G } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 // shared-element-morph〔转场〕：全屏特写面板收缩、位移、长出圆角，
 // 严丝合缝飞落进 dashboard 网格里它所属的卡片槽位，落座带 3% 过冲。
 // 观众感觉是同一个物体被镜头送回原位（FLIP 共享元素转场）。
 //
-// 目标槽位 = FakeDashboard A 中列第二行那格（seed 5），按 fixtures 布局精确推算：
-//   侧栏 220 + 网格 padding 36 → 列宽 (1920-220-72-56)/3 = 524
-//   头部 72 + padding 36     → 行高 (1008-72-28)/2   = 454
-//   中列 x = 220+36+524+28 = 808；第二行 y = 72+36+454+28 = 590
-const SLOT = { x: 808, y: 590, w: 524, h: 454, r: 14, seed: 5 };
+// 目标槽位 = 画面中心
+const SLOT = { x: 960 - 262, y: 540 - 227, w: 524, h: 454, r: 14 };
 const FULL = { x: 0, y: 0, w: 1920, h: 1080, r: 0 };
 
 // 节拍：0–35 全屏特写 hold ｜ 35–60 morph 25f（bezier 0.4,0,0.2,1 → 1.03）
@@ -30,7 +29,23 @@ const SETTLE_END = 70;
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
-export const SharedElementMorph: React.FC = () => {
+export interface SharedElementMorphProps {
+  scene?: SceneContentData;
+  card?: { label: string; value: string };
+}
+
+export const SharedElementMorph: React.FC<SharedElementMorphProps> = ({
+  scene = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+      { label: '指标三', value: '96.4%' },
+    ],
+  },
+  card = { label: '指标', value: '+18%' },
+}) => {
   const frame = useCurrentFrame();
 
   // 位置/尺寸/圆角共用同一条进度曲线：25f 冲到 1.03，再 10f 弹回 1
@@ -72,7 +87,7 @@ export const SharedElementMorph: React.FC = () => {
   return (
     <AbsoluteFill style={{ background: G.bg, overflow: 'hidden' }}>
       <div style={{ opacity: bgOpacity }}>
-        <FakeDashboard variant="A" />
+        <SceneContent content={scene} />
       </div>
       {/* 共享元素：全屏特写 → 精确飞落进槽位 */}
       <div
@@ -97,12 +112,26 @@ export const SharedElementMorph: React.FC = () => {
             transformOrigin: 'top left',
           }}
         >
-          <Card
-            w={SLOT.w}
-            h={SLOT.h}
-            seed={SLOT.seed}
-            style={{ boxShadow: 'none', borderRadius: r / Math.max(contentScale, 0.0001) }}
-          />
+          <div
+            style={{
+              width: SLOT.w,
+              height: SLOT.h,
+              background: G.card,
+              borderRadius: r / Math.max(contentScale, 0.0001),
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 18,
+            }}
+          >
+            <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 44, fontWeight: 800, color: G.ink }}>
+              {card.label}
+            </div>
+            <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 64, fontWeight: 800, color: G.accent }}>
+              {card.value}
+            </div>
+          </div>
         </div>
       </div>
     </AbsoluteFill>
