@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 钩子,展开
+// props: scene（俯仰揭示的内容承载）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
@@ -12,13 +13,28 @@
 // 内容一排排涌入视野。out-cubic + 末端轻微过冲回正，落定真静止 ≥35f。
 import React from 'react';
 import { AbsoluteFill, interpolate, useCurrentFrame, Easing } from 'remotion';
-import { FakeDashboard, G } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 const HOLD = 25; // 俯角定格
 const MOVE = 43; // 主抬升
 // 过冲：-55° → +2.6° → -0.9° → 0°，全部动画在 f=76 结束（145-76=69f 真静止）
 
-export const TiltReveal: React.FC = () => {
+export interface TiltRevealProps {
+  scene?: SceneContentData;
+}
+
+export const TiltReveal: React.FC<TiltRevealProps> = ({
+  scene = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+      { label: '指标三', value: '96.4%' },
+    ],
+  },
+}) => {
   const f = useCurrentFrame();
 
   const rotX = interpolate(
@@ -56,7 +72,7 @@ export const TiltReveal: React.FC = () => {
             transform: `translateY(${ty}px) scale(${scale}) rotateX(${rotX}deg)`,
           }}
         >
-          <FakeDashboard variant="A" />
+          <SceneContent content={scene} />
         </div>
       </div>
     </AbsoluteFill>
