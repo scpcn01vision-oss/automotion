@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 宣告,举证
+// props: lines（两行词表：text + 填充帧区间）
 // === 时间特性 ===
 // 刚性（不可压缩）: 需 BGM 节拍驱动（无刚性帧）
 // 弹性（可伸缩）: 需按节拍对齐，不适用纯时长缩放
@@ -18,17 +19,6 @@ import { useCurrentFrame, interpolate } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 
 type Word = { text: string; start: number; end: number };
-
-const LINES: Word[][] = [
-  [
-    { text: 'SHIP', start: 20, end: 38 },
-    { text: 'FASTER', start: 42, end: 75 },
-  ],
-  [
-    { text: 'BREAK', start: 85, end: 103 },
-    { text: 'NOTHING', start: 107, end: 130 },
-  ],
-];
 
 const KaraokeWord: React.FC<{ word: Word; frame: number }> = ({ word, frame }) => {
   // 词内 linear 填充进度，clamp 保证读完保持
@@ -69,7 +59,22 @@ const KaraokeWord: React.FC<{ word: Word; frame: number }> = ({ word, frame }) =
   );
 };
 
-export const KaraokeFillSync: React.FC = () => {
+export interface KaraokeFillSyncProps {
+  lines?: Word[][];
+}
+
+export const KaraokeFillSync: React.FC<KaraokeFillSyncProps> = ({
+  lines = [
+    [
+      { text: 'READY', start: 20, end: 38 },
+      { text: 'GO', start: 42, end: 75 },
+    ],
+    [
+      { text: 'BUILD', start: 85, end: 103 },
+      { text: 'FAST', start: 107, end: 130 },
+    ],
+  ],
+}) => {
   const frame = useCurrentFrame();
   return (
     <div
@@ -90,7 +95,7 @@ export const KaraokeFillSync: React.FC = () => {
         lineHeight: 1.45,
       }}
     >
-      {LINES.map((words, li) => (
+      {lines.map((words, li) => (
         <div key={li} style={{ display: 'flex', gap: 48 }}>
           {words.map((w) => (
             <KaraokeWord key={w.text} word={w} frame={frame} />
