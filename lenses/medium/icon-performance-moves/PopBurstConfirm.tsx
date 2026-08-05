@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 宣告
+// props: label（确认标签文本）
 // === 时间特性 ===
 // 刚性（不可压缩）: 刚性:120f
 // 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
@@ -18,11 +19,17 @@ import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 
-const AMBER = '#b45309';
+const AMBER = G.accent;
 const POP = 27; // 释放帧
 const DUR = 120;
 
-export const PopBurstConfirm: React.FC = () => {
+export interface PopBurstConfirmProps {
+  label?: string;
+}
+
+export const PopBurstConfirm: React.FC<PopBurstConfirmProps> = ({
+  label = 'Deployed',
+}) => {
   const f = useCurrentFrame();
 
   // icon 缩放：蓄力→过冲→落回
@@ -155,7 +162,7 @@ export const PopBurstConfirm: React.FC = () => {
             padding: '16px 0',
             borderRadius: 40,
             background: G.ink,
-            color: '#ffffff',
+            color: G.card,
             textAlign: 'center',
             fontFamily: 'Helvetica, Arial, sans-serif',
             fontWeight: 800,
@@ -163,7 +170,7 @@ export const PopBurstConfirm: React.FC = () => {
             letterSpacing: 1,
           }}
         >
-          Deployed
+          {label}
         </div>
       )}
     </div>
