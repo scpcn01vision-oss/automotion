@@ -19,7 +19,7 @@ import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G, TitleBlock } from '../../_fixtures/Fixtures';
 
-const AMBER = '#b45309';
+const AMBER = G.accent;
 
 const CARD_W = 1060;
 const CARD_H = 600;
@@ -47,7 +47,13 @@ const VAL_END = MARK_END + 10; // f108：真值标签弹出
 
 const easeDraw = Easing.inOut(Easing.cubic);
 
-export const AxisRescaleShock: React.FC = () => {
+export interface AxisRescaleShockProps {
+  label?: string;
+}
+
+export const AxisRescaleShock: React.FC<AxisRescaleShockProps> = ({
+  label = 'RESCALE',
+}) => {
   const frame = useCurrentFrame();
 
   // 量程：0–100 → 0–400，重标 12f out-cubic
@@ -140,7 +146,7 @@ export const AxisRescaleShock: React.FC = () => {
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: 100, width: '100%', textAlign: 'center' }}>
-        <TitleBlock text="AXIS RESCALE SHOCK" size={72} />
+        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1 }}>{label}</div>
       </div>
 
       <div
