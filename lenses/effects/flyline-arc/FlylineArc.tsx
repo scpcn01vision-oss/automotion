@@ -15,7 +15,8 @@
 // 收尾真静止：全部动画在 f86 前结束，之后所有元素冻结。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { FakeDashboard } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 type Pt = { x: number; y: number };
 
@@ -133,7 +134,21 @@ const CardPulse: React.FC<{
   );
 };
 
-export const FlylineArc: React.FC = () => {
+export interface FlylineArcProps {
+  scene?: SceneContentData;
+}
+
+export const FlylineArc: React.FC<FlylineArcProps> = ({
+  scene = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+      { label: '指标三', value: '96.4%' },
+    ],
+  },
+}) => {
   const frame = useCurrentFrame();
 
   // 时间轴：线1 生长 10–32f → 卡RB脉冲 32–50f；线2 生长 46–68f → 卡TM脉冲 68–86f
@@ -142,10 +157,10 @@ export const FlylineArc: React.FC = () => {
   const L2 = { p0: { x: CARD_RB.cx, y: CARD_RB.cy }, p1: { x: 1760, y: 560 }, p2: { x: 1360, y: 150 }, p3: { x: CARD_TM.cx, y: CARD_TM.cy } };
 
   return (
-    <div style={{ width: 1920, height: 1080, position: 'relative', background: '#e0e0de' }}>
+    <div style={{ width: 1920, height: 1080, position: 'relative', background: G.panel }}>
       {/* 背景微暗化 0.92，常量、不动画 */}
       <div style={{ filter: 'brightness(0.92)' }}>
-        <FakeDashboard variant="A" />
+        <SceneContent content={scene} />
       </div>
       <svg
         width={1920} height={1080} viewBox="0 0 1920 1080"
