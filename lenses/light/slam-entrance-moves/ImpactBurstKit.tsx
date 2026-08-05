@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 钩子,宣告
+// props: cards（主卡 + 两张邻卡内容）
 // === 时间特性 ===
 // 刚性（不可压缩）: 刚性:impact 20f,score 14f
 // 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
@@ -17,7 +18,7 @@
 //   邻卡外推 30px + rotate ±3° 阻尼振荡弹回(40f 内钳到 0) → 63–140 全静止(77f)。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, Card, TitleBlock } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
 
 // 伪随机（帧确定）
 const h = (n: number): number => {
@@ -53,7 +54,43 @@ const pushEnv = (f: number): number => {
   return Math.cos(t * 0.5) * Math.exp(-t / 8);
 };
 
-export const ImpactBurstKit: React.FC = () => {
+export interface ImpactBurstKitProps {
+  cards?: { label: string; value: string }[];
+}
+
+const MiniCard: React.FC<{ w: number; h: number; label: string; value: string; glow?: boolean }> = ({ w, h, label, value, glow }) => (
+  <div
+    style={{
+      width: w,
+      height: h,
+      background: G.card,
+      border: `2px solid ${G.border}`,
+      borderRadius: 14,
+      padding: 20,
+      boxSizing: 'border-box',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      gap: 10,
+      boxShadow: glow ? '0 6px 18px rgba(0,0,0,0.16)' : undefined,
+    }}
+  >
+    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 22, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
+      {label}
+    </div>
+    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 30, fontWeight: 800, color: G.accent }}>
+      {value}
+    </div>
+  </div>
+);
+
+export const ImpactBurstKit: React.FC<ImpactBurstKitProps> = ({
+  cards = [
+    { label: '指标一', value: '+18%' },
+    { label: '指标二', value: '2.1×' },
+    { label: '指标三', value: '96.4%' },
+  ],
+}) => {
   const frame = useCurrentFrame();
 
   // ── 主卡砸落：14–20 帧 scale 1.8→1 / y -120→0，加速进场
@@ -108,7 +145,7 @@ export const ImpactBurstKit: React.FC = () => {
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', inset: 0, transform: `translate(${shakeX}px, ${shakeY}px)` }}>
         <div style={{ position: 'absolute', left: 120, top: 96 }}>
-          <TitleBlock text="IMPACT BURST KIT" size={54} />
+          {null}
         </div>
 
         {/* 左邻卡：被冲击波推开再弹回 */}
@@ -120,7 +157,7 @@ export const ImpactBurstKit: React.FC = () => {
             transform: `translateX(${-pushX}px) rotate(${-pushRot}deg)`,
           }}
         >
-          <Card w={CW} h={CH} seed={2} />
+          <MiniCard w={CW} h={CH} label={cards[0]?.label ?? ''} value={cards[0]?.value ?? ''} />
         </div>
 
         {/* 右邻卡 */}
@@ -132,7 +169,7 @@ export const ImpactBurstKit: React.FC = () => {
             transform: `translateX(${pushX}px) rotate(${pushRot}deg)`,
           }}
         >
-          <Card w={CW} h={CH} seed={4} />
+          <MiniCard w={CW} h={CH} label={cards[1]?.label ?? ''} value={cards[1]?.value ?? ''} />
         </div>
 
         {/* 主卡：砸落 + 落点压扁回弹 */}
@@ -145,7 +182,7 @@ export const ImpactBurstKit: React.FC = () => {
             transformOrigin: '50% 100%',
           }}
         >
-          <Card w={CW} h={CH} seed={7} style={{ boxShadow: '0 6px 18px rgba(0,0,0,0.16)' }} />
+          <MiniCard w={CW} h={CH} label={cards[2]?.label ?? ''} value={cards[2]?.value ?? ''} glow />
         </div>
 
         {/* ② 粒子迸发（画在卡之上） */}
