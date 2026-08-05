@@ -108,7 +108,7 @@ export const GridWaveFlip: React.FC = () => {
                     inset: 0,
                     backfaceVisibility: 'hidden',
                     WebkitBackfaceVisibility: 'hidden',
-                    background: '#c7c7c5',
+                    background: G.bar,
                     border: `2px solid ${G.bar}`,
                     borderRadius: 14,
                     boxSizing: 'border-box',
