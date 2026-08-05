@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 钩子,宣告
+// props: segments（笔画段坐标数组，默认内置 SHIP 16 段，可自定义字形）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
@@ -66,7 +67,13 @@ const WORD_W = ADV * 3 + K; // 980
 const OX = (1920 - WORD_W) / 2;
 const OY = (1080 - H) / 2 + 20;
 
-export const StrokeSegmentBuild: React.FC = () => {
+export interface StrokeSegmentBuildProps {
+  segments?: Seg[];
+}
+
+export const StrokeSegmentBuild: React.FC<StrokeSegmentBuildProps> = ({
+  segments = SEGS,
+}) => {
   const frame = useCurrentFrame();
 
   // 末段落位：整字脉冲 1 → 1.06 → 1（8f）
@@ -79,29 +86,15 @@ export const StrokeSegmentBuild: React.FC = () => {
 
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, overflow: 'hidden', position: 'relative' }}>
-      <div
-        style={{
-          position: 'absolute',
-          top: 110,
-          width: '100%',
-          textAlign: 'center',
-          fontFamily: 'Helvetica, Arial, sans-serif',
-          fontWeight: 800,
-          fontSize: 44,
-          color: G.panel,
-          letterSpacing: 2,
-        }}
-      >
-        STROKE SEGMENT BUILD
-      </div>
       <svg
         width={1920}
         height={1080}
         style={{ position: 'absolute', left: 0, top: 0, transform: `scale(${pulse})`, transformOrigin: '50% 55%' }}
       >
-        {SEGS.map((seg, i) => {
+        {segments.map((seg, i) => {
           const rank = ORDER.indexOf(i);
-          const start = FIRST + rank * STEP;
+          // 自定义段超出内置顺序表时按序号顺序点亮（不崩）
+          const start = rank >= 0 ? FIRST + rank * STEP : FIRST + i * STEP;
           if (frame < start) return null; // 未开始的段不渲染
           const t = interpolate(frame, [start, start + SEG_IN], [0, 1], {
             easing: Easing.out(Easing.cubic),
