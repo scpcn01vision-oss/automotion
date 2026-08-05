@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 承接
+// props: sceneA / sceneB（前后景内容承载 rows/image）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
@@ -16,7 +17,8 @@
 // 帧确定，无随机；笔头墨点 118f 起条件卸载（摘罩判例）。
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, Card, TitleBlock } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContentData } from '../../_system/scene-content';
 
 // ---- 世界几何（一条折线：进度条 + 横线 + 直角 + 矩形框）----
 // M 400,705 → 2600,705（进度 560 + 冲出 1640）→ 上 2600,375 → 右 3160,375
@@ -44,7 +46,65 @@ const tipAt = (drawn: number): [number, number] => {
   return [2600, 705];
 };
 
-export const LineCarryTransition: React.FC = () => {
+export interface LineCarryTransitionProps {
+  sceneA?: SceneContentData;
+  sceneB?: SceneContentData;
+}
+
+const SideScene: React.FC<{ content: SceneContentData; titleOnly?: boolean }> = ({ content, titleOnly }) => {
+  if (titleOnly) {
+    return (
+      <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 56, color: G.ink, letterSpacing: -1 }}>
+        {content.title ?? ''}
+      </div>
+    );
+  }
+  return (
+    <div
+      style={{
+        width: 560,
+        height: 330,
+        background: G.card,
+        border: `2px solid ${G.border}`,
+        borderRadius: 16,
+        padding: 24,
+        boxSizing: 'border-box',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        gap: 12,
+      }}
+    >
+      {(content.rows ?? []).map((r, i) => (
+        <div key={i} style={{ display: 'flex', alignItems: 'center', borderBottom: i < (content.rows ?? []).length - 1 ? `1px solid ${G.line}` : 'none', padding: '8px 0' }}>
+          <span style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 22, fontWeight: 600, color: G.ink, overflowWrap: 'break-word' }}>{r.label}</span>
+          <span style={{ marginLeft: 'auto', fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 24, fontWeight: 800, color: G.accent }}>{r.value}</span>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export const LineCarryTransition: React.FC<LineCarryTransitionProps> = ({
+  sceneA = {
+    title: 'Scene A',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+      { label: '指标三', value: '96.4%' },
+    ],
+  },
+  sceneB = {
+    title: 'Scene B',
+    type: 'rows',
+    rows: [
+      { label: '节点', value: '4/4' },
+      { label: '延迟', value: '42ms' },
+      { label: '可用性', value: '99.98%' },
+    ],
+  },
+}) => {
   const frame = useCurrentFrame();
 
   // 镜头：34–94f 左移 1920px，inOut cubic
@@ -106,9 +166,11 @@ export const LineCarryTransition: React.FC = () => {
 
         {/* 场景 A：标题 + 卡 + 进度条轨道（ink 填充即 path 本体） */}
         <div style={{ position: 'absolute', left: 400, top: 250 }}>
-          <TitleBlock text="Scene A" size={56} />
+          <SideScene content={sceneA} titleOnly />
         </div>
-        <Card w={560} h={330} seed={2} style={{ position: 'absolute', left: 400, top: 350 }} />
+        <div style={{ position: 'absolute', left: 400, top: 350 }}>
+          <SideScene content={sceneA} />
+        </div>
         <div style={{ position: 'absolute', left: 400, top: 702, width: 560, height: 6, borderRadius: 3, background: G.line }} />
 
         {/* 一条线全程 evolve：dasharray/dashoffset 生长 */}
@@ -142,17 +204,10 @@ export const LineCarryTransition: React.FC = () => {
             opacity: contentOpacity,
           }}
         >
-          <div style={{ height: 18, width: '58%', background: G.bar, borderRadius: 9 }} />
-          <div style={{ height: 11, width: '86%', background: G.line, borderRadius: 5 }} />
-          <div style={{ height: 11, width: '72%', background: G.line, borderRadius: 5 }} />
-          <div style={{ height: 11, width: '64%', background: G.line, borderRadius: 5 }} />
-          <div style={{ marginTop: 'auto', display: 'flex', gap: 10, alignItems: 'center' }}>
-            <div style={{ width: 30, height: 30, borderRadius: 15, background: G.mid }} />
-            <div style={{ height: 11, width: 90, background: G.line, borderRadius: 5 }} />
-          </div>
+          <SideScene content={sceneB} />
         </div>
         <div style={{ position: 'absolute', left: 2600, top: 275, opacity: contentOpacity }}>
-          <TitleBlock text="Scene B" size={56} />
+          <SideScene content={sceneB} titleOnly />
         </div>
       </div>
     </AbsoluteFill>
