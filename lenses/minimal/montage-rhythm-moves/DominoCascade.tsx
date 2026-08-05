@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 展开,举证
+// props: title（砸落标题）、cards（多米诺卡片内容数组，数量自适应）
 // === 时间特性 ===
 // 刚性（不可压缩）: 刚性:每卡12f
 // 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
@@ -16,7 +17,7 @@
 // ③ 帧 78–100 左侧深色侧边栏被横向撞滑进场，Easing.out(cubic) 带过冲回弹；帧 100–150 全体真静止。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, Card, TitleBlock } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
 
 const easeInCubic = Easing.in(Easing.cubic);
 const easeOutCubic = Easing.out(Easing.cubic);
@@ -26,9 +27,6 @@ const TITLE_START = 36; // 砸落开始（前 36f hold 读布景）
 const IMPACT_1 = 51; // 标题落地 = 第一次撞击
 const CARD_STAGGER = 5;
 const CARD_DUR = 12;
-const IMPACT_2 = IMPACT_1 + 3 * CARD_STAGGER + CARD_DUR; // 78，末卡落地
-const SIDE_END = IMPACT_2 + 14; // 92 侧边栏到位（过冲点）
-const SIDE_SETTLE = SIDE_END + 8; // 100 回弹结束，此后真静止
 
 // 撞击震动：一拍，4f 内衰减归零
 const shake = (f: number, at: number, amp: number) => {
@@ -41,12 +39,55 @@ const shake = (f: number, at: number, amp: number) => {
 const CARD_W = 340;
 const CARD_H = 220;
 const GAP = 40;
-const ROW_W = 4 * CARD_W + 3 * GAP; // 1480
-const ROW_LEFT = 1080 - ROW_W / 2; // 340
 const CARD_TOP = 700; // 卡片底边 920，落在地板线上
 
-export const DominoCascade: React.FC = () => {
+const DominoCard: React.FC<{ label: string; value: string }> = ({ label, value }) => (
+  <div
+    style={{
+      width: CARD_W,
+      height: CARD_H,
+      background: G.card,
+      border: `2px solid ${G.border}`,
+      borderRadius: 16,
+      padding: 22,
+      boxSizing: 'border-box',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      gap: 10,
+      boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
+    }}
+  >
+    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 26, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
+      {label}
+    </div>
+    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 40, fontWeight: 800, color: G.accent }}>
+      {value}
+    </div>
+  </div>
+);
+
+export interface DominoCascadeProps {
+  title?: string;
+  cards?: { label: string; value: string }[];
+}
+
+export const DominoCascade: React.FC<DominoCascadeProps> = ({
+  title = 'START',
+  cards = [
+    { label: '指标一', value: '+18%' },
+    { label: '指标二', value: '2.1×' },
+    { label: '指标三', value: '96.4%' },
+    { label: '节点', value: '4/4' },
+  ],
+}) => {
   const frame = useCurrentFrame();
+  const n = cards.length;
+  const IMPACT_2 = IMPACT_1 + (n - 1) * CARD_STAGGER + CARD_DUR; // 末卡落地
+  const SIDE_END = IMPACT_2 + 14; // 侧边栏到位（过冲点）
+  const SIDE_SETTLE = SIDE_END + 8; // 回弹结束，此后真静止
+  const ROW_W = n * CARD_W + (n - 1) * GAP;
+  const ROW_LEFT = 1080 - ROW_W / 2;
 
   // ① 标题砸落：画外顶 → 上半屏，ease-in 加速读作"砸"
   const titleTop = interpolate(frame, [TITLE_START, IMPACT_1], [-260, 240], {
@@ -95,11 +136,13 @@ export const DominoCascade: React.FC = () => {
 
         {/* ① 砸落的标题 */}
         <div style={{ position: 'absolute', left: 240, width: 1680, top: titleTop, display: 'flex', justifyContent: 'center' }}>
-          <TitleBlock text="CHAIN REACTION" size={120} />
+          <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 120, color: G.ink, letterSpacing: -1 }}>
+            {title}
+          </div>
         </div>
 
-        {/* ② 被震弹起的 4 张卡片 */}
-        {[0, 1, 2, 3].map((i) => (
+        {/* ② 被震弹起的卡片（数量自适应） */}
+        {cards.map((c, i) => (
           <div
             key={i}
             style={{
@@ -110,7 +153,7 @@ export const DominoCascade: React.FC = () => {
               transformOrigin: '50% 100%',
             }}
           >
-            <Card w={CARD_W} h={CARD_H} seed={i + 2} />
+            <DominoCard label={c.label} value={c.value} />
           </div>
         ))}
 
@@ -123,7 +166,7 @@ export const DominoCascade: React.FC = () => {
             display: 'flex', flexDirection: 'column', gap: 22,
           }}
         >
-          <div style={{ width: 44, height: 44, borderRadius: 10, background: '#777775' }} />
+          <div style={{ width: 44, height: 44, borderRadius: 10, background: G.bar }} />
           {Array.from({ length: 8 }).map((_, i) => (
             <div key={i} style={{ height: 13, width: `${58 + ((i * 31) % 38)}%`, background: G.sideBar, borderRadius: 6 }} />
           ))}
