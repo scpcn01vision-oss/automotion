@@ -16,10 +16,81 @@
 // 0→1450（Easing.out(quad)）再叠 ±8% 低频正弦扰动（帧 78–98 扰动衰减到 0，
 // 洇满全屏）；帧 100–130 摘掉 mask 直接铺新景，真静止 30f。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, FakeDashboard, TitleBlock } from '../../_fixtures/Fixtures';
+import { useCurrentFrame, interpolate, Easing, Img, staticFile } from 'remotion';
+import { G, TitleBlock } from '../../_fixtures/Fixtures';
 
-export const InkBleedReveal: React.FC = () => {
+export interface InkBleedRevealNewScene {
+  title?: string;
+  type?: 'rows' | 'image';
+  rows?: { label: string; value: string }[];
+  image?: string;
+}
+
+export interface InkBleedRevealProps {
+  oldTitle?: string;
+  newScene?: InkBleedRevealNewScene;
+}
+
+// 新景内容渲染器：标题 + 行列表（默认）/ 标题 + 圆角图片
+const NewScene: React.FC<{ scene: InkBleedRevealNewScene }> = ({ scene }) => {
+  const { title, type = 'rows', rows, image } = scene;
+  return (
+    <div
+      style={{
+        width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 48,
+      }}
+    >
+      {title ? (
+        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 88, color: G.ink, letterSpacing: -1 }}>
+          {title}
+        </div>
+      ) : null}
+      {type === 'image' && image ? (
+        <Img
+          src={staticFile(image)}
+          style={{
+            width: 1200, height: 675, objectFit: 'cover', borderRadius: 24,
+            border: `2px solid ${G.border}`, boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+          }}
+        />
+      ) : (
+        <div
+          style={{
+            width: 1200, background: G.card, border: `2px solid ${G.border}`, borderRadius: 24,
+            padding: '40px 56px', display: 'flex', flexDirection: 'column',
+          }}
+        >
+          {(rows ?? []).map((r, i) => (
+            <div
+              key={i}
+              style={{
+                display: 'flex', alignItems: 'center', padding: '22px 0',
+                borderBottom: i < (rows ?? []).length - 1 ? `1px solid ${G.line}` : 'none',
+              }}
+            >
+              <span style={{ fontSize: 34, color: G.ink, fontWeight: 600 }}>{r.label}</span>
+              <span style={{ marginLeft: 'auto', fontSize: 36, color: G.accent, fontWeight: 800 }}>{r.value}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export const InkBleedReveal: React.FC<InkBleedRevealProps> = ({
+  oldTitle = 'BEFORE',
+  newScene = {
+    title: 'AFTER',
+    type: 'rows',
+    rows: [
+      { label: 'Metric', value: '+25%' },
+      { label: 'Growth', value: '2.4×' },
+      { label: 'Uptime', value: '99.9%' },
+    ],
+  },
+}) => {
   const frame = useCurrentFrame();
 
   // 墨滴落点：画面中心偏左上
@@ -53,12 +124,12 @@ export const InkBleedReveal: React.FC = () => {
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       {/* 旧景：纸底 + BEFORE 标题 */}
       <div style={{ position: 'absolute', inset: 0, background: G.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <TitleBlock text="BEFORE" size={120} />
+        <TitleBlock text={oldTitle} size={120} />
       </div>
 
       {settled ? (
         <div style={{ position: 'absolute', inset: 0 }}>
-          <FakeDashboard variant="A" />
+          <NewScene scene={newScene} />
         </div>
       ) : (
         <svg
@@ -80,7 +151,7 @@ export const InkBleedReveal: React.FC = () => {
           </defs>
           <g mask="url(#inkMask)">
             <foreignObject x="0" y="0" width="1920" height="1080">
-              <FakeDashboard variant="A" />
+              <NewScene scene={newScene} />
             </foreignObject>
           </g>
         </svg>
