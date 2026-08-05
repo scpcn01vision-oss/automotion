@@ -21,7 +21,6 @@ import { G, TitleBlock } from '../../_fixtures/Fixtures';
 import { useShotFrame } from '../../engine/useShotFrame';
 import type { ShotTime } from '../../engine/time';
 
-const CW = 440;
 const CH = 300;
 const GAP = 60;
 const Y = (1080 - CH) / 2; // 390
@@ -70,12 +69,10 @@ const Sheen: React.FC<{ angle: number }> = ({ angle }) => {
   );
 };
 
-// 正面 label 字号自适应：短词大字、长句小字可换行
-const labelFont = (len: number): number => {
-  if (len <= 4) return 52;
-  if (len <= 8) return 42;
-  if (len <= 14) return 34;
-  return 28;
+// 正面 label 字号自适应：按可用宽度 + 字符数估算，保证不溢出卡片
+const labelFont = (len: number, availW: number): number => {
+  const byWidth = Math.floor(availW / Math.max(1, len * 0.58));
+  return Math.min(52, Math.max(18, byWidth));
 };
 
 export interface CardFlipRevealCard {
@@ -88,16 +85,17 @@ export interface CardFlipRevealProps {
   cards?: CardFlipRevealCard[];
 }
 
-const FlipCard: React.FC<{ i: number; frame: number; card: CardFlipRevealCard }> = ({ i, frame, card }) => {
+const FlipCard: React.FC<{ i: number; frame: number; card: CardFlipRevealCard; w: number }> = ({ i, frame, card, w }) => {
   const angle = angleAt(frame, i);
   const len = (card.label ?? '').length;
+  const availW = w - 48;
   return (
     <div
       style={{
         position: 'absolute',
         left: 0,
         top: Y,
-        width: CW,
+        width: w,
         height: CH,
         perspective: 1200,
       }}
@@ -123,8 +121,9 @@ const FlipCard: React.FC<{ i: number; frame: number; card: CardFlipRevealCard }>
           <span
             style={{
               fontFamily: 'Helvetica, Arial, sans-serif',
-              fontWeight: 700, fontSize: labelFont(len), color: G.ink,
+              fontWeight: 700, fontSize: labelFont(len, availW), color: G.ink,
               textAlign: 'center', lineHeight: 1.2, letterSpacing: -0.5,
+              maxWidth: '100%', overflowWrap: 'break-word', wordBreak: 'break-word',
             }}
           >
             {card.label}
@@ -152,7 +151,7 @@ const FlipCard: React.FC<{ i: number; frame: number; card: CardFlipRevealCard }>
             style={{
               fontFamily: 'Helvetica, Arial, sans-serif',
               fontWeight: 800,
-              fontSize: 96,
+              fontSize: Math.min(96, Math.floor(w * 0.24)),
               color: G.ink,
               letterSpacing: -2,
             }}
@@ -175,6 +174,8 @@ export const CardFlipReveal: React.FC<CardFlipRevealProps> = ({
   ],
 }) => {
   const n = cards.length;
+  // 卡宽随数量自适应：总宽不超过 1920 - 左右边距 160
+  const cardW = Math.min(440, (1920 - 160 - (n - 1) * GAP) / n);
   // 时序按卡数动态：刚性段 = 首卡起点到末卡落定
   const shotTime = useMemo<ShotTime>(() => {
     const flipEnd = FLIP_START + (n - 1) * STAGGER + FLIP_DUR + SETTLE;
@@ -188,15 +189,15 @@ export const CardFlipReveal: React.FC<CardFlipRevealProps> = ({
     };
   }, [n]);
   const frame = useShotFrame(shotTime);
-  const X0 = (1920 - (n * CW + (n - 1) * GAP)) / 2;
+  const X0 = (1920 - (n * cardW + (n - 1) * GAP)) / 2;
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', left: 120, top: 96 }}>
         <TitleBlock text={title} size={54} />
       </div>
       {cards.map((card, i) => (
-        <div key={i} style={{ position: 'absolute', left: X0 + i * (CW + GAP), top: 0, width: CW, height: CH }}>
-          <FlipCard i={i} frame={frame} card={card} />
+        <div key={i} style={{ position: 'absolute', left: X0 + i * (cardW + GAP), top: 0, width: cardW, height: CH }}>
+          <FlipCard i={i} frame={frame} card={card} w={cardW} />
         </div>
       ))}
     </div>
