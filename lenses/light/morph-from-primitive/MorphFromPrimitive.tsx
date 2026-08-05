@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 钩子,展开
+// props: card（变形卡内容）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
@@ -135,7 +136,13 @@ const morphPath = (t: number): string => {
 // ---- 时间轴（30fps，总 140f）----
 // 0–10 静置圆 | 10–30 呼吸一拍 scale 1→1.06→1 | 30–54 变形 24f
 // | 56–68 内容条淡入 12f | 68–140 真静止 72f
-export const MorphFromPrimitive: React.FC = () => {
+export interface MorphFromPrimitiveProps {
+  card?: { label: string; value: string };
+}
+
+export const MorphFromPrimitive: React.FC<MorphFromPrimitiveProps> = ({
+  card = { label: '指标一', value: '+18%' },
+}) => {
   const frame = useCurrentFrame();
 
   const breath = interpolate(frame, [10, 20, 30], [1, 1.12, 1], {
@@ -186,12 +193,11 @@ export const MorphFromPrimitive: React.FC = () => {
           opacity: contentOpacity,
         }}
       >
-        <div style={{ height: 26, width: '58%', background: G.bar, borderRadius: 13 }} />
-        <div style={{ height: 16, width: '86%', background: G.line, borderRadius: 8 }} />
-        <div style={{ height: 16, width: '72%', background: G.line, borderRadius: 8 }} />
-        <div style={{ marginTop: 'auto', display: 'flex', gap: 14, alignItems: 'center' }}>
-          <div style={{ width: 40, height: 40, borderRadius: 20, background: G.mid }} />
-          <div style={{ height: 16, width: 120, background: G.line, borderRadius: 8 }} />
+        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 30, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
+          {card.label}
+        </div>
+        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 46, fontWeight: 800, color: G.accent }}>
+          {card.value}
         </div>
       </div>
     </div>
