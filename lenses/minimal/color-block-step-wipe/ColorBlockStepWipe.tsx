@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 转折,承接
+// props: blockColorA / blockColorB（两块阶跃色）、cards（携带卡内容）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
@@ -12,7 +13,7 @@
 // 核心语法：无缓动、逐帧硬跳的块状生长，像素游戏手感。
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame } from 'remotion';
-import { G, Card } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
 
 const BLUE = '#2383e2';
 const RED = '#e8503a';
@@ -26,7 +27,7 @@ const stepVal = (frame: number, steps: Array<[number, number]>): number => {
   return v;
 };
 
-// 蓝底上的圆形 AI 表情徽章
+// 蓝底上的圆形徽章（中性星形，替代原 AI 表情）
 const AiBadge: React.FC<{ scale: number; opacity: number }> = ({ scale, opacity }) => (
   <div
     style={{
@@ -43,30 +44,68 @@ const AiBadge: React.FC<{ scale: number; opacity: number }> = ({ scale, opacity 
     }}
   >
     <svg width={110} height={110} viewBox="0 0 110 110">
-      <circle cx={36} cy={44} r={8} fill={G.ink} />
-      <circle cx={74} cy={44} r={8} fill={G.ink} />
-      <path d="M32 70 Q55 88 78 70" stroke={G.ink} strokeWidth={7} fill="none" strokeLinecap="round" />
-      <path d="M24 28 Q34 20 44 26" stroke={G.ink} strokeWidth={6} fill="none" strokeLinecap="round" />
-      <path d="M66 26 Q76 20 86 28" stroke={G.ink} strokeWidth={6} fill="none" strokeLinecap="round" />
+      <path
+        d="M55 12 L65 45 L99 45 L71 66 L82 99 L55 78 L28 99 L39 66 L11 45 L45 45 Z"
+        fill={G.accent}
+        stroke={G.ink}
+        strokeWidth={4}
+        strokeLinejoin="round"
+      />
     </svg>
   </div>
 );
 
 // 变体 B 背景：极简灰阶页面（不动 Fixtures，只组合）
-const GrayPage: React.FC = () => (
+const GrayPage: React.FC<{ cards: { label: string; value: string }[] }> = ({ cards }) => (
   <AbsoluteFill style={{ background: G.panel, padding: '90px 160px', boxSizing: 'border-box' }}>
     <div style={{ height: 40, width: 560, background: G.bar, borderRadius: 12, marginBottom: 40 }} />
     {[92, 78, 86, 60].map((w, i) => (
       <div key={i} style={{ height: 18, width: `${w}%`, background: G.line, borderRadius: 9, marginBottom: 24 }} />
     ))}
     <div style={{ display: 'flex', gap: 32, marginTop: 30 }}>
-      <Card w={420} h={280} seed={2} />
-      <Card w={420} h={280} seed={5} />
+      {cards.map((c, i) => (
+        <div
+          key={i}
+          style={{
+            width: 420,
+            height: 280,
+            background: G.card,
+            border: `2px solid ${G.border}`,
+            borderRadius: 14,
+            padding: 24,
+            boxSizing: 'border-box',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            gap: 10,
+          }}
+        >
+          <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 28, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
+            {c.label}
+          </div>
+          <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 40, fontWeight: 800, color: G.accent }}>
+            {c.value}
+          </div>
+        </div>
+      ))}
     </div>
   </AbsoluteFill>
 );
 
-export const ColorBlockStepWipe: React.FC = () => {
+export interface ColorBlockStepWipeProps {
+  blockColorA?: string;
+  blockColorB?: string;
+  cards?: { label: string; value: string }[];
+}
+
+export const ColorBlockStepWipe: React.FC<ColorBlockStepWipeProps> = ({
+  blockColorA = '#2383e2',
+  blockColorB = '#e8503a',
+  cards = [
+    { label: '指标一', value: '+18%' },
+    { label: '指标二', value: '2.1×' },
+  ],
+}) => {
   const frame = useCurrentFrame();
 
   // ---------- 场景 A（0–77f）：蓝块中央阶跃生长 ----------
@@ -105,7 +144,7 @@ export const ColorBlockStepWipe: React.FC = () => {
             top: 540 - h / 2,
             width: w,
             height: h,
-            background: BLUE,
+            background: blockColorA,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -145,8 +184,8 @@ export const ColorBlockStepWipe: React.FC = () => {
 
   return (
     <AbsoluteFill>
-      <GrayPage />
-      <AbsoluteFill style={{ background: RED, clipPath: clip }} />
+      <GrayPage cards={cards} />
+      <AbsoluteFill style={{ background: blockColorB, clipPath: clip }} />
       {p > 0 && (
         <div
           style={{
@@ -158,7 +197,28 @@ export const ColorBlockStepWipe: React.FC = () => {
             borderRadius: 14,
           }}
         >
-          <Card w={420} h={290} seed={7} />
+          <div
+            style={{
+              width: 420,
+              height: 290,
+              background: G.card,
+              border: `2px solid ${G.border}`,
+              borderRadius: 14,
+              padding: 24,
+              boxSizing: 'border-box',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              gap: 10,
+            }}
+          >
+            <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 28, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
+              {cards[0]?.label ?? ''}
+            </div>
+            <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 40, fontWeight: 800, color: G.accent }}>
+              {cards[0]?.value ?? ''}
+            </div>
+          </div>
         </div>
       )}
     </AbsoluteFill>
