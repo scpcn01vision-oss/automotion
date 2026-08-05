@@ -15,18 +15,37 @@
 // 118–128 数字标签浮现;128–150 全静止收尾。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, TitleBlock } from '../../_fixtures/Fixtures';
-
-const h = (n: number) => {
-  const s = Math.sin(n * 127.3) * 43758.5453;
-  return s - Math.floor(s);
-};
+import { G } from '../../_fixtures/Fixtures';
 
 const PANEL_W = 900;
 const PANEL_H = 560;
-const BAR_COUNT = 5;
 
-export const BulletTimeFreezeOrbit: React.FC = () => {
+export interface BulletTimeBar {
+  value: number;
+  label?: string;
+}
+
+export interface BulletTimeFreezeOrbitProps {
+  panelTitle?: string;
+  panelSubtitle?: string;
+  bars?: BulletTimeBar[];
+  sideTitle?: string;
+  sideSubtitle?: string;
+}
+
+export const BulletTimeFreezeOrbit: React.FC<BulletTimeFreezeOrbitProps> = ({
+  panelTitle = 'METRICS',
+  panelSubtitle = 'Q3 OVERVIEW',
+  bars = [
+    { value: 62, label: 'Q1' },
+    { value: 74, label: 'Q2' },
+    { value: 58, label: 'Q3' },
+    { value: 89, label: 'Q4' },
+    { value: 97, label: 'FY' },
+  ],
+  sideTitle = 'Momentum',
+  sideSubtitle = 'Quarterly growth trend',
+}) => {
   const frame = useCurrentFrame();
 
   // ── 子弹时间时钟:0–45 正常走,45–105 冻结,105 起恢复 ──
@@ -57,9 +76,9 @@ export const BulletTimeFreezeOrbit: React.FC = () => {
   const chartW = PANEL_W - 140;
   const chartH = PANEL_H - 190;
   const barW = 92;
-  const gap = (chartW - BAR_COUNT * barW) / (BAR_COUNT - 1);
-  const bars = Array.from({ length: BAR_COUNT }).map((_, i) => {
-    const full = chartH * (0.42 + h(i + 1) * 0.55); // 目标高度
+  const gap = (chartW - bars.length * barW) / Math.max(1, bars.length - 1);
+  const barList = bars.map((b, i) => {
+    const full = chartH * Math.min(1, Math.max(0.05, b.value / 100)); // 目标高度（value 0-100）
     const start = 20 + i * 4;
     const end = 48 + i * 3; // 20–60f 区间内错峰
     const p = interpolate(effFrame, [start, end], [0, 1], {
@@ -67,9 +86,7 @@ export const BulletTimeFreezeOrbit: React.FC = () => {
       extrapolateRight: 'clamp',
       easing: Easing.out(Easing.cubic),
     });
-    const value = Math.round((full / chartH) * 100); // 标签与柱高一致
-
-    return { hNow: full * p, full, value, done: p >= 1 };
+    return { hNow: full * p, full, value: b.value, label: b.label, done: p >= 1 };
   });
 
   // ── 恢复段:数字标签浮现(118–128),之后全静止 ──
@@ -78,8 +95,8 @@ export const BulletTimeFreezeOrbit: React.FC = () => {
     extrapolateRight: 'clamp',
   });
 
-  // 冻结提示条:冻结期间显示 FREEZE 徽标,帮助读出手法
-  const freezeOp = interpolate(frame, [45, 52, 98, 105], [0, 1, 1, 0], {
+  // 右侧说明文字:冻结期间（侧向视角）淡入;回正开始（82f）即淡出
+  const sideOp = interpolate(frame, [45, 52, 82, 88], [0, 1, 1, 0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
@@ -95,28 +112,24 @@ export const BulletTimeFreezeOrbit: React.FC = () => {
         fontFamily: 'Helvetica, Arial, sans-serif',
       }}
     >
-      <div style={{ position: 'absolute', top: 56, left: 72 }}>
-        <TitleBlock text="BULLET TIME" size={44} />
-      </div>
-
-      {/* 冻结徽标 */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 62,
-          right: 84,
-          opacity: freezeOp,
-          background: G.ink,
-          color: G.card,
-          fontWeight: 800,
-          fontSize: 30,
-          letterSpacing: 4,
-          padding: '12px 26px',
-          borderRadius: 10,
-        }}
-      >
-        FREEZE
-      </div>
+      {/* 右侧说明文字：冻结期间（侧向视角）显示 */}
+      {(sideTitle || sideSubtitle) && (
+        <div
+          style={{
+            position: 'absolute', left: 1040, right: 80, top: '50%', transform: 'translateY(-50%)',
+            display: 'flex', justifyContent: 'center', opacity: sideOp,
+          }}
+        >
+          <div style={{ textAlign: 'left', maxWidth: 400 }}>
+            {sideTitle ? (
+              <div style={{ fontSize: 52, fontWeight: 800, color: G.ink, letterSpacing: -1, lineHeight: 1.15 }}>{sideTitle}</div>
+            ) : null}
+            {sideSubtitle ? (
+              <div style={{ fontSize: 24, color: G.mid, marginTop: 16, lineHeight: 1.5 }}>{sideSubtitle}</div>
+            ) : null}
+          </div>
+        </div>
+      )}
 
       {/* 3D 舞台 */}
       <div
@@ -143,25 +156,9 @@ export const BulletTimeFreezeOrbit: React.FC = () => {
             transformStyle: 'preserve-3d',
           }}
         >
-          {/* 面板标题条 */}
-          <div
-            style={{
-              height: 20,
-              width: 260,
-              background: G.bar,
-              borderRadius: 10,
-              marginBottom: 14,
-            }}
-          />
-          <div
-            style={{
-              height: 12,
-              width: 170,
-              background: G.line,
-              borderRadius: 6,
-              marginBottom: 30,
-            }}
-          />
+          {/* 面板标题（替代灰条装饰） */}
+          <div style={{ fontSize: 30, fontWeight: 700, color: G.ink, marginBottom: 6 }}>{panelTitle}</div>
+          <div style={{ fontSize: 18, color: G.mid, letterSpacing: 2, marginBottom: 24 }}>{panelSubtitle}</div>
 
           {/* 图表区:横向刻度线 + 柱子 */}
           <div style={{ position: 'relative', width: chartW, height: chartH }}>
@@ -189,7 +186,7 @@ export const BulletTimeFreezeOrbit: React.FC = () => {
                 background: G.mid,
               }}
             />
-            {bars.map((b, i) => (
+            {barList.map((b, i) => (
               <div key={i}>
                 <div
                   style={{
@@ -218,6 +215,23 @@ export const BulletTimeFreezeOrbit: React.FC = () => {
                 >
                   {b.value}
                 </div>
+                {/* 柱下方说明文字 */}
+                {b.label ? (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      left: i * (barW + gap),
+                      bottom: -36,
+                      width: barW,
+                      textAlign: 'center',
+                      fontWeight: 700,
+                      fontSize: 20,
+                      color: G.mid,
+                    }}
+                  >
+                    {b.label}
+                  </div>
+                ) : null}
               </div>
             ))}
           </div>
