@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 全景
+// props: columns（3 列瀑布素材/循环时长/方向）、columnWidth、gap、pushTo（缓推终点）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
@@ -17,8 +18,9 @@ import {
   useVideoConfig,
 } from 'remotion';
 import { VerticalTicker, TickerColumn } from './VerticalTicker';
+import { G } from '../../_fixtures/Fixtures';
 
-const BG = '#faf7f2';
+const BG = G.bg;
 
 const shot = (file: string) => (
   <div
@@ -52,20 +54,47 @@ export const buildColumns = (loops: [number, number, number]): TickerColumn[] =>
   },
 ];
 
-export const PageWaterfallWall: React.FC = () => {
+export interface WaterfallColumn {
+  images: string[];
+  loopSeconds: number;
+  direction: 1 | -1;
+}
+
+export interface PageWaterfallWallProps {
+  columns?: WaterfallColumn[];
+  columnWidth?: number;
+  gap?: number;
+  pushTo?: number;
+}
+
+export const PageWaterfallWall: React.FC<PageWaterfallWallProps> = ({
+  columns = [
+    { images: ['card1.png', 'card2.png', 'card3.png', 'card10.png'], loopSeconds: 12, direction: -1 },
+    { images: ['card4.png', 'card5.png', 'card6.png', 'projects-empty.png'], loopSeconds: 9, direction: 1 },
+    { images: ['card7.png', 'card8.png', 'card9.png', 'float-search.png'], loopSeconds: 14, direction: -1 },
+  ],
+  columnWidth = 560,
+  gap = 30,
+  pushTo = 1.06,
+}) => {
   const frame = useCurrentFrame();
   const { durationInFrames } = useVideoConfig();
   // 镜头缓推寄生在外层，墙自身循环、镜头单向
-  const push = interpolate(frame, [0, durationInFrames], [1, 1.06]);
+  const push = interpolate(frame, [0, durationInFrames], [1, pushTo]);
+  const tickerColumns: TickerColumn[] = columns.map((c) => ({
+    items: c.images.map(shot),
+    durationInSeconds: c.loopSeconds,
+    direction: c.direction,
+  }));
 
   return (
     <AbsoluteFill style={{ backgroundColor: BG }}>
       <AbsoluteFill style={{ transform: `scale(${push})` }}>
         <VerticalTicker
-          columns={buildColumns([12, 9, 14])}
+          columns={tickerColumns}
           backgroundColor={BG}
-          columnWidth={560}
-          gap={30}
+          columnWidth={columnWidth}
+          gap={gap}
         />
       </AbsoluteFill>
     </AbsoluteFill>
