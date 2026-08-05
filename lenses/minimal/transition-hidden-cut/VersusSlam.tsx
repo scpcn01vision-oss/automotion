@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 转折
+// props: sceneA / sceneB（对撞半屏内容承载）、vsText（盖章字块）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
@@ -9,7 +10,8 @@
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
-import { FakeDashboard, TitleBlock, G } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 // versus-slam 对撞开屏：左右两个半屏画面（带 78° 斜切边）从画外加速对冲，
 // 沿斜缝砰地撞合；撞击帧白闪 + 整机震屏指数衰减 + "VS" 字块盖章压出，结尾静止 hold。
@@ -21,7 +23,31 @@ const SEAM_BOT_X = 845; // 缝底端 x
 // CSS 旋转顺时针为正：缝顶端偏右（1075 > 845）→ 正角度 ≈ +12°
 const SEAM_DEG = (Math.atan2(SEAM_TOP_X - SEAM_BOT_X, 1080) * 180) / Math.PI;
 
-export const VersusSlam: React.FC = () => {
+export interface VersusSlamProps {
+  sceneA?: SceneContentData;
+  sceneB?: SceneContentData;
+  vsText?: string;
+}
+
+export const VersusSlam: React.FC<VersusSlamProps> = ({
+  sceneA = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+    ],
+  },
+  sceneB = {
+    title: '状态',
+    type: 'rows',
+    rows: [
+      { label: '节点', value: '4/4' },
+      { label: '可用性', value: '99.98%' },
+    ],
+  },
+  vsText = 'VS',
+}) => {
   const frame = useCurrentFrame();
 
   // 两半屏对冲：ease-in 加速，10f 从 ±1200px 冲到位
@@ -75,7 +101,7 @@ export const VersusSlam: React.FC = () => {
           transform: `translateX(${leftX}px)`,
           clipPath: `polygon(0px 0px, ${SEAM_TOP_X}px 0px, ${SEAM_BOT_X}px 1080px, 0px 1080px)`,
         }}>
-          <FakeDashboard variant="A" />
+          <SceneContent content={sceneA} />
         </div>
         {/* 右半屏：FakeDashboard B 裁右半 */}
         <div style={{
@@ -83,7 +109,7 @@ export const VersusSlam: React.FC = () => {
           transform: `translateX(${rightX}px)`,
           clipPath: `polygon(${SEAM_TOP_X}px 0px, 1920px 0px, 1920px 1080px, ${SEAM_BOT_X}px 1080px)`,
         }}>
-          <FakeDashboard variant="B" />
+          <SceneContent content={sceneB} />
         </div>
         {/* 撞合后的实体斜缝条 */}
         {impacted && (
@@ -102,12 +128,14 @@ export const VersusSlam: React.FC = () => {
             background: G.card, border: `6px solid ${G.ink}`, borderRadius: 20,
             padding: '18px 46px', boxShadow: '0 18px 60px rgba(0,0,0,0.35)',
           }}>
-            <TitleBlock text="VS" size={140} />
+            <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 140, color: G.ink, letterSpacing: -2 }}>
+              {vsText}
+            </div>
           </div>
         )}
       </div>
       {/* 撞击白闪（不随震屏位移） */}
-      <AbsoluteFill style={{ background: '#ffffff', opacity: flash, pointerEvents: 'none' }} />
+      <AbsoluteFill style={{ background: G.card, opacity: flash, pointerEvents: 'none' }} />
     </AbsoluteFill>
   );
 };
