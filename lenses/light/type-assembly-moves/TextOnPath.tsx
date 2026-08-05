@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 宣告,展开
+// props: text（沿曲线流入的标题）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
@@ -14,7 +15,7 @@
 // 12f 摆正到水平基线（y 拉平、rotate→0）→ 全部落定约 f103 → 103–150 真静止。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, TitleBlock } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
 
 // 上升贝塞尔：左下 → 右上，先缓后陡（增长线形状）
 const P0 = { x: 200, y: 820 };
@@ -37,14 +38,19 @@ const tangent = (t: number) => {
   return (Math.atan2(dy, dx) * 180) / Math.PI;
 };
 
-const TEXT = 'GROWTH ALL THE WAY';
-const N = TEXT.length;
 const CHAR_W = 46; // 64px fontWeight 800 的近似字宽
 const FINAL_Y = 300; // 水平基线（标题最终落位）
-const FINAL_X0 = 960 - (N * CHAR_W) / 2;
 
-export const TextOnPath: React.FC = () => {
+export interface TextOnPathProps {
+  text?: string;
+}
+
+export const TextOnPath: React.FC<TextOnPathProps> = ({
+  text = 'GROWTH ALL THE WAY',
+}) => {
   const frame = useCurrentFrame();
+  const n = text.length;
+  const finalX0 = 960 - (n * CHAR_W) / 2;
   // 曲线 evolve：随最前字符推进同步生长
   const evolve = interpolate(frame, [0, 82], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
@@ -53,9 +59,6 @@ export const TextOnPath: React.FC = () => {
 
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', left: 120, top: 96 }}>
-        <TitleBlock text="TEXT ON PATH" size={54} />
-      </div>
       <svg width={1920} height={1080} style={{ position: 'absolute', inset: 0 }}>
         <path
           d={`M ${P0.x} ${P0.y} C ${P1.x} ${P1.y}, ${P2.x} ${P2.y}, ${P3.x} ${P3.y}`}
@@ -63,9 +66,9 @@ export const TextOnPath: React.FC = () => {
           pathLength={1} strokeDasharray={1} strokeDashoffset={1 - evolve}
         />
       </svg>
-      {TEXT.split('').map((ch, i) => {
+      {text.split('').map((ch, i) => {
         if (ch === ' ') return null;
-        const tEnd = 0.12 + 0.82 * (i / (N - 1)); // 各字符沿线终点
+        const tEnd = 0.12 + 0.82 * (i / Math.max(1, n - 1)); // 各字符沿线终点
         const start = i * 2;
         // 沿线推进：start 起 45f 到达 tEnd
         const t = interpolate(frame, [start, start + 45], [0, tEnd], {
@@ -79,7 +82,7 @@ export const TextOnPath: React.FC = () => {
           extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
           easing: Easing.inOut(Easing.cubic),
         });
-        const x = pOnCurve.x + (FINAL_X0 + i * CHAR_W - pOnCurve.x) * settle;
+        const x = pOnCurve.x + (finalX0 + i * CHAR_W - pOnCurve.x) * settle;
         const y = pOnCurve.y + (FINAL_Y - pOnCurve.y) * settle;
         const ang = angOnCurve * (1 - settle);
         const op = interpolate(frame, [start, start + 8], [0, 1], {
