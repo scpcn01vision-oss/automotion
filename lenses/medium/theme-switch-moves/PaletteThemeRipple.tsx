@@ -19,7 +19,8 @@
 // 帧确定，无随机源。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, FakeDashboard } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 const DIM_START = 15;
 const PANEL_IN = 22;
@@ -78,7 +79,21 @@ const DarkDashboard: React.FC = () => (
   </div>
 );
 
-export const PaletteThemeRipple: React.FC = () => {
+export interface PaletteThemeRippleProps {
+  scene?: SceneContentData;
+}
+
+export const PaletteThemeRipple: React.FC<PaletteThemeRippleProps> = ({
+  scene = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+      { label: '指标三', value: '96.4%' },
+    ],
+  },
+}) => {
   const f = useCurrentFrame();
 
   // 压暗 + blur：面板阶段生效，扫场完成后浅色层已被卸载
@@ -127,7 +142,7 @@ export const PaletteThemeRipple: React.FC = () => {
       {/* 浅色层：扫场完成后条件卸载（真静止） */}
       {!done && (
         <div style={{ position: 'absolute', inset: 0, filter: dim > 0 ? `brightness(${1 - dim * 0.45}) blur(${dim * 6}px)` : 'none' }}>
-          <FakeDashboard variant="A" />
+          <SceneContent content={scene} />
         </div>
       )}
 
