@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 承接,转折
+// props: windowA / windowB（收发窗口内容：标题 + 行列表）、sendLabel（发送按钮文本）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
@@ -13,7 +14,7 @@
 // 飞抵窗口 B 前落定，窗口 B 放大接管全屏。发送语义实体化成转场信使。
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
-import { Card, G } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
 
 const mulberry32 = (a: number) => () => {
   let t = (a += 0x6d2b79f5);
@@ -66,17 +67,38 @@ const PROPS: Prop[] = (() => {
   return out;
 })();
 
-const Window: React.FC<{ cx: number; cy: number; seed: number; sendBtn?: boolean; btnPulse?: number }> = ({ cx, cy, seed, sendBtn, btnPulse = 0 }) => (
-  <div style={{ position: 'absolute', left: cx - WIN_W / 2, top: cy - WIN_H / 2, width: WIN_W, height: WIN_H, borderRadius: 18, background: '#fff', border: `2px solid ${G.border}`, boxShadow: '0 40px 100px rgba(0,0,0,0.30)', boxSizing: 'border-box', overflow: 'hidden' }}>
-    <div style={{ height: 54, background: '#f2f2f0', borderBottom: `2px solid ${G.line}`, display: 'flex', alignItems: 'center', gap: 10, padding: '0 20px', boxSizing: 'border-box' }}>
+export interface MessengerWindowContent {
+  title?: string;
+  rows?: { label: string; value: string }[];
+}
+
+const Window: React.FC<{
+  cx: number;
+  cy: number;
+  content: MessengerWindowContent;
+  sendBtn?: boolean;
+  btnPulse?: number;
+  sendLabel?: string;
+}> = ({ cx, cy, content, sendBtn, btnPulse = 0, sendLabel = '发送' }) => (
+  <div style={{ position: 'absolute', left: cx - WIN_W / 2, top: cy - WIN_H / 2, width: WIN_W, height: WIN_H, borderRadius: 18, background: G.card, border: `2px solid ${G.border}`, boxShadow: '0 40px 100px rgba(0,0,0,0.30)', boxSizing: 'border-box', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ height: 54, background: G.panel, borderBottom: `2px solid ${G.line}`, display: 'flex', alignItems: 'center', gap: 10, padding: '0 20px', boxSizing: 'border-box' }}>
       {[0, 1, 2].map((i) => <div key={i} style={{ width: 15, height: 15, borderRadius: 8, background: G.bar }} />)}
-      <div style={{ marginLeft: 14, height: 13, width: 200, background: G.bar, borderRadius: 7 }} />
+      {content.title ? (
+        <div style={{ marginLeft: 14, fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 18, fontWeight: 700, color: G.ink }}>{content.title}</div>
+      ) : (
+        <div style={{ marginLeft: 14, height: 13, width: 200, background: G.bar, borderRadius: 7 }} />
+      )}
     </div>
-    <div style={{ padding: 26, display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <Card w={WIN_W - 56} h={250} seed={seed} style={{ boxShadow: 'none' }} />
+    <div style={{ padding: 26, display: 'flex', flexDirection: 'column', gap: 12, flex: 1, boxSizing: 'border-box' }}>
+      {(content.rows ?? []).map((r, i) => (
+        <div key={i} style={{ display: 'flex', alignItems: 'center', borderBottom: i < (content.rows ?? []).length - 1 ? `1px solid ${G.line}` : 'none', padding: '8px 0' }}>
+          <span style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 20, fontWeight: 600, color: G.ink }}>{r.label}</span>
+          <span style={{ marginLeft: 'auto', fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 22, fontWeight: 800, color: G.accent }}>{r.value}</span>
+        </div>
+      ))}
       {sendBtn && (
-        <div style={{ alignSelf: 'flex-end', transform: `scale(${1 + btnPulse * 0.22})`, padding: '16px 46px', borderRadius: 12, background: G.ink, color: '#fff', fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 30, boxShadow: btnPulse > 0 ? `0 0 0 ${btnPulse * 22}px rgba(47,47,47,0.18)` : 'none' }}>
-          Send ➤
+        <div style={{ alignSelf: 'flex-end', marginTop: 'auto', transform: `scale(${1 + btnPulse * 0.22})`, padding: '16px 46px', borderRadius: 12, background: G.ink, color: G.card, fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 28, boxShadow: btnPulse > 0 ? `0 0 0 ${btnPulse * 22}px rgba(47,47,47,0.18)` : 'none' }}>
+          {sendLabel}
         </div>
       )}
     </div>
@@ -86,13 +108,37 @@ const Window: React.FC<{ cx: number; cy: number; seed: number; sendBtn?: boolean
 const Plane: React.FC<{ x: number; y: number; angle: number; scale: number; opacity: number }> = ({ x, y, angle, scale, opacity }) => (
   <svg width={180} height={110} viewBox="0 0 180 110" style={{ position: 'absolute', left: x - 90, top: y - 55, transform: `rotate(${angle}deg) scale(${scale})`, overflow: 'visible', opacity }}>
     {/* 折纸飞机：三块折面，灰阶深浅示折痕 */}
-    <polygon points="176,30 6,4 62,66" fill="#ffffff" stroke="#b8b8b6" strokeWidth={3} />
-    <polygon points="176,30 62,66 78,102" fill="#d4d4d2" stroke="#b8b8b6" strokeWidth={3} />
-    <polygon points="176,30 6,4 50,44" fill="#efefed" stroke="#c6c6c4" strokeWidth={2} />
+    <polygon points="176,30 6,4 62,66" fill={G.card} stroke={G.bar} strokeWidth={3} />
+    <polygon points="176,30 62,66 78,102" fill={G.line} stroke={G.bar} strokeWidth={3} />
+    <polygon points="176,30 6,4 50,44" fill={G.panel} stroke={G.line} strokeWidth={2} />
   </svg>
 );
 
-export const PaperPlaneMessenger: React.FC = () => {
+export interface PaperPlaneMessengerProps {
+  windowA?: MessengerWindowContent;
+  windowB?: MessengerWindowContent;
+  sendLabel?: string;
+}
+
+export const PaperPlaneMessenger: React.FC<PaperPlaneMessengerProps> = ({
+  windowA = {
+    title: '概览',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+      { label: '指标三', value: '96.4%' },
+    ],
+  },
+  windowB = {
+    title: '状态',
+    rows: [
+      { label: '节点', value: '4/4' },
+      { label: '延迟', value: '42ms' },
+      { label: '可用性', value: '99.98%' },
+    ],
+  },
+  sendLabel = '发送',
+}) => {
   const frame = useCurrentFrame();
 
   // 飞行进度（整体 ease-in-out：起飞加速、落定减速）
@@ -141,7 +187,7 @@ export const PaperPlaneMessenger: React.FC = () => {
   const planeOpacity = interpolate(takeP, [0, 0.35], [1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
 
   return (
-    <AbsoluteFill style={{ background: 'linear-gradient(160deg, #e9e9e7 0%, #dcdcda 100%)', overflow: 'hidden' }}>
+    <AbsoluteFill style={{ background: `linear-gradient(160deg, ${G.nav} 0%, ${G.line} 100%)`, overflow: 'hidden' }}>
       {/* 视差道具：远层 / 中层（世界层之下） */}
       {PROPS.filter((p) => p.depth < 1).map((p, i) => {
         const wob = Math.sin(frame * 0.035 + p.drift) * 14;
@@ -164,8 +210,8 @@ export const PaperPlaneMessenger: React.FC = () => {
 
       {/* 世界层（depth=1）：窗口 A / B + 飞机 */}
       <div style={{ position: 'absolute', left: 0, top: 0, transformOrigin: '0 0', transform: `translate(${960 - cx * z}px, ${540 - cy * z}px) scale(${z})` }}>
-        <Window cx={AX} cy={AY} seed={3} sendBtn btnPulse={btnPulse} />
-        <Window cx={BX} cy={BY} seed={6} />
+        <Window cx={AX} cy={AY} content={windowA} sendBtn btnPulse={btnPulse} sendLabel={sendLabel} />
+        <Window cx={BX} cy={BY} content={windowB} />
         {planeVisible && planeOpacity > 0.01 && <Plane x={pos.x} y={pos.y} angle={angle} scale={planeScale} opacity={planeOpacity} />}
       </div>
 
