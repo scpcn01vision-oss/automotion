@@ -32,15 +32,13 @@ type Actor = {
   delay: number; phase: number;
 };
 
-const ACTORS: Actor[] = [
-  { name: 'Lisa', color: '#b87a2e', from: [-160, 200], home: [430, 330], delay: 0, phase: 0.0 },
-  { name: 'Lucas', color: '#d3923c', from: [2080, 160], home: [1370, 290], delay: 5, phase: 1.7 },
-  { name: 'Marta', color: '#F2994A', from: [-160, 900], home: [560, 760], delay: 9, phase: 3.1 },
-  { name: 'Niko', color: '#b87a2e', from: [2080, 950], home: [1420, 780], delay: 13, phase: 4.4 },
-  { name: 'Rita', color: '#d3923c', from: [900, -180], home: [960, 545], delay: 17, phase: 5.6 },
+const ACTOR_LAYOUT: Omit<Actor, 'name'>[] = [
+  { color: '#b87a2e', from: [-160, 200], home: [430, 330], delay: 0, phase: 0.0 },
+  { color: '#d3923c', from: [2080, 160], home: [1370, 290], delay: 5, phase: 1.7 },
+  { color: '#F2994A', from: [-160, 900], home: [560, 760], delay: 9, phase: 3.1 },
+  { color: '#b87a2e', from: [2080, 950], home: [1420, 780], delay: 13, phase: 4.4 },
+  { color: '#d3923c', from: [900, -180], home: [960, 545], delay: 17, phase: 5.6 },
 ];
-
-const TYPED = 'Our customers love it';
 
 const CursorActor: React.FC<{ x: number; y: number; a: Actor; badge: number; scale?: number }> = ({
   x, y, a, badge, scale = 2.1,
@@ -61,8 +59,18 @@ const CursorActor: React.FC<{ x: number; y: number; a: Actor; badge: number; sca
   </div>
 );
 
-export const CursorCastEnsemble: React.FC = () => {
+export interface CursorCastEnsembleProps {
+  names?: string[];
+  typed?: string;
+}
+
+export const CursorCastEnsemble: React.FC<CursorCastEnsembleProps> = ({
+  names = ['Lisa', 'Lucas', 'Marta', 'Niko', 'Rita'],
+  typed = 'Our customers love it',
+}) => {
   const f = useCurrentFrame();
+  const TYPED = typed;
+  const ACTORS: Actor[] = ACTOR_LAYOUT.map((a, i) => ({ ...a, name: names[i] ?? `User ${i + 1}` }));
   const rnd = mulberry32(88);
   // 便签的固定随机旋转
   const noteRots = Array.from({ length: 4 }).map(() => (rnd() - 0.5) * 8);
