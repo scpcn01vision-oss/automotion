@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 转折,承接
+// props: sceneA / sceneB（百叶窗前后景内容承载）
 // === 时间特性 ===
 // 刚性（不可压缩）: 弹性(clock),刚性:wave 20f(blinds)
 // 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
@@ -16,7 +17,8 @@
 // 52–150f 真静止 98f ≥ 40f。帧确定，无随机源。
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
-import { FakeDashboard } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 const STRIPS = 12;
 const W = 160; // 每条宽 12×160 = 1920
@@ -26,20 +28,42 @@ const FLIP = 10; // 每条 10f 完成翻换
 const WAVE_END = WAVE_START + (STRIPS - 1) * STAGGER + FLIP; // 52
 
 // 条内某页的切片：外层 160 宽裁剪，内层整页 1920 负 margin 对位
-const Slice: React.FC<{ x: number; variant: 'A' | 'B' }> = ({ x, variant }) => (
+const Slice: React.FC<{ x: number; content: SceneContentData }> = ({ x, content }) => (
   <div style={{ width: 1920, height: 1080, marginLeft: -x }}>
-    <FakeDashboard variant={variant} />
+    <SceneContent content={content} />
   </div>
 );
 
-export const BlindsSlice: React.FC = () => {
+export interface BlindsSliceProps {
+  sceneA?: SceneContentData;
+  sceneB?: SceneContentData;
+}
+
+export const BlindsSlice: React.FC<BlindsSliceProps> = ({
+  sceneA = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+    ],
+  },
+  sceneB = {
+    title: '状态',
+    type: 'rows',
+    rows: [
+      { label: '节点', value: '4/4' },
+      { label: '可用性', value: '99.98%' },
+    ],
+  },
+}) => {
   const frame = useCurrentFrame();
 
   // 摘罩：波完成后条结构全部卸载，B 整页直出
   if (frame >= WAVE_END) {
     return (
-      <AbsoluteFill style={{ background: '#ececea' }}>
-        <FakeDashboard variant="B" />
+      <AbsoluteFill style={{ background: G.panel }}>
+        <SceneContent content={sceneB} />
       </AbsoluteFill>
     );
   }
@@ -55,14 +79,14 @@ export const BlindsSlice: React.FC = () => {
     if (frame < start) {
       return (
         <div key={i} style={{ position: 'absolute', left: x, top: 0, width: W, height: 1080, overflow: 'hidden' }}>
-          <Slice x={x} variant="A" />
+          <Slice x={x} content={sceneA} />
         </div>
       );
     }
     if (frame >= end) {
       return (
         <div key={i} style={{ position: 'absolute', left: x, top: 0, width: W, height: 1080, overflow: 'hidden' }}>
-          <Slice x={x} variant="B" />
+          <Slice x={x} content={sceneB} />
         </div>
       );
     }
@@ -86,18 +110,18 @@ export const BlindsSlice: React.FC = () => {
       <div key={i} style={{ position: 'absolute', left: x, top: 0, width: W, height: 1080, overflow: 'hidden' }}>
         {/* A：向左缘收缩 */}
         <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', transform: `scaleX(${1 - p})`, transformOrigin: '0% 50%' }}>
-          <Slice x={x} variant="A" />
+          <Slice x={x} content={sceneA} />
         </div>
         {/* B：从右缘展开 */}
         <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', transform: `scaleX(${p})`, transformOrigin: '100% 50%' }}>
-          <Slice x={x} variant="B" />
+          <Slice x={x} content={sceneB} />
         </div>
       </div>
     );
   });
 
   return (
-    <AbsoluteFill style={{ background: '#ececea' }}>
+    <AbsoluteFill style={{ background: G.panel }}>
       {strips}
       {/* 缝亮线：白底判例——纯提亮不可见，柔光 + 暗描边 + 白核三层 */}
       {seams.length > 0 && (
