@@ -76,8 +76,15 @@ const FLASHES: Flash[] = Array.from({ length: 36 }, () => ({
   bolt: Math.floor(rand() * BOLTS.length),
 }));
 
-export const GradientWordSweep: React.FC = () => {
+export interface GradientWordSweepProps {
+  lines?: [string, string];
+}
+
+export const GradientWordSweep: React.FC<GradientWordSweepProps> = ({
+  lines = ['Supercharged', 'with rock-solid reliability'],
+}) => {
   const frame = useCurrentFrame();
+  const [lineA, lineB] = lines;
 
   const enter = interpolate(frame, [0, 12], [0, 1], {
     extrapolateRight: 'clamp',
@@ -141,7 +148,7 @@ export const GradientWordSweep: React.FC = () => {
     fontSize: 92,
     letterSpacing: -1,
     lineHeight: 1.28,
-    color: '#ffffff',
+    color: G.card,
     whiteSpace: 'nowrap',
   };
 
@@ -155,7 +162,7 @@ export const GradientWordSweep: React.FC = () => {
   };
 
   return (
-    <AbsoluteFill style={{ background: '#050505', justifyContent: 'center', alignItems: 'center' }}>
+    <AbsoluteFill style={{ background: G.ink, justifyContent: 'center', alignItems: 'center' }}>
       {/* 词后方环境泛光（大半径，随充能增强） */}
       <div
         style={{
@@ -180,7 +187,7 @@ export const GradientWordSweep: React.FC = () => {
       >
         <div style={lineStyle}>
           <span style={{ position: 'relative', display: 'inline-block' }}>
-            <span>Supercharged</span>
+            <span>{lineA}</span>
             {/* AE 式辉光：大半径柔光层（最糊） */}
             <span
               aria-hidden
@@ -192,7 +199,7 @@ export const GradientWordSweep: React.FC = () => {
                 transform: 'scale(1.05)',
               }}
             >
-              Supercharged
+              {lineA}
             </span>
             {/* 中晕层 */}
             <span
@@ -309,7 +316,7 @@ export const GradientWordSweep: React.FC = () => {
           </span>{' '}
           <span>performance</span>
         </div>
-        <div style={lineStyle}>with rock-solid reliability</div>
+        <div style={lineStyle}>{lineB}</div>
       </div>
     </AbsoluteFill>
   );
