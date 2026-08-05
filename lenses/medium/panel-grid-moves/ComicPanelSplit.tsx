@@ -16,7 +16,8 @@
 // 全部卸载），57–150f 真静止 93f ≥ 40f。帧确定，无随机源。
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
-import { FakeDashboard, G } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 const SPLIT = 20;              // 全屏 A 结束、开始分格
 const POP = 3;                 // 每格弹入 3f
@@ -30,10 +31,10 @@ const EXPAND_END = 57;         // 第三格 12f 扩张结束
 // 边界1：顶 750 / 底 520；边界2：顶 1405 / 底 1175
 const outCubic = Easing.out(Easing.cubic);
 
-// 页面 = FakeDashboard A + 左上卡片内 KPI 数字块（给"数字区特写"一个锚点）
-const PageA: React.FC = () => (
+// 页面 = scene + 左上卡片内 KPI 数字块（给"数字区特写"一个锚点）
+const PageA: React.FC<{ scene: SceneContentData }> = ({ scene }) => (
   <div style={{ width: 1920, height: 1080, position: 'relative' }}>
-    <FakeDashboard variant="A" />
+    <SceneContent content={scene} />
     <div style={{
       position: 'absolute', left: 328, top: 320, width: 380, height: 160,
       background: G.card, borderRadius: 12, display: 'flex', flexDirection: 'column',
@@ -56,7 +57,21 @@ type PanelSpec = {
   z: number;
 };
 
-export const ComicPanelSplit: React.FC = () => {
+export interface ComicPanelSplitProps {
+  scene?: SceneContentData;
+}
+
+export const ComicPanelSplit: React.FC<ComicPanelSplitProps> = ({
+  scene = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+      { label: '指标三', value: '96.4%' },
+    ],
+  },
+}) => {
   const frame = useCurrentFrame();
 
   // ===== 摘罩：扩张完成后特写直出，分格结构 / 缝线全部卸载 =====
@@ -68,7 +83,7 @@ export const ComicPanelSplit: React.FC = () => {
           transform: 'translate(442px, 140px) scale(2.6)',
           transformOrigin: '518px 400px',
         }}>
-          <PageA />
+          <PageA scene={scene} />
         </div>
       </AbsoluteFill>
     );
@@ -78,7 +93,7 @@ export const ComicPanelSplit: React.FC = () => {
   if (frame < SPLIT) {
     return (
       <AbsoluteFill style={{ background: G.bg }}>
-        <PageA />
+        <PageA scene={scene} />
       </AbsoluteFill>
     );
   }
@@ -128,7 +143,7 @@ export const ComicPanelSplit: React.FC = () => {
   );
 
   return (
-    <AbsoluteFill style={{ background: '#ffffff' }}>
+    <AbsoluteFill style={{ background: G.card }}>
       {panels.map((p, i) => {
         const start = SPLIT + i * STAGGER;
         if (frame < start) return null; // 未弹入不渲染
@@ -150,7 +165,7 @@ export const ComicPanelSplit: React.FC = () => {
               transform: `translate(${p.tx}px, ${p.ty}px) scale(${p.baseScale})`,
               transformOrigin: `${p.originX}px ${p.originY}px`,
             }}>
-              <PageA />
+              <PageA scene={scene} />
             </div>
             {pulse > 0.005 && (
               <div style={{ position: 'absolute', inset: 0, background: `rgba(0,0,0,${pulse})` }} />
