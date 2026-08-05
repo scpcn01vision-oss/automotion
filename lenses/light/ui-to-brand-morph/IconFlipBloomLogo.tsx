@@ -16,7 +16,6 @@ import { AbsoluteFill, useCurrentFrame, interpolate, Easing, spring, useVideoCon
 import { G } from '../../_fixtures/Fixtures';
 
 const FONT = 'Helvetica, Arial, sans-serif';
-const INK = '#d3923c'; // 花形 mark 用一点 teal，其余灰阶
 
 const SmileLaptop: React.FC<{ size: number }> = ({ size }) => (
   <svg width={size} height={size} viewBox="0 0 40 40">
@@ -46,7 +45,7 @@ const FlowerMark: React.FC<{ size: number; bloom: number }> = ({ size, bloom }) 
             cy={-len / 2}
             rx={wid / 2}
             ry={len / 2}
-            fill={INK}
+            fill={G.accent}
             opacity={0.92}
             transform={`rotate(${angle + 90})`}
           />
@@ -57,9 +56,11 @@ const FlowerMark: React.FC<{ size: number; bloom: number }> = ({ size, bloom }) 
   );
 };
 
-const WORD = 'perplexity';
+export interface IconFlipBloomLogoProps {
+  wordmark?: string;
+}
 
-export const IconFlipBloomLogo: React.FC = () => {
+export const IconFlipBloomLogo: React.FC<IconFlipBloomLogoProps> = ({ wordmark = 'perplexity' }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
@@ -181,7 +182,7 @@ export const IconFlipBloomLogo: React.FC = () => {
             letterSpacing: 2,
           }}
         >
-          {WORD.split('').map((ch, i) => {
+          {wordmark.split('').map((ch, i) => {
             const cT = interpolate(frame, [WORD_START + i * 2.2, WORD_START + i * 2.2 + 10], [0, 1], {
               extrapolateLeft: 'clamp',
               extrapolateRight: 'clamp',
