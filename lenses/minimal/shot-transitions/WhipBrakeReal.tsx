@@ -1,12 +1,3 @@
-// === 可调参数 ===
-// DURATION: 130（总帧数，可调；弹性段随 DURATION 等比缩放）
-// 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
-// 功能: 转折,承接
-// === 时间特性 ===
-// 刚性（不可压缩）: 刚性:maskwipe 120f,whippan 120f
-// 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
-// === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 // E 式急刹款 whip-brake——真实卡片切片横向长廊，甩过 9 张卡后
 // 在目标卡（card4-hires，高清纹理）前急刹长尾滑入。
 // 速率：前 70% 路程用 12f（糊），后 30% 路程 ease-out 48f 长尾。

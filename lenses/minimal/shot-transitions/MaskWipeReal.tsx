@@ -1,12 +1,3 @@
-// === 可调参数 ===
-// DURATION: 120（总帧数，可调；弹性段随 DURATION 等比缩放）
-// 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
-// 功能: 转折,承接
-// === 时间特性 ===
-// 刚性（不可压缩）: 刚性:maskwipe 120f,whippan 120f
-// 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
-// === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 // mask-wipe 元素遮罩擦除（轮 D）——真实项目卡（card4-hires）放大成
 // 全屏窗口，projects 全景从窗内长出接管："点开一张卡进入它的世界"。
 // 节拍：0–40 全景 hold → 40–85 卡放大成窗（窗内新景反向补偿）→ 85–120 hold。

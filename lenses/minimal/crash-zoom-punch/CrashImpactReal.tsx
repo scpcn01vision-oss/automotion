@@ -1,12 +1,3 @@
-// === 可调参数 ===
-// DURATION: 120（总帧数，可调；弹性段随 DURATION 等比缩放）
-// 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
-// 功能: 钩子,宣告
-// === 时间特性 ===
-// 刚性（不可压缩）: 刚性核心:疾推11f
-// 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
-// === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 // crash-impact 急推撞停——同 crash-zoom 的急推，到位瞬间不回弹而是
 // 撞停震屏：高频抖 + 指数衰减 6f，然后真静止。对比点：重量感 vs 弹性感。
 import { AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame, Easing } from 'remotion';

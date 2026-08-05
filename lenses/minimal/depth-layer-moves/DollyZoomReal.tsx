@@ -1,12 +1,3 @@
-// === 可调参数 ===
-// DURATION: 135（总帧数，可调；弹性段随 DURATION 等比缩放）
-// 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
-// 功能: 展开,对比
-// === 时间特性 ===
-// 刚性（不可压缩）: 刚性:dolly 135f,multiplane 135f
-// 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
-// === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 // dolly-zoom 滑动变焦（轮 F）——主体卡（card4-hires）大小锁定屏中，
 // 背景真实卡群 + 整页反向膨胀逼近（scale + blur 渐深），
 // "世界压过来"而主角纹丝不动。伪 dolly-zoom：无需 3D，分层反向补偿。

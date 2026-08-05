@@ -1,12 +1,3 @@
-// === 可调参数 ===
-// DURATION: 120（总帧数，可调；弹性段随 DURATION 等比缩放）
-// 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
-// 功能: 转折,承接
-// === 时间特性 ===
-// 刚性（不可压缩）: 刚性:maskwipe 120f,whippan 120f
-// 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
-// === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 // E 式基本款 whip-pan——真实整页冻结纹理（demos/_textures/）。
 // 世界：projects-full 顶部 section（A 景）与同页底部 section（B 景）横向并排
 // ——模拟"功能段之间的区块交棒"，相机 8f 甩 2880px（峰值 ~540px/f），

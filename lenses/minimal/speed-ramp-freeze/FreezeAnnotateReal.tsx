@@ -1,12 +1,3 @@
-// === 可调参数 ===
-// DURATION: 135（总帧数，可调；弹性段随 DURATION 等比缩放）
-// 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
-// 功能: 举证,宣告
-// === 时间特性 ===
-// 刚性（不可压缩）: 刚性核心:变速段~30f
-// 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
-// === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 // freeze-annotate 定格标注（轮 G）——真实卡片流运动中定格，
 // 马克笔琥珀圈注（feTurbulence 手绘抖动）圈住目标卡 + 箭头点题，解冻继续。
 // remap：0–45 流动 → 45–100 定格（斜率0）→ 100–135 解冻（1.4x 补偿）。
@@ -19,7 +10,7 @@ const CARD_W = 460;
 const GAP = 60;
 const RAIL = layout.projects.cards.slice(0, 9);
 const TARGET_I = 5;
-const AMBER = '#b45309';
+const AMBER = '#d3923c';
 
 export const FreezeAnnotateReal: React.FC = () => {
   const frame = useCurrentFrame();

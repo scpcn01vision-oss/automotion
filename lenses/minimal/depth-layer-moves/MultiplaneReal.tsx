@@ -1,12 +1,3 @@
-// === 可调参数 ===
-// DURATION: 135（总帧数，可调；弹性段随 DURATION 等比缩放）
-// 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
-// 功能: 展开,对比
-// === 时间特性 ===
-// 刚性（不可压缩）: 刚性:dolly 135f,multiplane 135f
-// 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
-// === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 // multiplane parallax（轮 E）——真实页面拆 3 层深度横移：
 // 背景整页（0.35x，微 blur 退后）+ 中景真实卡组（0.7x）+
 // 前景浮块（1.4x，search 切片 + 高清卡，轻 blur 拉焦平面）。

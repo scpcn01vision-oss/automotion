@@ -2,5 +2,19 @@
   "name": "@automotion-v7/lenses",
   "version": "0.0.0",
   "private": true,
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@react-three/fiber": "^9.7.0",
+    "@remotion/motion-blur": "4.0.484",
+    "@remotion/three": "4.0.484",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "remotion": "4.0.484",
+    "three": "^0.185.1"
+  },
+  "devDependencies": {
+    "@remotion/cli": "4.0.484",
+    "@types/react": "^19.2.17",
+    "typescript": "^6.0.3"
+  }
 }
