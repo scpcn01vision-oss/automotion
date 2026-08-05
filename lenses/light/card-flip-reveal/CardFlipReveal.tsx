@@ -193,7 +193,9 @@ export const CardFlipReveal: React.FC<CardFlipRevealProps> = ({
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', left: 120, top: 96 }}>
-        <TitleBlock text={title} size={54} />
+        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 54, color: G.ink, letterSpacing: -1 }}>
+          {title}
+        </div>
       </div>
       {cards.map((card, i) => (
         <div key={i} style={{ position: 'absolute', left: X0 + i * (cardW + GAP), top: 0, width: cardW, height: CH }}>
