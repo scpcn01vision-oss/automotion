@@ -15,34 +15,21 @@
 // 关键帧（卡 i 起点 = 18 + i*10，i = 0/1/2）：
 //   0–18 hold → 卡0: 18–36 翻至 192° → 36–44 回弹落 180° →
 //   卡1: 28–46–54，卡2: 38–56–64 → 64–145 三卡全静止（81f ≥ 40f）。
-import React from 'react';
+import React, { useMemo } from 'react';
 import { interpolate, Easing } from 'remotion';
-import { G, Card, TitleBlock } from '../../_fixtures/Fixtures';
+import { G, TitleBlock } from '../../_fixtures/Fixtures';
 import { useShotFrame } from '../../engine/useShotFrame';
 import type { ShotTime } from '../../engine/time';
-
-// 时间轴配置（来自 lens-timings.json）
-const CARD_FLIP_TIME: ShotTime = {
-  segments: [
-    { from: 0, to: 18, mode: 'elastic', minFrames: 4 },   // 头部 hold
-    { from: 18, to: 64, mode: 'rigid' },                  // 三卡翻转核心 46f
-    { from: 64, to: 180, mode: 'elastic', minFrames: 20 }, // 尾部展示
-  ],
-  minFrames: 88,
-};
 
 const CW = 440;
 const CH = 300;
 const GAP = 60;
-const X0 = (1920 - (CW * 3 + GAP * 2)) / 2; // 240
 const Y = (1080 - CH) / 2; // 390
 const FLIP_START = 18;
 const STAGGER = 10;
 const FLIP_DUR = 18;
 const SETTLE = 8;
 const OVERSHOOT = 12; // 末端过冲角度（原案 8°，肉眼存疑加码到 12°）
-
-const RESULTS = ['4.9×', '−38%', '99.9%'];
 
 // 卡 i 在帧 f 的翻转角：0 → 192（先加速后减速）→ 180（弹性落定），帧确定
 const angleAt = (f: number, i: number): number => {
@@ -83,13 +70,32 @@ const Sheen: React.FC<{ angle: number }> = ({ angle }) => {
   );
 };
 
-const FlipCard: React.FC<{ i: number; frame: number }> = ({ i, frame }) => {
+// 正面 label 字号自适应：短词大字、长句小字可换行
+const labelFont = (len: number): number => {
+  if (len <= 4) return 52;
+  if (len <= 8) return 42;
+  if (len <= 14) return 34;
+  return 28;
+};
+
+export interface CardFlipRevealCard {
+  label?: string;
+  result?: string;
+}
+
+export interface CardFlipRevealProps {
+  title?: string;
+  cards?: CardFlipRevealCard[];
+}
+
+const FlipCard: React.FC<{ i: number; frame: number; card: CardFlipRevealCard }> = ({ i, frame, card }) => {
   const angle = angleAt(frame, i);
+  const len = (card.label ?? '').length;
   return (
     <div
       style={{
         position: 'absolute',
-        left: X0 + i * (CW + GAP),
+        left: 0,
         top: Y,
         width: CW,
         height: CH,
@@ -105,9 +111,24 @@ const FlipCard: React.FC<{ i: number; frame: number }> = ({ i, frame }) => {
           transform: `rotateY(${angle}deg)`,
         }}
       >
-        {/* 正面：占位卡 */}
-        <div style={{ position: 'absolute', inset: 0, backfaceVisibility: 'hidden' }}>
-          <Card w={CW} h={CH} seed={i + 1} />
+        {/* 正面：label 自适应排版（短词大字居中 / 长句小字换行） */}
+        <div
+          style={{
+            position: 'absolute', inset: 0, backfaceVisibility: 'hidden',
+            background: G.card, border: `2px solid ${G.border}`, borderRadius: 14,
+            boxSizing: 'border-box', boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24,
+          }}
+        >
+          <span
+            style={{
+              fontFamily: 'Helvetica, Arial, sans-serif',
+              fontWeight: 700, fontSize: labelFont(len), color: G.ink,
+              textAlign: 'center', lineHeight: 1.2, letterSpacing: -0.5,
+            }}
+          >
+            {card.label}
+          </span>
           <Sheen angle={angle} />
         </div>
         {/* 背面：白卡 + 大号结论数字（预先转 180°，翻满后正读） */}
@@ -136,7 +157,7 @@ const FlipCard: React.FC<{ i: number; frame: number }> = ({ i, frame }) => {
               letterSpacing: -2,
             }}
           >
-            {RESULTS[i]}
+            {card.result}
           </span>
           <Sheen angle={angle} />
         </div>
@@ -145,15 +166,38 @@ const FlipCard: React.FC<{ i: number; frame: number }> = ({ i, frame }) => {
   );
 };
 
-export const CardFlipReveal: React.FC = () => {
-  const frame = useShotFrame(CARD_FLIP_TIME);
+export const CardFlipReveal: React.FC<CardFlipRevealProps> = ({
+  title = 'CARD FLIP REVEAL',
+  cards = [
+    { label: 'Revenue', result: '4.9×' },
+    { label: 'Cost', result: '−38%' },
+    { label: 'Uptime', result: '99.9%' },
+  ],
+}) => {
+  const n = cards.length;
+  // 时序按卡数动态：刚性段 = 首卡起点到末卡落定
+  const shotTime = useMemo<ShotTime>(() => {
+    const flipEnd = FLIP_START + (n - 1) * STAGGER + FLIP_DUR + SETTLE;
+    return {
+      segments: [
+        { from: 0, to: FLIP_START, mode: 'elastic', minFrames: 4 },
+        { from: FLIP_START, to: flipEnd, mode: 'rigid' },
+        { from: flipEnd, to: 180, mode: 'elastic', minFrames: 20 },
+      ],
+      minFrames: 88,
+    };
+  }, [n]);
+  const frame = useShotFrame(shotTime);
+  const X0 = (1920 - (n * CW + (n - 1) * GAP)) / 2;
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', left: 120, top: 96 }}>
-        <TitleBlock text="CARD FLIP REVEAL" size={54} />
+        <TitleBlock text={title} size={54} />
       </div>
-      {[0, 1, 2].map((i) => (
-        <FlipCard key={i} i={i} frame={frame} />
+      {cards.map((card, i) => (
+        <div key={i} style={{ position: 'absolute', left: X0 + i * (CW + GAP), top: 0, width: CW, height: CH }}>
+          <FlipCard i={i} frame={frame} card={card} />
+        </div>
       ))}
     </div>
   );
