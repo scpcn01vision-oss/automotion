@@ -10,7 +10,8 @@
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
-import { FakeDashboard, Card, TitleBlock, G } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 // anime-impact 动漫打击帧〔组合〕：crash-zoom 急推撞停在目标卡上的那 3 帧，
 // 整幅画面反转成黑白负片 + 手绘放射集中线 + 红青通道 ±8px 色散——
@@ -60,7 +61,7 @@ const SpeedLines: React.FC<{ phase: number }> = ({ phase }) => {
       style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
     >
       {polys.map((pts, i) => (
-        <polygon key={i} points={pts} fill={i % 4 === 0 ? '#111111' : '#f5f5f5'} />
+        <polygon key={i} points={pts} fill={i % 4 === 0 ? G.ink : G.panel} />
       ))}
     </svg>
   );
@@ -69,7 +70,7 @@ const SpeedLines: React.FC<{ phase: number }> = ({ phase }) => {
 // 目标卡叠层 + 全景底
 const Scene: React.FC = () => (
   <>
-    <FakeDashboard variant="A" />
+    <SceneContent content={scene} />
     <div style={{ position: 'absolute', left: CARD.x, top: CARD.y }}>
       <Card
         w={CARD.w}
@@ -78,13 +79,28 @@ const Scene: React.FC = () => (
         style={{ boxShadow: '0 10px 36px rgba(0,0,0,0.18)', border: `3px solid ${G.ink}` }}
       />
       <div style={{ position: 'absolute', left: 24, bottom: 96 }}>
-        <TitleBlock text="IMPACT" size={92} />
+        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 92, color: G.ink, letterSpacing: -2 }}>{text}</div>
       </div>
     </div>
   </>
 );
 
-export const AnimeImpact: React.FC = () => {
+export interface AnimeImpactProps {
+  scene?: SceneContentData;
+  text?: string;
+}
+
+export const AnimeImpact: React.FC<AnimeImpactProps> = ({
+  scene = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+    ],
+  },
+  text = 'IMPACT',
+}) => {
   const frame = useCurrentFrame();
 
   // 急推：6f ease-in 撞到 2.4x，卡心推到画面正中
