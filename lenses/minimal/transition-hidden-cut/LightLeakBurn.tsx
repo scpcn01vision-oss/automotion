@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 转折
+// props: sceneA / sceneB（漏光前后景内容承载）、nextTitle（新页标题）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
@@ -9,7 +10,8 @@
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
-import { FakeDashboard, TitleBlock, G } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 // light-leak-burn〔转场〕：一团琥珀橙柔光从右上角斜扫入画，亮度顶峰时
 // 吞掉旧画面约七成（高光溢出、对比度被冲淡），光峰帧后切新页藏切点，
@@ -19,7 +21,31 @@ import { FakeDashboard, TitleBlock, G } from '../../_fixtures/Fixtures';
 
 const PEAK = 52; // 光峰帧 = 藏切点
 
-export const LightLeakBurn: React.FC = () => {
+export interface LightLeakBurnProps {
+  sceneA?: SceneContentData;
+  sceneB?: SceneContentData;
+  nextTitle?: string;
+}
+
+export const LightLeakBurn: React.FC<LightLeakBurnProps> = ({
+  sceneA = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+    ],
+  },
+  sceneB = {
+    title: '状态',
+    type: 'rows',
+    rows: [
+      { label: '节点', value: '4/4' },
+      { label: '可用性', value: '99.98%' },
+    ],
+  },
+  nextTitle = 'Next',
+}) => {
   const frame = useCurrentFrame();
 
   // 光团沿对角线的位移进度：右上外 → 左下外，贯穿 25–95
@@ -70,12 +96,14 @@ export const LightLeakBurn: React.FC = () => {
       {/* 页面层：光峰帧前是旧页（网格），之后是新页（列表+标题）——切点藏在最亮处 */}
       <AbsoluteFill style={{ filter: pageFilter }}>
         {frame <= PEAK ? (
-          <FakeDashboard variant="A" />
+          <SceneContent content={sceneA} />
         ) : (
           <>
-            <FakeDashboard variant="B" />
+            <SceneContent content={sceneB} />
             <div style={{ position: 'absolute', left: '50%', top: 96, transform: 'translateX(-50%)' }}>
-              <TitleBlock text="Next Page" size={64} />
+              <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 64, color: G.ink, letterSpacing: -1 }}>
+                {nextTitle}
+              </div>
             </div>
           </>
         )}
