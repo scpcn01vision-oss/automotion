@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 钩子,宣告
+// props: title（左上角标题）、content（卡片内容承载 rows/image）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
@@ -17,8 +18,8 @@
 // 48–56 闪黑加粗（48–50 上 50–56 回）+ 内容 8f 淡入 →
 // 54–64 描边淡出 / 自身 border 淡入 → 68–86 下划线短版生长 → 90–140 真静止 50f。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, TitleBlock } from '../../_fixtures/Fixtures';
+import { useCurrentFrame, interpolate, Easing, Img, staticFile } from 'remotion';
+import { G } from '../../_fixtures/Fixtures';
 
 const CW = 560;
 const CH = 380;
@@ -26,7 +27,72 @@ const CX = (1920 - CW) / 2; // 680
 const CY = (1080 - CH) / 2; // 350
 const PEN = 0.045; // 笔头 dash 长度（占整圈比例）
 
-export const DrawSvgTrace: React.FC = () => {
+export interface DrawSvgTraceContent {
+  title?: string;
+  type?: 'rows' | 'image';
+  rows?: { label: string; value: string }[];
+  image?: string;
+}
+
+export interface DrawSvgTraceProps {
+  title?: string;
+  content?: DrawSvgTraceContent;
+}
+
+// 卡片内容渲染器：标题条 + 行列表（默认）/ 标题条 + 圆角图片
+const CardContent: React.FC<{ content: DrawSvgTraceContent }> = ({ content }) => {
+  const { title, type = 'rows', rows, image } = content;
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 18, height: '100%' }}>
+      <div
+        style={{
+          height: 24, borderRadius: 10, background: G.bar, overflow: 'hidden',
+          display: 'flex', alignItems: 'center', padding: '0 12px',
+        }}
+      >
+        {title ? (
+          <span style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 15, fontWeight: 700, color: G.card }}>
+            {title}
+          </span>
+        ) : null}
+      </div>
+      {/* 下划线占位：由下方 SVG 画出，这里留 6px 空隙 */}
+      <div style={{ height: 6 }} />
+      {type === 'image' && image ? (
+        <Img
+          src={staticFile(image)}
+          style={{
+            flex: 1, width: '100%', objectFit: 'cover', borderRadius: 8,
+            border: `1px solid ${G.border}`,
+          }}
+        />
+      ) : (
+        <>
+          {(rows ?? []).map((r, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{ fontSize: 16, color: G.ink, fontWeight: 600 }}>{r.label}</span>
+              <span style={{ marginLeft: 'auto', fontSize: 17, color: G.accent, fontWeight: 800 }}>{r.value}</span>
+            </div>
+          ))}
+        </>
+      )}
+    </div>
+  );
+};
+
+export const DrawSvgTrace: React.FC<DrawSvgTraceProps> = ({
+  title = 'OVERVIEW',
+  content = {
+    title: '标题',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+      { label: '指标三', value: '96.4%' },
+      { label: '指标四', value: '42ms' },
+    ],
+  },
+}) => {
   const frame = useCurrentFrame();
 
   // 轮廓描边进度：8–48，40f，inOut cubic
@@ -48,7 +114,7 @@ export const DrawSvgTrace: React.FC = () => {
   });
   const flash = frame < 50 ? flashUp : flashDown;
   const strokeW = 4 + flash * 4;
-  const strokeColor = flash > 0.5 ? '#000000' : G.ink;
+  const strokeColor = G.ink;
 
   // 内容淡入：48–56（8f）
   const contentOp = interpolate(frame, [48, 56], [0, 1], {
@@ -79,10 +145,12 @@ export const DrawSvgTrace: React.FC = () => {
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', left: 120, top: 96 }}>
-        <TitleBlock text="DRAW SVG TRACE" size={54} />
+        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 54, color: G.ink, letterSpacing: -1 }}>
+          {title}
+        </div>
       </div>
 
-      {/* 卡片内容（手写灰阶块：标题条/下划线位/文字行/头像行），闭合后 8f 淡入 */}
+      {/* 卡片内容（标题条 + rows/image 承载），闭合后 8f 淡入 */}
       <div
         style={{
           position: 'absolute',
@@ -97,20 +165,10 @@ export const DrawSvgTrace: React.FC = () => {
           boxSizing: 'border-box',
           display: 'flex',
           flexDirection: 'column',
-          gap: 18,
           opacity: contentOp,
         }}
       >
-        <div style={{ height: 24, width: 340, background: G.bar, borderRadius: 10 }} />
-        {/* 下划线占位：由下方 SVG 画出，这里留 6px 空隙 */}
-        <div style={{ height: 6 }} />
-        <div style={{ height: 13, width: '86%', background: G.line, borderRadius: 6 }} />
-        <div style={{ height: 13, width: '72%', background: G.line, borderRadius: 6 }} />
-        <div style={{ height: 13, width: '60%', background: G.line, borderRadius: 6 }} />
-        <div style={{ marginTop: 'auto', display: 'flex', gap: 12, alignItems: 'center' }}>
-          <div style={{ width: 34, height: 34, borderRadius: 17, background: G.mid }} />
-          <div style={{ height: 12, width: 96, background: G.line, borderRadius: 6 }} />
-        </div>
+        <CardContent content={content} />
       </div>
 
       {/* 卡片自身 border：描边淡出时接棒 */}
