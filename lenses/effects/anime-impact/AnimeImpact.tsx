@@ -68,16 +68,33 @@ const SpeedLines: React.FC<{ phase: number }> = ({ phase }) => {
 };
 
 // 目标卡叠层 + 全景底
-const Scene: React.FC = () => (
+const Scene: React.FC<{ scene: SceneContentData; text: string }> = ({ scene, text }) => (
   <>
     <SceneContent content={scene} />
     <div style={{ position: 'absolute', left: CARD.x, top: CARD.y }}>
-      <Card
-        w={CARD.w}
-        h={CARD.h}
-        seed={9}
-        style={{ boxShadow: '0 10px 36px rgba(0,0,0,0.18)', border: `3px solid ${G.ink}` }}
-      />
+      <div
+        style={{
+          width: CARD.w,
+          height: CARD.h,
+          background: G.card,
+          border: `3px solid ${G.ink}`,
+          borderRadius: 14,
+          boxShadow: '0 10px 36px rgba(0,0,0,0.18)',
+          boxSizing: 'border-box',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 10,
+        }}
+      >
+        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 28, fontWeight: 800, color: G.ink }}>
+          {text}
+        </div>
+        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 40, fontWeight: 800, color: G.accent }}>
+          +18%
+        </div>
+      </div>
       <div style={{ position: 'absolute', left: 24, bottom: 96 }}>
         <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 92, color: G.ink, letterSpacing: -2 }}>{text}</div>
       </div>
@@ -134,7 +151,7 @@ export const AnimeImpact: React.FC<AnimeImpactProps> = ({
       <div style={{ position: 'absolute', inset: 0, transform: `translate(${shakeX}px, ${shakeY}px)` }}>
         {/* 主层：冲击帧期间整幅负片黑白 */}
         <div style={{ ...zoomStyle, filter: impact ? 'invert(1) grayscale(1)' : 'none' }}>
-          <Scene />
+          <Scene scene={scene} text={text} />
         </div>
         {/* RGB split：红/青双层负片副本，screen 叠底、±8px 错位（随 phase 抖动） */}
         {impact && (
@@ -148,7 +165,7 @@ export const AnimeImpact: React.FC<AnimeImpactProps> = ({
               }}
             >
               <div style={{ ...zoomStyle, filter: 'invert(1) grayscale(1)' }}>
-                <Scene />
+                <Scene scene={scene} text={text} />
               </div>
               <div style={{ position: 'absolute', inset: 0, background: '#ff0033', mixBlendMode: 'multiply' }} />
             </div>
@@ -161,7 +178,7 @@ export const AnimeImpact: React.FC<AnimeImpactProps> = ({
               }}
             >
               <div style={{ ...zoomStyle, filter: 'invert(1) grayscale(1)' }}>
-                <Scene />
+                <Scene scene={scene} text={text} />
               </div>
               <div style={{ position: 'absolute', inset: 0, background: '#00e5ff', mixBlendMode: 'multiply' }} />
             </div>

@@ -18,7 +18,8 @@
 // 62–135f 真静止 73f ≥ 40f。帧确定：h() 伪随机，无 Math.random。
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
-import { FakeDashboard, G } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 const STRIPS = 16;
 const H = 1080;
@@ -31,7 +32,29 @@ const h = (n: number) => {
   return s - Math.floor(s);
 };
 
-export const GlitchDisplace: React.FC = () => {
+export interface GlitchDisplaceProps {
+  sceneA?: SceneContentData;
+  sceneB?: SceneContentData;
+}
+
+export const GlitchDisplace: React.FC<GlitchDisplaceProps> = ({
+  sceneA = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+    ],
+  },
+  sceneB = {
+    title: '状态',
+    type: 'rows',
+    rows: [
+      { label: '节点', value: '4/4' },
+      { label: '可用性', value: '99.98%' },
+    ],
+  },
+}) => {
   const frame = useCurrentFrame();
 
   const tearing = frame >= 45 && frame < 62;
@@ -41,7 +64,7 @@ export const GlitchDisplace: React.FC = () => {
     // 45f 前 A 静置；62f 起 B 摘罩真静止（无 transform / filter / 重影）
     return (
       <AbsoluteFill style={{ background: G.bg }}>
-        <FakeDashboard variant={variant} />
+        <SceneContent content={variant === 'A' ? sceneA : sceneB} />
       </AbsoluteFill>
     );
   }
@@ -62,7 +85,7 @@ export const GlitchDisplace: React.FC = () => {
     <AbsoluteFill style={{ background: G.bg, overflow: 'hidden' }}>
       {/* 底垫一份完整页，防条带间横移露底色缝 */}
       <AbsoluteFill>
-        <FakeDashboard variant={variant} />
+        <SceneContent content={variant === 'A' ? sceneA : sceneB} />
       </AbsoluteFill>
 
       {/* 明暗错位重影（灰阶版 RGB 分离）：+12px 压暗 / -12px 反相提亮 */}
@@ -73,7 +96,7 @@ export const GlitchDisplace: React.FC = () => {
           filter: 'brightness(0.45)',
         }}
       >
-        <FakeDashboard variant={variant} />
+        <SceneContent content={variant === 'A' ? sceneA : sceneB} />
       </AbsoluteFill>
       <AbsoluteFill
         style={{
@@ -82,7 +105,7 @@ export const GlitchDisplace: React.FC = () => {
           filter: 'invert(1)',
         }}
       >
-        <FakeDashboard variant={variant} />
+        <SceneContent content={variant === 'A' ? sceneA : sceneB} />
       </AbsoluteFill>
 
       {/* 16 条水平条带：外层裁切，内层整页反向 translateY 对位 + 逐帧横向抖动 */}
@@ -107,7 +130,7 @@ export const GlitchDisplace: React.FC = () => {
                 transform: `translate(${dx.toFixed(2)}px, ${-i * STRIP_H}px)`,
               }}
             >
-              <FakeDashboard variant={variant} />
+              <SceneContent content={variant === 'A' ? sceneA : sceneB} />
             </div>
           </div>
         );

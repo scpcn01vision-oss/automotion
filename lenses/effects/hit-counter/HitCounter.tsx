@@ -110,7 +110,29 @@ export const HitCounter: React.FC<HitCounterProps> = ({
               transform: `scaleY(${squash})`, transformOrigin: 'bottom center',
             }}
           >
-            <Card w={SLOT_W} h={SLOT_H} seed={i + 2} style={{ boxShadow: '0 16px 48px rgba(0,0,0,0.25)' }} />
+            <div
+              style={{
+                width: SLOT_W,
+                height: SLOT_H,
+                background: G.card,
+                border: `2px solid ${G.border}`,
+                borderRadius: 14,
+                boxShadow: '0 16px 48px rgba(0,0,0,0.25)',
+                boxSizing: 'border-box',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 10,
+              }}
+            >
+              <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 26, fontWeight: 800, color: G.ink }}>
+                连击 {i + 1}
+              </div>
+              <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 36, fontWeight: 800, color: G.accent }}>
+                {dmgText[i] ?? ''}
+              </div>
+            </div>
           </div>
         );
       })}
