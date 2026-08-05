@@ -93,7 +93,7 @@ export const PanelToCanvasMaterialize: React.FC = () => {
             justifyContent: 'center',
           }}
         >
-          <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 700, fontSize: 22, color: '#f2f2f0', letterSpacing: 0.5 }}>
+          <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 700, fontSize: 22, color: G.card, letterSpacing: 0.5 }}>
             Add all to canvas
           </div>
         </div>
