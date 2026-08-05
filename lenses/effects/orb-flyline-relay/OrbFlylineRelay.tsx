@@ -16,6 +16,7 @@
 // 线二 B→C 接力，C 亮起收束。光斑 95–120f out-sine 减速收敛，
 // 全部动画 f120 前结束，末 35f 真静止。
 import React from 'react';
+import { G } from '../../_fixtures/Fixtures';
 import { AbsoluteFill, interpolate, useCurrentFrame, Easing } from 'remotion';
 
 // 库内标准伪随机（帧确定）
@@ -184,17 +185,17 @@ const DarkCard: React.FC<{
     <div
       style={{
         position: 'absolute', left: x, top: y, width: CARD_W, height: CARD_H,
-        boxSizing: 'border-box', background: '#3d3022',
+        boxSizing: 'border-box', background: G.side,
         border: `1.5px solid ${borderCol}`, borderRadius: 14,
         boxShadow: glow, opacity: op,
         padding: 24, display: 'flex', flexDirection: 'column', gap: 12,
       }}
     >
-      <div style={{ height: 15, width: `${titleW}%`, background: '#3d3022', borderRadius: 8 }} />
-      <div style={{ height: 10, width: '80%', background: '#383836', borderRadius: 5 }} />
-      <div style={{ height: 10, width: '62%', background: '#383836', borderRadius: 5 }} />
+      <div style={{ height: 15, width: `${titleW}%`, background: G.side, borderRadius: 8 }} />
+      <div style={{ height: 10, width: '80%', background: G.line, borderRadius: 5 }} />
+      <div style={{ height: 10, width: '62%', background: G.line, borderRadius: 5 }} />
       <div style={{ marginTop: 'auto', display: 'flex', gap: 9, alignItems: 'center' }}>
-        <div style={{ width: 24, height: 24, borderRadius: 12, background: '#3d3022' }} />
+        <div style={{ width: 24, height: 24, borderRadius: 12, background: G.side }} />
         <div style={{ height: 10, width: 78, background: '#383836', borderRadius: 5 }} />
       </div>
     </div>
