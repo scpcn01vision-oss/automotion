@@ -13,6 +13,7 @@
 // 奇偶行反向匀速无限滚动（marquee 允许 linear），
 // 三行明暗轮流脉冲（一行亮时其余压暗），结尾整组淡出。
 import React from 'react';
+import { G } from '../../_fixtures/Fixtures';
 import { AbsoluteFill, useCurrentFrame, interpolate } from 'remotion';
 
 const FONT = '"Arial Black", "Helvetica Neue", Arial, sans-serif';
@@ -75,7 +76,17 @@ const MarqueeRow: React.FC<{
   );
 };
 
-export const NeonTripleMarquee: React.FC = () => {
+export interface NeonTripleMarqueeProps {
+  words?: { word: string; color: string; dir: 1 | -1; speed: number }[];
+}
+
+export const NeonTripleMarquee: React.FC<NeonTripleMarqueeProps> = ({
+  words = [
+    { word: 'BETTER', color: '#4d9fff', dir: 1, speed: 14 },
+    { word: 'FASTER', color: '#ff4dd2', dir: -1, speed: 17 },
+    { word: 'STRONGER', color: '#ffb347', dir: 1, speed: 14 },
+  ],
+}) => {
   const f = useCurrentFrame();
 
   // 三行轮流脉冲：周期 45 帧，每行占 1/3 相位，余弦软脉冲
@@ -93,14 +104,10 @@ export const NeonTripleMarquee: React.FC = () => {
     extrapolateRight: 'clamp',
   });
 
-  const rows: { word: string; color: string; dir: 1 | -1; speed: number }[] = [
-    { word: 'BETTER', color: '#4d9fff', dir: 1, speed: 14 },
-    { word: 'FASTER', color: '#ff4dd2', dir: -1, speed: 17 },
-    { word: 'STRONGER', color: '#ffb347', dir: 1, speed: 14 },
-  ];
+  const rows = words;
 
   return (
-    <AbsoluteFill style={{ background: '#2c2416', overflow: 'hidden' }}>
+    <AbsoluteFill style={{ background: G.ink, overflow: 'hidden' }}>
       <div style={{ opacity: groupOpacity, position: 'absolute', inset: 0 }}>
         {rows.map((r, i) => (
           <MarqueeRow
