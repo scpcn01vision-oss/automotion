@@ -19,46 +19,40 @@ import { G } from '../../_fixtures/Fixtures';
 // mask 放大原点：内容通用时取画面中心（字母 L 竖笔位置仅为演示字形优化）
 const ORIGIN = '50% 50%';
 
-// 遮罩内中性纹理：主题词重复网格 + 中央大字（内容即词本身，替代演示占位）
-const MaskTexture: React.FC<{ word: string; driftX: number; scale: number }> = ({ word, driftX, scale }) => {
-  const CELL_W = 480;
-  const CELL_H = 270;
-  const cols = 4;
-  const rows = 4;
+// 镂空字背后的内容层：静止的干净中性内容画面（统一 G 色板，不堆文字不混色）
+const MaskTexture: React.FC = () => {
+  const rows = [
+    { label: 'Scope', value: 'Locked' },
+    { label: 'Budget', value: 'Approved' },
+    { label: 'Ship', value: 'Ready' },
+  ];
   return (
-    <div style={{ width: 1920, height: 1080, background: G.bg, overflow: 'hidden' }}>
+    <div
+      style={{
+        width: 1920, height: 1080, background: G.bg, overflow: 'hidden',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+      }}
+    >
       <div
         style={{
-          position: 'absolute',
-          inset: -200,
-          transform: `translateX(${driftX}px) scale(${scale})`,
-          transformOrigin: '50% 50%',
-          display: 'grid',
-          gridTemplateColumns: `repeat(${cols}, ${CELL_W}px)`,
-          gridTemplateRows: `repeat(${rows}, ${CELL_H}px)`,
+          width: 920, background: G.card, border: `2px solid ${G.border}`, borderRadius: 18,
+          padding: '42px 54px', boxSizing: 'border-box',
+          boxShadow: '0 10px 40px rgba(0,0,0,0.08)',
         }}
       >
-        {Array.from({ length: cols * rows }).map((_, i) => (
+        <div style={{ fontSize: 40, fontWeight: 700, color: G.ink, marginBottom: 26 }}>PROJECT SNAPSHOT</div>
+        {rows.map((r, i) => (
           <div
             key={i}
             style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 96,
-              letterSpacing: 4, color: i % 2 === 0 ? G.mid : G.bar,
+              display: 'flex', alignItems: 'center', padding: '15px 0',
+              borderBottom: i < rows.length - 1 ? `1px solid ${G.line}` : 'none',
             }}
           >
-            {word}
+            <span style={{ fontSize: 26, color: G.ink, fontWeight: 600 }}>{r.label}</span>
+            <span style={{ marginLeft: 'auto', fontSize: 27, color: G.accent, fontWeight: 800 }}>{r.value}</span>
           </div>
         ))}
-      </div>
-      <div
-        style={{
-          position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)',
-          fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 900, fontSize: 220,
-          letterSpacing: -6, color: G.ink, textShadow: '0 6px 24px rgba(211,146,60,0.35)',
-        }}
-      >
-        {word}
       </div>
     </div>
   );
@@ -82,21 +76,10 @@ export const TextAsMask: React.FC<TextAsMaskProps> = ({ text = 'SCALE' }) => {
     easing: Easing.bezier(0.4, 0, 0.2, 1),
   });
 
-  // dashboard 内容运动：20–100f 匀速漂移，100–130f 归位到全屏
-  const driftX = interpolate(f, [20, 100], [110, -110], clamp);
-  const dx = f < 100 ? driftX : interpolate(endT, [0, 1], [-110, 0]);
-  const dashS = interpolate(endT, [0, 1], [1.15, 1]);
-
   // mask 层放大（内容层反向抵消，dashboard 不跟着几何畸变）
   const maskS = interpolate(endT, [0, 1], [1, 26]);
   // 无遮罩全屏层淡入，保证接管彻底
   const cover = interpolate(endT, [0.25, 0.9], [0, 1], clamp);
-  const dashMotion: React.CSSProperties = {
-    position: 'absolute',
-    inset: 0,
-    transform: `translateX(${dx}px) scale(${dashS})`,
-    transformOrigin: '50% 50%',
-  };
 
   return (
     <div style={{ width: 1920, height: 1080, background: G.ink, position: 'relative', overflow: 'hidden' }}>
@@ -116,17 +99,13 @@ export const TextAsMask: React.FC<TextAsMaskProps> = ({ text = 'SCALE' }) => {
         }}
       >
         <div style={{ position: 'absolute', inset: 0, transform: `scale(${1 / maskS})`, transformOrigin: ORIGIN }}>
-          <div style={dashMotion}>
-            <MaskTexture word={text} driftX={dx} scale={dashS} />
-          </div>
+          <MaskTexture />
         </div>
       </div>
 
       {/* 接管层：同一运动变换的全屏 dashboard，撤场时淡入到 1 */}
       <div style={{ position: 'absolute', inset: 0, opacity: cover }}>
-        <div style={dashMotion}>
-          <MaskTexture word={text} driftX={dx} scale={dashS} />
-        </div>
+        <MaskTexture />
       </div>
     </div>
   );
