@@ -18,17 +18,16 @@
 // 附 1.035 微缩放加码）→ 66–84 下方标签条淡入 → 84–150 全静止（66f ≥45f）。
 import React from 'react';
 import { useCurrentFrame, interpolate, interpolateColors, Easing } from 'remotion';
-import { G, TitleBlock } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
 
 const ROW = 210; // 数位行高（overflow 盒高）
 const DW = 126; // 数位盒宽
 const FS = 190; // 字号
 const SPIN = 0.85; // 高速滚动速度：行/帧
-const DIGITS = [9, 9, 9, 8]; // 目标数位（"99.98" 中可滚的四位）
 
 // 位 i 的 strip 位置（单位：行，连续值）。纯帧函数，天然确定性。
-const posAt = (f: number, i: number): number => {
-  const d = DIGITS[i];
+const posAt = (f: number, i: number, digits: number[]): number => {
+  const d = digits[i];
   const s = 20 + i * 7; // 开始减速帧
   const p0 = SPIN * s;
   // 最小再走 6 行后，落在个位 = d 的最近整数位置
@@ -87,9 +86,9 @@ const Strip: React.FC<{ pos: number; color: string; opacity?: number; dy?: numbe
 );
 
 // 单个数位盒：本体 strip + 滚动期 2 个错帧残影（速度门控，停稳即摘）
-const DigitReel: React.FC<{ frame: number; i: number; color: string }> = ({ frame, i, color }) => {
-  const pos = posAt(frame, i);
-  const speed = Math.abs(pos - posAt(frame - 1, i));
+const DigitReel: React.FC<{ frame: number; i: number; color: string; digits: number[] }> = ({ frame, i, color, digits }) => {
+  const pos = posAt(frame, i, digits);
+  const speed = Math.abs(pos - posAt(frame - 1, i, digits));
   const gate = interpolate(speed, [0.06, 0.5], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
@@ -125,8 +124,22 @@ const StaticGlyph: React.FC<{ ch: string; color: string; w?: number }> = ({ ch, 
   </div>
 );
 
-export const OdometerDigitRoll: React.FC = () => {
+export interface OdometerDigitRollProps {
+  value?: string;
+  label?: string;
+  sublabel?: string;
+}
+
+export const OdometerDigitRoll: React.FC<OdometerDigitRollProps> = ({
+  value = '99.98',
+  label = 'TARGET METRIC',
+  sublabel = 'ACHIEVED',
+}) => {
   const frame = useCurrentFrame();
+  // 目标数字解析：数字位滚动，非数字（./%/空格）驻场
+  const chars = value.split('');
+  const digits = chars.filter((c) => /\d/.test(c)).map(Number);
+  let digitIdx = 0;
   // 全位锁定于 63f：整体加深脉冲 ink→#000→ink（8f），附微缩放加码可感性
   const inkNow = interpolateColors(frame, [63, 67, 71], [G.ink, '#000000', G.ink]);
   const pulseScale = interpolate(frame, [63, 67, 71], [1, 1.035, 1], {
@@ -142,9 +155,6 @@ export const OdometerDigitRoll: React.FC = () => {
 
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', left: 120, top: 96 }}>
-        <TitleBlock text="ODOMETER DIGIT ROLL" size={54} />
-      </div>
       <div
         style={{
           position: 'absolute',
@@ -158,14 +168,15 @@ export const OdometerDigitRoll: React.FC = () => {
           transformOrigin: '960px 105px',
         }}
       >
-        <DigitReel frame={frame} i={0} color={inkNow} />
-        <DigitReel frame={frame} i={1} color={inkNow} />
-        <StaticGlyph ch="." color={inkNow} w={70} />
-        <DigitReel frame={frame} i={2} color={inkNow} />
-        <DigitReel frame={frame} i={3} color={inkNow} />
-        <StaticGlyph ch="%" color={inkNow} />
+        {chars.map((ch, k) =>
+          /\d/.test(ch) ? (
+            <DigitReel key={k} frame={frame} i={digitIdx++} color={inkNow} digits={digits} />
+          ) : (
+            <StaticGlyph key={k} ch={ch} color={inkNow} w={ch === '.' ? 70 : undefined} />
+          ),
+        )}
       </div>
-      {/* 下方标签条：全部锁定后淡入 */}
+      {/* 下方标签：全部锁定后淡入 */}
       <div
         style={{
           position: 'absolute',
@@ -175,12 +186,12 @@ export const OdometerDigitRoll: React.FC = () => {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: 16,
+          gap: 10,
           opacity: labelOp,
         }}
       >
-        <div style={{ width: 520, height: 22, background: G.bar, borderRadius: 11 }} />
-        <div style={{ width: 320, height: 14, background: G.line, borderRadius: 7 }} />
+        {label ? <div style={{ fontSize: 34, fontWeight: 700, color: G.ink, letterSpacing: 2 }}>{label}</div> : null}
+        {sublabel ? <div style={{ fontSize: 20, color: G.mid, letterSpacing: 3 }}>{sublabel}</div> : null}
       </div>
     </div>
   );
