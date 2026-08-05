@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 展开
+// props: cards（三张抬升卡内容）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
@@ -13,7 +14,7 @@
 // 落地 2f 卡壳 scale 0.99 微压。三张依次各来一遍。收尾真静止 ≥35f。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, Card } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
 
 const outCubic = Easing.out(Easing.cubic);
 const inCubic = Easing.in(Easing.cubic);
@@ -65,7 +66,42 @@ const CARD_H = 220;
 const GAP = 120;
 const STARTS = [2, 42, 82]; // 三张卡依次点名，间隔 40f；末次动画止于 f125，留 35f 真静止
 
-export const ContactShadowLift: React.FC = () => {
+export interface ContactShadowLiftProps {
+  cards?: { label: string; value: string }[];
+}
+
+const MiniCard: React.FC<{ w: number; h: number; label: string; value: string }> = ({ w, h, label, value }) => (
+  <div
+    style={{
+      width: w,
+      height: h,
+      background: G.card,
+      border: `2px solid ${G.border}`,
+      borderRadius: 14,
+      padding: 18,
+      boxSizing: 'border-box',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      gap: 8,
+    }}
+  >
+    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 20, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
+      {label}
+    </div>
+    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 28, fontWeight: 800, color: G.accent }}>
+      {value}
+    </div>
+  </div>
+);
+
+export const ContactShadowLift: React.FC<ContactShadowLiftProps> = ({
+  cards = [
+    { label: '指标一', value: '+18%' },
+    { label: '指标二', value: '2.1×' },
+    { label: '指标三', value: '96.4%' },
+  ],
+}) => {
   const frame = useCurrentFrame();
   const rowW = CARD_W * 3 + GAP * 2;
   const left0 = (1920 - rowW) / 2;
@@ -106,18 +142,16 @@ export const ContactShadowLift: React.FC = () => {
                 opacity: shOpacity,
               }}
             />
-            <Card
-              w={CARD_W}
-              h={CARD_H}
-              seed={i + 2}
+            <div
               style={{
                 position: 'absolute',
                 left: x,
                 top,
-                boxShadow: 'none',
                 transform: `translateY(${y}px) scale(${s})`,
               }}
-            />
+            >
+              <MiniCard w={CARD_W} h={CARD_H} label={cards[i]?.label ?? ''} value={cards[i]?.value ?? ''} />
+            </div>
           </React.Fragment>
         );
       })}
