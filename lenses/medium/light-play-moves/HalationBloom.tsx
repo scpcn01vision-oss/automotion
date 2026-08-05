@@ -14,10 +14,11 @@
 // 深底白字：白底上提亮不可见判例。收尾真静止 ≥40f。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { G } from '../../_fixtures/Fixtures';
 
-const BG = '#2a2a28';
-const WHITE = '#f7f7f5';
-const MID = '#8f8f8d';
+const BG = G.side;
+const WHITE = G.card;
+const MID = G.mid;
 
 // —— 时间轴（30fps）——
 const ZOOM_START = 8; // 入场起始
@@ -28,7 +29,7 @@ const FALL_END = POP_END + 20; // 20f 线性回落 → f41
 const SETTLE_END = FALL_END + 15; // 15f 缓收 → f56，此后全静止
 // 总时长 145f → 静止 89f ≥ 40f
 
-const TextBlock: React.FC<{ color: string }> = ({ color }) => (
+const TextBlock: React.FC<{ color: string; text: string }> = ({ color, text }) => (
   <div
     style={{
       fontFamily: 'Helvetica, Arial, sans-serif',
@@ -40,11 +41,17 @@ const TextBlock: React.FC<{ color: string }> = ({ color }) => (
       whiteSpace: 'nowrap',
     }}
   >
-    10x
+    {text}
   </div>
 );
 
-export const HalationBloom: React.FC = () => {
+export interface HalationBloomProps {
+  value?: string;
+}
+
+export const HalationBloom: React.FC<HalationBloomProps> = ({
+  value = '10x',
+}) => {
   const frame = useCurrentFrame();
 
   // —— crash-zoom 入场：scale 2.4 → 0.94（7f in-quad 加速撞停）→ 1（2f 回弹）——
@@ -125,7 +132,7 @@ export const HalationBloom: React.FC = () => {
             filter: 'blur(22px) brightness(1.8)',
           }}
         >
-          <TextBlock color={WHITE} />
+          <TextBlock color={WHITE} text={value} />
         </div>
       )}
 
@@ -141,7 +148,7 @@ export const HalationBloom: React.FC = () => {
           opacity: textOpacity,
         }}
       >
-        <TextBlock color={WHITE} />
+        <TextBlock color={WHITE} text={value} />
       </div>
     </div>
   );
