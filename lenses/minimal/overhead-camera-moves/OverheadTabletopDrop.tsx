@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 钩子,展开
+// props: pages（3 张页面卡内容承载：左/中/右）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
@@ -16,7 +17,8 @@
 // 落版 16:9 精确对位），间距 140px。
 import React from 'react';
 import { AbsoluteFill, interpolate, useCurrentFrame, Easing } from 'remotion';
-import { FakeDashboard, Card, G } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 const CARD_W = 996;
 const CARD_H = 560;
@@ -52,7 +54,38 @@ const PageCard: React.FC<{ x: number; children: React.ReactNode }> = ({ x, child
   </div>
 );
 
-export const OverheadTabletopDrop: React.FC = () => {
+export interface OverheadTabletopDropProps {
+  pages?: [SceneContentData, SceneContentData, SceneContentData];
+}
+
+export const OverheadTabletopDrop: React.FC<OverheadTabletopDropProps> = ({
+  pages = [
+    {
+      title: '概览',
+      type: 'rows',
+      rows: [
+        { label: '指标一', value: '+18%' },
+        { label: '指标二', value: '2.1×' },
+      ],
+    },
+    {
+      title: '状态',
+      type: 'rows',
+      rows: [
+        { label: '节点', value: '4/4' },
+        { label: '可用性', value: '99.98%' },
+      ],
+    },
+    {
+      title: '进度',
+      type: 'rows',
+      rows: [
+        { label: '完成', value: '62%' },
+        { label: '剩余', value: '3 项' },
+      ],
+    },
+  ],
+}) => {
   const f = useCurrentFrame();
 
   // 0–55f 横滑：只动 translateX，缓入缓出
@@ -111,25 +144,14 @@ export const OverheadTabletopDrop: React.FC = () => {
             }}
           />
           <PageCard x={-PITCH}>
-            <FakeDashboard variant="B" />
+            <SceneContent content={pages[0]} />
           </PageCard>
           {/* 目标页：落版满屏 */}
           <PageCard x={0}>
-            <FakeDashboard variant="A" />
+            <SceneContent content={pages[1]} />
           </PageCard>
           <PageCard x={PITCH}>
-            <div
-              style={{
-                width: 1920,
-                height: 1080,
-                background: G.panel,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Card w={760} h={520} seed={4} />
-            </div>
+            <SceneContent content={pages[2]} />
           </PageCard>
         </div>
       </div>
