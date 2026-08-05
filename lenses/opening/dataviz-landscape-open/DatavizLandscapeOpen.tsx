@@ -10,6 +10,7 @@
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 import React from 'react';
 import {AbsoluteFill, interpolate, useCurrentFrame} from 'remotion';
+import { G } from '../../_fixtures/Fixtures';
 
 /**
  * DatavizLandscapeOpen — 暗场支流线束地景开场
@@ -173,7 +174,7 @@ export const DatavizLandscapeOpen: React.FC = () => {
   });
 
   return (
-    <AbsoluteFill style={{backgroundColor: '#2c2416', overflow: 'hidden'}}>
+    <AbsoluteFill style={{backgroundColor: G.ink, overflow: 'hidden'}}>
       {/* zoom 容器: 以画面中心为原点 */}
       <AbsoluteFill style={{transform: `scale(${zoom})`, transformOrigin: '50% 50%'}}>
         {/* 底色微渐变, 避免纯黑死平 */}
@@ -337,7 +338,7 @@ export const DatavizLandscapeOpen: React.FC = () => {
                     top: py - 8,
                     width: 16,
                     height: 16,
-                    backgroundColor: '#fefcf8',
+                    backgroundColor: G.card,
                     opacity: fadeIn * 0.9,
                   }}
                 />
@@ -349,7 +350,7 @@ export const DatavizLandscapeOpen: React.FC = () => {
                     fontFamily: 'Menlo, "SF Mono", Consolas, monospace',
                     fontSize: 22,
                     letterSpacing: 3,
-                    color: '#d9d3c7',
+                    color: G.line,
                     whiteSpace: 'nowrap',
                     opacity: fadeIn * 0.92,
                   }}
