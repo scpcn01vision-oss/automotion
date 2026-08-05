@@ -16,7 +16,8 @@
 // 标签 f46–56 弹出；f56 后真静止 ≥84f（140f 总长）。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, FakeDashboard } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 // 目标：variant A 网格第 2 张卡（第一行中间）。
 // 布局推导：侧栏 220 + padding 36，网格 3 列 gap 28，
@@ -41,7 +42,21 @@ const THICK = 10; // L 粗
 
 const clamp = { extrapolateLeft: 'clamp' as const, extrapolateRight: 'clamp' as const };
 
-export const ReticleLockOn: React.FC = () => {
+export interface ReticleLockOnProps {
+  scene?: SceneContentData;
+}
+
+export const ReticleLockOn: React.FC<ReticleLockOnProps> = ({
+  scene = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+      { label: '指标三', value: '96.4%' },
+    ],
+  },
+}) => {
   const frame = useCurrentFrame();
 
   // 飞入：整框从右下画外冲进来，同时是个放大 2.2× 的大框
@@ -84,7 +99,7 @@ export const ReticleLockOn: React.FC = () => {
 
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, overflow: 'hidden', position: 'relative' }}>
-      <FakeDashboard variant="A" />
+      <SceneContent content={scene} />
       {/* 咬合微亮层：条件渲染，锁定前不存在 */}
       {locked && (
         <div
@@ -95,7 +110,7 @@ export const ReticleLockOn: React.FC = () => {
             width: CARD_W,
             height: CARD_H,
             borderRadius: 14,
-            background: '#ffffff',
+            background: G.card,
             opacity: glow,
             pointerEvents: 'none',
           }}
