@@ -2,20 +2,22 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 展开,举证
+// props: scene（全景内容承载）、resultValue（结果大数字）
 // === 时间特性 ===
 // 刚性（不可压缩）: 刚性:每卡12f
 // 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
 // === 适配注意 ===
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 // 三连咔哒特写（wright-triple-cut）——Edgar Wright《僵尸肖恩》流程三连快切:
-// 帧 0–24 全景 hold(FakeDashboard A);随后三个 10f 特写硬切连打,每个特写
+// 帧 0–24 全景 hold;随后三个 10f 特写硬切连打,每个特写
 // 前 4f 静止、中 3f 动作、后 3f 静止:①25–34 光标按下按钮(圆点缩一圈+按钮变深)
 // ②35–44 开关左拨右(圆钮 3f 滑动+轨道 G.mid→G.ink) ③45–54 大数字 rotateX 翻牌 0→1;
 // 帧 55 甩回全景:6f whip translateX 滑入,高速段 3 层错帧副本模拟运动模糊,
 // 中上卡片提亮泛光+大 "1" 标记结果;帧 ~68 起全静止到 130(真静止 ≥60f)。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { FakeDashboard, G } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 const HOLD_END = 25; // 全景 hold 结束
 const C1 = 25; // 特写一:光标按下
@@ -36,15 +38,31 @@ const CloseupStage: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   </div>
 );
 
-// 结果卡片(3×2 网格中上格)的几何:sidebar 220 + padding 36,列宽 524,行高 454
-const RESULT = { left: 808, top: 108, w: 524, h: 454 };
+// 结果卡片:画面中心
+const RESULT = { left: 960 - 262, top: 540 - 227, w: 524, h: 454 };
 
-export const WrightTripleCut: React.FC = () => {
+export interface WrightTripleCutProps {
+  scene?: SceneContentData;
+  resultValue?: string;
+}
+
+export const WrightTripleCut: React.FC<WrightTripleCutProps> = ({
+  scene = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+      { label: '指标三', value: '96.4%' },
+    ],
+  },
+  resultValue = '1',
+}) => {
   const f = useCurrentFrame();
 
   // ===== 帧 0–24:全景 hold =====
   if (f < HOLD_END) {
-    return <FakeDashboard variant="A" />;
+    return <SceneContent content={scene} />;
   }
 
   // ===== 特写一(25–34):光标从悬停到按下,按钮变深 =====
@@ -125,7 +143,7 @@ export const WrightTripleCut: React.FC = () => {
           }}>
             <div style={{
               fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800,
-              fontSize: 420, color: '#ffffff', lineHeight: 1,
+              fontSize: 420, color: G.card, lineHeight: 1,
             }}>
               {digit}
             </div>
@@ -151,7 +169,7 @@ export const WrightTripleCut: React.FC = () => {
 
   const dash = (x: number, opacity: number, key: string) => (
     <div key={key} style={{ position: 'absolute', left: 0, top: 0, transform: `translateX(${x}px)`, opacity }}>
-      <FakeDashboard variant="A" />
+      <SceneContent content={scene} />
     </div>
   );
 
@@ -176,7 +194,7 @@ export const WrightTripleCut: React.FC = () => {
           fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800,
           fontSize: 260, color: G.ink, lineHeight: 1,
         }}>
-          1
+          {resultValue}
         </div>
       </div>
     </div>
