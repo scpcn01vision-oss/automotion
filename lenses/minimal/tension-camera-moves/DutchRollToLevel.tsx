@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 宣告,举证
+// props: scene（斜置内容承载）、alertText（痛点警示条）、solution（滚正浮现卡）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
@@ -9,7 +10,8 @@
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
-import { FakeDashboard, Card, G } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 // 斜角滚正（dutch-roll-to-level）：呈现痛点时整帧带 -10° 斜角悬着（叠极缓慢
 // 正弦漂移防止读作静态歪图），帧 70 解决方案的一拍整帧带单次过冲滚回水平
@@ -19,7 +21,25 @@ import { FakeDashboard, Card, G } from '../../_fixtures/Fixtures';
 const ROLL = 70; // 滚正起拍
 const LEVEL = 94; // 完全归位帧
 
-export const DutchRollToLevel: React.FC = () => {
+export interface DutchRollToLevelProps {
+  scene?: SceneContentData;
+  alertText?: string;
+  solution?: { title: string; value: string };
+}
+
+export const DutchRollToLevel: React.FC<DutchRollToLevelProps> = ({
+  scene = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+      { label: '指标三', value: '96.4%' },
+    ],
+  },
+  alertText = '注意',
+  solution = { title: '已解决', value: '✓' },
+}) => {
   const f = useCurrentFrame();
 
   // —— 斜置期的缓慢漂移（帧 70 前）：±0.8° 长周期正弦 + 2px 纵漂 ——
@@ -75,7 +95,7 @@ export const DutchRollToLevel: React.FC = () => {
           transformOrigin: '50% 50%',
         }}
       >
-        <FakeDashboard variant="B" />
+        <SceneContent content={scene} />
 
         {/* 痛点警示条：深色横幅压在页面上方（斜着更显歪） */}
         <div
@@ -103,15 +123,38 @@ export const DutchRollToLevel: React.FC = () => {
               height: 0,
               borderLeft: '18px solid transparent',
               borderRight: '18px solid transparent',
-              borderBottom: '32px solid #f7f7f6',
+              borderBottom: `32px solid ${G.panel}`,
             }}
           />
-          <div style={{ height: 16, width: 420, background: G.mid, borderRadius: 8 }} />
+          <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 28, fontWeight: 700, color: G.card }}>
+            {alertText}
+          </div>
         </div>
 
         {/* 解决方案：干净卡随滚正浮现在同一位置 */}
         <div style={{ position: 'absolute', left: 560, top: 96, opacity: cleanOpacity }}>
-          <Card w={800} h={140} seed={2} style={{ boxShadow: '0 10px 30px rgba(0,0,0,0.12)' }} />
+          <div
+            style={{
+              width: 800,
+              height: 140,
+              background: G.card,
+              border: `2px solid ${G.border}`,
+              borderRadius: 14,
+              boxShadow: '0 10px 30px rgba(0,0,0,0.12)',
+              padding: '0 28px',
+              boxSizing: 'border-box',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 18,
+            }}
+          >
+            <span style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 32, fontWeight: 800, color: G.ink }}>
+              {solution.title}
+            </span>
+            <span style={{ marginLeft: 'auto', fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 34, fontWeight: 800, color: G.accent }}>
+              {solution.value}
+            </span>
+          </div>
         </div>
       </div>
     </AbsoluteFill>
