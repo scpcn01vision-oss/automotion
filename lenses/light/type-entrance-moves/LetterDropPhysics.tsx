@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 钩子,宣告
+// props: word（坠落堆积的字标）
 // === 时间特性 ===
 // 刚性（不可压缩）: 刚性:锁定闪2f
 // 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
@@ -24,11 +25,8 @@ const h = (n: number) => {
   return s - Math.floor(s);
 };
 
-const WORD = 'GRAVITY';
 const SLOT_W = 150; // 每字符槽宽
 const FONT = 140;
-const WORD_W = WORD.length * SLOT_W; // 1050
-const LEFT = (1920 - WORD_W) / 2; // 435
 const REST_TOP = 452; // 字符落定后的 top
 const FLOOR_Y = REST_TOP + 152; // 地板线（视觉基线）
 
@@ -57,17 +55,25 @@ const dropY = (t: number): number => {
   return 0;
 };
 
-export const LetterDropPhysics: React.FC = () => {
+export interface LetterDropPhysicsProps {
+  word?: string;
+}
+
+export const LetterDropPhysics: React.FC<LetterDropPhysicsProps> = ({
+  word = 'GRAVITY',
+}) => {
   const frame = useCurrentFrame();
+  const wordW = word.length * SLOT_W;
+  const left = (1920 - wordW) / 2;
   // 帧 110 起的齐整回正进度
   const snap = easeOutCubic(clamp01((frame - SNAP) / SNAP_DUR));
 
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, overflow: 'hidden', position: 'relative' }}>
       {/* 地板线：字符落点的视觉基线 */}
-      <div style={{ position: 'absolute', left: LEFT - 60, top: FLOOR_Y, width: WORD_W + 120, height: 6, background: G.bar, borderRadius: 3 }} />
+      <div style={{ position: 'absolute', left: left - 60, top: FLOOR_Y, width: wordW + 120, height: 6, background: G.bar, borderRadius: 3 }} />
 
-      {WORD.split('').map((ch, i) => {
+      {word.split('').map((ch, i) => {
         const start = 10 + i * 5;
         const t = frame - start;
         const y = dropY(t);
@@ -84,7 +90,7 @@ export const LetterDropPhysics: React.FC = () => {
             key={i}
             style={{
               position: 'absolute',
-              left: LEFT + i * SLOT_W,
+              left: left + i * SLOT_W,
               top: REST_TOP,
               width: SLOT_W,
               height: FONT,
