@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 钩子,宣告
+// props: text（翻牌文本，大写 A-Z/0-9/#$%&）、backdrop（背景压暗内容承载）
 // === 时间特性 ===
 // 刚性（不可压缩）: 刚性:每字符翻转物理下限
 // 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
@@ -9,13 +10,13 @@
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
-import { FakeDashboard, G } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 // split-flap-flip：机场翻牌字。每字符一个深底翻牌格（上下两半），
 // 逐格翻过 3 个乱码中间态后咔哒停在目标字，左→右 4f 级联成波。
 // 节拍：0–21 建立（整排乱码静止）→ 22 起级联翻牌 → 78 全部停定 → 静止到 140。
 
-const TEXT = 'SHIP FASTER';
 const CHARSET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#$%&';
 const START = 22; // 级联起始帧
 const STAGGER = 4; // 字符间级联延迟
@@ -32,8 +33,8 @@ const rnd = (a: number) => {
 const garble = (i: number, k: number) =>
   CHARSET[Math.floor(rnd(i * 7.13 + k * 3.71 + 1) * CHARSET.length)];
 
-const FLAP_BG = '#262624';
-const FLAP_INK = '#f4f4f2';
+const FLAP_BG = G.side;
+const FLAP_INK = G.card;
 
 // 半格：上/下半各自 overflow hidden，内部整字定位错半格露出对应一半
 const Half: React.FC<{ ch: string; part: 'top' | 'bottom' }> = ({ ch, part }) => (
@@ -165,7 +166,7 @@ const FlapCell: React.FC<{ target: string; i: number; frame: number }> = ({
           top: CELL_H / 2 - 2,
           width: CELL_W,
           height: 4,
-          background: '#141412',
+          background: G.ink,
           zIndex: 3,
         }}
       />
@@ -173,18 +174,34 @@ const FlapCell: React.FC<{ target: string; i: number; frame: number }> = ({
   );
 };
 
-export const SplitFlapFlip: React.FC = () => {
+export interface SplitFlapFlipProps {
+  text?: string;
+  backdrop?: SceneContentData;
+}
+
+export const SplitFlapFlip: React.FC<SplitFlapFlipProps> = ({
+  text = 'READY GO',
+  backdrop = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+      { label: '指标三', value: '96.4%' },
+    ],
+  },
+}) => {
   const frame = useCurrentFrame();
   let letterIdx = 0;
   return (
     <AbsoluteFill style={{ background: G.bg, overflow: 'hidden' }}>
-      {/* 背景假页面压暗，突出翻牌板 */}
+      {/* 背景内容压暗，突出翻牌板 */}
       <div style={{ position: 'absolute', inset: 0, opacity: 0.3, filter: 'saturate(0.8)' }}>
-        <FakeDashboard variant="A" />
+        <SceneContent content={backdrop} />
       </div>
       <AbsoluteFill style={{ alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-          {TEXT.split('').map((ch, idx) => {
+          {text.split('').map((ch, idx) => {
             if (ch === ' ') {
               return <div key={idx} style={{ width: 52 }} />;
             }
