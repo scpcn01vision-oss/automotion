@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 展开,承接
+// props: workspaceName（工作区名，默认 Workspace）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
@@ -17,9 +18,10 @@
 // v4 的悬空贴落（FloatWrap 同形软影）保留。
 import React from 'react';
 import { AbsoluteFill, interpolate, useCurrentFrame, Easing } from 'remotion';
+import { G } from '../../_fixtures/Fixtures';
 
 const FONT = 'Helvetica, Arial, sans-serif';
-const INK = '#2c2416';
+const INK = G.ink;
 
 const easeFall = Easing.bezier(0.5, 0.05, 0.6, 1); // 加速贴落、末端软着陆
 
@@ -46,17 +48,17 @@ const liftOf = (t: number, land: number, H = 230) => {
   return (1 - easeFall(p)) * H;
 };
 
-/* ClickUp 彩色小 logo（双 V 叠形近似） */
+/* 中性工作区 logo（双色几何 mark） */
 const CULogo: React.FC<{ size: number }> = ({ size }) => (
   <svg width={size} height={size} viewBox="0 0 100 100">
     <defs>
       <linearGradient id="cu1" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0" stopColor="#8930fd" />
-        <stop offset="1" stopColor="#49ccf9" />
+        <stop offset="0" stopColor={G.accent} />
+        <stop offset="1" stopColor={G.mid} />
       </linearGradient>
       <linearGradient id="cu2" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0" stopColor="#ff02f0" />
-        <stop offset="1" stopColor="#ffc800" />
+        <stop offset="0" stopColor={G.ink} />
+        <stop offset="1" stopColor={G.accent} />
       </linearGradient>
     </defs>
     <path d="M 14 62 L 50 30 L 86 62" fill="none" stroke="url(#cu1)" strokeWidth="16" strokeLinecap="round" strokeLinejoin="round" />
@@ -64,11 +66,11 @@ const CULogo: React.FC<{ size: number }> = ({ size }) => (
   </svg>
 );
 
-/* Dropbox 蓝四菱形 glyph（原片 f45/f60 主区圆角灰砖里的图标） */
+/* 中性四菱形 glyph（原片 f45/f60 主区圆角灰砖里的图标，品牌蓝换 G.accent） */
 const DropboxGlyph: React.FC<{ size: number }> = ({ size }) => (
   <svg width={size} height={size} viewBox="0 0 100 100">
     {[[50, 8, 27, 22], [50, 8, 73, 22], [50, 36, 27, 50], [50, 36, 73, 50]].map(() => null)}
-    <g fill="#0061fe">
+    <g fill={G.accent}>
       <path d="M 27 10 L 50 25 L 27 40 L 4 25 Z" />
       <path d="M 73 10 L 96 25 L 73 40 L 50 25 Z" />
       <path d="M 27 40 L 50 55 L 27 70 L 4 55 Z" />
@@ -83,9 +85,9 @@ const DropboxGlyph: React.FC<{ size: number }> = ({ size }) => (
 const PW = 6200;
 const PH = 2400;
 
-const Panel: React.FC<{ shade: number; t?: number }> = ({ shade, t = 1 }) => (
+const Panel: React.FC<{ shade: number; t?: number; workspaceName: string }> = ({ shade, t = 1, workspaceName }) => (
   <div style={{
-    width: PW, height: PH, background: '#f5f0e8', borderRadius: 64,
+    width: PW, height: PH, background: G.panel, borderRadius: 64,
     position: 'relative', overflow: 'hidden',
     boxShadow: '0 0 220px rgba(220,210,255,0.35)',
     fontFamily: FONT,
@@ -93,7 +95,7 @@ const Panel: React.FC<{ shade: number; t?: number }> = ({ shade, t = 1 }) => (
     {/* 顶部 tab 条（贯穿整页；文字悬空贴落） */}
     <div style={{
       position: 'absolute', top: 0, left: 0, width: PW, height: 230,
-      borderBottom: '4px solid #d9d3c7', display: 'flex', alignItems: 'center', paddingLeft: 130,
+      borderBottom: `4px solid ${G.line}`, display: 'flex', alignItems: 'center', paddingLeft: 130,
     }}>
       <FloatWrap h={liftOf(t, 0.3)}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -108,12 +110,12 @@ const Panel: React.FC<{ shade: number; t?: number }> = ({ shade, t = 1 }) => (
       <FloatWrap h={liftOf(t, 0.42, 280)}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <div style={{ width: 72, height: 72, borderRadius: 20, background: '#4147f5', marginLeft: 150, flexShrink: 0 }} />
-          <div style={{ fontSize: 165, color: '#2c2416', fontWeight: 550, marginLeft: 110, letterSpacing: 1, whiteSpace: 'nowrap' }}>ClickUp 3.0</div>
+          <div style={{ fontSize: 165, color: G.ink, fontWeight: 550, marginLeft: 110, letterSpacing: 1, whiteSpace: 'nowrap' }}>{workspaceName} 3.0</div>
         </div>
       </FloatWrap>
       {/* 顶栏右延的淡 tab（对齐 clickup04 顶栏 Widget brainstorm / Design system） */}
       {[['Widget brainstorm', 3050], ['Design system', 3900], ['Design', 4650]].map(([tb, x]) => (
-        <div key={tb as string} style={{ position: 'absolute', left: x as number, top: 88, fontSize: 58, color: '#8b7355' }}>{tb}</div>
+        <div key={tb as string} style={{ position: 'absolute', left: x as number, top: 88, fontSize: 58, color: G.mid }}>{tb}</div>
       ))}
     </div>
     {/* ClickUp logo 行 */}
@@ -121,7 +123,7 @@ const Panel: React.FC<{ shade: number; t?: number }> = ({ shade, t = 1 }) => (
       <FloatWrap h={liftOf(t, 0.54, 250)}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 26 }}>
           <CULogo size={104} />
-          <div style={{ fontSize: 92, fontWeight: 800, color: '#2c2416', letterSpacing: -1 }}>ClickUp</div>
+          <div style={{ fontSize: 92, fontWeight: 800, color: G.ink, letterSpacing: -1 }}>{workspaceName}</div>
         </div>
       </FloatWrap>
     </div>
@@ -129,18 +131,18 @@ const Panel: React.FC<{ shade: number; t?: number }> = ({ shade, t = 1 }) => (
     <div style={{ position: 'absolute', left: 1330, top: 440 }}>
       <FloatWrap h={liftOf(t, 0.62, 260)}>
         <div style={{
-          width: 620, height: 350, background: '#efe9df', borderRadius: 56,
+          width: 620, height: 350, background: G.nav, borderRadius: 56,
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 60,
         }}>
           <div style={{
-            width: 210, height: 210, background: '#fefcf8', borderRadius: 44,
+            width: 210, height: 210, background: G.card, borderRadius: 44,
             boxShadow: '0 6px 60px rgba(139,115,85,0.35)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
             <DropboxGlyph size={130} />
           </div>
           <svg width={90} height={90} viewBox="0 0 40 40">
-            <path d="M 10 15 L 20 26 L 30 15" fill="none" stroke="#8b7355" strokeWidth={3.6} strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M 10 15 L 20 26 L 30 15" fill="none" stroke={G.mid} strokeWidth={3.6} strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </div>
       </FloatWrap>
@@ -151,13 +153,13 @@ const Panel: React.FC<{ shade: number; t?: number }> = ({ shade, t = 1 }) => (
         <div style={{
           width: 2900, height: 168,
           borderRadius: 34, border: '3.5px solid rgba(211,146,60,0.75)',
-          background: 'rgba(211,146,60,0.09)', display: 'flex', alignItems: 'center',
+            background: 'rgba(211,146,60,0.09)', display: 'flex', alignItems: 'center',
           gap: 40, paddingLeft: 56, boxSizing: 'border-box',
         }}>
           <svg width={66} height={66} viewBox="0 0 40 40">
-            <path d="M 6 20 L 20 7 L 34 20 M 11 17 V 33 H 29 V 17" fill="none" stroke="#d3923c" strokeWidth={3.4} strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M 6 20 L 20 7 L 34 20 M 11 17 V 33 H 29 V 17" fill="none" stroke={G.accent} strokeWidth={3.4} strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          <div style={{ fontSize: 70, color: '#b87a2e', fontWeight: 550 }}>Home</div>
+          <div style={{ fontSize: 70, color: G.accent, fontWeight: 550 }}>Home</div>
         </div>
       </FloatWrap>
     </div>
@@ -167,7 +169,7 @@ const Panel: React.FC<{ shade: number; t?: number }> = ({ shade, t = 1 }) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: 40 }}>
           <svg width={64} height={64} viewBox="0 0 40 40">
             <path d="M 20 5 C 13 5 10 10 10 16 V 24 L 6 30 H 34 L 30 24 V 16 C 30 10 27 5 20 5 Z M 16 33 C 16 36 24 36 24 33"
-              fill="none" stroke="#4a3b28" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" />
+              fill="none" stroke={G.ink} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" />
           </svg>
           <div style={{ fontSize: 70, color: INK }}>Inbox</div>
         </div>
@@ -178,7 +180,7 @@ const Panel: React.FC<{ shade: number; t?: number }> = ({ shade, t = 1 }) => (
       <div key={tb} style={{ position: 'absolute', left: 166, top: 1310 + i * 240 }}>
         <FloatWrap h={liftOf(t, 0.86 + i * 0.06, 230)}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 40 }}>
-            <div style={{ width: 58, height: 58, border: '6px solid #b8ae9e', borderRadius: 14 }} />
+            <div style={{ width: 58, height: 58, border: `6px solid ${G.bar}`, borderRadius: 14 }} />
             <div style={{ fontSize: 70, color: INK }}>{tb}</div>
           </div>
         </FloatWrap>
@@ -187,66 +189,66 @@ const Panel: React.FC<{ shade: number; t?: number }> = ({ shade, t = 1 }) => (
     {/* 主区轮播左箭头（原片 f60 中景的 "<"） */}
     <div style={{ position: 'absolute', left: 2440, top: 1060 }}>
       <svg width={120} height={120} viewBox="0 0 40 40">
-        <path d="M 26 6 L 12 20 L 26 34" fill="none" stroke="#2c2416" strokeWidth={4.4} strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M 26 6 L 12 20 L 26 34" fill="none" stroke={G.ink} strokeWidth={4.4} strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     </div>
     {/* 大 W 字形（原片中程右上滑入的大字残段） */}
-    <div style={{ position: 'absolute', left: 3050, top: 300, fontSize: 430, fontWeight: 700, color: '#2c2416', letterSpacing: -6 }}>W</div>
+    <div style={{ position: 'absolute', left: 3050, top: 300, fontSize: 430, fontWeight: 700, color: G.ink, letterSpacing: -6 }}>W</div>
     {/* 主区白色圆角卡群（右下淡白砖） */}
     {[[2620, 620, 640, 380], [2740, 1360, 720, 420], [2620, 1900, 560, 330]].map(([x, y, w, h], i) => (
       <div key={i} style={{
         position: 'absolute', left: x, top: y, width: w, height: h,
-        background: '#fefcf8', borderRadius: 56, boxShadow: '0 6px 60px rgba(139,115,85,0.3)',
+        background: G.card, borderRadius: 56, boxShadow: '0 6px 60px rgba(139,115,85,0.3)',
       }} />
     ))}
     {/* —— 右段：Product Management 列表（原片尾程满幅白页） —— */}
     <div style={{
       position: 'absolute', left: 3560, top: 230, width: PW - 3560, height: PH - 230,
-      background: '#fefcf8',
+      background: G.card,
     }}>
-      <div style={{ position: 'absolute', left: 220, top: 200, fontSize: 150, fontWeight: 750, color: '#2c2416', letterSpacing: -2, whiteSpace: 'nowrap' }}>Product Management</div>
+      <div style={{ position: 'absolute', left: 220, top: 200, fontSize: 150, fontWeight: 750, color: G.ink, letterSpacing: -2, whiteSpace: 'nowrap' }}>Product Management</div>
       {/* List / Board tabs */}
       <div style={{ position: 'absolute', left: 240, top: 480, display: 'flex', gap: 110, alignItems: 'center' }}>
         <div style={{
-          display: 'flex', alignItems: 'center', gap: 26, background: '#f0ebe0',
+          display: 'flex', alignItems: 'center', gap: 26, background: G.nav,
           borderRadius: 22, padding: '20px 40px',
         }}>
           <svg width={56} height={56} viewBox="0 0 40 40">
             {[9, 20, 31].map((y) => (
               <g key={y}>
-                <rect x={5} y={y - 1.6} width={4} height={4} fill="#4a3b28" />
-                <rect x={14} y={y - 1.4} width={20} height={3.4} rx={1.6} fill="#4a3b28" />
+                <rect x={5} y={y - 1.6} width={4} height={4} fill={G.ink} />
+                <rect x={14} y={y - 1.4} width={20} height={3.4} rx={1.6} fill={G.ink} />
               </g>
             ))}
           </svg>
-          <div style={{ fontSize: 62, fontWeight: 600, color: '#2c2416' }}>List</div>
+          <div style={{ fontSize: 62, fontWeight: 600, color: G.ink }}>List</div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 26 }}>
           <svg width={56} height={56} viewBox="0 0 40 40">
-            <rect x={5} y={7} width={12} height={26} rx={3} fill="none" stroke="#4a3b28" strokeWidth={3} />
-            <rect x={23} y={7} width={12} height={18} rx={3} fill="none" stroke="#4a3b28" strokeWidth={3} />
+            <rect x={5} y={7} width={12} height={26} rx={3} fill="none" stroke={G.ink} strokeWidth={3} />
+            <rect x={23} y={7} width={12} height={18} rx={3} fill="none" stroke={G.ink} strokeWidth={3} />
           </svg>
-          <div style={{ fontSize: 62, fontWeight: 500, color: '#2c2416' }}>Board</div>
+          <div style={{ fontSize: 62, fontWeight: 500, color: G.ink }}>Board</div>
         </div>
-        <div style={{ fontSize: 56, color: '#8b7355', marginLeft: -40 }}>11</div>
+        <div style={{ fontSize: 56, color: G.mid, marginLeft: -40 }}>11</div>
       </div>
-      <div style={{ position: 'absolute', left: 900, top: 620, width: 1500, height: 3, background: '#d9d3c7' }} />
+      <div style={{ position: 'absolute', left: 900, top: 620, width: 1500, height: 3, background: G.line }} />
       {/* IN PROGRESS chip */}
       <div style={{
         position: 'absolute', left: 240, top: 850, background: '#f6d9a8', color: '#b87a2e',
         fontSize: 46, fontWeight: 650, letterSpacing: 2, padding: '14px 30px', borderRadius: 14,
       }}>IN PROGRESS</div>
-      <div style={{ position: 'absolute', left: 244, top: 1030, fontSize: 44, fontWeight: 600, color: '#8b7355', letterSpacing: 1 }}>TASK NAME</div>
+      <div style={{ position: 'absolute', left: 244, top: 1030, fontSize: 44, fontWeight: 600, color: G.mid, letterSpacing: 1 }}>TASK NAME</div>
       {/* 任务行 */}
-      {[['New Feature Launch', '#4a3b28'], ['Roadmap Q3', '#5c4a34'], ['User Testing', '#8b7355'], ['Bug Triage', '#b8ae9e']].map(([name, col], i) => (
+      {[['New Feature Launch', G.ink], ['Roadmap Q3', G.ink], ['User Testing', G.mid], ['Bug Triage', G.bar]].map(([name, col], i) => (
         <div key={name as string} style={{ position: 'absolute', left: 280, top: 1180 + i * 210, display: 'flex', alignItems: 'center', gap: 56 }}>
-          <div style={{ width: 42, height: 42, borderRadius: 12, background: '#d3923c' }} />
+          <div style={{ width: 42, height: 42, borderRadius: 12, background: G.accent }} />
           <div style={{ fontSize: 64, fontWeight: 550, color: col as string, whiteSpace: 'nowrap' }}>{name}</div>
         </div>
       ))}
     </div>
     {/* 亮度：面板内黑罩（随进度揭亮） */}
-    <div style={{ position: 'absolute', inset: 0, background: '#2c2416', opacity: shade }} />
+    <div style={{ position: 'absolute', inset: 0, background: G.ink, opacity: shade }} />
     {/* 左缘额外阴影（起始更暗，随亮度一同退去） */}
     <div style={{
       position: 'absolute', inset: 0,
@@ -263,7 +265,13 @@ const Panel: React.FC<{ shade: number; t?: number }> = ({ shade, t = 1 }) => (
 // v7（批次 16）：用户意见"改成60度吧"——rotY -53 → -60（精确定值）
 const CAM = { persp: 1100, origin: '30% 58%', rotY: -60, rotZ: -2, left: '40%', top: '15%', scale: 0.62 };
 
-const PanelLayer: React.FC<{ lx: number; shade: number; opacity: number; t: number }> = ({ lx, shade, opacity, t }) => (
+const PanelLayer: React.FC<{
+  lx: number;
+  shade: number;
+  opacity: number;
+  t: number;
+  workspaceName: string;
+}> = ({ lx, shade, opacity, t, workspaceName }) => (
   <AbsoluteFill style={{ opacity }}>
     <AbsoluteFill style={{ perspective: CAM.persp, perspectiveOrigin: CAM.origin }}>
       <div style={{
@@ -272,14 +280,20 @@ const PanelLayer: React.FC<{ lx: number; shade: number; opacity: number; t: numb
       }}>
         {/* 页面自身在其 3D 平面内横移（局部 X 轴） */}
         <div style={{ transform: `scale(${CAM.scale}) translateX(${lx}px)`, transformOrigin: 'left top' }}>
-          <Panel shade={shade} t={t} />
+          <Panel shade={shade} t={t} workspaceName={workspaceName} />
         </div>
       </div>
     </AbsoluteFill>
   </AbsoluteFill>
 );
 
-export const SteepTiltGlide: React.FC = () => {
+export interface SteepTiltGlideProps {
+  workspaceName?: string;
+}
+
+export const SteepTiltGlide: React.FC<SteepTiltGlideProps> = ({
+  workspaceName = 'Workspace',
+}) => {
   const frame = useCurrentFrame();
 
   // 页面滑移（物动镜不动）：局部 X 从 +140 → -2680，起步柔和后近匀速，
@@ -303,17 +317,17 @@ export const SteepTiltGlide: React.FC = () => {
   const glow = interpolate(frame, [14, 70], [0.15, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
 
   return (
-    <AbsoluteFill style={{ background: '#2c2416' }}>
+    <AbsoluteFill style={{ background: G.ink }}>
       {/* 左侧紫晕 */}
       <AbsoluteFill style={{
         opacity: glow,
         background: 'radial-gradient(ellipse 40% 50% at 20% 66%, rgba(211,146,60,0.30), transparent 70%)',
       }} />
       {/* 重影（先画，垫在本体后面；位置=过去时刻的页面局部位移） */}
-      {g2 > 0.02 && <PanelLayer lx={lxAt(frame - 5)} shade={shade} opacity={g2} t={drop} />}
-      {g1 > 0.02 && <PanelLayer lx={lxAt(frame - 2.5)} shade={shade} opacity={g1} t={drop} />}
+      {g2 > 0.02 && <PanelLayer lx={lxAt(frame - 5)} shade={shade} opacity={g2} t={drop} workspaceName={workspaceName} />}
+      {g1 > 0.02 && <PanelLayer lx={lxAt(frame - 2.5)} shade={shade} opacity={g1} t={drop} workspaceName={workspaceName} />}
       {/* 本体 */}
-      <PanelLayer lx={lx} shade={shade} opacity={1} t={drop} />
+      <PanelLayer lx={lx} shade={shade} opacity={1} t={drop} workspaceName={workspaceName} />
       {/* 暗角 */}
       <AbsoluteFill style={{
         background: 'radial-gradient(ellipse 105% 95% at 55% 42%, transparent 60%, rgba(44,36,22,0.25) 85%, rgba(44,36,22,0.5) 100%)',
