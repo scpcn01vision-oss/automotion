@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 展开
+// props: hashtag（打字词）、pillText（胶囊词）、title（成品页标题）、body（成品页正文行）
 // === 时间特性 ===
 // 刚性（不可压缩）: 刚性:type 8f,move 66→80f
 // 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
@@ -46,19 +47,18 @@ function mulberry32(seed: number) {
   };
 }
 
-const TEXT = '#music';
 // 打字起点 & 每字间隔（帧），4–8 帧带抖动，模拟原片真人节奏
 const TYPE_START = 8;
 const rand = mulberry32(20260717);
-const TYPE_AT: number[] = (() => {
+const typeAt = (text: string): number[] => {
   const at: number[] = [];
   let f = TYPE_START;
-  for (let i = 0; i < TEXT.length; i++) {
+  for (let i = 0; i < text.length; i++) {
     at.push(f);
     f += 4 + Math.floor(rand() * 3); // 4–6 帧（原片 ~6字/秒）
   }
   return at;
-})();
+};
 
 // ---- 时间轴（30fps，共 132 帧，节奏对齐原片 18–21.5s）----
 const MORPH = 48;       // 1 帧硬切实体化（打完 hold ~0.5s，原片 0.45s）
@@ -85,18 +85,36 @@ const NoteIcon: React.FC<{ size: number; color: string }> = ({ size, color }) =>
 );
 
 // 胶囊（大字号绘制，整体 transform 缩放，保证实体化前后文字原位等大）
-const Pill: React.FC<{ bg: string; iconColor: string; textColor: string }> = ({ bg, iconColor, textColor }) => (
+const Pill: React.FC<{ bg: string; iconColor: string; textColor: string; text: string }> = ({ bg, iconColor, textColor, text }) => (
   <div style={{
     width: PILL_W, height: PILL_H, borderRadius: PILL_H / 2, background: bg,
     display: 'flex', alignItems: 'center', paddingLeft: 96, boxSizing: 'border-box', gap: 66,
   }}>
     <NoteIcon size={104} color={iconColor} />
-    <span style={{ fontSize: FS, fontWeight: 500, color: textColor, letterSpacing: 2 }}>music</span>
+    <span style={{ fontSize: FS, fontWeight: 500, color: textColor, letterSpacing: 2 }}>{text}</span>
   </div>
 );
 
-export const HashtagToPillMaterialize: React.FC = () => {
+export interface HashtagToPillMaterializeProps {
+  hashtag?: string;
+  pillText?: string;
+  title?: string;
+  body?: string[];
+}
+
+export const HashtagToPillMaterialize: React.FC<HashtagToPillMaterializeProps> = ({
+  hashtag = '#music',
+  pillText = 'music',
+  title = 'My favorite bands',
+  body = [
+    'I want to share a few of my favorite bands',
+    'and the song that I always listen when driving',
+    'to home. Welcome. Bring headphones.',
+  ],
+}) => {
   const frame = useCurrentFrame();
+  const TEXT = hashtag;
+  const TYPE_AT = typeAt(TEXT);
 
   // ---- 打字 ----
   const typedCount = TYPE_AT.filter((t) => frame >= t).length;
@@ -126,15 +144,18 @@ export const HashtagToPillMaterialize: React.FC = () => {
             position: 'absolute', left: 160, top: 168,
             fontSize: 122, fontWeight: 700, color: C.titleGreen, letterSpacing: 0.5,
           }}>
-            My favorite bands
+            {title}
           </div>
           <div style={{
             position: 'absolute', left: 152, top: 618,
             fontSize: 70, fontWeight: 500, color: C.body, lineHeight: 1.33, letterSpacing: 0.3,
           }}>
-            I want to share a few of my favorite bands<br />
-            and the song that I always listen when driving<br />
-            to home. Welcome. Bring headphones.
+            {body.map((b, i) => (
+              <span key={i}>
+                {b}
+                {i < body.length - 1 && <br />}
+              </span>
+            ))}
           </div>
         </>
       )}
