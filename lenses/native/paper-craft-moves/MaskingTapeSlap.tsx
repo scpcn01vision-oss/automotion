@@ -13,8 +13,8 @@
 // 第二条拍下同帧卡片停晃、投影瞬间变薄、整卡 2px 下沉——"按死"的一瞬是主角。
 // 帧确定性：全部由 frame 派生，无随机。收尾 f86 后真静止 54f。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, Card, TitleBlock } from '../../_fixtures/Fixtures';
+import { useCurrentFrame, interpolate, Easing, Img, staticFile } from 'remotion';
+import { G, TitleBlock } from '../../_fixtures/Fixtures';
 
 const CARD_W = 560;
 const CARD_H = 350;
@@ -105,7 +105,71 @@ const Tape: React.FC<{
   );
 };
 
-export const MaskingTapeSlap: React.FC = () => {
+export interface MaskingTapeCard {
+  type?: 'rows' | 'image';
+  title?: string;
+  rows?: { label: string; value: string }[];
+  image?: string;
+}
+
+export interface MaskingTapeSlapProps {
+  title?: string;
+  card?: MaskingTapeCard;
+}
+
+// 卡片内容渲染器（可扩展：新形态 = 在 type 联合里加值 + 此处加分支）
+const CardContent: React.FC<{ card: MaskingTapeCard }> = ({ card }) => {
+  const { type = 'rows', title, rows, image } = card;
+  return (
+    <div
+      style={{
+        width: '100%', height: '100%', background: G.card, border: `2px solid ${G.border}`,
+        borderRadius: 14, boxSizing: 'border-box', padding: '28px 32px',
+        display: 'flex', flexDirection: 'column', overflow: 'hidden',
+      }}
+    >
+      {title ? (
+        <div style={{ fontSize: 30, fontWeight: 700, color: G.ink, marginBottom: 18 }}>
+          {title}
+        </div>
+      ) : null}
+      {type === 'image' && image ? (
+        <Img
+          src={staticFile(image)}
+          style={{ width: '100%', flex: 1, objectFit: 'cover', borderRadius: 10, border: `1px solid ${G.line}` }}
+        />
+      ) : (
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          {(rows ?? []).map((r, i) => (
+            <div
+              key={i}
+              style={{
+                display: 'flex', alignItems: 'center', padding: '13px 0',
+                borderBottom: i < (rows ?? []).length - 1 ? `1px solid ${G.line}` : 'none',
+              }}
+            >
+              <span style={{ fontSize: 22, color: G.ink, fontWeight: 600 }}>{r.label}</span>
+              <span style={{ marginLeft: 'auto', fontSize: 23, color: G.accent, fontWeight: 800 }}>{r.value}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export const MaskingTapeSlap: React.FC<MaskingTapeSlapProps> = ({
+  title = 'MASKING TAPE SLAP',
+  card = {
+    type: 'rows',
+    title: 'PROJECT BRIEF',
+    rows: [
+      { label: 'Scope', value: 'Locked' },
+      { label: 'Budget', value: 'Approved' },
+      { label: 'Ship', value: 'Ready' },
+    ],
+  },
+}) => {
   const frame = useCurrentFrame();
 
   // 卡片飘入：从上方 -120px 缓落
@@ -143,7 +207,7 @@ export const MaskingTapeSlap: React.FC = () => {
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: 110, width: '100%', textAlign: 'center' }}>
-        <TitleBlock text="MASKING TAPE SLAP" size={72} />
+        <TitleBlock text={title} size={72} />
       </div>
 
       <div
@@ -151,17 +215,15 @@ export const MaskingTapeSlap: React.FC = () => {
           position: 'absolute',
           left: CX,
           top: CY,
+          width: CARD_W,
+          height: CARD_H,
           transform: `translateY(${floatY + bob + sink}px) rotate(${rot}deg)`,
           transformOrigin: '50% 50%',
           opacity: floatOp,
+          boxShadow: `0 ${shOff}px ${shBlur}px rgba(0,0,0,${shAlpha})`,
         }}
       >
-        <Card
-          w={CARD_W}
-          h={CARD_H}
-          seed={3}
-          style={{ boxShadow: `0 ${shOff}px ${shBlur}px rgba(0,0,0,${shAlpha})` }}
-        />
+        <CardContent card={card} />
       </div>
 
       {/* 两条胶带钉在卡片对角（世界坐标，卡片在其下滑动微晃） */}
