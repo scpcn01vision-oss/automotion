@@ -18,6 +18,7 @@ import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { NeutralCard } from '../../_system/neutral-card';
+import type { SceneContentData } from '../../_system/scene-content';
 import { FONT_STACK } from '../../_system/typography';
 
 const AMBER = G.accent;
@@ -34,9 +35,19 @@ const JUMPS = [
 ];
 
 export interface AttentionBounceProps {
+  panel?: SceneContentData;
 }
 
-export const AttentionBounce: React.FC<AttentionBounceProps> = () => {
+export const AttentionBounce: React.FC<AttentionBounceProps> = ({
+  panel = {
+    title: '概览',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.4×' },
+      { label: '指标三', value: '99%' },
+    ],
+  },
+}) => {
   const f = useCurrentFrame();
 
   // 弹跳高度 + 落地挤压
@@ -182,7 +193,7 @@ export const AttentionBounce: React.FC<AttentionBounceProps> = () => {
               opacity: Math.min(1, panelT * 1.5),
             }}
           >
-            <NeutralCard w={520} h={330} seed={4} />
+            <NeutralCard w={520} h={330} content={panel} />
             <div
               style={{
                 position: 'absolute',

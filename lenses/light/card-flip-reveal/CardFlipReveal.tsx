@@ -167,11 +167,11 @@ const FlipCard: React.FC<{ i: number; frame: number; card: CardFlipRevealCard; w
 };
 
 export const CardFlipReveal: React.FC<CardFlipRevealProps> = ({
-  title = 'CARD FLIP REVEAL',
+  title = 'OVERVIEW',
   cards = [
-    { label: 'Revenue', result: '4.9×' },
-    { label: 'Cost', result: '−38%' },
-    { label: 'Uptime', result: '99.9%' },
+    { label: '指标一', result: '+18%' },
+    { label: '指标二', result: '2.4×' },
+    { label: '指标三', result: '99%' },
   ],
 }) => {
   const n = cards.length;

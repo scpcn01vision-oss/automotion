@@ -18,6 +18,7 @@
 import React from 'react';
 import { G } from '../../_fixtures/Fixtures';
 import { AbsoluteFill, interpolate, useCurrentFrame, Easing } from 'remotion';
+import type { SceneContentData } from '../../_system/scene-content';
 
 // 库内标准伪随机（帧确定）
 const h = (n: number) => {
@@ -129,7 +130,7 @@ const Flyline: React.FC<{
       <line
         key={i}
         x1={pts[i].x} y1={pts[i].y} x2={pts[i + 1].x} y2={pts[i + 1].y}
-        stroke={G.card} strokeWidth={5} strokeLinecap="round"
+        stroke={G.ink} strokeWidth={5} strokeLinecap="round"
         strokeOpacity={grad * fade}
       />
     );
@@ -137,9 +138,9 @@ const Flyline: React.FC<{
 
   return (
     <g>
-      {/* 宽幅低透明白 = 辉光衬底（暗底上可见） */}
+      {/* 宽幅低透琥珀 = 辉光衬底 */}
       <polyline
-        points={poly} fill="none" stroke={G.line}
+        points={poly} fill="none" stroke={G.accent}
         strokeWidth={14} strokeLinecap="round" strokeLinejoin="round"
         strokeOpacity={0.18 * fade}
       />
@@ -148,19 +149,20 @@ const Flyline: React.FC<{
       {growing && (
         <g>
           <circle cx={head.x} cy={head.y} r={34} fill="url(#orbHeadHalo)" />
-          <circle cx={head.x} cy={head.y} r={8} fill={G.card} />
+          <circle cx={head.x} cy={head.y} r={8} fill={G.accent} />
         </g>
       )}
     </g>
   );
 };
 
-// ===== 深色描边卡：半暗 → 落点帧亮起 + 描边亮白脉冲 =====
-const DarkCard: React.FC<{
+// ===== 接力内容卡：半暗 → 落点帧亮起 + 描边琥珀脉冲 =====
+const RelayCard: React.FC<{
   frame: number;
   litAt: number; // 亮起帧（Infinity = 一直半暗；A 用 8 表示开场自亮）
   x: number; y: number; seed: number;
-}> = ({ frame, litAt, x, y, seed }) => {
+  card: SceneContentData;
+}> = ({ frame, litAt, x, y, card }) => {
   const lit = interpolate(frame, [litAt, litAt + 8], [0, 1], {
     easing: Easing.out(Easing.cubic),
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
@@ -178,34 +180,52 @@ const DarkCard: React.FC<{
         : interpolate(frame, [litAt + 6, litAt + 22], [1, 0.3], {
             extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
           });
-  const borderCol = `rgba(${Math.round(90 + 165 * pulse)},${Math.round(90 + 165 * pulse)},${Math.round(88 + 164 * pulse)},1)`;
-  const glow = pulse > 0 ? `0 0 ${24 * pulse}px ${6 * pulse}px rgba(255,255,255,${(0.3 * pulse).toFixed(3)})` : 'none';
-  const titleW = 45 + ((seed * 37) % 40);
+  const borderCol = `rgba(${Math.round(80 + 132 * pulse)},${Math.round(60 + 86 * pulse)},${Math.round(30 + 46 * pulse)},1)`;
+  const glow = pulse > 0 ? `0 0 ${24 * pulse}px ${6 * pulse}px rgba(211,146,60,${(0.35 * pulse).toFixed(3)})` : 'none';
   return (
     <div
       style={{
         position: 'absolute', left: x, top: y, width: CARD_W, height: CARD_H,
-        boxSizing: 'border-box', background: G.side,
+        boxSizing: 'border-box', background: G.card,
         border: `1.5px solid ${borderCol}`, borderRadius: 14,
         boxShadow: glow, opacity: op,
-        padding: 24, display: 'flex', flexDirection: 'column', gap: 12,
+        padding: 24, display: 'flex', flexDirection: 'column', gap: 8,
       }}
     >
-      <div style={{ height: 15, width: `${titleW}%`, background: G.side, borderRadius: 8 }} />
-      <div style={{ height: 10, width: '80%', background: G.line, borderRadius: 5 }} />
-      <div style={{ height: 10, width: '62%', background: G.line, borderRadius: 5 }} />
-      <div style={{ marginTop: 'auto', display: 'flex', gap: 9, alignItems: 'center' }}>
-        <div style={{ width: 24, height: 24, borderRadius: 12, background: G.side }} />
-        <div style={{ height: 10, width: 78, background: '#383836', borderRadius: 5 }} />
+      {card.title ? (
+        <div style={{ fontSize: 26, fontWeight: 700, color: G.ink }}>{card.title}</div>
+      ) : null}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        {(card.rows ?? []).map((r, i) => (
+          <div
+            key={i}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              padding: '7px 0',
+              borderBottom: i < (card.rows ?? []).length - 1 ? `1px solid ${G.line}` : 'none',
+            }}
+          >
+            <span style={{ fontSize: 18, color: G.ink, fontWeight: 600 }}>{r.label}</span>
+            <span style={{ marginLeft: 'auto', fontSize: 19, color: G.accent, fontWeight: 800 }}>{r.value}</span>
+          </div>
+        ))}
       </div>
     </div>
   );
 };
 
 export interface OrbFlylineRelayProps {
+  cards?: SceneContentData[];
 }
 
-export const OrbFlylineRelay: React.FC<OrbFlylineRelayProps> = () => {
+export const OrbFlylineRelay: React.FC<OrbFlylineRelayProps> = ({
+  cards = [
+    { title: '卡一', rows: [{ label: '指标一', value: '+18%' }] },
+    { title: '卡二', rows: [{ label: '指标二', value: '2.4×' }] },
+    { title: '卡三', rows: [{ label: '指标三', value: '99%' }] },
+  ],
+}) => {
   const frame = useCurrentFrame();
 
   // 光斑有效时间：0–95f 匀速漂移，95–120f out-sine 减速收敛，f≥120 恒定 → 末 35f 真静止
@@ -233,7 +253,7 @@ export const OrbFlylineRelay: React.FC<OrbFlylineRelayProps> = () => {
   const L2 = { p0: cB, p1: { x: 1620, y: 820 }, p2: { x: 1240, y: 1000 }, p3: cC };
 
   return (
-    <AbsoluteFill style={{ background: G.ink, overflow: 'hidden' }}>
+    <AbsoluteFill style={{ background: G.bg, overflow: 'hidden' }}>
       {/* 氛围层：两团大 blur 光斑，落点帧同帧涨亮（组合共振） */}
       {ORBS.map((o, i) => {
         const pos = orbPos(o, t);
@@ -249,7 +269,7 @@ export const OrbFlylineRelay: React.FC<OrbFlylineRelayProps> = () => {
               width: o.size,
               height: o.size,
               borderRadius: '50%',
-              background: `radial-gradient(circle, rgba(234,234,230,${a.toFixed(3)}) 0%, rgba(234,234,230,${(a * 0.5).toFixed(3)}) 42%, rgba(234,234,230,0) 70%)`,
+              background: `radial-gradient(circle, rgba(211,146,60,${a.toFixed(3)}) 0%, rgba(211,146,60,${(a * 0.5).toFixed(3)}) 42%, rgba(211,146,60,0) 70%)`,
               filter: 'blur(100px)',
               opacity: fadeIn,
             }}
@@ -258,9 +278,9 @@ export const OrbFlylineRelay: React.FC<OrbFlylineRelayProps> = () => {
       })}
 
       {/* 三张深色描边卡：A 开场自亮发起，B/C 随落点亮起 */}
-      <DarkCard frame={frame} litAt={8} x={CARDS.A.x} y={CARDS.A.y} seed={1} />
-      <DarkCard frame={frame} litAt={42} x={CARDS.B.x} y={CARDS.B.y} seed={2} />
-      <DarkCard frame={frame} litAt={76} x={CARDS.C.x} y={CARDS.C.y} seed={3} />
+      <RelayCard frame={frame} litAt={8} x={CARDS.A.x} y={CARDS.A.y} seed={1} card={cards[0] ?? cards[0]} />
+      <RelayCard frame={frame} litAt={42} x={CARDS.B.x} y={CARDS.B.y} seed={2} card={cards[1] ?? cards[0]} />
+      <RelayCard frame={frame} litAt={76} x={CARDS.C.x} y={CARDS.C.y} seed={3} card={cards[2] ?? cards[0]} />
 
       {/* 飞线接力层 */}
       <svg
@@ -269,9 +289,9 @@ export const OrbFlylineRelay: React.FC<OrbFlylineRelayProps> = () => {
       >
         <defs>
           <radialGradient id="orbHeadHalo">
-            <stop offset="0%" stopColor="rgba(255,255,255,0.55)" />
-            <stop offset="55%" stopColor="rgba(255,255,255,0.22)" />
-            <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+            <stop offset="0%" stopColor="rgba(211,146,60,0.55)" />
+            <stop offset="55%" stopColor="rgba(211,146,60,0.22)" />
+            <stop offset="100%" stopColor="rgba(211,146,60,0)" />
           </radialGradient>
         </defs>
         <Flyline frame={frame} start={18} {...L1} />

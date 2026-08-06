@@ -87,25 +87,7 @@ const passWindow = (i: number, k: number): [number, number] => {
   return [start, start + dur];
 };
 
-// 假面板飞入物：命令面板式灰阶块
-const FlyPanel: React.FC<{ w: number; h: number }> = ({ w, h }) => (
-  <div style={{
-    width: w, height: h, background: G.card, border: `2px solid ${G.border}`,
-    borderRadius: 20, padding: 26, boxSizing: 'border-box',
-    display: 'flex', flexDirection: 'column', gap: 16,
-    boxShadow: '0 16px 44px rgba(0,0,0,0.28)',
-  }}>
-    <div style={{ height: 52, border: `2px solid ${G.line}`, borderRadius: 12, background: G.panel }} />
-    {Array.from({ length: 3 }).map((_, i) => (
-      <div key={i} style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 16 }}>
-        <div style={{ width: 28, height: 28, borderRadius: 8, background: G.mid }} />
-        <div style={{ height: 12, width: `${50 + ((i * 27) % 30)}%`, background: G.line, borderRadius: 6 }} />
-      </div>
-    ))}
-  </div>
-);
-
-const FlyItem: React.FC<{ fly: Fly; i: number; frame: number }> = ({ fly, i, frame }) => {
+const FlyItem: React.FC<{ fly: Fly; i: number; frame: number; cards: SceneContentData[] }> = ({ fly, i, frame, cards }) => {
   let active: [number, number] | null = null;
   for (let k = 0; k < 2; k++) {
     const [s, e] = passWindow(i, k);
@@ -129,16 +111,19 @@ const FlyItem: React.FC<{ fly: Fly; i: number; frame: number }> = ({ fly, i, fra
       transform: `translate(${x}px, ${y}px) rotate(${rot}deg) scale(${scale})`,
       filter: `blur(${blur}px)`,
     }}>
-      {fly.panel
-        ? <FlyPanel w={fly.w} h={fly.h} />
-        : <NeutralCard w={fly.w} h={fly.h} seed={fly.seed}
-            style={{ boxShadow: '0 12px 40px rgba(0,0,0,0.25)' }} />}
+      <NeutralCard
+        w={fly.w}
+        h={fly.h}
+        content={cards[i] ?? cards[0]}
+        style={{ boxShadow: fly.panel ? '0 16px 44px rgba(0,0,0,0.28)' : '0 12px 40px rgba(0,0,0,0.25)' }}
+      />
     </div>
   );
 };
 
 export interface KeycapSmashCutProps {
   scene?: SceneContentData;
+  flyingCards?: SceneContentData[];
 }
 
 export const KeycapSmashCut: React.FC<KeycapSmashCutProps> = ({
@@ -151,6 +136,14 @@ export const KeycapSmashCut: React.FC<KeycapSmashCutProps> = ({
       { label: '指标三', value: '96.4%' },
     ],
   },
+  flyingCards = [
+    { title: '卡一', rows: [{ label: '指标', value: '+18%' }] },
+    { title: '卡二', rows: [{ label: '指标', value: '2.4×' }] },
+    { title: '卡三', rows: [{ label: '指标', value: '99%' }] },
+    { title: '卡四', rows: [{ label: '指标', value: '45%' }] },
+    { title: '卡五', rows: [{ label: '指标', value: '7.1×' }] },
+    { title: '面板', rows: [{ label: '项目一', value: 'OK' }, { label: '项目二', value: '—' }, { label: '项目三', value: '✓' }] },
+  ],
 }) => {
   const frame = useCurrentFrame();
 
@@ -236,7 +229,7 @@ export const KeycapSmashCut: React.FC<KeycapSmashCutProps> = ({
 
       {/* 轰鸣段飞入物 */}
       {frame >= T.pressEnd && FLIES.map((fly, i) => (
-        <FlyItem key={i} fly={fly} i={i} frame={frame} />
+        <FlyItem key={i} fly={fly} i={i} frame={frame} cards={flyingCards} />
       ))}
     </div>
   );

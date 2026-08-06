@@ -177,14 +177,14 @@ export const DatavizLandscapeOpen: React.FC<DatavizLandscapeOpenProps> = () => {
   });
 
   return (
-    <AbsoluteFill style={{backgroundColor: G.ink, overflow: 'hidden'}}>
+    <AbsoluteFill style={{backgroundColor: G.bg, overflow: 'hidden'}}>
       {/* zoom 容器: 以画面中心为原点 */}
       <AbsoluteFill style={{transform: `scale(${zoom})`, transformOrigin: '50% 50%'}}>
         {/* 底色微渐变, 避免纯黑死平 */}
         <AbsoluteFill
           style={{
             background:
-              `radial-gradient(120% 90% at 62% 45%, ${G.ink} 0%, ${G.ink} 55%, ${G.ink} 100%)`,
+              `radial-gradient(120% 90% at 62% 45%, ${G.bg} 0%, ${G.panel} 55%, ${G.bg} 100%)`,
           }}
         />
 
@@ -198,7 +198,7 @@ export const DatavizLandscapeOpen: React.FC<DatavizLandscapeOpenProps> = () => {
                   <path
                     d={farPath(l)}
                     fill="none"
-                    stroke={G.card}
+                    stroke={G.ink}
                     strokeWidth={1.3}
                     strokeLinecap="round"
                     opacity={l.op}
@@ -215,7 +215,7 @@ export const DatavizLandscapeOpen: React.FC<DatavizLandscapeOpenProps> = () => {
                         cx={p.x}
                         cy={p.y}
                         r={3}
-                        fill={G.card}
+                        fill={G.ink}
                         opacity={t <= g ? l.op + 0.08 : 0}
                       />
                     );
@@ -234,7 +234,7 @@ export const DatavizLandscapeOpen: React.FC<DatavizLandscapeOpenProps> = () => {
               <path
                 d={trunkPath()}
                 fill="none"
-                stroke={G.card}
+                stroke={G.ink}
                 strokeWidth={7}
                 strokeLinecap="round"
                 opacity={0.16}
@@ -247,7 +247,7 @@ export const DatavizLandscapeOpen: React.FC<DatavizLandscapeOpenProps> = () => {
                   key={i}
                   d={tribPath(t)}
                   fill="none"
-                  stroke={G.card}
+                  stroke={G.ink}
                   strokeWidth={5.5}
                   strokeLinecap="round"
                   opacity={t.opacity * 0.18}
@@ -261,7 +261,7 @@ export const DatavizLandscapeOpen: React.FC<DatavizLandscapeOpenProps> = () => {
             <path
               d={trunkPath()}
               fill="none"
-              stroke={G.card}
+              stroke={G.ink}
               strokeWidth={2.8}
               strokeLinecap="round"
               opacity={0.8}
@@ -275,7 +275,7 @@ export const DatavizLandscapeOpen: React.FC<DatavizLandscapeOpenProps> = () => {
                 key={i}
                 d={tribPath(t)}
                 fill="none"
-                stroke={G.card}
+                stroke={G.ink}
                 strokeWidth={2.2}
                 strokeLinecap="round"
                 opacity={t.opacity}
@@ -288,7 +288,7 @@ export const DatavizLandscapeOpen: React.FC<DatavizLandscapeOpenProps> = () => {
             <path
               d={trunkPath()}
               fill="none"
-              stroke={G.card}
+              stroke={G.ink}
               strokeWidth={2.8}
               strokeLinecap="round"
               opacity={0.3 * flowIn(38)}
@@ -300,7 +300,7 @@ export const DatavizLandscapeOpen: React.FC<DatavizLandscapeOpenProps> = () => {
                 key={`flow-${i}`}
                 d={tribPath(t)}
                 fill="none"
-                stroke={G.card}
+                stroke={G.ink}
                 strokeWidth={2.2}
                 strokeLinecap="round"
                 opacity={0.26 * flowIn(t.growStart + t.growDur)}
@@ -341,7 +341,7 @@ export const DatavizLandscapeOpen: React.FC<DatavizLandscapeOpenProps> = () => {
                     top: py - 8,
                     width: 16,
                     height: 16,
-                    backgroundColor: G.card,
+                    backgroundColor: G.ink,
                     opacity: fadeIn * 0.9,
                   }}
                 />
@@ -353,7 +353,7 @@ export const DatavizLandscapeOpen: React.FC<DatavizLandscapeOpenProps> = () => {
                     fontFamily: 'Menlo, "SF Mono", Consolas, monospace',
                     fontSize: 22,
                     letterSpacing: 3,
-                    color: G.line,
+                    color: G.mid,
                     whiteSpace: 'nowrap',
                     opacity: fadeIn * 0.92,
                   }}
@@ -373,7 +373,7 @@ export const DatavizLandscapeOpen: React.FC<DatavizLandscapeOpenProps> = () => {
               width: 840,
               height: 520,
               background:
-                'radial-gradient(50% 50% at 50% 50%, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.12) 45%, rgba(255,255,255,0) 72%)',
+                'radial-gradient(50% 50% at 50% 50%, rgba(211,146,60,0.55) 0%, rgba(211,146,60,0.12) 45%, rgba(211,146,60,0) 72%)',
               opacity: handoffGlow,
               filter: 'blur(18px)',
               pointerEvents: 'none',
@@ -389,7 +389,7 @@ export const DatavizLandscapeOpen: React.FC<DatavizLandscapeOpenProps> = () => {
                 key={i}
                 d={l.d}
                 fill="none"
-                stroke={G.card}
+                stroke={G.ink}
                 strokeWidth={l.w}
                 strokeLinecap="round"
                 opacity={l.op}

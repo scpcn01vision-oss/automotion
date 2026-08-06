@@ -24,6 +24,7 @@ import { G } from '../../_fixtures/Fixtures';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { CameraMotionBlur } from '@remotion/motion-blur';
 import { G } from '../../_fixtures/Fixtures';
+import type { SceneContentData } from '../../_system/scene-content';
 
 const CARD_W = 380;
 const CARD_H = 540;
@@ -42,27 +43,31 @@ const SHEEN_DUR = 26;            // 扫光时长（一次性）
 const TURNS = 13;                // 飞行总圈数（整数→定格瞬间恰好正面朝镜头）
 const FINAL_SCALE = 1.88;        // 终态：卡高 540×1.88≈1015 ≈ 94% 画面高（1080）
 
-// 卡片正面：灰阶海报卡
-const CardFace: React.FC = () => (
+// 卡片正面：中性内容卡（标题 + 行列表）
+const CardFace: React.FC<{ card: SceneContentData }> = ({ card }) => (
   <div style={{
     width: CARD_W, height: CARD_H, borderRadius: 22, background: G.card,
     border: `2px solid ${G.border}`, boxSizing: 'border-box', padding: 26,
-    display: 'flex', flexDirection: 'column', gap: 16, overflow: 'hidden',
+    display: 'flex', flexDirection: 'column', gap: 10, overflow: 'hidden',
   }}>
-    <div style={{ height: 26, width: '62%', background: G.bar, borderRadius: 13 }} />
-    <div style={{ height: 12, width: '84%', background: G.line, borderRadius: 6 }} />
-    <div style={{
-      flex: 1, borderRadius: 14, background: `linear-gradient(145deg, #e6e6e4, ${G.bar})`,
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-    }}>
-      <div style={{ width: 110, height: 110, borderRadius: 55, background: G.mid, opacity: 0.55 }} />
-    </div>
-    <div style={{ height: 12, width: '74%', background: G.line, borderRadius: 6 }} />
-    <div style={{ height: 12, width: '52%', background: G.line, borderRadius: 6 }} />
-    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 4 }}>
-      <div style={{ width: 34, height: 34, borderRadius: 17, background: G.mid }} />
-      <div style={{ height: 11, width: 90, background: G.line, borderRadius: 5 }} />
-      <div style={{ marginLeft: 'auto', width: 58, height: 24, borderRadius: 12, background: G.ink, opacity: 0.75 }} />
+    {card.title ? (
+      <div style={{ fontSize: 32, fontWeight: 700, color: G.ink }}>{card.title}</div>
+    ) : null}
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+      {(card.rows ?? []).map((r, i) => (
+        <div
+          key={i}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '10px 0',
+            borderBottom: i < (card.rows ?? []).length - 1 ? `1px solid ${G.line}` : 'none',
+          }}
+        >
+          <span style={{ fontSize: 22, color: G.ink, fontWeight: 600 }}>{r.label}</span>
+          <span style={{ marginLeft: 'auto', fontSize: 23, color: G.accent, fontWeight: 800 }}>{r.value}</span>
+        </div>
+      ))}
     </div>
   </div>
 );
@@ -186,7 +191,7 @@ const SpawnFlash: React.FC<{ f: number }> = ({ f }) => {
   );
 };
 
-const Scene: React.FC = () => {
+const Scene: React.FC<{ card: SceneContentData }> = ({ card }) => {
   const f = useCurrentFrame();
   // 硬定格：闪光后 f=TAKEOFF 起飞，到达（f=LAND）后时间冻结——所有量按 tEff 计算
   const tEff = Math.min(1, Math.max(0, (f - TAKEOFF) / FLIGHT));
@@ -229,7 +234,7 @@ const Scene: React.FC = () => {
   const sheenLift = sheenVisible ? 0.07 * Math.sin(sheenP * Math.PI) : 0;
 
   return (
-    <div style={{ width: 1920, height: 1080, background: G.side, position: 'relative', overflow: 'hidden' }}>
+    <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       {/* —— 卡片：闪光过后从中心飞出，纯黑空间中飞行 —— */}
       <div style={{
         position: 'absolute', left: cx - CARD_W / 2, top: cy - CARD_H / 2,
@@ -246,7 +251,7 @@ const Scene: React.FC = () => {
           borderRadius: 22,
           filter: sheenLift > 0 ? `brightness(${1 + sheenLift})` : undefined,
         }}>
-          <CardFace />
+          <CardFace card={card} />
           <div style={{ opacity: facingBack ? 1 : 0, position: 'absolute', inset: 0 }}>
             <CardBack />
           </div>
@@ -296,12 +301,22 @@ const FlashLayer: React.FC = () => {
 };
 
 export interface MagicianCardFlourishProps {
+  card?: SceneContentData;
 }
 
-export const MagicianCardFlourish: React.FC<MagicianCardFlourishProps> = () => (
+export const MagicianCardFlourish: React.FC<MagicianCardFlourishProps> = ({
+  card = {
+    title: '概览',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.4×' },
+      { label: '指标三', value: '99%' },
+    ],
+  },
+}) => (
   <>
     <CameraMotionBlur shutterAngle={150} samples={7}>
-      <Scene />
+      <Scene card={card} />
     </CameraMotionBlur>
     <FlashLayer />
   </>

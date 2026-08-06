@@ -14,6 +14,7 @@ import React from 'react';
 import { AbsoluteFill, useCurrentFrame, interpolate, spring, useVideoConfig, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { NeutralCard } from '../../_system/neutral-card';
+import type { SceneContentData } from '../../_system/scene-content';
 import { FONT_STACK } from '../../_system/typography';
 
 const CLICK = 34; // 点击时刻
@@ -46,11 +47,18 @@ const useStrip = (frame: number, start: number, dx: number, dy: number) => {
 export interface UiStripAwayOutroProps {
   buttonText?: string;
   wordmark?: string;
+  cards?: SceneContentData[];
 }
 
 export const UiStripAwayOutro: React.FC<UiStripAwayOutroProps> = ({
   buttonText = 'Publish',
   wordmark = 'WORDMARK',
+  cards = [
+    { title: '概览', rows: [{ label: '指标一', value: '+18%' }, { label: '指标二', value: '2.4×' }] },
+    { title: '明细', rows: [{ label: '指标三', value: '99%' }, { label: '指标四', value: '45%' }] },
+    { title: '汇总', rows: [{ label: '指标五', value: '7.1×' }, { label: '指标六', value: '88%' }] },
+    { title: '备注', rows: [{ label: '指标七', value: '✓' }, { label: '指标八', value: '—' }] },
+  ],
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -155,7 +163,7 @@ export const UiStripAwayOutro: React.FC<UiStripAwayOutroProps> = ({
           const s = cardStrip(i);
           return (
             <div key={i} style={{ position: 'absolute', left: 70 + (i % 2) * 560, top: 120 + Math.floor(i / 2) * 340, ...s }}>
-              <NeutralCard w={480} h={280} seed={i + 2} />
+              <NeutralCard w={480} h={280} content={cards[i % cards.length]} />
             </div>
           );
         })}

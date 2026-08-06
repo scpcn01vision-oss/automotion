@@ -17,8 +17,8 @@ import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
 
-const BG = G.side;
-const WHITE = G.card;
+const BG = G.bg; // 纸色（原 G.side 深底，按用户要求改纸色）
+const WHITE = G.ink; // 深墨字（纸色底上白字不可见）
 const MID = G.mid;
 
 // —— 时间轴（30fps）——
@@ -102,23 +102,6 @@ export const HalationBloom: React.FC<HalationBloomProps> = ({
         overflow: 'hidden',
       }}
     >
-      {/* 小标签，全程静态 */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 110,
-          width: '100%',
-          textAlign: 'center',
-          fontFamily: FONT_STACK,
-          fontSize: 30,
-          fontWeight: 700,
-          letterSpacing: '0.35em',
-          color: MID,
-        }}
-      >
-        HALATION BLOOM
-      </div>
-
       {/* 晕层：文字复制底层，blur + 提亮，撞停帧起条件挂载 */}
       {frame >= IMPACT && (
         <div
@@ -130,10 +113,11 @@ export const HalationBloom: React.FC<HalationBloomProps> = ({
             justifyContent: 'center',
             transform: `scale(${bloomScale})`,
             opacity: bloomOpacity,
-            filter: 'blur(22px) brightness(1.8)',
+            filter: 'blur(22px)',
           }}
         >
-          <TextBlock color={WHITE} text={value} />
+          {/* 纸墨风高光晕：琥珀色晕层（纸色上提亮不可见，改琥珀光） */}
+          <TextBlock color={G.accent} text={value} />
         </div>
       )}
 

@@ -11,6 +11,7 @@ import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { NeutralCard } from '../../_system/neutral-card';
+import type { SceneContentData } from '../../_system/scene-content';
 
 // grid-wave-flip〔入场退场〕：3×3 灰背卡片墙沿对角线波前依次 rotateX 翻转 180°，
 // 灰背翻成正面内容卡；波浪约一秒扫完全屏，最后一张落定带轻微过冲。
@@ -53,9 +54,16 @@ const angleAt = (frame: number, row: number, col: number): number => {
 };
 
 export interface GridWaveFlipProps {
+  cards?: SceneContentData[];
 }
 
-export const GridWaveFlip: React.FC<GridWaveFlipProps> = () => {
+export const GridWaveFlip: React.FC<GridWaveFlipProps> = ({
+  cards = [
+    { title: '指标一', rows: [{ label: '数值', value: '+18%' }] },
+    { title: '指标二', rows: [{ label: '数值', value: '2.4×' }] },
+    { title: '指标三', rows: [{ label: '数值', value: '99%' }] },
+  ],
+}) => {
   const frame = useCurrentFrame();
   const wallW = COLS * CELL_W + (COLS - 1) * GAP;
   const wallH = ROWS * CELL_H + (ROWS - 1) * GAP;
@@ -143,7 +151,7 @@ export const GridWaveFlip: React.FC<GridWaveFlipProps> = () => {
                     borderRadius: 14,
                   }}
                 >
-                  <NeutralCard w={CELL_W} h={CELL_H} seed={i + 1} style={{ width: '100%', height: '100%' }} />
+                  <NeutralCard w={CELL_W} h={CELL_H} content={cards[i % cards.length]} style={{ width: '100%', height: '100%' }} />
                 </div>
               </div>
               {/* 最薄处高光线：不随卡旋转，贴在格位上随角度纵向移动 */}
