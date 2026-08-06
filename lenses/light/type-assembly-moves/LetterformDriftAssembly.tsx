@@ -21,6 +21,7 @@
 import React from 'react';
 import { useCurrentFrame, interpolate, interpolateColors, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const h = (n: number) => {
   const s = Math.sin(n * 127.3) * 43758.5453;
@@ -96,7 +97,7 @@ export const LetterformDriftAssembly: React.FC<LetterformDriftAssemblyProps> = (
             <span
               key={i}
               style={{
-                fontFamily: 'Helvetica, Arial, sans-serif',
+                fontFamily: FONT_STACK,
                 fontWeight: 800,
                 fontSize: 140,
                 letterSpacing: 8,

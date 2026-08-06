@@ -15,7 +15,8 @@
 // 撞入屏心（帧 28 命中）；28–71f 双版错位震荡；72–75f 套准脉冲；76–119f 真静止 44f。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, TitleBlock } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const HIT = 28; // 撞停命中帧
 const SNAP = 72; // 套准合一帧
@@ -24,7 +25,7 @@ const AY = 7; // 单版 y 错位振幅（少量，更像没对准版）
 const OMEGA = (2 * Math.PI) / 18; // 震荡周期 18f，44f 内抖两下半
 const TAU = 60; // 缓衰减：帧 72 前仍余 ~14px 总分离，被"啪地"硬切归零
 
-// 与 TitleBlock 同字形的可调色标题（错位印版需要单色副本）
+// 与正体标题同字形的可调色标题（错位印版需要单色副本）
 const Plate: React.FC<{ color: string; dx: number; dy: number; text: string }> = ({ color, dx, dy, text }) => (
   <div
     style={{
@@ -39,7 +40,7 @@ const Plate: React.FC<{ color: string; dx: number; dy: number; text: string }> =
   >
     <div
       style={{
-        fontFamily: 'Helvetica, Arial, sans-serif',
+        fontFamily: FONT_STACK,
         fontWeight: 800,
         fontSize: 200,
         color,
@@ -117,7 +118,9 @@ export const RisoMisregistrationHit: React.FC<RisoMisregistrationHitProps> = ({ 
             transformOrigin: 'center center',
           }}
         >
-          <TitleBlock text={text} size={200} />
+          <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 200, color: G.ink, letterSpacing: -1, textShadow: '2px 2px 8px rgba(211,146,60,0.28)' }}>
+            {text}
+          </div>
         </div>
       )}
 

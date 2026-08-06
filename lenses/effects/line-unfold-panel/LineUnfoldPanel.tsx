@@ -14,9 +14,10 @@
 // 静置展示后反向退场：压扁成线（7f）→ 线缩成点 → 熄灭，像老 CRT 关机。
 // f0–12 空场静置；入场 f12–34；持面板至 f78；退场 f78–98；末静止 ≥42f（140f）。
 import React from 'react';
-import { G } from '../../_fixtures/Fixtures';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, Card } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { NeutralCard } from '../../_system/neutral-card';
+import { FONT_STACK } from '../../_system/typography';
 
 const PANEL_W = 760;
 const PANEL_H = 460;
@@ -38,7 +39,6 @@ const OFF = SHRINK_END + 4; // 点熄灭 f95
 const clamp = { extrapolateLeft: 'clamp' as const, extrapolateRight: 'clamp' as const };
 
 export interface LineUnfoldPanelProps {
-  // ??????????/?????????? G
 }
 
 export const LineUnfoldPanel: React.FC<LineUnfoldPanelProps> = () => {
@@ -93,7 +93,7 @@ export const LineUnfoldPanel: React.FC<LineUnfoldPanelProps> = () => {
           top: 120,
           width: '100%',
           textAlign: 'center',
-          fontFamily: 'Helvetica, Arial, sans-serif',
+          fontFamily: FONT_STACK,
           fontWeight: 800,
           fontSize: 52,
           color: G.mid,
@@ -117,7 +117,7 @@ export const LineUnfoldPanel: React.FC<LineUnfoldPanelProps> = () => {
         >
           {isPanel ? (
             <>
-              <Card w={PANEL_W} h={PANEL_H} seed={3} style={{ border: `2px solid ${G.mid}`, boxShadow: '0 0 40px rgba(255,255,255,0.18)' }} />
+              <NeutralCard w={PANEL_W} h={PANEL_H} seed={3} style={{ border: `2px solid ${G.mid}`, boxShadow: '0 0 40px rgba(255,255,255,0.18)' }} />
               {/* 内容层单独控 opacity：盖一层暗板模拟"内容未亮" */}
               <div
                 style={{

@@ -12,6 +12,7 @@ import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+import { FONT_STACK } from '../../_system/typography';
 
 // 斜角滚正（dutch-roll-to-level）：呈现痛点时整帧带 -10° 斜角悬着（叠极缓慢
 // 正弦漂移防止读作静态歪图），帧 70 解决方案的一拍整帧带单次过冲滚回水平
@@ -126,7 +127,7 @@ export const DutchRollToLevel: React.FC<DutchRollToLevelProps> = ({
               borderBottom: `32px solid ${G.panel}`,
             }}
           />
-          <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 28, fontWeight: 700, color: G.card }}>
+          <div style={{ fontFamily: FONT_STACK, fontSize: 28, fontWeight: 700, color: G.card }}>
             {alertText}
           </div>
         </div>
@@ -148,10 +149,10 @@ export const DutchRollToLevel: React.FC<DutchRollToLevelProps> = ({
               gap: 18,
             }}
           >
-            <span style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 32, fontWeight: 800, color: G.ink }}>
+            <span style={{ fontFamily: FONT_STACK, fontSize: 32, fontWeight: 800, color: G.ink }}>
               {solution.title}
             </span>
-            <span style={{ marginLeft: 'auto', fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 34, fontWeight: 800, color: G.accent }}>
+            <span style={{ marginLeft: 'auto', fontFamily: FONT_STACK, fontSize: 34, fontWeight: 800, color: G.accent }}>
               {solution.value}
             </span>
           </div>

@@ -15,6 +15,7 @@ import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+import { FONT_STACK } from '../../_system/typography';
 
 // 时间轴（30fps，共 142f）
 const T = {
@@ -44,7 +45,7 @@ const LogoLockup: React.FC<{ opacity: number; scale: number; logoText: string }>
         <div style={{ width: 44, height: 44, borderRadius: 12, background: G.side }} />
       </div>
       <div style={{
-        fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800,
+        fontFamily: FONT_STACK, fontWeight: 800,
         fontSize: 90, color: G.card, letterSpacing: 2,
       }}>
         {logoText}

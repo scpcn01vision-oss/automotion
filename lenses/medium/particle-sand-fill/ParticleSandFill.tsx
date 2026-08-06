@@ -15,7 +15,8 @@
 // 帧确定性：sin 散列派生每颗出发帧抖动/起点错高，落地帧由高度差闭式反解。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, TitleBlock } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const AMBER = G.accent;
 const frac = (x: number) => x - Math.floor(x);
@@ -53,7 +54,7 @@ export const ParticleSandFill: React.FC<ParticleSandFillProps> = ({
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: 110, width: '100%', textAlign: 'center' }}>
-        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1 }}>{label}</div>
+        <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1 }}>{label}</div>
       </div>
 
       {/* 图表卡 */}
@@ -91,7 +92,7 @@ export const ParticleSandFill: React.FC<ParticleSandFillProps> = ({
             {labelScale > 0 && (
               <div style={{
                 position: 'absolute', left: bar.cx - 70, top: PLOT_BOTTOM - bar.h - 62, width: 140,
-                textAlign: 'center', fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800,
+                textAlign: 'center', fontFamily: FONT_STACK, fontWeight: 800,
                 fontSize: 46, color: b === 1 ? AMBER : G.ink,
                 transform: `scale(${labelScale})`,
               }}>

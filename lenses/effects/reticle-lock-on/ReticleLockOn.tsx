@@ -18,6 +18,7 @@ import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+import { FONT_STACK } from '../../_system/typography';
 
 // 目标：variant A 网格第 2 张卡（第一行中间）。
 // 布局推导：侧栏 220 + padding 36，网格 3 列 gap 28，
@@ -145,7 +146,7 @@ export const ReticleLockOn: React.FC<ReticleLockOnProps> = ({
                 transformOrigin: '0 50%',
                 background: G.ink,
                 color: '#fff',
-                fontFamily: 'Helvetica, Arial, sans-serif',
+                fontFamily: FONT_STACK,
                 fontWeight: 700,
                 fontSize: 26,
                 padding: '10px 18px',

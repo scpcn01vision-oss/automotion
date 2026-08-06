@@ -19,6 +19,7 @@ import React from 'react';
 import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+import { FONT_STACK } from '../../_system/typography';
 
 const CLAMP = { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' } as const;
 
@@ -47,7 +48,7 @@ const TitleCard: React.FC<{ text: string; local: number; underline?: boolean }> 
       >
         <div
           style={{
-            fontFamily: 'Helvetica, Arial, sans-serif',
+            fontFamily: FONT_STACK,
             fontWeight: 800,
             fontSize: 170,
             color: G.card,

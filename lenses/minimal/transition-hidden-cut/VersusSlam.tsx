@@ -12,6 +12,7 @@ import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+import { FONT_STACK } from '../../_system/typography';
 
 // versus-slam 对撞开屏：左右两个半屏画面（带 78° 斜切边）从画外加速对冲，
 // 沿斜缝砰地撞合；撞击帧白闪 + 整机震屏指数衰减 + "VS" 字块盖章压出，结尾静止 hold。
@@ -128,7 +129,7 @@ export const VersusSlam: React.FC<VersusSlamProps> = ({
             background: G.card, border: `6px solid ${G.ink}`, borderRadius: 20,
             padding: '18px 46px', boxShadow: '0 18px 60px rgba(0,0,0,0.35)',
           }}>
-            <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 140, color: G.ink, letterSpacing: -2 }}>
+            <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 140, color: G.ink, letterSpacing: -2 }}>
               {vsText}
             </div>
           </div>

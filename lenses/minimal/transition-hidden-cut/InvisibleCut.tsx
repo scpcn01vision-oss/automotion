@@ -13,6 +13,7 @@ import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
 import { CameraMotionBlur } from '@remotion/motion-blur';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+import { FONT_STACK } from '../../_system/typography';
 
 // invisible-cut：前景遮挡隐形切——一张放大到超出画幅的卡片带重运动模糊
 // 从左侧贴脸扫过，糊满屏幕的瞬间背景从 A 无痕换成 B，卡片飞出右侧时
@@ -123,10 +124,10 @@ const OcclusionCard: React.FC<{ label: string; value: string }> = ({ label, valu
       gap: 24,
     }}
   >
-    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 96, fontWeight: 800, color: G.ink }}>
+    <div style={{ fontFamily: FONT_STACK, fontSize: 96, fontWeight: 800, color: G.ink }}>
       {label}
     </div>
-    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 140, fontWeight: 800, color: G.accent }}>
+    <div style={{ fontFamily: FONT_STACK, fontSize: 140, fontWeight: 800, color: G.accent }}>
       {value}
     </div>
   </div>

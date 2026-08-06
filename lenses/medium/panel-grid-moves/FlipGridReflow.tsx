@@ -15,6 +15,7 @@
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const CARD_W = 280;
 const CARD_H = 170;
@@ -107,10 +108,10 @@ const FlipCard: React.FC<{ i: number; frame: number }> = ({ i, frame }) => {
           gap: 8,
         }}
       >
-        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 20, fontWeight: 800, color: G.ink }}>
+        <div style={{ fontFamily: FONT_STACK, fontSize: 20, fontWeight: 800, color: G.ink }}>
           指标 {i + 1}
         </div>
-        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 28, fontWeight: 800, color: G.accent }}>
+        <div style={{ fontFamily: FONT_STACK, fontSize: 28, fontWeight: 800, color: G.accent }}>
           +{(i + 1) * 7}%
         </div>
       </div>
@@ -119,7 +120,6 @@ const FlipCard: React.FC<{ i: number; frame: number }> = ({ i, frame }) => {
 };
 
 export interface FlipGridReflowProps {
-  // ??????????/?????????? G
 }
 
 export const FlipGridReflow: React.FC<FlipGridReflowProps> = () => {

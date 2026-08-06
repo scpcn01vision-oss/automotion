@@ -1,4 +1,5 @@
 import { AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame, Easing } from 'remotion';
+import { G } from '../_system/colors';
 
 export type CamKey = {
   frame: number;
@@ -57,7 +58,7 @@ export const PageCam: React.FC<{
 
   if (!has3D) {
     return (
-      <AbsoluteFill style={{ overflow: 'hidden', backgroundColor: '#faf7f2' }}>
+      <AbsoluteFill style={{ overflow: 'hidden', backgroundColor: G.bg }}>
         <div
           style={{
             position: 'absolute', width: 1920, height: pageH,
@@ -82,7 +83,7 @@ export const PageCam: React.FC<{
   const persp = lerp(a.persp ?? 1400, b.persp ?? 1400, t);
 
   return (
-    <AbsoluteFill style={{ overflow: 'hidden', backgroundColor: '#faf7f2' }}>
+    <AbsoluteFill style={{ overflow: 'hidden', backgroundColor: G.bg }}>
       <div
         style={{
           position: 'absolute', inset: 0,

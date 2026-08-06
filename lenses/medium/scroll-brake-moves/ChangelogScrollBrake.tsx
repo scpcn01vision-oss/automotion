@@ -97,7 +97,6 @@ const Row: React.FC<{ i: number; frame: number }> = ({ i, frame }) => {
 };
 
 export interface ChangelogScrollBrakeProps {
-  // ??????????/?????????? G
 }
 
 export const ChangelogScrollBrake: React.FC<ChangelogScrollBrakeProps> = () => {

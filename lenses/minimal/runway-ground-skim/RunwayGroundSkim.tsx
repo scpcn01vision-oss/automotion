@@ -17,8 +17,8 @@
 import React from 'react';
 import { AbsoluteFill, interpolate, useCurrentFrame, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
-const FONT = 'Helvetica, Arial, sans-serif';
 const INK = '#3c3c42';
 const MID = '#8d8d94';
 const FAINT = '#d2d2d5';
@@ -41,9 +41,9 @@ const MiniCardFace: React.FC<{ title: string; sub: string }> = ({ title, sub }) 
   }}>
     <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
       <div style={{ width: 40, height: 40, border: '6px solid #85858b', borderRadius: 8, flexShrink: 0 }} />
-      <div style={{ fontFamily: FONT, fontSize: 46, color: INK, fontWeight: 650, whiteSpace: 'nowrap' }}>{title}</div>
+      <div style={{ fontFamily: FONT_STACK, fontSize: 46, color: INK, fontWeight: 650, whiteSpace: 'nowrap' }}>{title}</div>
     </div>
-    <div style={{ fontFamily: FONT, fontSize: 36, color: MID, paddingLeft: 64, whiteSpace: 'nowrap' }}>{sub}</div>
+    <div style={{ fontFamily: FONT_STACK, fontSize: 36, color: MID, paddingLeft: 64, whiteSpace: 'nowrap' }}>{sub}</div>
   </div>
 );
 
@@ -70,7 +70,7 @@ const Ground: React.FC<{ workspaceName: string }> = ({ workspaceName }) => (
       <div style={{ width: 860, borderRight: `4px solid ${FAINT}`, padding: '70px 60px 0', background: '#f1f1f0' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 26 }}>
           <div style={{ width: 64, height: 64, borderRadius: 18, background: 'linear-gradient(135deg,#adadb3,#6b6b72)' }} />
-          <div style={{ fontFamily: FONT, fontSize: 56, fontWeight: 800, color: INK }}>{workspaceName}</div>
+          <div style={{ fontFamily: FONT_STACK, fontSize: 56, fontWeight: 800, color: INK }}>{workspaceName}</div>
         </div>
         <div style={{ height: 46 }} />
         {['Home', 'Inbox', 'Company', 'People & Teams', 'Goals', 'Docs', 'More'].map((t, i) => (
@@ -79,43 +79,43 @@ const Ground: React.FC<{ workspaceName: string }> = ({ workspaceName }) => (
             background: i === 0 ? '#e6e6f0' : 'transparent', borderRadius: 20,
           }}>
             <div style={{ width: 36, height: 36, border: '6px solid #90909a', borderRadius: 9 }} />
-            <div style={{ fontFamily: FONT, fontSize: 46, color: INK, fontWeight: i === 0 ? 650 : 400 }}>{t}</div>
+            <div style={{ fontFamily: FONT_STACK, fontSize: 46, color: INK, fontWeight: i === 0 ? 650 : 400 }}>{t}</div>
           </div>
         ))}
         <div style={{ height: 60 }} />
-        <div style={{ fontFamily: FONT, fontSize: 38, letterSpacing: 5, color: MID, fontWeight: 600, paddingLeft: 32 }}>SPACES</div>
+        <div style={{ fontFamily: FONT_STACK, fontSize: 38, letterSpacing: 5, color: MID, fontWeight: 600, paddingLeft: 32 }}>SPACES</div>
         <div style={{ height: 16 }} />
         {['EPD', 'Product roadmap', 'Design', 'Designer handbook', '3.0', 'Design system'].map((t) => (
           <div key={t} style={{ display: 'flex', alignItems: 'center', gap: 30, height: 96, paddingLeft: 32 }}>
             <div style={{ width: 44, height: 44, borderRadius: 12, background: '#d6d6da' }} />
-            <div style={{ fontFamily: FONT, fontSize: 42, color: INK }}>{t}</div>
+            <div style={{ fontFamily: FONT_STACK, fontSize: 42, color: INK }}>{t}</div>
           </div>
         ))}
       </div>
       {/* 主区 */}
       <div style={{ flex: 1, padding: '70px 100px 0', position: 'relative' }}>
         {/* 顶部 tab 条 */}
-        <div style={{ display: 'flex', gap: 110, fontFamily: FONT, fontSize: 42, color: MID, marginBottom: 60 }}>
+        <div style={{ display: 'flex', gap: 110, fontFamily: FONT_STACK, fontSize: 42, color: MID, marginBottom: 60 }}>
           <div>Product analytics</div><div style={{ fontWeight: 700, color: INK }}>{workspaceName} 3.0</div>
           <div>Widget brainstorm</div><div>Design system</div><div>Design</div>
         </div>
-        <div style={{ fontFamily: FONT, fontSize: 110, fontWeight: 750, color: INK }}>Home</div>
+        <div style={{ fontFamily: FONT_STACK, fontSize: 110, fontWeight: 750, color: INK }}>Home</div>
         <div style={{ height: 40 }} />
         <div style={{
           display: 'flex', alignItems: 'center', gap: 30, border: `4px solid ${FAINT}`,
           borderRadius: 24, padding: '28px 42px', background: '#fff', width: 1400,
         }}>
           <div style={{ width: 38, height: 38, borderRadius: 19, border: '6px solid #9a9aa0' }} />
-          <div style={{ fontFamily: FONT, fontSize: 42, color: MID }}>Search by app, filetype, or keyword</div>
+          <div style={{ fontFamily: FONT_STACK, fontSize: 42, color: MID }}>Search by app, filetype, or keyword</div>
         </div>
         <div style={{ height: 66 }} />
-        <div style={{ display: 'flex', gap: 70, fontFamily: FONT, fontSize: 46 }}>
+        <div style={{ display: 'flex', gap: 70, fontFamily: FONT_STACK, fontSize: 46 }}>
           <div style={{ color: INK, fontWeight: 700 }}>Recent</div>
           <div style={{ color: MID }}>Favorites</div>
         </div>
         {/* ↑ Recent 网格槽位区域留空（卡片从空中落入 GRID_X/GRID_Y 起的两行四列） */}
         <div style={{ height: 560 }} />
-        <div style={{ display: 'flex', gap: 70, fontFamily: FONT, fontSize: 44 }}>
+        <div style={{ display: 'flex', gap: 70, fontFamily: FONT_STACK, fontSize: 44 }}>
           <div style={{ color: INK, fontWeight: 700 }}>Todo</div>
           <div style={{ color: MID }}>Comments</div>
           <div style={{ color: MID }}>Done</div>
@@ -124,7 +124,7 @@ const Ground: React.FC<{ workspaceName: string }> = ({ workspaceName }) => (
         <div style={{ height: 36 }} />
         <div style={{
           display: 'inline-block', padding: '16px 40px', background: '#e4e4e3', borderRadius: 14,
-          fontFamily: FONT, fontSize: 36, letterSpacing: 4, color: '#6f6f75', fontWeight: 600,
+          fontFamily: FONT_STACK, fontSize: 36, letterSpacing: 4, color: '#6f6f75', fontWeight: 600,
         }}>TODAY</div>
         <div style={{ height: 40 }} />
         {['New Bugs Per Week', 'Designer handbook', 'Mobile screens', 'Product roadmap'].map((t) => (
@@ -133,7 +133,7 @@ const Ground: React.FC<{ workspaceName: string }> = ({ workspaceName }) => (
             borderBottom: '3px solid #e5e5e3', width: 2600,
           }}>
             <div style={{ width: 32, height: 32, borderRadius: 9, background: G.accent }} />
-            <div style={{ fontFamily: FONT, fontSize: 46, color: INK, fontWeight: 550 }}>{t}</div>
+            <div style={{ fontFamily: FONT_STACK, fontSize: 46, color: INK, fontWeight: 550 }}>{t}</div>
             <div style={{ marginLeft: 'auto', width: 180, height: 16, background: '#e3e3e8', borderRadius: 8 }} />
           </div>
         ))}

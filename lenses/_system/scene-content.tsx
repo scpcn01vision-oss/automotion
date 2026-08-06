@@ -3,6 +3,7 @@
 import React from 'react';
 import { Img, staticFile } from 'remotion';
 import { G } from './colors';
+import { FONT_STACK } from './typography';
 
 export interface SceneContentData {
   title?: string;
@@ -36,7 +37,7 @@ export const SceneContent: React.FC<{
       {title ? (
         <div
           style={{
-            fontFamily: 'Helvetica, Arial, sans-serif',
+            fontFamily: FONT_STACK,
             fontWeight: 800,
             fontSize: titleSize,
             color: G.ink,

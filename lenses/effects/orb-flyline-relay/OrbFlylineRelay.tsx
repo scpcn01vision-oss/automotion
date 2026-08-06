@@ -129,7 +129,7 @@ const Flyline: React.FC<{
       <line
         key={i}
         x1={pts[i].x} y1={pts[i].y} x2={pts[i + 1].x} y2={pts[i + 1].y}
-        stroke="#fefcf8" strokeWidth={5} strokeLinecap="round"
+        stroke={G.card} strokeWidth={5} strokeLinecap="round"
         strokeOpacity={grad * fade}
       />
     );
@@ -139,7 +139,7 @@ const Flyline: React.FC<{
     <g>
       {/* 宽幅低透明白 = 辉光衬底（暗底上可见） */}
       <polyline
-        points={poly} fill="none" stroke="#d9d3c7"
+        points={poly} fill="none" stroke={G.line}
         strokeWidth={14} strokeLinecap="round" strokeLinejoin="round"
         strokeOpacity={0.18 * fade}
       />
@@ -148,7 +148,7 @@ const Flyline: React.FC<{
       {growing && (
         <g>
           <circle cx={head.x} cy={head.y} r={34} fill="url(#orbHeadHalo)" />
-          <circle cx={head.x} cy={head.y} r={8} fill="#fefcf8" />
+          <circle cx={head.x} cy={head.y} r={8} fill={G.card} />
         </g>
       )}
     </g>
@@ -203,7 +203,6 @@ const DarkCard: React.FC<{
 };
 
 export interface OrbFlylineRelayProps {
-  // ??????????/?????????? G
 }
 
 export const OrbFlylineRelay: React.FC<OrbFlylineRelayProps> = () => {
@@ -234,7 +233,7 @@ export const OrbFlylineRelay: React.FC<OrbFlylineRelayProps> = () => {
   const L2 = { p0: cB, p1: { x: 1620, y: 820 }, p2: { x: 1240, y: 1000 }, p3: cC };
 
   return (
-    <AbsoluteFill style={{ background: '#2c2416', overflow: 'hidden' }}>
+    <AbsoluteFill style={{ background: G.ink, overflow: 'hidden' }}>
       {/* 氛围层：两团大 blur 光斑，落点帧同帧涨亮（组合共振） */}
       {ORBS.map((o, i) => {
         const pos = orbPos(o, t);

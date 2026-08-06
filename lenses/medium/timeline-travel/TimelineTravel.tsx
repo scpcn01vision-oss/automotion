@@ -14,7 +14,8 @@
 // f0–12 初始静置；f118 起真静止 ≥42f（160f 总长）。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing, spring } from 'remotion';
-import { G, Card, TitleBlock } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const W = 1920;
 const AXIS_Y = 700;
@@ -74,7 +75,7 @@ const TickStop: React.FC<{ i: number; frame: number }> = ({ i, frame }) => {
       {/* 刻度竖线 */}
       <div style={{ position: 'absolute', left: -3, top: AXIS_Y - 28, width: 6, height: 56, background: G.ink, borderRadius: 3 }} />
       {/* 刻度标签 */}
-      <div style={{ position: 'absolute', left: -80, top: AXIS_Y + 44, width: 160, textAlign: 'center', fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 40, color: G.ink }}>
+      <div style={{ position: 'absolute', left: -80, top: AXIS_Y + 44, width: 160, textAlign: 'center', fontFamily: FONT_STACK, fontWeight: 800, fontSize: 40, color: G.ink }}>
         {tick.label}
       </div>
       {/* 卡片从刻度线弹立：以底边为轴 scaleY 0→1（带过冲），伴随上移 */}
@@ -104,10 +105,10 @@ const TickStop: React.FC<{ i: number; frame: number }> = ({ i, frame }) => {
               gap: 10,
             }}
           >
-            <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 22, fontWeight: 800, color: G.ink }}>
+            <div style={{ fontFamily: FONT_STACK, fontSize: 22, fontWeight: 800, color: G.ink }}>
               阶段 {i + 1}
             </div>
-            <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 30, fontWeight: 800, color: G.accent }}>
+            <div style={{ fontFamily: FONT_STACK, fontSize: 30, fontWeight: 800, color: G.accent }}>
               Day {(i + 1) * 7}
             </div>
           </div>
@@ -152,7 +153,7 @@ export const TimelineTravel: React.FC<TimelineTravelProps> = ({
         </div>
       </div>
       <div style={{ position: 'absolute', top: 90, width: '100%', textAlign: 'center' }}>
-        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 64, color: G.ink, letterSpacing: -1 }}>{title}</div>
+        <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 64, color: G.ink, letterSpacing: -1 }}>{title}</div>
       </div>
     </div>
   );

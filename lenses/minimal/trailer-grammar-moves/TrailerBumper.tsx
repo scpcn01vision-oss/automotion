@@ -16,6 +16,7 @@ import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+import { FONT_STACK } from '../../_system/typography';
 
 // 时间轴（帧）
 const CUT_1 = 0;   // 镜头1：variant A 整页
@@ -123,7 +124,7 @@ export const TrailerBumper: React.FC<TrailerBumperProps> = ({
         style={{
           opacity,
           transform: `translateY(${rise}px)`,
-          fontFamily: 'Helvetica, Arial, sans-serif',
+          fontFamily: FONT_STACK,
           fontWeight: 800,
           fontSize: 168,
           color: G.ink,

@@ -17,7 +17,8 @@
 // 帧确定性：伪随机全用 sin 散列，无 Math.random / Date.now。
 import React from 'react';
 import { useCurrentFrame, spring, interpolate } from 'remotion';
-import { G, TitleBlock } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const AMBER = G.accent;
 const FPS = 30;
@@ -127,7 +128,7 @@ const fade = (frame: number, inA: number, inB: number, outA?: number, outB?: num
   return Math.min(fi, fo);
 };
 
-const LABEL_FONT = 'Helvetica, Arial, sans-serif';
+const LABEL_FONT = FONT_STACK;
 
 export interface UnitDotSwarmRegroupProps {
   label?: string;
@@ -165,7 +166,7 @@ export const UnitDotSwarmRegroup: React.FC<UnitDotSwarmRegroupProps> = ({
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: 110, width: '100%', textAlign: 'center' }}>
-        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1 }}>{label}</div>
+        <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1 }}>{label}</div>
       </div>
 
       {/* 图例：每点的含义（全程挂角） */}

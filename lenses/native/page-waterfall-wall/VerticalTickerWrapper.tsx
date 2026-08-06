@@ -11,6 +11,7 @@ import { VerticalTicker } from "./VerticalTicker";
 import type { TickerColumn } from "./VerticalTicker";
 import React from "react";
 import { Img, staticFile } from "remotion";
+import { G } from '../../_system/colors';
 
 const CARD_FILES = [
   ["card1.png", "card2.png", "card3.png", "card10.png"],
@@ -39,7 +40,7 @@ const COLUMNS: TickerColumn[] = [
 export const VerticalTickerWrapper: React.FC = () => (
   <VerticalTicker
     columns={COLUMNS}
-    backgroundColor="#faf7f2"
+    backgroundColor={G.bg}
     maskHeight={200}
     tiltDeg={20}
     perspective={1000}

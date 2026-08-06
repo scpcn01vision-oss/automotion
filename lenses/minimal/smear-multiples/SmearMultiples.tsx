@@ -17,6 +17,7 @@
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const X0 = 240; // 左槽卡片左边缘
 const X1 = 1140; // 右槽卡片左边缘（横移 900px）
@@ -69,10 +70,10 @@ const SmearCard: React.FC<{ label: string; value: string }> = ({ label, value })
       boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
     }}
   >
-    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 34, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
+    <div style={{ fontFamily: FONT_STACK, fontSize: 34, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
       {label}
     </div>
-    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 56, fontWeight: 800, color: G.accent }}>
+    <div style={{ fontFamily: FONT_STACK, fontSize: 56, fontWeight: 800, color: G.accent }}>
       {value}
     </div>
   </div>

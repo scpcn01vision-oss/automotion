@@ -15,6 +15,7 @@ import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+import { FONT_STACK } from '../../_system/typography';
 
 // 时间轴（30fps，共 150f）
 const T = {
@@ -153,7 +154,7 @@ export const CursorPerformancePunchIn: React.FC<CursorPerformancePunchInProps> =
           boxShadow: '0 6px 18px rgba(0,0,0,0.28)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           transform: `scale(${hoverScale * press})`,
-          fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 700,
+          fontFamily: FONT_STACK, fontWeight: 700,
           fontSize: 27, color: G.card, letterSpacing: 0.5,
         }}>
           Deploy

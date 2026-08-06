@@ -13,6 +13,7 @@
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, interpolate, spring, useVideoConfig, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const PANEL_X = 1210;
 const PANEL_Y = 90;
@@ -34,7 +35,6 @@ const BUTTON_FRAME = 46; // 按钮按下
 const FLY_START = [54, 60, 66]; // 三行错峰起飞
 
 export interface PanelToCanvasMaterializeProps {
-  // ??????????/?????????? G
 }
 
 export const PanelToCanvasMaterialize: React.FC<PanelToCanvasMaterializeProps> = () => {
@@ -97,7 +97,7 @@ export const PanelToCanvasMaterialize: React.FC<PanelToCanvasMaterializeProps> =
             justifyContent: 'center',
           }}
         >
-          <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 700, fontSize: 22, color: G.card, letterSpacing: 0.5 }}>
+          <div style={{ fontFamily: FONT_STACK, fontWeight: 700, fontSize: 22, color: G.card, letterSpacing: 0.5 }}>
             Add all to canvas
           </div>
         </div>

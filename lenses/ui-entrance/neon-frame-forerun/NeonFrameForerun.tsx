@@ -89,25 +89,25 @@ const GrayHome: React.FC<{ t?: number }> = ({ t = 1 }) => {
         <FloatWrap key={i} h={L(0.3 + i * 0.045, 66)}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 11, height: 34 }}>
             <div style={{ width: 17, height: 17, borderRadius: 5, background: mid }} />
-            <div style={{ height: 10, width: w, background: '#b8ae9e', borderRadius: 5 }} />
+            <div style={{ height: 10, width: w, background: G.bar, borderRadius: 5 }} />
           </div>
         </FloatWrap>
       ))}
       <FloatWrap h={L(0.56, 62)}>
-        <div style={{ height: 11, width: 70, background: '#8b7355', borderRadius: 5, margin: '24px 0 12px' }} />
+        <div style={{ height: 11, width: 70, background: G.mid, borderRadius: 5, margin: '24px 0 12px' }} />
       </FloatWrap>
       {[104, 126, 96, 118, 88].map((w, i) => (
         <FloatWrap key={i} h={L(0.62 + i * 0.05, 66)}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 11, height: 32 }}>
-            <div style={{ width: 16, height: 16, borderRadius: 4, background: '#b8ae9e' }} />
-            <div style={{ height: 10, width: w, background: '#b8ae9e', borderRadius: 5 }} />
+            <div style={{ width: 16, height: 16, borderRadius: 4, background: G.bar }} />
+            <div style={{ height: 10, width: w, background: G.bar, borderRadius: 5 }} />
           </div>
         </FloatWrap>
       ))}
     </div>
     <div style={{ flex: 1, padding: '30px 40px', boxSizing: 'border-box' }}>
       <FloatWrap h={L(0.26, 90)}>
-        <div style={{ height: 24, width: 130, background: '#8b7355', borderRadius: 10, marginBottom: 22 }} />
+        <div style={{ height: 24, width: 130, background: G.mid, borderRadius: 10, marginBottom: 22 }} />
       </FloatWrap>
       <FloatWrap h={L(0.34, 80)}>
         <div style={{ height: 46, border: `2px solid ${line}`, borderRadius: 12, marginBottom: 26, display: 'flex', alignItems: 'center', padding: '0 16px', background: '#fefcf8' }}>
@@ -125,7 +125,7 @@ const GrayHome: React.FC<{ t?: number }> = ({ t = 1 }) => {
       <FloatWrap h={L(0.72, 60)}>
         <div style={{ display: 'flex', gap: 18, marginBottom: 18 }}>
           {[54, 84, 50, 82].map((w, i) => (
-            <div key={i} style={{ height: 11, width: w, background: i === 0 ? '#8b7355' : line, borderRadius: 5 }} />
+            <div key={i} style={{ height: 11, width: w, background: i === 0 ? G.mid : line, borderRadius: 5 }} />
           ))}
         </div>
       </FloatWrap>
@@ -133,9 +133,9 @@ const GrayHome: React.FC<{ t?: number }> = ({ t = 1 }) => {
         <FloatWrap key={i} h={L(0.78 + i * 0.055, 64)}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14, height: 46, borderBottom: `2px solid ${line}` }}>
             <div style={{ width: 13, height: 13, borderRadius: 7, background: '#c26a6a' }} />
-            <div style={{ height: 11, width: 160 + ((i * 37) % 70), background: '#b8ae9e', borderRadius: 5 }} />
+            <div style={{ height: 11, width: 160 + ((i * 37) % 70), background: G.bar, borderRadius: 5 }} />
             <div style={{ marginLeft: 'auto', display: 'flex', gap: 7 }}>
-              {[0, 1, 2].map((k) => <div key={k} style={{ width: 20, height: 20, borderRadius: 10, background: '#b8ae9e' }} />)}
+              {[0, 1, 2].map((k) => <div key={k} style={{ width: 20, height: 20, borderRadius: 10, background: G.bar }} />)}
             </div>
           </div>
         </FloatWrap>
@@ -158,7 +158,6 @@ const BG_FRAMES: BgFrame[] = Array.from({ length: 18 }).map(() => ({
 }));
 
 export interface NeonFrameForerunProps {
-  // ??????????/?????????? G
 }
 
 export const NeonFrameForerun: React.FC<NeonFrameForerunProps> = () => {
@@ -201,7 +200,7 @@ export const NeonFrameForerun: React.FC<NeonFrameForerunProps> = () => {
   });
 
   return (
-    <AbsoluteFill style={{ background: '#2c2416', overflow: 'hidden' }}>
+    <AbsoluteFill style={{ background: G.ink, overflow: 'hidden' }}>
       {/* 背景霓虹管框群 */}
       <svg width={1920} height={1080} style={{ position: 'absolute' }}>
         <defs>
@@ -278,7 +277,7 @@ export const NeonFrameForerun: React.FC<NeonFrameForerunProps> = () => {
                   opacity={0.95 * Math.max(frameLine, 0.25)} />
                 {/* 奔跑亮头 */}
                 {trace < 1 && (
-                  <path d={FRAME_D} pathLength={PL} fill="none" stroke="#fefcf8"
+          <path d={FRAME_D} pathLength={PL} fill="none" stroke={G.card}
                     strokeWidth={6} strokeLinecap="round" filter="url(#fblur2)"
                     strokeDasharray={`8 ${PL}`}
                     strokeDashoffset={dir === 1 ? -(Math.max(0, headP - 8)) : -(PL - headP)}

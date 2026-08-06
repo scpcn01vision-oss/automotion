@@ -14,6 +14,7 @@
 import React from 'react';
 import { G } from '../../_fixtures/Fixtures';
 import { AbsoluteFill, interpolate, useCurrentFrame } from 'remotion';
+import { FONT_STACK } from '../../_system/typography';
 
 const mulberry32 = (a: number) => () => {
   let t = (a += 0x6d2b79f5);
@@ -48,12 +49,11 @@ const GRAYS = ['#9a9a9a', '#7c7c7c', '#b0b0b0', '#8b8b8b'];
 const WAVES = [
   { color: '#b87a2e', fromRow: 0, start: 78 },
   { color: '#e7a03c', fromRow: 3, start: 90 },
-  { color: '#d3923c', fromRow: 6, start: 100 },
+  { color: G.accent, fromRow: 6, start: 100 },
   { color: '#e2606b', fromRow: 9, start: 110 },
 ];
 
 export interface IconFieldColorizeProps {
-  // ??????????/?????????? G
 }
 
 export const IconFieldColorize: React.FC<IconFieldColorizeProps> = () => {

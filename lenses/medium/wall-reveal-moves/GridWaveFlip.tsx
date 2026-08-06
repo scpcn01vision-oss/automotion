@@ -9,7 +9,8 @@
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
-import { Card, G } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { NeutralCard } from '../../_system/neutral-card';
 
 // grid-wave-flip〔入场退场〕：3×3 灰背卡片墙沿对角线波前依次 rotateX 翻转 180°，
 // 灰背翻成正面内容卡；波浪约一秒扫完全屏，最后一张落定带轻微过冲。
@@ -52,7 +53,6 @@ const angleAt = (frame: number, row: number, col: number): number => {
 };
 
 export interface GridWaveFlipProps {
-  // ??????????/?????????? G
 }
 
 export const GridWaveFlip: React.FC<GridWaveFlipProps> = () => {
@@ -143,7 +143,7 @@ export const GridWaveFlip: React.FC<GridWaveFlipProps> = () => {
                     borderRadius: 14,
                   }}
                 >
-                  <Card w={CELL_W} h={CELL_H} seed={i + 1} style={{ width: '100%', height: '100%' }} />
+                  <NeutralCard w={CELL_W} h={CELL_H} seed={i + 1} style={{ width: '100%', height: '100%' }} />
                 </div>
               </div>
               {/* 最薄处高光线：不随卡旋转，贴在格位上随角度纵向移动 */}

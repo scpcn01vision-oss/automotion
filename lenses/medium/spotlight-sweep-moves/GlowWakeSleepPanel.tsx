@@ -66,7 +66,7 @@ const Panel: React.FC = () => (
       <div style={{ display: 'flex', gap: 44 }}>
         {[0, 1].map((col) => (
           <div key={col} style={{ flex: 1 }}>
-            <div style={{ borderTop: `4px solid ${col === 0 ? '#b9a44c' : '#d3923c'}`, paddingTop: 16, display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ borderTop: `4px solid ${col === 0 ? '#b9a44c' : G.accent}`, paddingTop: 16, display: 'flex', alignItems: 'center', gap: 10 }}>
               <div style={{ height: 14, width: 88, background: '#5a5a58', borderRadius: 7 }} />
               <div style={{ width: 22, height: 22, borderRadius: 11, border: `2px solid ${line}` }} />
             </div>
@@ -106,7 +106,6 @@ const EdgeStreak: React.FC<{ cx: number; y: number; len: number; opacity: number
   };
 
 export interface GlowWakeSleepPanelProps {
-  // ??????????/?????????? G
 }
 
 export const GlowWakeSleepPanel: React.FC<GlowWakeSleepPanelProps> = () => {

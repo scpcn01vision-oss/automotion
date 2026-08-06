@@ -16,6 +16,7 @@ import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+import { FONT_STACK } from '../../_system/typography';
 
 const h = (n: number) => {
   const s = Math.sin(n * 127.3) * 43758.5453;
@@ -105,10 +106,10 @@ const CellContent: React.FC<{ i: number; sceneA: SceneContentData; sceneB: Scene
             gap: 10,
           }}
         >
-          <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 24, fontWeight: 800, color: G.ink }}>
+          <div style={{ fontFamily: FONT_STACK, fontSize: 24, fontWeight: 800, color: G.ink }}>
             指标 {i + 1}
           </div>
-          <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 34, fontWeight: 800, color: G.accent }}>
+          <div style={{ fontFamily: FONT_STACK, fontSize: 34, fontWeight: 800, color: G.accent }}>
             +{(i + 1) * 9}%
           </div>
         </div>

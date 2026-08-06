@@ -21,6 +21,7 @@ import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+import { FONT_STACK } from '../../_system/typography';
 
 const DIM_START = 15;
 const PANEL_IN = 22;
@@ -210,7 +211,7 @@ export const PaletteThemeRipple: React.FC<PaletteThemeRippleProps> = ({
         >
           {/* 输入行：⌘K 标识 + 逐字灰块 */}
           <div style={{ height: 62, border: `2px solid ${G.line}`, borderRadius: 12, display: 'flex', alignItems: 'center', gap: 14, padding: '0 18px', boxSizing: 'border-box' }}>
-            <div style={{ padding: '6px 12px', borderRadius: 8, background: G.side, color: '#fff', fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 22 }}>⌘K</div>
+            <div style={{ padding: '6px 12px', borderRadius: 8, background: G.side, color: '#fff', fontFamily: FONT_STACK, fontWeight: 800, fontSize: 22 }}>⌘K</div>
             {TYPE_FRAMES.map((_, i) => (
               <div key={i} style={{ width: 30, height: 30, borderRadius: 6, background: G.ink, transform: `scale(${charScale(i)})` }} />
             ))}

@@ -15,8 +15,8 @@
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
-const FONT = 'Helvetica, Arial, sans-serif';
 const SEL = 'rgba(211,146,60,0.35)';
 
 // 内容骨架块：随 t 依次生长
@@ -132,7 +132,7 @@ const DemoteScene: React.FC<{
         <div
           style={{
             position: 'relative',
-            fontFamily: FONT,
+            fontFamily: FONT_STACK,
             fontWeight: 800,
             fontSize: 128,
             color: G.ink,

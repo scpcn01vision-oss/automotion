@@ -19,7 +19,8 @@
 // + 66–80 底部标签条淡入 → 80–144 全静止(≥45f, 无逐帧噪声层)。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, TitleBlock } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 type Word = {
   text: string;
@@ -74,7 +75,9 @@ export const CelFlashStomp: React.FC<CelFlashStompProps> = ({
   return (
     <div style={{ width: 1920, height: 1080, background: bg, position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', left: 120, top: 96 }}>
-        <TitleBlock text="CEL FLASH STOMP" size={54} />
+        <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 54, color: G.ink, letterSpacing: -1, textShadow: '2px 2px 8px rgba(211,146,60,0.28)' }}>
+          CEL FLASH STOMP
+        </div>
       </div>
       {/* 文字层独立在背景之上：背景闪切时它纹丝不动 */}
       <div
@@ -88,7 +91,7 @@ export const CelFlashStomp: React.FC<CelFlashStompProps> = ({
       >
         <div
           style={{
-            fontFamily: 'Helvetica, Arial, sans-serif',
+            fontFamily: FONT_STACK,
             fontWeight: 800,
             fontSize: 210,
             color: G.ink,

@@ -12,6 +12,7 @@ import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+import { FONT_STACK } from '../../_system/typography';
 
 // anime-impact 动漫打击帧〔组合〕：crash-zoom 急推撞停在目标卡上的那 3 帧，
 // 整幅画面反转成黑白负片 + 手绘放射集中线 + 红青通道 ±8px 色散——
@@ -88,15 +89,15 @@ const Scene: React.FC<{ scene: SceneContentData; text: string }> = ({ scene, tex
           gap: 10,
         }}
       >
-        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 28, fontWeight: 800, color: G.ink }}>
+        <div style={{ fontFamily: FONT_STACK, fontSize: 28, fontWeight: 800, color: G.ink }}>
           {text}
         </div>
-        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 40, fontWeight: 800, color: G.accent }}>
+        <div style={{ fontFamily: FONT_STACK, fontSize: 40, fontWeight: 800, color: G.accent }}>
           +18%
         </div>
       </div>
       <div style={{ position: 'absolute', left: 24, bottom: 96 }}>
-        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 92, color: G.ink, letterSpacing: -2 }}>{text}</div>
+        <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 92, color: G.ink, letterSpacing: -2 }}>{text}</div>
       </div>
     </div>
   </>

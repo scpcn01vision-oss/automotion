@@ -22,6 +22,7 @@ import {
   Easing,
 } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const BG = G.side; // 深棕墨色
 const CX = 960;
@@ -101,7 +102,7 @@ export const InputMorphsIntoLogo: React.FC<InputMorphsIntoLogoProps> = ({
   const WHITE = G.card;
 
   return (
-    <AbsoluteFill style={{ background: BG, fontFamily: 'Helvetica, Arial, sans-serif', overflow: 'hidden' }}>
+    <AbsoluteFill style={{ background: BG, fontFamily: FONT_STACK, overflow: 'hidden' }}>
       <AbsoluteFill style={{ transform: `scale(${breathe})`, transformOrigin: `${CX}px ${CY - 40}px` }}>
         {/* 主体：输入框 → 主胶囊 */}
         <div

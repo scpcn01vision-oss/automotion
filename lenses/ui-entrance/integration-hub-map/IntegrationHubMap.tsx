@@ -59,13 +59,13 @@ export interface IntegrationHubMapProps {
 
 // ---------- 中枢面板（默认内容保留原版，可参数化） ----------
 const DEFAULT_ROWS: IntegrationHubRow[] = [
-  { color: '#4a9fd8', title: 'Q3 Enterprise Deal', sub: 'Revenue · Pipeline · Q3 Quota' },
-  { color: '#4a9fd8', title: 'Major Enterprise Account - UK', sub: 'Revenue · MQL · International' },
-  { color: '#34a853', title: 'Enterprise Pitch Deck', sub: 'Open in GDrive' },
-  { color: '#a259ff', title: 'MQL Lead Form Design', sub: 'Figma File · Last Edited' },
-  { color: '#f2c744', title: 'Enterprise Sales', sub: 'ClickUp Space' },
-  { color: '#8b7355', title: 'Enterprise Closed Archive', sub: 'Archived · In Enterprise Sales' },
-  { color: '#b8ae9e', title: 'Open Enterprise Lead - Follow up', sub: 'In Progress · In Enterprise Sales · Yesterday' },
+  { color: '#4a9fd8', title: 'Project Roadmap', sub: 'Overview · Milestones · Timeline' },
+  { color: '#4a9fd8', title: 'Design Review - Homepage', sub: 'Notes · Feedback · Handoff' },
+  { color: '#34a853', title: 'Launch Checklist', sub: 'Open Document' },
+  { color: '#a259ff', title: 'Onboarding Guide', sub: 'Document · Last Edited' },
+  { color: '#f2c744', title: 'Weekly Sync', sub: 'Workspace' },
+  { color: G.mid, title: 'Archived Notes', sub: 'Archived · In Workspace' },
+  { color: G.bar, title: 'Draft - New Idea', sub: 'In Progress · In Workspace · Yesterday' },
 ];
 
 const HubPanel: React.FC<{
@@ -163,12 +163,12 @@ const FrontPanel: React.FC<{ glow: number; frontTitle: string }> = ({ glow, fron
       <div style={{ fontSize: 26, fontWeight: 600, color: G.ink }}>{frontTitle}</div>
     </div>
     <div style={{ display: 'flex', gap: 14, marginTop: 10 }}>
-      {['Revenue', 'Pipeline', 'Q3 Quota'].map((t) => (
+      {['Overview', 'Milestones', 'Timeline'].map((t) => (
         <div
           key={t}
           style={{
             fontSize: 11.5,
-            color: '#8b7355',
+            color: G.mid,
             background: '#efeff0',
             borderRadius: 6,
             padding: '3px 10px',
@@ -178,7 +178,7 @@ const FrontPanel: React.FC<{ glow: number; frontTitle: string }> = ({ glow, fron
         </div>
       ))}
     </div>
-    <div style={{ height: 1, background: '#d9d3c7', marginTop: 18 }} />
+    <div style={{ height: 1, background: G.line, marginTop: 18 }} />
     {/* 文档灰条段落 */}
     {[420, 700, 660, 540, 0, 690, 630, 380, 0, 580, 640, 460].map((w, i) =>
       w === 0 ? (
@@ -190,7 +190,7 @@ const FrontPanel: React.FC<{ glow: number; frontTitle: string }> = ({ glow, fron
             width: w,
             height: 13,
             borderRadius: 6,
-            background: i % 5 === 0 ? '#d9d3c7' : '#d9d3c7',
+            background: i % 5 === 0 ? G.line : G.line,
             marginTop: 13,
           }}
         />
@@ -203,42 +203,35 @@ const FrontPanel: React.FC<{ glow: number; frontTitle: string }> = ({ glow, fron
 const Tile: React.FC<{ kind: string; on: number }> = ({ kind, on }) => {
   const glyph = (() => {
     switch (kind) {
-      case 'figma':
+      case 'ring':
         return (
           <svg width={46} height={46} viewBox="0 0 46 46">
-            <circle cx={16} cy={9} r={7} fill="#f24e1e" />
-            <circle cx={30} cy={9} r={7} fill="#ff7262" />
-            <circle cx={16} cy={23} r={7} fill="#a259ff" />
-            <circle cx={30} cy={23} r={7} fill="#1abcfe" />
-            <circle cx={16} cy={37} r={7} fill="#0acf83" />
+            <circle cx={23} cy={23} r={17} fill="none" stroke={G.mid} strokeWidth={5} />
+            <circle cx={23} cy={23} r={6} fill={G.accent} />
           </svg>
         );
-      case 'github':
-        return <div style={{ width: 46, height: 46, borderRadius: '50%', background: '#3d3022' }} />;
-      case 'salesforce':
+      case 'disc':
+        return <div style={{ width: 40, height: 40, borderRadius: '50%', background: G.accent }} />;
+      case 'cloud':
         return (
           <svg width={56} height={40} viewBox="0 0 56 40">
-            <ellipse cx={22} cy={22} rx={14} ry={11} fill="#00a1e0" />
-            <ellipse cx={36} cy={18} rx={13} ry={10} fill="#00a1e0" />
-            <ellipse cx={30} cy={26} rx={16} ry={10} fill="#00a1e0" />
+            <ellipse cx={22} cy={22} rx={14} ry={11} fill={G.mid} />
+            <ellipse cx={36} cy={18} rx={13} ry={10} fill={G.bar} />
+            <ellipse cx={30} cy={26} rx={16} ry={10} fill={G.mid} />
           </svg>
         );
-      case 'gdrive':
+      case 'triangle':
         return (
           <svg width={48} height={42} viewBox="0 0 48 42">
-            <path d="M16 2 L32 2 L48 30 L40 42 L8 42 L0 30 Z" fill="none" />
-            <path d="M16 2 L32 2 L20 24 L4 24 Z" fill="#34a853" transform="translate(2,2)" />
-            <path d="M32 2 L46 28 L30 28 L18 6 Z" fill="#fbbc04" transform="translate(0,2)" />
-            <path d="M6 28 L42 28 L36 38 L12 38 Z" fill="#4285f4" />
+            <polygon points="24,2 46,40 2,40" fill="none" stroke={G.ink} strokeWidth={5} strokeLinejoin="round" />
+            <polygon points="24,12 36,34 12,34" fill={G.accent} />
           </svg>
         );
-      default: // dropbox
+      default: // diamond
         return (
           <svg width={48} height={42} viewBox="0 0 48 42">
-            <path d="M12 0 L24 8 L12 16 L0 8 Z" fill="#0061ff" />
-            <path d="M36 0 L48 8 L36 16 L24 8 Z" fill="#0061ff" />
-            <path d="M12 18 L24 26 L12 34 L0 26 Z" fill="#0061ff" />
-            <path d="M36 18 L48 26 L36 34 L24 26 Z" fill="#0061ff" />
+            <polygon points="24,2 46,21 24,40 2,21" fill={G.bar} stroke={G.mid} strokeWidth={3} />
+            <polygon points="24,10 38,21 24,32 10,21" fill={G.accent} />
           </svg>
         );
     }
@@ -265,11 +258,11 @@ const Tile: React.FC<{ kind: string; on: number }> = ({ kind, on }) => {
 // ---------- 光管（彩虹渐变霓虹管） ----------
 type Pipe = { kind: string; icon: [number, number]; path: string; len: number; tIcon: number; tPipe: number };
 const PIPES: Pipe[] = [
-  { kind: 'figma', icon: [452, 262], path: 'M 452 322 L 452 440 Q 452 480 492 480 L 552 480', len: 300, tIcon: 52, tPipe: 62 },
-  { kind: 'github', icon: [252, 612], path: 'M 316 612 L 552 612', len: 240, tIcon: 52, tPipe: 62 },
-  { kind: 'salesforce', icon: [992, 178], path: 'M 992 240 L 992 332', len: 92, tIcon: 52, tPipe: 62 },
-  { kind: 'gdrive', icon: [1512, 272], path: 'M 1512 332 L 1512 440 Q 1512 480 1472 480 L 1372 480', len: 290, tIcon: 52, tPipe: 62 },
-  { kind: 'dropbox', icon: [1702, 618], path: 'M 1640 618 L 1372 618', len: 270, tIcon: 52, tPipe: 62 },
+  { kind: 'ring', icon: [452, 262], path: 'M 452 322 L 452 440 Q 452 480 492 480 L 552 480', len: 300, tIcon: 52, tPipe: 62 },
+  { kind: 'disc', icon: [252, 612], path: 'M 316 612 L 552 612', len: 240, tIcon: 52, tPipe: 62 },
+  { kind: 'cloud', icon: [992, 178], path: 'M 992 240 L 992 332', len: 92, tIcon: 52, tPipe: 62 },
+  { kind: 'triangle', icon: [1512, 272], path: 'M 1512 332 L 1512 440 Q 1512 480 1472 480 L 1372 480', len: 290, tIcon: 52, tPipe: 62 },
+  { kind: 'diamond', icon: [1702, 618], path: 'M 1640 618 L 1372 618', len: 270, tIcon: 52, tPipe: 62 },
 ];
 const GROW = 9; // v8（批次 17）：用户意见"翻转过来后，5个app同时出现，然后同时连接"——两拍制：五图标 tIcon 统一 52 同帧出现，五管 tPipe 统一 62 同帧连接
 
@@ -284,10 +277,10 @@ const RECTS = Array.from({ length: 9 }, (_, i) => ({
 }));
 
 export const IntegrationHubMap: React.FC<IntegrationHubMapProps> = ({
-  frontTitle = 'Q3 Enterprise Deal',
-  hubTitle = 'Enterprise MQLs',
+  frontTitle = 'Project Overview',
+  hubTitle = 'Workspace Hub',
   rows = DEFAULT_ROWS,
-  icons = ['figma', 'github', 'salesforce', 'gdrive', 'dropbox'],
+  icons = ['ring', 'disc', 'cloud', 'triangle', 'diamond'],
   hubStyle = {},
 }) => {
   const frame = useCurrentFrame();
@@ -378,7 +371,7 @@ export const IntegrationHubMap: React.FC<IntegrationHubMapProps> = ({
             return (
               <linearGradient key={i} id={`rainbow-${i}`} gradientUnits="userSpaceOnUse" x1={x1} y1={y1} x2={x2} y2={y2}>
                 <stop offset="0%" stopColor="#f0b06a" />
-                <stop offset="28%" stopColor="#d3923c" />
+                <stop offset="28%" stopColor={G.accent} />
                 <stop offset="52%" stopColor="#c47f2e" />
                 <stop offset="76%" stopColor="#a86a24" />
                 <stop offset="100%" stopColor="#8b5a1e" />
@@ -386,7 +379,7 @@ export const IntegrationHubMap: React.FC<IntegrationHubMapProps> = ({
             );
           })}
           {/* userSpaceOnUse：纯水平/垂直直线管的 bbox 为零，百分比滤镜区域会
-              坍缩成 0 导致整条管不渲染（github/salesforce/dropbox 三管消失） */}
+              坍缩成 0 导致整条管不渲染（disc/cloud/diamond 三管消失） */}
           <filter id="pipeGlow" filterUnits="userSpaceOnUse" x="0" y="0" width="1920" height="1080">
             <feGaussianBlur stdDeviation="4" result="b" />
             <feMerge>
@@ -436,7 +429,7 @@ export const IntegrationHubMap: React.FC<IntegrationHubMapProps> = ({
                   <path
                     d={p.path}
                     fill="none"
-                    stroke="#fefcf8"
+                    stroke={G.card}
                     strokeWidth={11}
                     strokeLinecap="round"
                     strokeDasharray="18 56"

@@ -15,6 +15,7 @@
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 // mask 放大原点：内容通用时取画面中心（字母 L 竖笔位置仅为演示字形优化）
 const ORIGIN = '50% 50%';
@@ -67,7 +68,7 @@ export const TextAsMask: React.FC<TextAsMaskProps> = ({ text = 'SCALE' }) => {
   const clamp = { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' } as const;
   // 字号自适应：超粗大字按字符数缩放，上限 360
   const FONT = Math.min(360, Math.floor(1800 / Math.max(text.length, 1)));
-  const MASK_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080"><text x="960" y="666" font-family="Helvetica, Arial, sans-serif" font-size="${FONT}" font-weight="900" letter-spacing="-8" text-anchor="middle" fill="white">${text}</text></svg>`;
+  const MASK_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080"><text x="960" y="666" font-family="${FONT_STACK}" font-size="${FONT}" font-weight="900" letter-spacing="-8" text-anchor="middle" fill="white">${text}</text></svg>`;
   const MASK_URL = `url("data:image/svg+xml,${encodeURIComponent(MASK_SVG)}")`;
 
   // 结尾撤场进度：100–130f 单段 bezier

@@ -18,6 +18,7 @@ import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+import { FONT_STACK } from '../../_system/typography';
 
 // 光圈圆心 = 画面中心（景 A 内容承载的面板中心）
 const CX = 960;
@@ -121,7 +122,7 @@ export const CircleMatchIris: React.FC<CircleMatchIrisProps> = ({
             display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
             opacity: numOpacity,
           }}>
-            <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 96, color: '#f2f2f0', letterSpacing: -2 }}>
+            <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 96, color: '#f2f2f0', letterSpacing: -2 }}>
               {num}%
             </div>
             <div style={{ marginTop: 6, height: 12, width: 130, background: '#6a6a68', borderRadius: 6 }} />

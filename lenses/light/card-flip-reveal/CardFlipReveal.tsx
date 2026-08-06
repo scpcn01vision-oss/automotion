@@ -17,9 +17,10 @@
 //   卡1: 28–46–54，卡2: 38–56–64 → 64–145 三卡全静止（81f ≥ 40f）。
 import React, { useMemo } from 'react';
 import { interpolate, Easing } from 'remotion';
-import { G, TitleBlock } from '../../_fixtures/Fixtures';
-import { useShotFrame } from '../../engine/useShotFrame';
-import type { ShotTime } from '../../engine/time';
+import { G } from '../../_fixtures/Fixtures';
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+import { FONT_STACK } from '../../_system/typography';
 
 const CH = 300;
 const GAP = 60;
@@ -120,7 +121,7 @@ const FlipCard: React.FC<{ i: number; frame: number; card: CardFlipRevealCard; w
         >
           <span
             style={{
-              fontFamily: 'Helvetica, Arial, sans-serif',
+              fontFamily: FONT_STACK,
               fontWeight: 700, fontSize: labelFont(len, availW), color: G.ink,
               textAlign: 'center', lineHeight: 1.2, letterSpacing: -0.5,
               maxWidth: '100%', overflowWrap: 'break-word', wordBreak: 'break-word',
@@ -149,7 +150,7 @@ const FlipCard: React.FC<{ i: number; frame: number; card: CardFlipRevealCard; w
         >
           <span
             style={{
-              fontFamily: 'Helvetica, Arial, sans-serif',
+              fontFamily: FONT_STACK,
               fontWeight: 800,
               fontSize: Math.min(96, Math.floor(w * 0.24)),
               color: G.ink,
@@ -193,7 +194,7 @@ export const CardFlipReveal: React.FC<CardFlipRevealProps> = ({
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', left: 120, top: 96 }}>
-        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 54, color: G.ink, letterSpacing: -1 }}>
+        <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 54, color: G.ink, letterSpacing: -1 }}>
           {title}
         </div>
       </div>

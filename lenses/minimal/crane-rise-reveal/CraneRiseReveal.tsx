@@ -17,6 +17,7 @@
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const HOLD = 20; // 开场特写 hold
 const MOVE_END = 120; // 运镜结束，此后真静止
@@ -112,10 +113,10 @@ export const CraneRiseReveal: React.FC<CraneRiseRevealProps> = ({
                 borderBottom: i < rows.length - 1 ? `1px solid ${G.line}` : 'none',
               }}
             >
-              <span style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 36, fontWeight: 600, color: G.ink }}>
+              <span style={{ fontFamily: FONT_STACK, fontSize: 36, fontWeight: 600, color: G.ink }}>
                 {r.label}
               </span>
-              <span style={{ marginLeft: 'auto', fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 38, fontWeight: 800, color: G.accent }}>
+              <span style={{ marginLeft: 'auto', fontFamily: FONT_STACK, fontSize: 38, fontWeight: 800, color: G.accent }}>
                 {r.value}
               </span>
             </div>

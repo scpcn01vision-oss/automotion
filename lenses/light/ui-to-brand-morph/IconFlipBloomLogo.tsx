@@ -14,8 +14,8 @@
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, interpolate, Easing, spring, useVideoConfig } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
-const FONT = 'Helvetica, Arial, sans-serif';
 
 const SmileLaptop: React.FC<{ size: number }> = ({ size }) => (
   <svg width={size} height={size} viewBox="0 0 40 40">
@@ -60,7 +60,7 @@ export interface IconFlipBloomLogoProps {
   wordmark?: string;
 }
 
-export const IconFlipBloomLogo: React.FC<IconFlipBloomLogoProps> = ({ wordmark = 'perplexity' }) => {
+export const IconFlipBloomLogo: React.FC<IconFlipBloomLogoProps> = ({ wordmark = 'inkmark' }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
@@ -175,7 +175,7 @@ export const IconFlipBloomLogo: React.FC<IconFlipBloomLogoProps> = ({ wordmark =
             top: 200,
             transform: 'translateY(-50%)',
             display: 'flex',
-            fontFamily: FONT,
+            fontFamily: FONT_STACK,
             fontWeight: 700,
             fontSize: 150,
             color: G.ink,

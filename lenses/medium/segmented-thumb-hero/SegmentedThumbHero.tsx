@@ -14,8 +14,8 @@
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, interpolate, Easing, spring, useVideoConfig } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
-const FONT = 'Helvetica, Arial, sans-serif';
 
 // 超大描边箭头光标
 const ArrowCursor: React.FC<{ x: number; y: number; press: number }> = ({ x, y, press }) => (
@@ -61,7 +61,6 @@ const AskIcon: React.FC<{ size: number }> = ({ size }) => (
 );
 
 export interface SegmentedThumbHeroProps {
-  // ??????????/?????????? G
 }
 
 export const SegmentedThumbHero: React.FC<SegmentedThumbHeroProps> = () => {
@@ -124,7 +123,7 @@ export const SegmentedThumbHero: React.FC<SegmentedThumbHeroProps> = () => {
   });
 
   const labelStyle = (active: boolean): React.CSSProperties => ({
-    fontFamily: FONT,
+    fontFamily: FONT_STACK,
     fontWeight: 700,
     fontSize: 72,
     color: active ? G.ink : G.mid,

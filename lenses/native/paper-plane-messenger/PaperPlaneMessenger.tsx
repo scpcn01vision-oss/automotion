@@ -15,6 +15,7 @@
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const mulberry32 = (a: number) => () => {
   let t = (a += 0x6d2b79f5);
@@ -84,7 +85,7 @@ const Window: React.FC<{
     <div style={{ height: 54, background: G.panel, borderBottom: `2px solid ${G.line}`, display: 'flex', alignItems: 'center', gap: 10, padding: '0 20px', boxSizing: 'border-box' }}>
       {[0, 1, 2].map((i) => <div key={i} style={{ width: 15, height: 15, borderRadius: 8, background: G.bar }} />)}
       {content.title ? (
-        <div style={{ marginLeft: 14, fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 18, fontWeight: 700, color: G.ink }}>{content.title}</div>
+        <div style={{ marginLeft: 14, fontFamily: FONT_STACK, fontSize: 18, fontWeight: 700, color: G.ink }}>{content.title}</div>
       ) : (
         <div style={{ marginLeft: 14, height: 13, width: 200, background: G.bar, borderRadius: 7 }} />
       )}
@@ -92,12 +93,12 @@ const Window: React.FC<{
     <div style={{ padding: 26, display: 'flex', flexDirection: 'column', gap: 12, flex: 1, boxSizing: 'border-box' }}>
       {(content.rows ?? []).map((r, i) => (
         <div key={i} style={{ display: 'flex', alignItems: 'center', borderBottom: i < (content.rows ?? []).length - 1 ? `1px solid ${G.line}` : 'none', padding: '8px 0' }}>
-          <span style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 20, fontWeight: 600, color: G.ink }}>{r.label}</span>
-          <span style={{ marginLeft: 'auto', fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 22, fontWeight: 800, color: G.accent }}>{r.value}</span>
+          <span style={{ fontFamily: FONT_STACK, fontSize: 20, fontWeight: 600, color: G.ink }}>{r.label}</span>
+          <span style={{ marginLeft: 'auto', fontFamily: FONT_STACK, fontSize: 22, fontWeight: 800, color: G.accent }}>{r.value}</span>
         </div>
       ))}
       {sendBtn && (
-        <div style={{ alignSelf: 'flex-end', marginTop: 'auto', transform: `scale(${1 + btnPulse * 0.22})`, padding: '16px 46px', borderRadius: 12, background: G.ink, color: G.card, fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 28, boxShadow: btnPulse > 0 ? `0 0 0 ${btnPulse * 22}px rgba(47,47,47,0.18)` : 'none' }}>
+        <div style={{ alignSelf: 'flex-end', marginTop: 'auto', transform: `scale(${1 + btnPulse * 0.22})`, padding: '16px 46px', borderRadius: 12, background: G.ink, color: G.card, fontFamily: FONT_STACK, fontWeight: 800, fontSize: 28, boxShadow: btnPulse > 0 ? `0 0 0 ${btnPulse * 22}px rgba(47,47,47,0.18)` : 'none' }}>
           {sendLabel}
         </div>
       )}

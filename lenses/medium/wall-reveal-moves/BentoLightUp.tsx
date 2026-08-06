@@ -10,6 +10,7 @@
 import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 // bento-light-up：暗场里 3×2 bento 墙压暗待命，随节拍逐格点亮——
 // 边框流光先描一圈（琥珀），格内内容随后提亮上浮弹出；六格全亮后整体微推收住。
@@ -89,7 +90,7 @@ const Cell: React.FC<{ i: number; frame: number }> = ({ i, frame }) => {
             gap: 8,
           }}
         >
-          <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 22, fontWeight: 800, color: G.ink }}>
+          <div style={{ fontFamily: FONT_STACK, fontSize: 22, fontWeight: 800, color: G.ink }}>
             功能 {i + 1}
           </div>
         </div>
@@ -156,7 +157,7 @@ export const BentoLightUp: React.FC<BentoLightUpProps> = ({
           transformOrigin: '960px 540px',
         }}
       >
-        <div style={{ position: 'absolute', left: LEFT, top: TOP - 110, opacity: titleLit, filter: 'invert(1)', fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 64, color: G.ink, letterSpacing: -1 }}>
+        <div style={{ position: 'absolute', left: LEFT, top: TOP - 110, opacity: titleLit, filter: 'invert(1)', fontFamily: FONT_STACK, fontWeight: 800, fontSize: 64, color: G.ink, letterSpacing: -1 }}>
           {title}
         </div>
         {Array.from({ length: 6 }).map((_, i) => (

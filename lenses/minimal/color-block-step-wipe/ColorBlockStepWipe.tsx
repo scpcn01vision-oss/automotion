@@ -14,6 +14,7 @@
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const BLUE = '#2383e2';
 const RED = '#e8503a';
@@ -80,10 +81,10 @@ const GrayPage: React.FC<{ cards: { label: string; value: string }[] }> = ({ car
             gap: 10,
           }}
         >
-          <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 28, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
+          <div style={{ fontFamily: FONT_STACK, fontSize: 28, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
             {c.label}
           </div>
-          <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 40, fontWeight: 800, color: G.accent }}>
+          <div style={{ fontFamily: FONT_STACK, fontSize: 40, fontWeight: 800, color: G.accent }}>
             {c.value}
           </div>
         </div>
@@ -212,10 +213,10 @@ export const ColorBlockStepWipe: React.FC<ColorBlockStepWipeProps> = ({
               gap: 10,
             }}
           >
-            <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 28, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
+            <div style={{ fontFamily: FONT_STACK, fontSize: 28, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
               {cards[0]?.label ?? ''}
             </div>
-            <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 40, fontWeight: 800, color: G.accent }}>
+            <div style={{ fontFamily: FONT_STACK, fontSize: 40, fontWeight: 800, color: G.accent }}>
               {cards[0]?.value ?? ''}
             </div>
           </div>

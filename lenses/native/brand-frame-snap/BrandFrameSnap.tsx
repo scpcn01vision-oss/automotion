@@ -14,6 +14,7 @@
 import React from 'react';
 import { useCurrentFrame, spring, interpolate, Img, staticFile } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const FPS = 30;
 const FLIP_FRAME = 78; // 同帧硬翻色时刻
@@ -48,7 +49,7 @@ const ContentRenderer: React.FC<{ content: BrandFrameSnapContent }> = ({ content
       }}
     >
       {title ? (
-        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 84, color: G.ink, letterSpacing: -1 }}>
+        <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 84, color: G.ink, letterSpacing: -1 }}>
           {title}
         </div>
       ) : null}
@@ -160,7 +161,7 @@ export const BrandFrameSnap: React.FC<BrandFrameSnapProps> = ({
             {/* 模式徽标：随画框同帧换色换字 */}
             <div style={{
               marginLeft: 'auto', background: frameColor, color: G.card,
-              fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 15,
+              fontFamily: FONT_STACK, fontWeight: 800, fontSize: 15,
               letterSpacing: 1.5, padding: '6px 16px', borderRadius: 8,
               opacity: winO,
             }}>
@@ -188,7 +189,7 @@ export const BrandFrameSnap: React.FC<BrandFrameSnapProps> = ({
       <div style={{
         position: 'absolute', left: 70, top: 0, height: frameW + snapPulse,
         display: 'flex', alignItems: 'center',
-        fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800,
+        fontFamily: FONT_STACK, fontWeight: 800,
         fontSize: 22, letterSpacing: 3, color: G.card,
         opacity: frameGrow,
       }}>

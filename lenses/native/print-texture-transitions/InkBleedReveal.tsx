@@ -17,7 +17,8 @@
 // 洇满全屏）；帧 100–130 摘掉 mask 直接铺新景，真静止 30f。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing, Img, staticFile } from 'remotion';
-import { G, TitleBlock } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 export interface InkBleedRevealNewScene {
   title?: string;
@@ -42,7 +43,7 @@ const NewScene: React.FC<{ scene: InkBleedRevealNewScene }> = ({ scene }) => {
       }}
     >
       {title ? (
-        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 88, color: G.ink, letterSpacing: -1 }}>
+        <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 88, color: G.ink, letterSpacing: -1 }}>
           {title}
         </div>
       ) : null}
@@ -124,7 +125,7 @@ export const InkBleedReveal: React.FC<InkBleedRevealProps> = ({
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       {/* 旧景：纸底 + BEFORE 标题 */}
       <div style={{ position: 'absolute', inset: 0, background: G.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 120, color: G.ink, letterSpacing: -1 }}>
+        <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 120, color: G.ink, letterSpacing: -1 }}>
           {oldTitle}
         </div>
       </div>

@@ -18,6 +18,7 @@ import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+import { FONT_STACK } from '../../_system/typography';
 
 const HOLD_END = 25; // 全景 hold 结束
 const C1 = 25; // 特写一:光标按下
@@ -142,7 +143,7 @@ export const WrightTripleCut: React.FC<WrightTripleCutProps> = ({
             boxShadow: '0 8px 28px rgba(0,0,0,0.25)',
           }}>
             <div style={{
-              fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800,
+              fontFamily: FONT_STACK, fontWeight: 800,
               fontSize: 420, color: G.card, lineHeight: 1,
             }}>
               {digit}
@@ -191,7 +192,7 @@ export const WrightTripleCut: React.FC<WrightTripleCutProps> = ({
         opacity: glow,
       }}>
         <div style={{
-          fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800,
+          fontFamily: FONT_STACK, fontWeight: 800,
           fontSize: 260, color: G.ink, lineHeight: 1,
         }}>
           {resultValue}

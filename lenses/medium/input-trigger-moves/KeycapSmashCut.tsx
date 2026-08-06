@@ -19,6 +19,8 @@ import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+import { NeutralCard } from '../../_system/neutral-card';
+import { FONT_STACK } from '../../_system/typography';
 
 const T = {
   press: 25,      // 按下起始（呼吸周期 25f，此帧位移恰好归零）
@@ -49,7 +51,7 @@ const Keycap: React.FC<{ size: number; thick: number; bright: number; label?: st
   }}>
     <div style={{
       fontSize: size * 0.3, fontWeight: 700, color: G.ink,
-      fontFamily: 'Helvetica, Arial, sans-serif',
+      fontFamily: FONT_STACK,
     }}>
       {label}
     </div>
@@ -129,7 +131,7 @@ const FlyItem: React.FC<{ fly: Fly; i: number; frame: number }> = ({ fly, i, fra
     }}>
       {fly.panel
         ? <FlyPanel w={fly.w} h={fly.h} />
-        : <Card w={fly.w} h={fly.h} seed={fly.seed}
+        : <NeutralCard w={fly.w} h={fly.h} seed={fly.seed}
             style={{ boxShadow: '0 12px 40px rgba(0,0,0,0.25)' }} />}
     </div>
   );

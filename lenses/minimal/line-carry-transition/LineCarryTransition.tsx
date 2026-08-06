@@ -19,6 +19,7 @@ import React from 'react';
 import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContentData } from '../../_system/scene-content';
+import { FONT_STACK } from '../../_system/typography';
 
 // ---- 世界几何（一条折线：进度条 + 横线 + 直角 + 矩形框）----
 // M 400,705 → 2600,705（进度 560 + 冲出 1640）→ 上 2600,375 → 右 3160,375
@@ -54,7 +55,7 @@ export interface LineCarryTransitionProps {
 const SideScene: React.FC<{ content: SceneContentData; titleOnly?: boolean }> = ({ content, titleOnly }) => {
   if (titleOnly) {
     return (
-      <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 56, color: G.ink, letterSpacing: -1 }}>
+      <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 56, color: G.ink, letterSpacing: -1 }}>
         {content.title ?? ''}
       </div>
     );
@@ -77,8 +78,8 @@ const SideScene: React.FC<{ content: SceneContentData; titleOnly?: boolean }> = 
     >
       {(content.rows ?? []).map((r, i) => (
         <div key={i} style={{ display: 'flex', alignItems: 'center', borderBottom: i < (content.rows ?? []).length - 1 ? `1px solid ${G.line}` : 'none', padding: '8px 0' }}>
-          <span style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 22, fontWeight: 600, color: G.ink, overflowWrap: 'break-word' }}>{r.label}</span>
-          <span style={{ marginLeft: 'auto', fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 24, fontWeight: 800, color: G.accent }}>{r.value}</span>
+          <span style={{ fontFamily: FONT_STACK, fontSize: 22, fontWeight: 600, color: G.ink, overflowWrap: 'break-word' }}>{r.label}</span>
+          <span style={{ marginLeft: 'auto', fontFamily: FONT_STACK, fontSize: 24, fontWeight: 800, color: G.accent }}>{r.value}</span>
         </div>
       ))}
     </div>

@@ -19,6 +19,7 @@
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const START = 12; // 首字起跳帧
 const RISE = 14; // 升起时长
@@ -89,7 +90,7 @@ export const SplitTextStagger: React.FC<SplitTextStaggerProps> = ({
               <span
                 style={{
                   display: 'inline-block',
-                  fontFamily: 'Helvetica, Arial, sans-serif',
+                  fontFamily: FONT_STACK,
                   fontWeight: 800,
                   fontSize: FONT,
                   lineHeight: 1.05,

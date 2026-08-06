@@ -18,6 +18,7 @@ import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+import { FONT_STACK } from '../../_system/typography';
 
 // 帧确定伪随机(硬规矩:禁 Math.random)
 const h = (n: number) => {
@@ -145,7 +146,7 @@ export const DropBlackoutSlam: React.FC<DropBlackoutSlamProps> = ({
         )}
         <div
           style={{
-            fontFamily: 'Helvetica, Arial, sans-serif',
+            fontFamily: FONT_STACK,
             fontWeight: 800,
             fontSize: 340,
             color: G.card,

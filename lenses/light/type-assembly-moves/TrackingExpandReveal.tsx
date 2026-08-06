@@ -19,6 +19,7 @@
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const FS = 150; // 主词字号
 // 每个字缝的起始-终点差：(-0.42em) - (0.14em) = -0.56em = -84px @150px
@@ -73,7 +74,7 @@ export const TrackingExpandReveal: React.FC<TrackingExpandRevealProps> = ({
       >
         <div
           style={{
-            fontFamily: 'Helvetica, Arial, sans-serif',
+            fontFamily: FONT_STACK,
             fontWeight: 800,
             fontSize: FS,
             color: G.ink,
@@ -108,7 +109,7 @@ export const TrackingExpandReveal: React.FC<TrackingExpandRevealProps> = ({
           left: 0,
           width: 1920,
           textAlign: 'center',
-          fontFamily: 'Helvetica, Arial, sans-serif',
+          fontFamily: FONT_STACK,
           fontWeight: 500,
           fontSize: 34,
           color: G.mid,

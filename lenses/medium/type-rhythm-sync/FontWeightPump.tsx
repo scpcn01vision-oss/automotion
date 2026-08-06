@@ -16,6 +16,7 @@
 import React from 'react';
 import { useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const BEATS = [30, 50, 70, 90, 110];
 const ACCENTS = new Set([2, 4]); // 第 3、5 拍重音
@@ -61,7 +62,7 @@ export const FontWeightPump: React.FC<FontWeightPumpProps> = ({
         background: G.bg,
         position: 'relative',
         overflow: 'hidden',
-        fontFamily: 'Helvetica, Arial, sans-serif',
+        fontFamily: FONT_STACK,
       }}
     >
       {/* 定宽居中容器，transform 缩放不改排版 */}

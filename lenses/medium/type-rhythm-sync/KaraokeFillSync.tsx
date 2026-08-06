@@ -17,6 +17,7 @@
 import React from 'react';
 import { useCurrentFrame, interpolate } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 type Word = { text: string; start: number; end: number };
 
@@ -88,7 +89,7 @@ export const KaraokeFillSync: React.FC<KaraokeFillSyncProps> = ({
         justifyContent: 'center',
         paddingLeft: 240,
         boxSizing: 'border-box',
-        fontFamily: 'Helvetica, Arial, sans-serif',
+        fontFamily: FONT_STACK,
         fontSize: 130,
         fontWeight: 800,
         letterSpacing: 2,

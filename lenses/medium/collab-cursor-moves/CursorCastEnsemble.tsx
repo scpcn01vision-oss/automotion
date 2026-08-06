@@ -14,6 +14,7 @@
 import React from 'react';
 import { useCurrentFrame, spring, interpolate } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const mulberry32 = (a: number) => () => {
   let t = (a += 0x6d2b79f5);
@@ -34,10 +35,10 @@ type Actor = {
 
 const ACTOR_LAYOUT: Omit<Actor, 'name'>[] = [
   { color: '#b87a2e', from: [-160, 200], home: [430, 330], delay: 0, phase: 0.0 },
-  { color: '#d3923c', from: [2080, 160], home: [1370, 290], delay: 5, phase: 1.7 },
+  { color: G.accent, from: [2080, 160], home: [1370, 290], delay: 5, phase: 1.7 },
   { color: '#F2994A', from: [-160, 900], home: [560, 760], delay: 9, phase: 3.1 },
   { color: '#b87a2e', from: [2080, 950], home: [1420, 780], delay: 13, phase: 4.4 },
-  { color: '#d3923c', from: [900, -180], home: [960, 545], delay: 17, phase: 5.6 },
+  { color: G.accent, from: [900, -180], home: [960, 545], delay: 17, phase: 5.6 },
 ];
 
 const CursorActor: React.FC<{ x: number; y: number; a: Actor; badge: number; scale?: number }> = ({
@@ -51,7 +52,7 @@ const CursorActor: React.FC<{ x: number; y: number; a: Actor; badge: number; sca
     <div style={{
       position: 'absolute', left: 24, top: 40, whiteSpace: 'nowrap',
       background: a.color, color: '#fff', borderRadius: 7, padding: '4px 11px',
-      fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 700, fontSize: 14,
+      fontFamily: FONT_STACK, fontWeight: 700, fontSize: 14,
       opacity: badge, transform: `translateY(${(1 - badge) * 10}px)`,
     }}>
       {a.name}
@@ -119,12 +120,12 @@ export const CursorCastEnsemble: React.FC<CursorCastEnsembleProps> = ({
       }}>
         <div style={{ height: 14, width: 180, background: G.bar, borderRadius: 7, marginBottom: 24 }} />
         <div style={{
-          fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 700, fontSize: 44,
+          fontFamily: FONT_STACK, fontWeight: 700, fontSize: 44,
           color: G.ink, letterSpacing: -0.5, minHeight: 56,
         }}>
           {TYPED.slice(0, typedCount)}
           <span style={{
-            display: 'inline-block', width: 4, height: 44, background: '#d3923c',
+            display: 'inline-block', width: 4, height: 44, background: G.accent,
             marginLeft: 3, verticalAlign: 'middle',
             opacity: f > 50 && typedCount < TYPED.length ? (caretOn ? 1 : 0.15) : 0,
           }} />

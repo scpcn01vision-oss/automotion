@@ -11,6 +11,7 @@
 import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 // exploded-view：整页 dashboard 带 3D 倾斜，咔地沿 Z 轴炸开——顶栏/侧栏/六卡
 // 各自浮到不同深度悬停（近大而实、远略暗），层间透出投影；hold 一拍后
@@ -81,10 +82,10 @@ const MiniCard: React.FC<{ w: number; h: number; label: string; value: string }>
       gap: 10,
     }}
   >
-    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 26, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
+    <div style={{ fontFamily: FONT_STACK, fontSize: 26, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
       {label}
     </div>
-    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 38, fontWeight: 800, color: G.accent }}>
+    <div style={{ fontFamily: FONT_STACK, fontSize: 38, fontWeight: 800, color: G.accent }}>
       {value}
     </div>
   </div>

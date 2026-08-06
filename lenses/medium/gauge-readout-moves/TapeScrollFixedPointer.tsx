@@ -15,7 +15,8 @@
 // 帧确定性：value(frame) 纯分段 interpolate 全 clamp，带偏移 = value 线性映射。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, TitleBlock } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const AMBER = G.accent;
 
@@ -75,7 +76,7 @@ export const TapeScrollFixedPointer: React.FC<TapeScrollFixedPointerProps> = ({
       ticks.push(
         <div key={`n${u}`} style={{
           position: 'absolute', top: y - 22, right: 110,
-          fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 700,
+          fontFamily: FONT_STACK, fontWeight: 700,
           fontSize: 38, color: G.mid, textAlign: 'right', width: 90,
         }}>
           {u}
@@ -87,7 +88,7 @@ export const TapeScrollFixedPointer: React.FC<TapeScrollFixedPointerProps> = ({
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: 90, width: '100%', textAlign: 'center' }}>
-        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 68, color: G.ink, letterSpacing: -1 }}>{label}</div>
+        <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 68, color: G.ink, letterSpacing: -1 }}>{label}</div>
       </div>
 
       {/* 刻度带容器（世界层：整体在动） */}
@@ -126,7 +127,7 @@ export const TapeScrollFixedPointer: React.FC<TapeScrollFixedPointerProps> = ({
         padding: '0 36px', boxSizing: 'border-box',
       }}>
         <div style={{ height: 12, width: 150, background: G.line, borderRadius: 6, marginBottom: 12 }} />
-        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 96, color: AMBER, letterSpacing: -2, lineHeight: 1 }}>
+        <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 96, color: AMBER, letterSpacing: -2, lineHeight: 1 }}>
           {Math.round(v)}
         </div>
       </div>

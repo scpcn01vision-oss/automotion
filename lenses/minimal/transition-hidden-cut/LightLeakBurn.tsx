@@ -12,6 +12,7 @@ import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+import { FONT_STACK } from '../../_system/typography';
 
 // light-leak-burn〔转场〕：一团琥珀橙柔光从右上角斜扫入画，亮度顶峰时
 // 吞掉旧画面约七成（高光溢出、对比度被冲淡），光峰帧后切新页藏切点，
@@ -101,7 +102,7 @@ export const LightLeakBurn: React.FC<LightLeakBurnProps> = ({
           <>
             <SceneContent content={sceneB} />
             <div style={{ position: 'absolute', left: '50%', top: 96, transform: 'translateX(-50%)' }}>
-              <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 64, color: G.ink, letterSpacing: -1 }}>
+              <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 64, color: G.ink, letterSpacing: -1 }}>
                 {nextTitle}
               </div>
             </div>

@@ -19,6 +19,7 @@
 import React from 'react';
 import { useCurrentFrame, interpolate } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const BOIL_START = 35;
 const BOIL_END = 105;
@@ -85,7 +86,7 @@ export const LineBoil: React.FC<LineBoilProps> = ({
       >
         <div
           style={{
-            fontFamily: 'Helvetica, Arial, sans-serif',
+            fontFamily: FONT_STACK,
             fontWeight: 800,
             fontSize: 170,
             color: G.ink,

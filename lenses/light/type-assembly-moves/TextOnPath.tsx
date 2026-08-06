@@ -16,6 +16,7 @@
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 // 上升贝塞尔：左下 → 右上，先缓后陡（增长线形状）
 const P0 = { x: 200, y: 820 };
@@ -92,7 +93,7 @@ export const TextOnPath: React.FC<TextOnPathProps> = ({
           <div key={i} style={{
             position: 'absolute', left: x, top: y, opacity: op,
             transform: `translate(-50%, -50%) rotate(${ang}deg)`,
-            fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800,
+            fontFamily: FONT_STACK, fontWeight: 800,
             fontSize: 64, color: G.ink,
           }}>
             {ch}

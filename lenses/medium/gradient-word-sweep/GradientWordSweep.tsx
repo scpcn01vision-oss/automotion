@@ -15,6 +15,7 @@
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const mulberry32 = (a: number) => () => {
   let t = (a += 0x6d2b79f5);
@@ -25,7 +26,7 @@ const mulberry32 = (a: number) => () => {
 
 const FONT = '"Avenir Next", Futura, "Helvetica Neue", sans-serif';
 // 截图 5：S 偏蓝青 → 中段紫 → 粉 → 尾部琥珀
-const GRAD = 'linear-gradient(92deg, #e8a44a 0%, #b87a2e 32%, #f2c98a 62%, #d3923c 100%)';
+const GRAD = `linear-gradient(92deg, #e8a44a 0%, #b87a2e 32%, #f2c98a 62%, ${G.accent} 100%)`;
 
 const FILL_START = 12;
 const FILL_END = 30; // 18 帧 ≈ 0.6s，快扫

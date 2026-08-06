@@ -13,6 +13,7 @@
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, interpolate, spring, useVideoConfig, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const PROMPT = 'Generate an entity-relationship diagram';
 const TYPE_START = 6;
@@ -61,7 +62,6 @@ const edgeLen = (p: (typeof NODES)[number], c: (typeof NODES)[number]) => {
 };
 
 export interface DiagramCascadeBuildProps {
-  // ??????????/?????????? G
 }
 
 export const DiagramCascadeBuild: React.FC<DiagramCascadeBuildProps> = () => {
@@ -105,7 +105,7 @@ export const DiagramCascadeBuild: React.FC<DiagramCascadeBuildProps> = () => {
           padding: '0 36px',
           boxSizing: 'border-box',
           boxShadow: '0 6px 24px rgba(0,0,0,0.08)',
-          fontFamily: 'Helvetica, Arial, sans-serif',
+          fontFamily: FONT_STACK,
           fontSize: 30,
           fontWeight: 600,
           color: G.ink,

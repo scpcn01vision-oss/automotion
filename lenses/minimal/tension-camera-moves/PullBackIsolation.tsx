@@ -17,6 +17,7 @@
 import React from 'react';
 import { useCurrentFrame, interpolate, interpolateColors, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 // 8 张兄弟卡：相对主卡中心 (960,540) 的偏移 + 尺寸 + seed
 const SIBS = [
@@ -56,10 +57,10 @@ const MiniCard: React.FC<{ w: number; h: number; label: string; value: string }>
       gap: 8,
     }}
   >
-    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 18, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
+    <div style={{ fontFamily: FONT_STACK, fontSize: 18, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
       {label}
     </div>
-    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 26, fontWeight: 800, color: G.accent }}>
+    <div style={{ fontFamily: FONT_STACK, fontSize: 26, fontWeight: 800, color: G.accent }}>
       {value}
     </div>
   </div>
@@ -153,7 +154,7 @@ export const PullBackIsolation: React.FC<PullBackIsolationProps> = ({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontFamily: 'Helvetica, Arial, sans-serif',
+              fontFamily: FONT_STACK,
               fontWeight: 800,
               fontSize: 128,
               letterSpacing: -3,

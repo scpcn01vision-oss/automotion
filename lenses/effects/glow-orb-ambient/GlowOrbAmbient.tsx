@@ -15,6 +15,7 @@
 import React from 'react';
 import { G } from '../../_fixtures/Fixtures';
 import { AbsoluteFill, interpolate, useCurrentFrame, Easing } from 'remotion';
+import { FONT_STACK } from '../../_system/typography';
 
 // 库内标准伪随机（帧确定）
 const h = (n: number) => {
@@ -55,7 +56,6 @@ const orbPos = (o: Orb, t: number) => {
 };
 
 export interface GlowOrbAmbientProps {
-  // ??????????/?????????? G
 }
 
 export const GlowOrbAmbient: React.FC<GlowOrbAmbientProps> = () => {
@@ -124,7 +124,7 @@ export const GlowOrbAmbient: React.FC<GlowOrbAmbientProps> = () => {
           height: 330,
           boxSizing: 'border-box',
           background: G.side,
-          border: '1.5px solid #8b7355',
+          border: `1.5px solid ${G.mid}`,
           borderRadius: 16,
           boxShadow: `0 0 ${shadowBlur}px ${shadowSpread}px rgba(255,255,255,${shadowAlpha})`,
           padding: 32,

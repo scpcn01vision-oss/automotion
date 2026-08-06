@@ -59,7 +59,7 @@ const InboxPanel: React.FC = () => (
             <div style={{ height: 18, width: 260, background: '#c9c9c7', borderRadius: 9 }} />
           </div>
           <div style={{ display: 'flex', gap: 14, marginTop: 16 }}>
-            <div style={{ height: 18, width: 300, background: '#8b7355', borderRadius: 9, opacity: 0.75 }} />
+            <div style={{ height: 18, width: 300, background: G.mid, borderRadius: 9, opacity: 0.75 }} />
             <div style={{ height: 18, width: 340 - ((row * 91) % 120), background: '#d8d8d6', borderRadius: 9 }} />
           </div>
         </div>
@@ -69,7 +69,6 @@ const InboxPanel: React.FC = () => (
 );
 
 export interface CornerSpotlightRevealProps {
-  // ??????????/?????????? G
 }
 
 export const CornerSpotlightReveal: React.FC<CornerSpotlightRevealProps> = () => {

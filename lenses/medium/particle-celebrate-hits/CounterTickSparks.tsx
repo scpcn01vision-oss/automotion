@@ -15,7 +15,8 @@
 // 帧确定性：tick 帧从同一 easeOut 曲线预解析（模块级求出），火星 = 纯 age 闭式弹道。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, TitleBlock } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const AMBER = G.accent;
 const TARGET = 12847;
@@ -70,7 +71,7 @@ export const CounterTickSparks: React.FC<CounterTickSparksProps> = ({
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: 110, width: '100%', textAlign: 'center' }}>
-        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1 }}>{label}</div>
+        <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1 }}>{label}</div>
       </div>
 
       {/* 计数卡 */}
@@ -82,7 +83,7 @@ export const CounterTickSparks: React.FC<CounterTickSparksProps> = ({
       }}>
         <div style={{ height: 14, width: 220, background: G.bar, borderRadius: 7 }} />
         <div style={{
-          fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 168,
+          fontFamily: FONT_STACK, fontWeight: 800, fontSize: 168,
           color: G.ink, letterSpacing: -3, lineHeight: 1, fontVariantNumeric: 'tabular-nums',
           transform: `scale(${popScale})`,
         }}>

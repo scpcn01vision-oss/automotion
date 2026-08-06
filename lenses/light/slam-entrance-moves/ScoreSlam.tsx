@@ -20,6 +20,7 @@ import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+import { FONT_STACK } from '../../_system/typography';
 
 // 库规伪随机
 const h = (n: number) => {
@@ -219,7 +220,7 @@ export const ScoreSlam: React.FC<ScoreSlamProps> = ({
           >
             <div
               style={{
-                fontFamily: 'Helvetica, Arial, sans-serif',
+                fontFamily: FONT_STACK,
                 fontWeight: 800,
                 fontSize: 110,
                 color: G.ink,
@@ -231,7 +232,7 @@ export const ScoreSlam: React.FC<ScoreSlamProps> = ({
             </div>
             <div
               style={{
-                fontFamily: 'Helvetica, Arial, sans-serif',
+                fontFamily: FONT_STACK,
                 fontWeight: 600,
                 fontSize: 26,
                 color: G.mid,

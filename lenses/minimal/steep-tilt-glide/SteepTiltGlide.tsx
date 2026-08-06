@@ -19,8 +19,8 @@
 import React from 'react';
 import { AbsoluteFill, interpolate, useCurrentFrame, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
-const FONT = 'Helvetica, Arial, sans-serif';
 const INK = G.ink;
 
 const easeFall = Easing.bezier(0.5, 0.05, 0.6, 1); // 加速贴落、末端软着陆
@@ -49,25 +49,25 @@ const liftOf = (t: number, land: number, H = 230) => {
 };
 
 /* 中性工作区 logo（双色几何 mark） */
-const CULogo: React.FC<{ size: number }> = ({ size }) => (
+const WorkspaceMark: React.FC<{ size: number }> = ({ size }) => (
   <svg width={size} height={size} viewBox="0 0 100 100">
     <defs>
-      <linearGradient id="cu1" x1="0" y1="0" x2="1" y2="0">
+      <linearGradient id="wm1" x1="0" y1="0" x2="1" y2="0">
         <stop offset="0" stopColor={G.accent} />
         <stop offset="1" stopColor={G.mid} />
       </linearGradient>
-      <linearGradient id="cu2" x1="0" y1="0" x2="1" y2="0">
+      <linearGradient id="wm2" x1="0" y1="0" x2="1" y2="0">
         <stop offset="0" stopColor={G.ink} />
         <stop offset="1" stopColor={G.accent} />
       </linearGradient>
     </defs>
-    <path d="M 14 62 L 50 30 L 86 62" fill="none" stroke="url(#cu1)" strokeWidth="16" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M 22 84 L 50 62 L 78 84" fill="none" stroke="url(#cu2)" strokeWidth="16" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M 14 62 L 50 30 L 86 62" fill="none" stroke="url(#wm1)" strokeWidth="16" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M 22 84 L 50 62 L 78 84" fill="none" stroke="url(#wm2)" strokeWidth="16" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
-/* 中性四菱形 glyph（原片 f45/f60 主区圆角灰砖里的图标，品牌蓝换 G.accent） */
-const DropboxGlyph: React.FC<{ size: number }> = ({ size }) => (
+/* 中性四菱形 glyph（原片 f45/f60 主区圆角灰砖里的图标，原品牌蓝已换 G.accent） */
+const QuadGlyph: React.FC<{ size: number }> = ({ size }) => (
   <svg width={size} height={size} viewBox="0 0 100 100">
     {[[50, 8, 27, 22], [50, 8, 73, 22], [50, 36, 27, 50], [50, 36, 73, 50]].map(() => null)}
     <g fill={G.accent}>
@@ -90,7 +90,7 @@ const Panel: React.FC<{ shade: number; t?: number; workspaceName: string }> = ({
     width: PW, height: PH, background: G.panel, borderRadius: 64,
     position: 'relative', overflow: 'hidden',
     boxShadow: '0 0 220px rgba(220,210,255,0.35)',
-    fontFamily: FONT,
+    fontFamily: FONT_STACK,
   }}>
     {/* 顶部 tab 条（贯穿整页；文字悬空贴落） */}
     <div style={{
@@ -118,16 +118,16 @@ const Panel: React.FC<{ shade: number; t?: number; workspaceName: string }> = ({
         <div key={tb as string} style={{ position: 'absolute', left: x as number, top: 88, fontSize: 58, color: G.mid }}>{tb}</div>
       ))}
     </div>
-    {/* ClickUp logo 行 */}
+    {/* 工作区 logo 行 */}
     <div style={{ position: 'absolute', left: 120, top: 560 }}>
       <FloatWrap h={liftOf(t, 0.54, 250)}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 26 }}>
-          <CULogo size={104} />
+          <WorkspaceMark size={104} />
           <div style={{ fontSize: 92, fontWeight: 800, color: G.ink, letterSpacing: -1 }}>{workspaceName}</div>
         </div>
       </FloatWrap>
     </div>
-    {/* 主区圆角灰砖：Dropbox 图标 + 下拉 chevron（原片 f45–f60） */}
+    {/* 主区圆角灰砖：四菱形图标 + 下拉 chevron（原片 f45–f60） */}
     <div style={{ position: 'absolute', left: 1330, top: 440 }}>
       <FloatWrap h={liftOf(t, 0.62, 260)}>
         <div style={{
@@ -139,7 +139,7 @@ const Panel: React.FC<{ shade: number; t?: number; workspaceName: string }> = ({
             boxShadow: '0 6px 60px rgba(139,115,85,0.35)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
-            <DropboxGlyph size={130} />
+            <QuadGlyph size={130} />
           </div>
           <svg width={90} height={90} viewBox="0 0 40 40">
             <path d="M 10 15 L 20 26 L 30 15" fill="none" stroke={G.mid} strokeWidth={3.6} strokeLinecap="round" strokeLinejoin="round" />

@@ -12,6 +12,7 @@ import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+import { FONT_STACK } from '../../_system/typography';
 
 // paparazzi flash 连闪定格：高光时刻三连白闪，每闪硬切同一素材的不同裁切
 // （全景→卡片特写→数字特写），每闪切入画面带 1.03→1 回落 + 半格沉降像快门
@@ -36,7 +37,7 @@ const Footage: React.FC<{ footage: SceneContentData; value: string }> = ({ foota
     <div style={{ position: 'absolute', left: 1070, top: 350, transform: 'translate(-50%, -50%)' }}>
       <div
         style={{
-          fontFamily: 'Helvetica, Arial, sans-serif',
+          fontFamily: FONT_STACK,
           fontWeight: 800,
           fontSize: 104,
           color: G.accent,

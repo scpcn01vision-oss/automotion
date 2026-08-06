@@ -18,6 +18,7 @@
 import React from 'react';
 import { useCurrentFrame, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 // 确定性伪随机
 const h = (n: number) => {
@@ -99,7 +100,7 @@ export const LetterDropPhysics: React.FC<LetterDropPhysicsProps> = ({
               justifyContent: 'center',
               transform: `translateY(${y + jitter}px) rotate(${rot}deg) scale(${scale})`,
               transformOrigin: '50% 100%',
-              fontFamily: 'Helvetica, Arial, sans-serif',
+              fontFamily: FONT_STACK,
               fontWeight: 800,
               fontSize: FONT,
               lineHeight: 1,

@@ -12,6 +12,7 @@ import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+import { FONT_STACK } from '../../_system/typography';
 
 // letterform-zoom〔转场〕：巨型标题字腔透出新页面，镜头急速推进
 // 字母 A 的三角字腔，洞被撑满全屏的瞬间新页面接管，残余笔画滑出画外。
@@ -29,7 +30,7 @@ const BASELINE = 741;
 const ZOOM_MAX = 28;
 
 const titleFont: React.CSSProperties = {
-  fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif',
+  fontFamily: FONT_STACK,
   fontWeight: 900,
   fontSize: FS,
 };

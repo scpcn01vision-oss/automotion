@@ -19,6 +19,7 @@
 import React from 'react';
 import { useCurrentFrame, interpolate, interpolateColors, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const ROW = 210; // 数位行高（overflow 盒高）
 const DW = 126; // 数位盒宽
@@ -163,7 +164,7 @@ export const OdometerDigitRoll: React.FC<OdometerDigitRollProps> = ({
           width: 1920,
           display: 'flex',
           justifyContent: 'center',
-          fontFamily: 'Helvetica, Arial, sans-serif',
+          fontFamily: FONT_STACK,
           transform: `scale(${pulseScale})`,
           transformOrigin: '960px 105px',
         }}

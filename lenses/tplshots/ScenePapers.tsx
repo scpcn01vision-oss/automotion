@@ -3,6 +3,7 @@ import { PageCam, CamKey } from './PageCam';
 import { AIFL_SHOTS } from './aifl-shots';
 import layout from './live-layout.json';
 import { DigitRoll } from './DigitRoll';
+import { G } from '../_system/colors';
 
 const cards = layout.papers.cards;
 const PAGE_H = layout.papers.pageH;
@@ -79,7 +80,7 @@ export const ScenePapers: React.FC<{ start?: number }> = ({ start = 0 }) => {
               top: c.y - 10,
               width: c.w + 24,
               height: c.h + 20,
-              background: '#faf7f2',
+              background: G.bg,
               opacity: frame >= CUES[i] + DUR - 2 ? 0 : 1,
             }}
           />

@@ -12,6 +12,7 @@ import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+import { FONT_STACK } from '../../_system/typography';
 
 // hit-counter 连招计数：三张功能卡接连砸入槽位，每次命中 = 全局顿帧 2f
 // + 落点伤害数字上浮渐隐 + 右上角 ×N 计数跳字（脉冲/倾斜逐次加码）。
@@ -126,10 +127,10 @@ export const HitCounter: React.FC<HitCounterProps> = ({
                 gap: 10,
               }}
             >
-              <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 26, fontWeight: 800, color: G.ink }}>
+              <div style={{ fontFamily: FONT_STACK, fontSize: 26, fontWeight: 800, color: G.ink }}>
                 连击 {i + 1}
               </div>
-              <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 36, fontWeight: 800, color: G.accent }}>
+              <div style={{ fontFamily: FONT_STACK, fontSize: 36, fontWeight: 800, color: G.accent }}>
                 {dmgText[i] ?? ''}
               </div>
             </div>
@@ -163,7 +164,7 @@ export const HitCounter: React.FC<HitCounterProps> = ({
               opacity,
             }}
           >
-            <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1 }}>{dmgText[i] ?? ''}</div>
+            <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1 }}>{dmgText[i] ?? ''}</div>
           </div>
         );
       })}
@@ -181,7 +182,7 @@ export const HitCounter: React.FC<HitCounterProps> = ({
           style={{
             background: G.ink, color: '#fff', borderRadius: 18,
             padding: '10px 34px 16px',
-            fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800,
+            fontFamily: FONT_STACK, fontWeight: 800,
             fontSize: counterSize, letterSpacing: -2, lineHeight: 1.1,
             boxShadow: '0 8px 28px rgba(0,0,0,0.3)',
           }}

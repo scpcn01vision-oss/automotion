@@ -13,9 +13,10 @@
 import React from 'react';
 import { useCurrentFrame, interpolate } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const BLUE = '#b87a2e';
-const GREEN = '#d3923c';
+const GREEN = G.accent;
 const DARK = G.ink;
 
 const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
@@ -51,7 +52,7 @@ const Cursor: React.FC<{
     <div style={{
       position: 'absolute', left: 34, top: 56, whiteSpace: 'nowrap',
       background: color, color: '#fff', borderRadius: 8, padding: '5px 13px',
-      fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 700, fontSize: 16,
+      fontFamily: FONT_STACK, fontWeight: 700, fontSize: 16,
       opacity: badgeOpacity * (0.28 + 0.72 * badgeLit),
       filter: `saturate(${0.35 + 0.65 * badgeLit})`,
       boxShadow: badgeLit > 0.6 ? `0 0 ${22 * badgeLit}px ${color}` : 'none',

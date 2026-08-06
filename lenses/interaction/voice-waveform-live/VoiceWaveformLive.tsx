@@ -15,6 +15,7 @@
 import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const mulberry32 = (a: number) => () => {
   let t = (a += 0x6d2b79f5);
@@ -112,7 +113,7 @@ export const VoiceWaveformLive: React.FC<VoiceWaveformLiveProps> = ({ statusText
           <div
             style={{
               position: 'absolute', top: 250, width: '100%', textAlign: 'center',
-              fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 26,
+              fontFamily: FONT_STACK, fontSize: 26,
               fontWeight: 700, letterSpacing: 4, color: G.mid, opacity: inOp,
             }}
           >

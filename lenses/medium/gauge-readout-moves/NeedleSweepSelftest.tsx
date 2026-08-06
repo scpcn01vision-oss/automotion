@@ -14,7 +14,8 @@
 // 帧确定性：纯 interpolate 分段，全部 clamp，settle 后每帧输出常数。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, TitleBlock } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const AMBER = G.accent;
 const RED = G.mid;
@@ -121,10 +122,10 @@ const Gauge: React.FC<{ start: number; target: number }> = ({ start, target }) =
         position: 'absolute', left: 0, right: 0, top: 396, textAlign: 'center',
         opacity: popOp, transform: `scale(${popScale.toFixed(4)})`,
       }}>
-        <span style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 62, color: G.ink }}>
+        <span style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 62, color: G.ink }}>
           {value}
         </span>
-        <span style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 700, fontSize: 30, color: G.mid, marginLeft: 8 }}>
+        <span style={{ fontFamily: FONT_STACK, fontWeight: 700, fontSize: 30, color: G.mid, marginLeft: 8 }}>
           %
         </span>
       </div>
@@ -142,7 +143,7 @@ export const NeedleSweepSelftest: React.FC<NeedleSweepSelftestProps> = ({
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: 110, width: '100%', textAlign: 'center' }}>
-        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1 }}>{label}</div>
+        <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1 }}>{label}</div>
       </div>
       <div style={{
         position: 'absolute', left: CARD_X, top: CARD_Y, width: CARD_W, height: CARD_H,

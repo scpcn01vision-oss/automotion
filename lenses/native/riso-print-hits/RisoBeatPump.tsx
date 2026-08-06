@@ -17,6 +17,7 @@
 import React from 'react';
 import { useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const HITS = [30, 54, 78, 102]; // 节拍命中帧
 const AMP = [4, 7, 11, 16]; // 每拍单版初始错位（px），逐拍加码
@@ -38,7 +39,7 @@ const Plate: React.FC<{ text: string; color: string; dx: number; dy: number }> =
   >
     <div
       style={{
-        fontFamily: 'Helvetica, Arial, sans-serif',
+        fontFamily: FONT_STACK,
         fontWeight: 800,
         fontSize: 160,
         color,
@@ -115,7 +116,7 @@ export const RisoBeatPump: React.FC<RisoBeatPumpProps> = ({
             >
               <div
                 style={{
-                  fontFamily: 'Helvetica, Arial, sans-serif',
+                  fontFamily: FONT_STACK,
                   fontWeight: 800,
                   fontSize: 160,
                   color: G.ink,
@@ -164,10 +165,10 @@ export const RisoBeatPump: React.FC<RisoBeatPumpProps> = ({
                 gap: 10,
               }}
             >
-              <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 24, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
+              <div style={{ fontFamily: FONT_STACK, fontSize: 24, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
                 {c.label}
               </div>
-              <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 34, fontWeight: 800, color: G.accent }}>
+              <div style={{ fontFamily: FONT_STACK, fontSize: 34, fontWeight: 800, color: G.accent }}>
                 {c.value}
               </div>
             </div>

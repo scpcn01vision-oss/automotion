@@ -2,6 +2,7 @@ import { AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame, Easing } f
 import { AIFL_SHOTS } from './aifl-shots';
 import { PageCam, CamKey } from './PageCam';
 import layout from './live-layout.json';
+import { G } from '../_system/colors';
 
 const SERIF = 'ui-serif, Georgia, "Times New Roman", serif';
 const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
@@ -195,7 +196,7 @@ export const SceneOpen: React.FC<{ start?: number }> = ({ start = 0 }) => {
   const rootOpacity = 1 - outT;
 
   return (
-    <AbsoluteFill style={{ backgroundColor: '#faf7f2', opacity: rootOpacity }}>
+    <AbsoluteFill style={{ backgroundColor: G.bg, opacity: rootOpacity }}>
       {frame >= 84 ? (
         <AbsoluteFill style={{ opacity: macroIn }}>
           <PageCam

@@ -80,7 +80,7 @@ const WidePanel: React.FC = () => (
       </div>
       <div style={{ display: 'flex', gap: 84 }}>
         <Col accent="#c4ad45" seed={1} w={620} />
-        <Col accent="#d3923c" seed={4} w={620} />
+        <Col accent={G.accent} seed={4} w={620} />
         <Col accent="#b87a2e" seed={7} w={620} />
       </div>
     </div>
@@ -88,7 +88,6 @@ const WidePanel: React.FC = () => (
 );
 
 export interface SlideSpotlightPanProps {
-  // ??????????/?????????? G
 }
 
 export const SlideSpotlightPan: React.FC<SlideSpotlightPanProps> = () => {

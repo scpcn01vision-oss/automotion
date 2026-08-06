@@ -15,6 +15,7 @@
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const W = 1920;
 const CARD_W = 380;
@@ -106,10 +107,10 @@ const MiniCard: React.FC<{ w: number; h: number; label: string; value: string }>
       gap: 10,
     }}
   >
-    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 22, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
+    <div style={{ fontFamily: FONT_STACK, fontSize: 22, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
       {label}
     </div>
-    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 30, fontWeight: 800, color: G.accent }}>
+    <div style={{ fontFamily: FONT_STACK, fontSize: 30, fontWeight: 800, color: G.accent }}>
       {value}
     </div>
   </div>

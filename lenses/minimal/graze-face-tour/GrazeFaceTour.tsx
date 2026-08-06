@@ -15,8 +15,8 @@
 import React from 'react';
 import { AbsoluteFill, interpolate, useCurrentFrame, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
-const FONT = 'Helvetica, Arial, sans-serif';
 const INK = '#3a3a40';
 const MID = '#8b8b92';
 const FAINT = '#c8c8ce';
@@ -55,7 +55,7 @@ const Chip: React.FC<{ letter: string; tone: string }> = ({ letter, tone }) => (
   <div style={{
     width: 64, height: 64, borderRadius: 16, background: tone,
     display: 'flex', alignItems: 'center', justifyContent: 'center',
-    fontFamily: FONT, fontWeight: 700, fontSize: 36, color: '#666',
+    fontFamily: FONT_STACK, fontWeight: 700, fontSize: 36, color: '#666',
   }}>{letter}</div>
 );
 
@@ -96,8 +96,8 @@ const TreeRow: React.FC<{
     {icon === 'folder' && <FolderIcon />}
     {icon === 'dash' && <div style={{ width: 40, height: 40, border: '6px dashed #a2a2a8', borderRadius: 10 }} />}
     {chip && <Chip letter={chip} tone="#d4d4da" />}
-    <div style={{ fontFamily: FONT, fontSize: size, color: INK, fontWeight: 500 }}>{label}</div>
-    {count && <div style={{ marginLeft: 'auto', marginRight: 80, fontFamily: FONT, fontSize: size * 0.85, color: MID }}>{count}</div>}
+    <div style={{ fontFamily: FONT_STACK, fontSize: size, color: INK, fontWeight: 500 }}>{label}</div>
+    {count && <div style={{ marginLeft: 'auto', marginRight: 80, fontFamily: FONT_STACK, fontSize: size * 0.85, color: MID }}>{count}</div>}
   </div>
 );
 
@@ -108,9 +108,9 @@ const RecentCard: React.FC<{ title: string; sub: string; w?: number }> = ({ titl
   }}>
     <div style={{ display: 'flex', alignItems: 'center', gap: 26 }}>
       <div style={{ width: 44, height: 44, border: '6px solid #85858b', borderRadius: 8 }} />
-      <div style={{ fontFamily: FONT, fontSize: 52, color: INK, fontWeight: 600 }}>{title}</div>
+      <div style={{ fontFamily: FONT_STACK, fontSize: 52, color: INK, fontWeight: 600 }}>{title}</div>
     </div>
-    <div style={{ fontFamily: FONT, fontSize: 42, color: MID, paddingLeft: 70 }}>{sub}</div>
+    <div style={{ fontFamily: FONT_STACK, fontSize: 42, color: MID, paddingLeft: 70 }}>{sub}</div>
   </div>
 );
 
@@ -151,7 +151,7 @@ const SceneTree: React.FC<{ t?: number; recentCards: { title: string; sub: strin
         ))}
         <div style={{ height: 90 }} />
         <FloatWrap h={L(4)}>
-          <div style={{ paddingLeft: 48, fontFamily: FONT, fontSize: 46, letterSpacing: 6, color: MID, fontWeight: 600 }}>SPACES</div>
+          <div style={{ paddingLeft: 48, fontFamily: FONT_STACK, fontSize: 46, letterSpacing: 6, color: MID, fontWeight: 600 }}>SPACES</div>
         </FloatWrap>
         <div style={{ height: 30 }} />
         {rows.slice(4).map((r, i) => (
@@ -162,7 +162,7 @@ const SceneTree: React.FC<{ t?: number; recentCards: { title: string; sub: strin
       </div>
       <div style={{ flex: 1, paddingTop: 100, paddingLeft: 110 }}>
         <FloatWrap h={liftOf(t, 0.3, 150)}>
-          <div style={{ display: 'flex', gap: 90, fontFamily: FONT, fontSize: 52 }}>
+          <div style={{ display: 'flex', gap: 90, fontFamily: FONT_STACK, fontSize: 52 }}>
             <div style={{ color: INK, fontWeight: 700 }}>Recent</div>
             <div style={{ color: MID }}>Favorites</div>
           </div>
@@ -178,7 +178,7 @@ const SceneTree: React.FC<{ t?: number; recentCards: { title: string; sub: strin
         </div>
         <div style={{ height: 110 }} />
         <FloatWrap h={liftOf(t, 0.68, 150)}>
-          <div style={{ display: 'flex', gap: 90, fontFamily: FONT, fontSize: 50 }}>
+          <div style={{ display: 'flex', gap: 90, fontFamily: FONT_STACK, fontSize: 50 }}>
             <div style={{ color: INK, fontWeight: 700 }}>Todo</div>
             <div style={{ color: MID }}>Comments</div>
             <div style={{ color: MID }}>Done</div>
@@ -189,9 +189,9 @@ const SceneTree: React.FC<{ t?: number; recentCards: { title: string; sub: strin
           <div style={{ display: 'flex', gap: 40, alignItems: 'center' }}>
             <div style={{
               padding: '22px 46px', background: '#e3e3ec', borderRadius: 18,
-              fontFamily: FONT, fontSize: 46, color: INK, fontWeight: 600,
+              fontFamily: FONT_STACK, fontSize: 46, color: INK, fontWeight: 600,
             }}>≡ List</div>
-            <div style={{ fontFamily: FONT, fontSize: 46, color: MID }}>▦ Gallery</div>
+            <div style={{ fontFamily: FONT_STACK, fontSize: 46, color: MID }}>▦ Gallery</div>
           </div>
         </FloatWrap>
       </div>
@@ -205,7 +205,7 @@ const SceneTopNav: React.FC<{ t?: number; workspaceName: string }> = ({ t = 1, w
   <div style={{ width: 3000, height: 2100, background: G.bg, borderRadius: 48 }}>
     <div style={{
       height: 150, borderBottom: `4px solid ${FAINT}`, display: 'flex', alignItems: 'center',
-      gap: 120, paddingLeft: 90, fontFamily: FONT, fontSize: 54, color: INK,
+      gap: 120, paddingLeft: 90, fontFamily: FONT_STACK, fontSize: 54, color: INK,
     }}>
       {['Product analytics', `${workspaceName} 3.0`, 'Widget brainstorm', 'Design system'].map((tb, i) => (
         <FloatWrap key={tb} h={liftOf(t, 0.2 + i * 0.1, 140)}>
@@ -225,7 +225,7 @@ const SceneTopNav: React.FC<{ t?: number; workspaceName: string }> = ({ t = 1, w
         <FloatWrap h={liftOf(t, 0.34, 150)}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 30 }}>
             <div style={{ width: 74, height: 74, borderRadius: 20, background: 'linear-gradient(135deg,#a9a9af,#6f6f76)' }} />
-            <div style={{ fontFamily: FONT, fontSize: 66, fontWeight: 800, color: INK }}>{workspaceName}</div>
+            <div style={{ fontFamily: FONT_STACK, fontSize: 66, fontWeight: 800, color: INK }}>{workspaceName}</div>
             <div style={{ marginLeft: 'auto', width: 130, height: 90, border: `4px solid ${FAINT}`, borderRadius: 22, background: '#fff' }} />
           </div>
         </FloatWrap>
@@ -236,10 +236,10 @@ const SceneTopNav: React.FC<{ t?: number; workspaceName: string }> = ({ t = 1, w
             border: '4px solid #c5c5d4', borderRadius: 24, padding: '30px 44px',
           }}>
             <div style={{ width: 48, height: 44, border: '6px solid #5f5f66', borderBottom: 'none', borderRadius: '10px 10px 0 0' }} />
-            <div style={{ fontFamily: FONT, fontSize: 56, color: '#4a4a55', fontWeight: 600 }}>Home</div>
+            <div style={{ fontFamily: FONT_STACK, fontSize: 56, color: '#4a4a55', fontWeight: 600 }}>Home</div>
             <div style={{
               marginLeft: 'auto', width: 62, height: 62, borderRadius: 31, background: '#a5a5ab',
-              color: '#fff', fontFamily: FONT, fontSize: 38, fontWeight: 700,
+              color: '#fff', fontFamily: FONT_STACK, fontSize: 38, fontWeight: 700,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>3</div>
           </div>
@@ -248,14 +248,14 @@ const SceneTopNav: React.FC<{ t?: number; workspaceName: string }> = ({ t = 1, w
           <FloatWrap key={tb} h={liftOf(t, 0.55 + i * 0.08, 140)}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 34, height: 128, paddingLeft: 44 }}>
               <div style={{ width: 44, height: 44, border: '6px solid #93939a', borderRadius: 10 }} />
-              <div style={{ fontFamily: FONT, fontSize: 54, color: INK }}>{tb}</div>
+              <div style={{ fontFamily: FONT_STACK, fontSize: 54, color: INK }}>{tb}</div>
             </div>
           </FloatWrap>
         ))}
       </div>
       <div style={{ flex: 1, borderLeft: `4px solid ${FAINT}`, padding: '70px 90px 0' }}>
         <FloatWrap h={liftOf(t, 0.4, 150)}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 40, color: MID, fontFamily: FONT, fontSize: 52 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 40, color: MID, fontFamily: FONT_STACK, fontSize: 52 }}>
             <div>‹</div><div>›</div>
             <div style={{ width: 44, height: 40, border: '6px solid #93939a', borderBottom: 'none', borderRadius: '10px 10px 0 0' }} />
             <div style={{ color: INK }}>Home</div>
@@ -263,7 +263,7 @@ const SceneTopNav: React.FC<{ t?: number; workspaceName: string }> = ({ t = 1, w
         </FloatWrap>
         <div style={{ height: 80 }} />
         <FloatWrap h={liftOf(t, 0.58, 180)}>
-          <div style={{ fontFamily: FONT, fontSize: 130, fontWeight: 750, color: INK }}>Home</div>
+          <div style={{ fontFamily: FONT_STACK, fontSize: 130, fontWeight: 750, color: INK }}>Home</div>
         </FloatWrap>
         <div style={{ height: 70 }} />
         <FloatWrap h={liftOf(t, 0.74, 160)}>
@@ -272,7 +272,7 @@ const SceneTopNav: React.FC<{ t?: number; workspaceName: string }> = ({ t = 1, w
             borderRadius: 26, padding: '34px 46px', background: '#fff', width: 1100,
           }}>
             <div style={{ width: 44, height: 44, borderRadius: 22, border: '6px solid #9a9aa0' }} />
-            <div style={{ fontFamily: FONT, fontSize: 48, color: MID }}>Search by app, filetype…</div>
+            <div style={{ fontFamily: FONT_STACK, fontSize: 48, color: MID }}>Search by app, filetype…</div>
           </div>
         </FloatWrap>
       </div>
@@ -285,7 +285,7 @@ const SceneTopNav: React.FC<{ t?: number; workspaceName: string }> = ({ t = 1, w
 const SceneListRows: React.FC<{ t?: number; tasks: string[] }> = ({ t = 1, tasks }) => (
   <div style={{ width: 2900, height: 2200, background: G.bg, paddingTop: 60 }}>
     <FloatWrap h={liftOf(t, 0.22, 150)}>
-      <div style={{ display: 'flex', gap: 100, paddingLeft: 120, fontFamily: FONT, fontSize: 54 }}>
+      <div style={{ display: 'flex', gap: 100, paddingLeft: 120, fontFamily: FONT_STACK, fontSize: 54 }}>
         <div style={{ color: INK, fontWeight: 700 }}>Todo</div>
         <div style={{ color: MID }}>Comments</div>
         <div style={{ color: MID }}>Done</div>
@@ -297,10 +297,10 @@ const SceneListRows: React.FC<{ t?: number; tasks: string[] }> = ({ t = 1, tasks
       <div style={{ display: 'flex', gap: 44, alignItems: 'center', paddingLeft: 120 }}>
         <div style={{
           padding: '24px 52px', background: '#e2e2ea', borderRadius: 20,
-          fontFamily: FONT, fontSize: 50, color: INK, fontWeight: 600,
+          fontFamily: FONT_STACK, fontSize: 50, color: INK, fontWeight: 600,
         }}>≡ List</div>
-        <div style={{ fontFamily: FONT, fontSize: 50, color: MID }}>▦ Gallery</div>
-        <div style={{ marginLeft: 500, display: 'flex', gap: 80, color: MID, fontFamily: FONT, fontSize: 46 }}>
+        <div style={{ fontFamily: FONT_STACK, fontSize: 50, color: MID }}>▦ Gallery</div>
+        <div style={{ marginLeft: 500, display: 'flex', gap: 80, color: MID, fontFamily: FONT_STACK, fontSize: 46 }}>
           <div>Filter</div><div>Group</div><div>Sort</div>
         </div>
       </div>
@@ -310,12 +310,12 @@ const SceneListRows: React.FC<{ t?: number; tasks: string[] }> = ({ t = 1, tasks
     <FloatWrap h={liftOf(t, 0.44, 160)}>
       <div style={{
         marginLeft: 120, display: 'inline-block', padding: '20px 48px', background: '#e4e4e3',
-        borderRadius: 16, fontFamily: FONT, fontSize: 44, letterSpacing: 4, color: '#6f6f75', fontWeight: 600,
+        borderRadius: 16, fontFamily: FONT_STACK, fontSize: 44, letterSpacing: 4, color: '#6f6f75', fontWeight: 600,
       }}>TODAY</div>
     </FloatWrap>
     <div style={{ height: 60 }} />
     <FloatWrap h={liftOf(t, 0.54, 150)}>
-      <div style={{ paddingLeft: 120, fontFamily: FONT, fontSize: 42, letterSpacing: 5, color: MID }}>TASK NAME</div>
+      <div style={{ paddingLeft: 120, fontFamily: FONT_STACK, fontSize: 42, letterSpacing: 5, color: MID }}>TASK NAME</div>
     </FloatWrap>
     <div style={{ height: 30 }} />
     {tasks.map((tb, i) => (
@@ -325,7 +325,7 @@ const SceneListRows: React.FC<{ t?: number; tasks: string[] }> = ({ t = 1, tasks
           borderBottom: '3px solid #e6e6e4',
         }}>
           <div style={{ width: 40, height: 40, borderRadius: 12, background: '#88888e' }} />
-          <div style={{ fontFamily: FONT, fontSize: 58, color: INK, fontWeight: 550 }}>{tb}</div>
+          <div style={{ fontFamily: FONT_STACK, fontSize: 58, color: INK, fontWeight: 550 }}>{tb}</div>
           <div style={{ marginLeft: 'auto', width: 220, height: 20, background: '#e2e2e8', borderRadius: 10 }} />
           <div style={{ color: MID, fontSize: 60 }}>…</div>
         </div>
@@ -360,7 +360,7 @@ const Plane: React.FC<{
               <>
                 <div style={{
                   position: 'absolute', left: -70, top: -40, width: 110, height: '104%',
-                  background: 'linear-gradient(185deg, #f2c98a, #e8a44a 55%, #d3923c)',
+                  background: `linear-gradient(185deg, #f2c98a, #e8a44a 55%, ${G.accent})`,
                   filter: 'blur(70px)', opacity: 0.9,
                 }} />
                 <div style={{
@@ -372,7 +372,7 @@ const Plane: React.FC<{
               <>
                 <div style={{
                   position: 'absolute', left: -40, top: -70, width: '104%', height: 110,
-                  background: 'linear-gradient(90deg, #f2c98a, #e8a44a 55%, #d3923c)',
+                  background: `linear-gradient(90deg, #f2c98a, #e8a44a 55%, ${G.accent})`,
                   filter: 'blur(70px)', opacity: 0.85,
                 }} />
                 <div style={{
@@ -402,7 +402,7 @@ const NeonRects: React.FC<{ drift: number }> = ({ drift }) => (
   <AbsoluteFill style={{ overflow: 'hidden' }}>
     <div style={{
       position: 'absolute', left: -140 + drift * 40, top: 240, width: 620, height: 380,
-      border: '4px solid #d3923c', borderRadius: 34, filter: 'blur(7px)', opacity: 0.5,
+      border: `4px solid ${G.accent}`, borderRadius: 34, filter: 'blur(7px)', opacity: 0.5,
     }} />
     <div style={{
       position: 'absolute', left: 60 + drift * 25, top: 700, width: 420, height: 260,

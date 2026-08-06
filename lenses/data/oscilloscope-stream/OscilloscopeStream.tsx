@@ -17,6 +17,7 @@
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const CARD_W = 1080;
 const CARD_H = 560;
@@ -143,7 +144,7 @@ export const OscilloscopeStream: React.FC<OscilloscopeStreamProps> = ({
         }}
       >
         {/* 真卡头：标题 + 副题 + 实时读数 */}
-        <div style={{ position: 'absolute', left: PAD, top: 38, fontFamily: 'Helvetica, Arial, sans-serif' }}>
+        <div style={{ position: 'absolute', left: PAD, top: 38, fontFamily: FONT_STACK }}>
           <div style={{ fontSize: 30, fontWeight: 700, color: G.ink }}>{title}</div>
           <div style={{ fontSize: 20, fontWeight: 500, color: G.mid, marginTop: 8 }}>{subtitle}</div>
         </div>
@@ -153,7 +154,7 @@ export const OscilloscopeStream: React.FC<OscilloscopeStreamProps> = ({
             right: PAD,
             top: 36,
             textAlign: 'right',
-            fontFamily: 'Helvetica, Arial, sans-serif',
+            fontFamily: FONT_STACK,
             transform: `scale(${readScale.toFixed(4)})`,
             transformOrigin: 'right top',
           }}
@@ -174,7 +175,7 @@ export const OscilloscopeStream: React.FC<OscilloscopeStreamProps> = ({
               top: PLOT_Y + (PLOT_H / 4) * i - 11,
               width: AXIS_W - 8,
               textAlign: 'right',
-              fontFamily: 'Helvetica, Arial, sans-serif',
+              fontFamily: FONT_STACK,
               fontSize: 20,
               fontWeight: 600,
               color: G.mid,
@@ -227,7 +228,7 @@ export const OscilloscopeStream: React.FC<OscilloscopeStreamProps> = ({
                 left: (PLOT_W / 6) * i - 40,
                 width: 80,
                 textAlign: 'center',
-                fontFamily: 'Helvetica, Arial, sans-serif',
+                fontFamily: FONT_STACK,
                 fontSize: 19,
                 fontWeight: 600,
                 color: G.mid,

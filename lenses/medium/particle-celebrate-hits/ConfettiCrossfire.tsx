@@ -14,7 +14,8 @@
 // 帧确定性：sin 散列伪随机派生每颗初速/角度/翻转率，弹道 = 纯 age 的函数。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, TitleBlock } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const AMBER = G.accent;
 const FIRE = 16; // 揭晓帧 = 发射帧
@@ -102,7 +103,7 @@ export const ConfettiCrossfire: React.FC<ConfettiCrossfireProps> = ({
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: 110, width: '100%', textAlign: 'center' }}>
-        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1 }}>{label}</div>
+        <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1 }}>{label}</div>
       </div>
 
       {/* 中央 KPI 卡 */}
@@ -115,7 +116,7 @@ export const ConfettiCrossfire: React.FC<ConfettiCrossfireProps> = ({
       }}>
         <div style={{ height: 14, width: 220, background: G.bar, borderRadius: 7 }} />
         <div style={{
-          fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 150,
+          fontFamily: FONT_STACK, fontWeight: 800, fontSize: 150,
           color: AMBER, letterSpacing: -3, lineHeight: 1.1, fontVariantNumeric: 'tabular-nums',
         }}>
           98.5%

@@ -296,7 +296,6 @@ const FlashLayer: React.FC = () => {
 };
 
 export interface MagicianCardFlourishProps {
-  // ??????????/?????????? G
 }
 
 export const MagicianCardFlourish: React.FC<MagicianCardFlourishProps> = () => (

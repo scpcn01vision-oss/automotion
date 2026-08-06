@@ -12,6 +12,7 @@ import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+import { FONT_STACK } from '../../_system/typography';
 
 // portal-wipe 穿窗入景·改〔批次 1 重做〕
 // 批次 1 弱点：3 层 7 卡散开幅度大(0.85)+blur，穿窗后画面碎读不清。
@@ -46,10 +47,10 @@ const MiniCard: React.FC<{ w: number; h: number; label: string; value: string }>
       gap: 10,
     }}
   >
-    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 22, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
+    <div style={{ fontFamily: FONT_STACK, fontSize: 22, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
       {label}
     </div>
-    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 30, fontWeight: 800, color: G.accent }}>
+    <div style={{ fontFamily: FONT_STACK, fontSize: 30, fontWeight: 800, color: G.accent }}>
       {value}
     </div>
   </div>
@@ -159,7 +160,7 @@ export const PortalWipeV2: React.FC<PortalWipeV2Props> = ({
               <SceneContent content={sceneB} />
             </div>
             <div style={{ position: 'absolute', left: 250, top: 100 }}>
-              <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 64, color: G.ink, letterSpacing: -1 }}>
+              <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 64, color: G.ink, letterSpacing: -1 }}>
                 {sceneB.title ?? 'Scene B'}
               </div>
             </div>

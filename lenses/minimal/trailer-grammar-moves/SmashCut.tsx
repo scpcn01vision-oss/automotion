@@ -18,6 +18,7 @@ import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+import { FONT_STACK } from '../../_system/typography';
 
 const CUT = 42; // 硬切帧：>=42 全静止
 
@@ -95,10 +96,10 @@ const FlyCard: React.FC<{
           gap: 8,
         }}
       >
-        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 24, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
+        <div style={{ fontFamily: FONT_STACK, fontSize: 24, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
           {label}
         </div>
-        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 34, fontWeight: 800, color: G.accent }}>
+        <div style={{ fontFamily: FONT_STACK, fontSize: 34, fontWeight: 800, color: G.accent }}>
           {value}
         </div>
       </div>

@@ -16,6 +16,7 @@
 import React from 'react';
 import { useCurrentFrame, interpolate, spring, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const FPS = 30;
 const HOLD = 14; // 开头静置
@@ -111,10 +112,10 @@ const PageCard: React.FC<{
             gap: 12,
           }}
         >
-          <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 22, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
+          <div style={{ fontFamily: FONT_STACK, fontSize: 22, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
             {label}
           </div>
-          <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 34, fontWeight: 800, color: G.accent }}>
+          <div style={{ fontFamily: FONT_STACK, fontSize: 34, fontWeight: 800, color: G.accent }}>
             {value}
           </div>
         </div>
@@ -174,7 +175,7 @@ export const PopupBookRise: React.FC<PopupBookRiseProps> = ({
               ))}
             </div>
             <div style={{ position: 'absolute', left: 220, right: 0, top: 0, height: 72, background: G.panel, borderBottom: `2px solid ${G.line}`, display: 'flex', alignItems: 'center', padding: '0 32px', gap: 20, boxSizing: 'border-box' }}>
-              <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 22, fontWeight: 700, color: G.ink }}>{pageTitle}</div>
+              <div style={{ fontFamily: FONT_STACK, fontSize: 22, fontWeight: 700, color: G.ink }}>{pageTitle}</div>
               <div style={{ marginLeft: 'auto', height: 36, width: 320, background: G.card, border: `2px solid ${G.line}`, borderRadius: 18, boxSizing: 'border-box' }} />
               <div style={{ width: 36, height: 36, borderRadius: 18, background: G.mid }} />
             </div>

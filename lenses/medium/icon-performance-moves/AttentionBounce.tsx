@@ -17,7 +17,8 @@
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
-import { G, Card } from '../../_fixtures/Fixtures';
+import { NeutralCard } from '../../_system/neutral-card';
+import { FONT_STACK } from '../../_system/typography';
 
 const AMBER = G.accent;
 const ICON = 400; // icon 边长（半屏级）
@@ -33,7 +34,6 @@ const JUMPS = [
 ];
 
 export interface AttentionBounceProps {
-  // ??????????/?????????? G
 }
 
 export const AttentionBounce: React.FC<AttentionBounceProps> = () => {
@@ -182,7 +182,7 @@ export const AttentionBounce: React.FC<AttentionBounceProps> = () => {
               opacity: Math.min(1, panelT * 1.5),
             }}
           >
-            <Card w={520} h={330} seed={4} />
+            <NeutralCard w={520} h={330} seed={4} />
             <div
               style={{
                 position: 'absolute',
@@ -192,7 +192,7 @@ export const AttentionBounce: React.FC<AttentionBounceProps> = () => {
                 borderRadius: 24,
                 background: AMBER,
                 color: '#fff',
-                fontFamily: 'Helvetica, Arial, sans-serif',
+                fontFamily: FONT_STACK,
                 fontWeight: 800,
                 fontSize: 26,
               }}

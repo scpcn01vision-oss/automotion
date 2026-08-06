@@ -19,6 +19,7 @@ import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const SCROLL_START = 12;
 const BRAKE = 59;
@@ -87,7 +88,6 @@ const Corner: React.FC<{ flip: [number, number]; style: React.CSSProperties }> =
 );
 
 export interface BrakeReticleLockProps {
-  // ??????????/?????????? G
 }
 
 export const BrakeReticleLock: React.FC<BrakeReticleLockProps> = () => {
@@ -171,7 +171,7 @@ export const BrakeReticleLock: React.FC<BrakeReticleLockProps> = () => {
             borderRadius: 27,
             background: G.ink,
             color: G.card,
-            fontFamily: 'Helvetica, Arial, sans-serif',
+            fontFamily: FONT_STACK,
             fontWeight: 800,
             fontSize: 26,
             letterSpacing: 0.5,

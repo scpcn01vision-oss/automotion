@@ -20,6 +20,7 @@
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing, Img, staticFile } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const CW = 560;
 const CH = 380;
@@ -51,7 +52,7 @@ const CardContent: React.FC<{ content: DrawSvgTraceContent }> = ({ content }) =>
         }}
       >
         {title ? (
-          <span style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 15, fontWeight: 700, color: G.card }}>
+          <span style={{ fontFamily: FONT_STACK, fontSize: 15, fontWeight: 700, color: G.card }}>
             {title}
           </span>
         ) : null}
@@ -145,7 +146,7 @@ export const DrawSvgTrace: React.FC<DrawSvgTraceProps> = ({
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', left: 120, top: 96 }}>
-        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 54, color: G.ink, letterSpacing: -1 }}>
+        <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 54, color: G.ink, letterSpacing: -1 }}>
           {title}
         </div>
       </div>

@@ -14,13 +14,13 @@ import React from 'react';
 import { G } from '../../_fixtures/Fixtures';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const CARD_W = 760;
 const CARD_H = 420;
 const SHEEN_W = CARD_W * 1.6; // 1216
 
 export interface SheenSweepRetryProps {
-  // ??????????/?????????? G
 }
 
 export const SheenSweepRetry: React.FC<SheenSweepRetryProps> = () => {
@@ -43,7 +43,7 @@ export const SheenSweepRetry: React.FC<SheenSweepRetryProps> = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        fontFamily: 'Helvetica, Arial, sans-serif',
+        fontFamily: FONT_STACK,
       }}
     >
       <div

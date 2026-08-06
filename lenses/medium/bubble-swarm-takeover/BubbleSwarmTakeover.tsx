@@ -14,6 +14,7 @@ import React from 'react';
 import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+import { FONT_STACK } from '../../_system/typography';
 
 const mulberry32 = (a: number) => () => {
   let t = (a += 0x6d2b79f5);
@@ -207,7 +208,7 @@ export const BubbleSwarmTakeover: React.FC<BubbleSwarmTakeoverProps> = ({
             background: 'linear-gradient(135deg, rgba(255,255,255,0.95), rgba(235,220,255,0.9))',
             border: '2px solid rgba(255,255,255,0.9)',
             boxShadow: '0 8px 32px rgba(211,146,60,0.25)',
-            fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800,
+            fontFamily: FONT_STACK, fontWeight: 800,
             fontSize: 46, color: '#b87a2e', whiteSpace: 'nowrap',
           }}>{c.text}</div>
         );

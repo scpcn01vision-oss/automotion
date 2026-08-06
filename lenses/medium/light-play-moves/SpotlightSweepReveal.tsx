@@ -9,6 +9,7 @@
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
+import { FONT_STACK } from '../../_system/typography';
 
 // spotlight-sweep-reveal: 聚光灯摆动扫字
 // 暗场 #2a2a28，标题两行常驻 opacity 0.07；亮版同文本用 radial-gradient mask，
@@ -26,7 +27,7 @@ const SWEEP_END = 110; // 两个来回结束
 const REVEAL_END = 125; // 提亮完成，之后真静止
 
 const textStyle: React.CSSProperties = {
-  fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif',
+  fontFamily: FONT_STACK,
   fontSize: 150,
   fontWeight: 800,
   lineHeight: 1.15,
@@ -43,7 +44,6 @@ const TitleText: React.FC = () => (
 );
 
 export interface SpotlightSweepRevealProps {
-  // ??????????/?????????? G
 }
 
 export const SpotlightSweepReveal: React.FC<SpotlightSweepRevealProps> = () => {

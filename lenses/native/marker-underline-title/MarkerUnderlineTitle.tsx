@@ -52,7 +52,7 @@ export interface MarkerUnderlineTitleProps {
 export const MarkerUnderlineTitle: React.FC<MarkerUnderlineTitleProps> = ({
   prefix = 'Meet the ',
   highlight = 'new',
-  title = 'Notion AI',
+  title = 'Paper Notes',
 }) => {
   const frame = useCurrentFrame();
   // 下划线长度：跟随强调词宽度自适应（斜体约 84px/字符 @118px 字号，下限 60）

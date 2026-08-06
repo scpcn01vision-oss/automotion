@@ -14,6 +14,7 @@
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, interpolate, spring, useVideoConfig, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const BLOCK_H = 100;
 const ROW_Y = 540; // 行中心
@@ -81,7 +82,7 @@ export const AutolayoutGapDial: React.FC<AutolayoutGapDialProps> = ({
       />
 
       {/* 标题字块（讲清这是"参数驱动布局"） */}
-      <div style={{ position: 'absolute', top: 250, width: '100%', textAlign: 'center', fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 44, color: G.mid, letterSpacing: 2 }}>
+      <div style={{ position: 'absolute', top: 250, width: '100%', textAlign: 'center', fontFamily: FONT_STACK, fontWeight: 800, fontSize: 44, color: G.mid, letterSpacing: 2 }}>
         GAP
         <span style={{ display: 'inline-block', minWidth: 130, marginLeft: 24, padding: '4px 22px', borderRadius: 12, background: G.ink, color: G.card, fontVariantNumeric: 'tabular-nums', transform: `scale(${tickPulse})` }}>
           {gapShown}
@@ -173,7 +174,7 @@ export const AutolayoutGapDial: React.FC<AutolayoutGapDialProps> = ({
                 borderRadius: 10,
                 background: G.ink,
                 color: G.card,
-                fontFamily: 'Helvetica, Arial, sans-serif',
+                fontFamily: FONT_STACK,
                 fontWeight: 700,
                 fontSize: 24,
                 fontVariantNumeric: 'tabular-nums',

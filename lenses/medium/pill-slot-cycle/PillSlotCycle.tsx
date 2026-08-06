@@ -13,8 +13,8 @@
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
-const FONT = 'Helvetica, Arial, sans-serif';
 
 const BEAT = 21; // ~0.7s @30fps
 const INTRO = 12; // 句干入场
@@ -34,7 +34,7 @@ const Pill: React.FC<{ label: string; icon: string; style?: React.CSSProperties 
       background: G.card,
       border: `3px solid ${G.border}`,
       boxShadow: '0 6px 18px rgba(0,0,0,0.10)',
-      fontFamily: FONT,
+      fontFamily: FONT_STACK,
       fontWeight: 700,
       fontSize: 64,
       color: G.ink,
@@ -72,8 +72,8 @@ export const PillSlotCycle: React.FC<PillSlotCycleProps> = ({
   stem = 'One AI tool to',
   pills = [
     { label: 'Ask a question', icon: '?' },
-    { label: 'Find in Drive', icon: '▲' },
-    { label: 'Find in Slack', icon: '#' },
+    { label: 'Find in Files', icon: '▲' },
+    { label: 'Search', icon: '#' },
     { label: 'Summarize', icon: '≡' },
     { label: 'Improve writing', icon: '✎' },
     { label: 'Draft an agenda', icon: '☰' },
@@ -171,7 +171,7 @@ export const PillSlotCycle: React.FC<PillSlotCycleProps> = ({
       <div style={{ position: 'relative', display: 'inline-block' }}>
         <span
           style={{
-            fontFamily: FONT,
+            fontFamily: FONT_STACK,
             fontWeight: 800,
             fontSize: 96,
             color: G.ink,
@@ -220,7 +220,7 @@ export const PillSlotCycle: React.FC<PillSlotCycleProps> = ({
       >
         <span
           style={{
-            fontFamily: FONT,
+            fontFamily: FONT_STACK,
             fontWeight: 800,
             fontSize: 96,
             color: G.ink,

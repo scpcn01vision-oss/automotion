@@ -18,6 +18,7 @@
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const easeInCubic = Easing.in(Easing.cubic);
 const easeOutCubic = Easing.out(Easing.cubic);
@@ -58,10 +59,10 @@ const DominoCard: React.FC<{ label: string; value: string }> = ({ label, value }
       boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
     }}
   >
-    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 26, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
+    <div style={{ fontFamily: FONT_STACK, fontSize: 26, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
       {label}
     </div>
-    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 40, fontWeight: 800, color: G.accent }}>
+    <div style={{ fontFamily: FONT_STACK, fontSize: 40, fontWeight: 800, color: G.accent }}>
       {value}
     </div>
   </div>
@@ -136,7 +137,7 @@ export const DominoCascade: React.FC<DominoCascadeProps> = ({
 
         {/* ① 砸落的标题 */}
         <div style={{ position: 'absolute', left: 240, width: 1680, top: titleTop, display: 'flex', justifyContent: 'center' }}>
-          <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 120, color: G.ink, letterSpacing: -1 }}>
+          <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 120, color: G.ink, letterSpacing: -1 }}>
             {title}
           </div>
         </div>

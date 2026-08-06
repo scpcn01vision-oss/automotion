@@ -12,6 +12,7 @@ import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+import { FONT_STACK } from '../../_system/typography';
 
 // split-flap-flip：机场翻牌字。每字符一个深底翻牌格（上下两半），
 // 逐格翻过 3 个乱码中间态后咔哒停在目标字，左→右 4f 级联成波。
@@ -60,7 +61,7 @@ const Half: React.FC<{ ch: string; part: 'top' | 'bottom' }> = ({ ch, part }) =>
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        fontFamily: 'Helvetica, Arial, sans-serif',
+        fontFamily: FONT_STACK,
         fontWeight: 800,
         fontSize: 100,
         color: FLAP_INK,

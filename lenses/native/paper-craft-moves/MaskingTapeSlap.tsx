@@ -14,7 +14,8 @@
 // 帧确定性：全部由 frame 派生，无随机。收尾 f86 后真静止 54f。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing, Img, staticFile } from 'remotion';
-import { G, TitleBlock } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const CARD_W = 560;
 const CARD_H = 350;
@@ -207,7 +208,9 @@ export const MaskingTapeSlap: React.FC<MaskingTapeSlapProps> = ({
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: 110, width: '100%', textAlign: 'center' }}>
-        <TitleBlock text={title} size={72} />
+        <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1, textShadow: '2px 2px 8px rgba(211,146,60,0.28)' }}>
+          {title}
+        </div>
       </div>
 
       <div

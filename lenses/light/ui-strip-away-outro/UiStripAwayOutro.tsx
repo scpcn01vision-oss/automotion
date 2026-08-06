@@ -12,7 +12,9 @@
 // （每层 fade + 轻微位移，从外围到中心）→ 黑场只剩按钮 → 按钮淡出交棒字标。
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, interpolate, spring, useVideoConfig, Easing } from 'remotion';
-import { G, Card } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { NeutralCard } from '../../_system/neutral-card';
+import { FONT_STACK } from '../../_system/typography';
 
 const CLICK = 34; // 点击时刻
 // 蒸发层级（点击后延迟，外围先走）
@@ -153,7 +155,7 @@ export const UiStripAwayOutro: React.FC<UiStripAwayOutroProps> = ({
           const s = cardStrip(i);
           return (
             <div key={i} style={{ position: 'absolute', left: 70 + (i % 2) * 560, top: 120 + Math.floor(i / 2) * 340, ...s }}>
-              <Card w={480} h={280} seed={i + 2} />
+              <NeutralCard w={480} h={280} seed={i + 2} />
             </div>
           );
         })}
@@ -184,7 +186,7 @@ export const UiStripAwayOutro: React.FC<UiStripAwayOutroProps> = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontFamily: 'Helvetica, Arial, sans-serif',
+            fontFamily: FONT_STACK,
             fontWeight: 700,
             fontSize: 20 * btnScale,
             color: '#161615',
@@ -201,7 +203,7 @@ export const UiStripAwayOutro: React.FC<UiStripAwayOutroProps> = ({
             style={{
               opacity: logoP,
               transform: `scale(${0.86 + 0.14 * logoP})`,
-              fontFamily: 'Helvetica, Arial, sans-serif',
+              fontFamily: FONT_STACK,
               fontWeight: 800,
               fontSize: 110,
               letterSpacing: 6,

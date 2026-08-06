@@ -12,6 +12,7 @@ import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+import { FONT_STACK } from '../../_system/typography';
 
 // shared-element-morph〔转场〕：全屏特写面板收缩、位移、长出圆角，
 // 严丝合缝飞落进 dashboard 网格里它所属的卡片槽位，落座带 3% 过冲。
@@ -125,10 +126,10 @@ export const SharedElementMorph: React.FC<SharedElementMorphProps> = ({
               gap: 18,
             }}
           >
-            <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 44, fontWeight: 800, color: G.ink }}>
+            <div style={{ fontFamily: FONT_STACK, fontSize: 44, fontWeight: 800, color: G.ink }}>
               {card.label}
             </div>
-            <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 64, fontWeight: 800, color: G.accent }}>
+            <div style={{ fontFamily: FONT_STACK, fontSize: 64, fontWeight: 800, color: G.accent }}>
               {card.value}
             </div>
           </div>

@@ -18,6 +18,7 @@
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const AMBER = G.accent;
 const POP = 27; // 释放帧
@@ -164,7 +165,7 @@ export const PopBurstConfirm: React.FC<PopBurstConfirmProps> = ({
             background: G.ink,
             color: G.card,
             textAlign: 'center',
-            fontFamily: 'Helvetica, Arial, sans-serif',
+            fontFamily: FONT_STACK,
             fontWeight: 800,
             fontSize: 40,
             letterSpacing: 1,

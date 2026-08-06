@@ -15,6 +15,7 @@
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const BG = G.side;
 const WHITE = G.card;
@@ -32,7 +33,7 @@ const SETTLE_END = FALL_END + 15; // 15f 缓收 → f56，此后全静止
 const TextBlock: React.FC<{ color: string; text: string }> = ({ color, text }) => (
   <div
     style={{
-      fontFamily: 'Helvetica, Arial, sans-serif',
+      fontFamily: FONT_STACK,
       fontSize: 260,
       fontWeight: 800,
       color,
@@ -108,7 +109,7 @@ export const HalationBloom: React.FC<HalationBloomProps> = ({
           top: 110,
           width: '100%',
           textAlign: 'center',
-          fontFamily: 'Helvetica, Arial, sans-serif',
+          fontFamily: FONT_STACK,
           fontSize: 30,
           fontWeight: 700,
           letterSpacing: '0.35em',

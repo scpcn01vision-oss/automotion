@@ -18,6 +18,7 @@ import React from 'react';
 import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+import { FONT_STACK } from '../../_system/typography';
 
 const SPLIT = 20;              // 全屏 A 结束、开始分格
 const POP = 3;                 // 每格弹入 3f
@@ -40,7 +41,7 @@ const PageA: React.FC<{ scene: SceneContentData }> = ({ scene }) => (
       background: G.card, borderRadius: 12, display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'center', gap: 8,
     }}>
-      <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 96, color: G.ink, letterSpacing: -2, lineHeight: 1 }}>
+      <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 96, color: G.ink, letterSpacing: -2, lineHeight: 1 }}>
         1,284
       </div>
       <div style={{ height: 10, width: 150, background: G.mid, borderRadius: 5 }} />

@@ -14,6 +14,7 @@
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const CX = 960;
 const CY = 540;
@@ -193,10 +194,10 @@ export const MorphFromPrimitive: React.FC<MorphFromPrimitiveProps> = ({
           opacity: contentOpacity,
         }}
       >
-        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 30, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
+        <div style={{ fontFamily: FONT_STACK, fontSize: 30, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
           {card.label}
         </div>
-        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 46, fontWeight: 800, color: G.accent }}>
+        <div style={{ fontFamily: FONT_STACK, fontSize: 46, fontWeight: 800, color: G.accent }}>
           {card.value}
         </div>
       </div>

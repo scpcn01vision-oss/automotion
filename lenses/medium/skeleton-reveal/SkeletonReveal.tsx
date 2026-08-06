@@ -21,6 +21,7 @@ import {
   Easing,
 } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const mulberry32 = (a: number) => () => {
   let t = (a += 0x6d2b79f5);
@@ -185,7 +186,6 @@ const Row: React.FC<{ i: number; dev: number; wordAt: (w: number, n: number) => 
 };
 
 export interface SkeletonRevealProps {
-  // ??????????/?????????? G
 }
 
 export const SkeletonReveal: React.FC<SkeletonRevealProps> = () => {
@@ -236,7 +236,7 @@ export const SkeletonReveal: React.FC<SkeletonRevealProps> = () => {
   };
 
   return (
-    <AbsoluteFill style={{ background: PAPER, fontFamily: 'Helvetica, Arial, sans-serif', overflow: 'hidden' }}>
+    <AbsoluteFill style={{ background: PAPER, fontFamily: FONT_STACK, overflow: 'hidden' }}>
       {/* 第三/二拍：骨架 UI 窗口 */}
       {f >= SWAP && (
         <AbsoluteFill

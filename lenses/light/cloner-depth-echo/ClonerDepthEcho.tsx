@@ -16,6 +16,7 @@
 import React from 'react';
 import { useCurrentFrame, interpolate, spring, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const FPS = 30;
 const N = 7; // 克隆数
@@ -46,10 +47,10 @@ const CloneCard: React.FC<{ label: string; value: string; glow?: boolean }> = ({
       boxShadow: glow ? '0 10px 36px rgba(31,28,23,0.22)' : undefined,
     }}
   >
-    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 28, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
+    <div style={{ fontFamily: FONT_STACK, fontSize: 28, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
       {label}
     </div>
-    <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 42, fontWeight: 800, color: G.accent }}>
+    <div style={{ fontFamily: FONT_STACK, fontSize: 42, fontWeight: 800, color: G.accent }}>
       {value}
     </div>
   </div>

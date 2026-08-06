@@ -17,6 +17,7 @@
 //    弥散变淡而非熄灭）、中心无水面光。用 feTurbulence+位移贴图模拟。
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
+import { G } from '../../_system/colors';
 
 const mulberry32 = (a: number) => () => {
   let t = (a += 0x6d2b79f5);
@@ -36,7 +37,7 @@ const TEXT_T0 = 84; // STRONGER 出现
 
 // ---------- 霓虹描边文字墙（S2：黄左→品红→紫→蓝右） ----------
 const ROW_GRADS: [string, string][] = [
-  ['#f2c98a', '#d3923c'],
+  ['#f2c98a', G.accent],
   ['#e8a44a', '#b87a2e'],
   ['#f6d9a8', '#e8a44a'],
 ];
@@ -114,7 +115,7 @@ const UiCard: React.FC<{ seed: number; title: string }> = ({ seed, title }) => (
   >
     <div style={{ width: 128, background: '#f3f3f6', padding: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-        <div style={{ width: 14, height: 14, borderRadius: 4, background: 'linear-gradient(135deg,#d3923c,#e8a44a)' }} />
+        <div style={{ width: 14, height: 14, borderRadius: 4, background: `linear-gradient(135deg,${G.accent},#e8a44a)` }} />
         <div style={{ height: 8, width: 52, background: '#c9c9d2', borderRadius: 4 }} />
       </div>
       {Array.from({ length: 8 }).map((_, i) => (
@@ -126,12 +127,12 @@ const UiCard: React.FC<{ seed: number; title: string }> = ({ seed, title }) => (
       <div style={{ height: 10, width: '58%', background: '#ececf1', borderRadius: 5 }} />
       {Array.from({ length: 6 }).map((_, i) => (
         <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <div style={{ width: 11, height: 11, borderRadius: '50%', background: ['#d3923c', '#e8a44a', '#b87a2e'][(i + seed) % 3], opacity: 0.7 }} />
+          <div style={{ width: 11, height: 11, borderRadius: '50%', background: [G.accent, '#e8a44a', '#b87a2e'][(i + seed) % 3], opacity: 0.7 }} />
           <div style={{ height: 8, width: `${78 - ((i * 23 + seed * 29) % 40)}%`, background: '#e8e8ee', borderRadius: 4 }} />
         </div>
       ))}
       <div style={{ marginTop: 'auto', display: 'flex', gap: 8 }}>
-        <div style={{ width: 74, height: 22, background: '#d3923c', opacity: 0.75, borderRadius: 6 }} />
+        <div style={{ width: 74, height: 22, background: G.accent, opacity: 0.75, borderRadius: 6 }} />
         <div style={{ width: 46, height: 22, background: '#e4e4ea', borderRadius: 6 }} />
       </div>
     </div>
@@ -295,7 +296,7 @@ export const CardFlockTumble: React.FC<CardFlockTumbleProps> = ({
   });
 
   return (
-    <AbsoluteFill style={{ background: '#2c2416' }}>
+    <AbsoluteFill style={{ background: G.ink }}>
       <NeonWall frame={frame} />
 
       {/* 卡片群 */}
@@ -371,7 +372,7 @@ export const CardFlockTumble: React.FC<CardFlockTumbleProps> = ({
                 <stop offset="0%" stopColor="#f2c98a" />
                 <stop offset="30%" stopColor="#e8a44a" />
                 <stop offset="60%" stopColor="#b87a2e" />
-                <stop offset="100%" stopColor="#d3923c" />
+                <stop offset="100%" stopColor={G.accent} />
               </linearGradient>
             </defs>
             <text

@@ -14,7 +14,8 @@
 // 条底对齐原线、向上生长。两小节后 12f 收拢回 8px 直线，收线后真静止 ≥35f。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, TitleBlock } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 // 库内标准 seed hash（帧确定，无 Math.random）
 const h = (n: number) => {
@@ -93,7 +94,7 @@ export const SpectrumMorphUi: React.FC<SpectrumMorphUiProps> = ({ title = 'LAUNC
           width: '100%',
           textAlign: 'center',
           opacity: titleOp,
-          fontFamily: 'Helvetica, Arial, sans-serif',
+          fontFamily: FONT_STACK,
           fontWeight: 800,
           fontSize: 120,
           color: G.ink,

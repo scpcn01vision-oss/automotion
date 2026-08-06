@@ -18,6 +18,7 @@ import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+import { FONT_STACK } from '../../_system/typography';
 
 const CUT = 120; // 硬切帧
 
@@ -69,7 +70,7 @@ export const SlowPushIn: React.FC<SlowPushInProps> = ({
         background: G.side,
         position: 'relative',
         overflow: 'hidden',
-        fontFamily: 'Helvetica, Arial, sans-serif',
+        fontFamily: FONT_STACK,
       }}
     >
       {/* 被推近的内容层：整体 scale */}

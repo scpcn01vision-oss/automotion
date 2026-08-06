@@ -16,6 +16,7 @@
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const PANEL_W = 900;
 const PANEL_H = 560;
@@ -109,7 +110,7 @@ export const BulletTimeFreezeOrbit: React.FC<BulletTimeFreezeOrbitProps> = ({
         background: G.bg,
         position: 'relative',
         overflow: 'hidden',
-        fontFamily: 'Helvetica, Arial, sans-serif',
+        fontFamily: FONT_STACK,
       }}
     >
       {/* 右侧说明文字：冻结期间（侧向视角）显示 */}

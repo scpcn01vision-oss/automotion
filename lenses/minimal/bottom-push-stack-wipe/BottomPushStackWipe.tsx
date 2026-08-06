@@ -15,6 +15,7 @@
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const H = 1080;
 
@@ -64,10 +65,10 @@ const ChapterScene: React.FC<{
             borderTop: 'none',
           }}
         >
-          <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 44, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
+          <div style={{ fontFamily: FONT_STACK, fontSize: 44, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
             {label}
           </div>
-          <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontSize: 60, fontWeight: 800, color: G.accent }}>
+          <div style={{ fontFamily: FONT_STACK, fontSize: 60, fontWeight: 800, color: G.accent }}>
             {value}
           </div>
         </div>

@@ -17,7 +17,8 @@
 // 帧确定性：数据硬编码，全部 frame 派生，无 Math.random / Date.now。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G, TitleBlock } from '../../_fixtures/Fixtures';
+import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const AMBER = G.accent;
 
@@ -146,7 +147,7 @@ export const AxisRescaleShock: React.FC<AxisRescaleShockProps> = ({
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: 100, width: '100%', textAlign: 'center' }}>
-        <div style={{ fontFamily: 'Helvetica, Arial, sans-serif', fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1 }}>{label}</div>
+        <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1 }}>{label}</div>
       </div>
 
       <div
@@ -166,7 +167,7 @@ export const AxisRescaleShock: React.FC<AxisRescaleShockProps> = ({
         }}
       >
         {/* 真卡头 */}
-        <div style={{ position: 'absolute', left: PAD, top: 34, fontFamily: 'Helvetica, Arial, sans-serif' }}>
+        <div style={{ position: 'absolute', left: PAD, top: 34, fontFamily: FONT_STACK }}>
           <div style={{ fontSize: 30, fontWeight: 700, color: G.ink }}>Monthly revenue</div>
           <div style={{ fontSize: 19, fontWeight: 500, color: G.mid, marginTop: 6 }}>FY2026 · all products · USD</div>
         </div>
@@ -258,7 +259,7 @@ export const AxisRescaleShock: React.FC<AxisRescaleShockProps> = ({
                 background: AMBER,
                 borderRadius: 10,
                 color: '#fff',
-                fontFamily: 'Helvetica, Arial, sans-serif',
+                fontFamily: FONT_STACK,
                 fontWeight: 800,
                 fontSize: 30,
                 display: 'flex',
@@ -282,7 +283,7 @@ export const AxisRescaleShock: React.FC<AxisRescaleShockProps> = ({
                 top: PLOT_H + 16,
                 width: 60,
                 textAlign: 'center',
-                fontFamily: 'Helvetica, Arial, sans-serif',
+                fontFamily: FONT_STACK,
                 fontSize: 18,
                 fontWeight: 600,
                 color: i === N - 1 ? AMBER : G.mid,
