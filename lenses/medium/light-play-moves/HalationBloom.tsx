@@ -48,10 +48,12 @@ const TextBlock: React.FC<{ color: string; text: string }> = ({ color, text }) =
 
 export interface HalationBloomProps {
   value?: string;
+  label?: string; // 顶部小标签（中性化保留，不删除）
 }
 
 export const HalationBloom: React.FC<HalationBloomProps> = ({
   value = '10x',
+  label = 'GLOW',
 }) => {
   const frame = useCurrentFrame();
 
@@ -102,6 +104,23 @@ export const HalationBloom: React.FC<HalationBloomProps> = ({
         overflow: 'hidden',
       }}
     >
+      {/* 顶部小标签：中性化内容（原画面镜头名按用户要求中性化保留） */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 110,
+          width: '100%',
+          textAlign: 'center',
+          fontFamily: FONT_STACK,
+          fontSize: 30,
+          fontWeight: 700,
+          letterSpacing: '0.35em',
+          color: MID,
+        }}
+      >
+        {label}
+      </div>
+
       {/* 晕层：文字复制底层，blur + 提亮，撞停帧起条件挂载 */}
       {frame >= IMPACT && (
         <div
