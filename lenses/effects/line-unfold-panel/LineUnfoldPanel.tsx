@@ -16,7 +16,7 @@
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
-import { NeutralCard } from '../../_system/neutral-card';
+import { SceneContentData } from '../../_system/scene-content';
 import { FONT_STACK } from '../../_system/typography';
 
 const PANEL_W = 760;
@@ -39,9 +39,20 @@ const OFF = SHRINK_END + 4; // 点熄灭 f95
 const clamp = { extrapolateLeft: 'clamp' as const, extrapolateRight: 'clamp' as const };
 
 export interface LineUnfoldPanelProps {
+  panel?: SceneContentData;
 }
 
-export const LineUnfoldPanel: React.FC<LineUnfoldPanelProps> = () => {
+export const LineUnfoldPanel: React.FC<LineUnfoldPanelProps> = ({
+  panel = {
+    title: '概览',
+    type: 'rows',
+    rows: [
+      { label: '指标一', value: '+18%' },
+      { label: '指标二', value: '2.1×' },
+      { label: '指标三', value: '96.4%' },
+    ],
+  },
+}) => {
   const frame = useCurrentFrame();
 
   // 入场：scaleX（线抽出）快进快停，入场后保持 1
@@ -86,22 +97,7 @@ export const LineUnfoldPanel: React.FC<LineUnfoldPanelProps> = () => {
   const isPanel = sy > 0.15;
 
   return (
-    <div style={{ width: 1920, height: 1080, background: G.side, overflow: 'hidden', position: 'relative' }}>
-      <div
-        style={{
-          position: 'absolute',
-          top: 120,
-          width: '100%',
-          textAlign: 'center',
-          fontFamily: FONT_STACK,
-          fontWeight: 800,
-          fontSize: 52,
-          color: G.mid,
-          letterSpacing: 2,
-        }}
-      >
-        LINE UNFOLD PANEL
-      </div>
+    <div style={{ width: 1920, height: 1080, background: G.bg, overflow: 'hidden', position: 'relative' }}>
       {alive && (
         <div
           style={{
@@ -117,7 +113,42 @@ export const LineUnfoldPanel: React.FC<LineUnfoldPanelProps> = () => {
         >
           {isPanel ? (
             <>
-              <NeutralCard w={PANEL_W} h={PANEL_H} seed={3} style={{ border: `2px solid ${G.mid}`, boxShadow: '0 0 40px rgba(255,255,255,0.18)' }} />
+              <div
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  background: G.card,
+                  border: `2px solid ${G.border}`,
+                  borderRadius: 14,
+                  boxSizing: 'border-box',
+                  padding: '30px 36px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  overflow: 'hidden',
+                  boxShadow: '0 0 40px rgba(211,146,60,0.18)',
+                  fontFamily: FONT_STACK,
+                }}
+              >
+                {panel.title ? (
+                  <div style={{ fontSize: 32, fontWeight: 700, color: G.ink, marginBottom: 20 }}>{panel.title}</div>
+                ) : null}
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                  {(panel.rows ?? []).map((r, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        padding: '15px 0',
+                        borderBottom: i < (panel.rows ?? []).length - 1 ? `1px solid ${G.line}` : 'none',
+                      }}
+                    >
+                      <span style={{ fontSize: 26, color: G.ink, fontWeight: 600 }}>{r.label}</span>
+                      <span style={{ marginLeft: 'auto', fontSize: 28, color: G.accent, fontWeight: 800 }}>{r.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
               {/* 内容层单独控 opacity：盖一层暗板模拟"内容未亮" */}
               <div
                 style={{

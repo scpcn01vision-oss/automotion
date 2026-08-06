@@ -114,7 +114,6 @@ export interface MaskingTapeCard {
 }
 
 export interface MaskingTapeSlapProps {
-  title?: string;
   card?: MaskingTapeCard;
 }
 
@@ -160,7 +159,6 @@ const CardContent: React.FC<{ card: MaskingTapeCard }> = ({ card }) => {
 };
 
 export const MaskingTapeSlap: React.FC<MaskingTapeSlapProps> = ({
-  title = 'MASKING TAPE SLAP',
   card = {
     type: 'rows',
     title: 'PROJECT BRIEF',
@@ -207,12 +205,6 @@ export const MaskingTapeSlap: React.FC<MaskingTapeSlapProps> = ({
 
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', top: 110, width: '100%', textAlign: 'center' }}>
-        <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1, textShadow: '2px 2px 8px rgba(211,146,60,0.28)' }}>
-          {title}
-        </div>
-      </div>
-
       <div
         style={{
           position: 'absolute',

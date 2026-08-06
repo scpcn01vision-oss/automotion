@@ -32,8 +32,14 @@ type Word = {
 };
 
 const LAND = 6; // 入场弹落时长：start+6 落定，同帧起闪
+export interface CelFlashStompFooter {
+  icon?: string; // 中性图标（Unicode 符号）
+  label?: string; // 主文字
+  tag?: string; // 右侧副文字
+}
 export interface CelFlashStompProps {
   words?: Word[];
+  footer?: CelFlashStompFooter;
 }
 
 export const CelFlashStomp: React.FC<CelFlashStompProps> = ({
@@ -42,6 +48,7 @@ export const CelFlashStomp: React.FC<CelFlashStompProps> = ({
     { text: 'GO', start: 30, end: 60, rot: -2.5, flashLen: 6, flashDark: '#cfcfca' },
     { text: 'NOW', start: 60, end: 9999, rot: 0, flashLen: 8, flashDark: '#c4c4c0' },
   ],
+  footer = { icon: '✦', label: 'GOAL', tag: 'READY' },
 }) => {
   const frame = useCurrentFrame();
   const word = words.find((w) => frame >= w.start && frame < w.end)!;
@@ -74,11 +81,6 @@ export const CelFlashStomp: React.FC<CelFlashStompProps> = ({
 
   return (
     <div style={{ width: 1920, height: 1080, background: bg, position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', left: 120, top: 96 }}>
-        <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 54, color: G.ink, letterSpacing: -1, textShadow: '2px 2px 8px rgba(211,146,60,0.28)' }}>
-          CEL FLASH STOMP
-        </div>
-      </div>
       {/* 文字层独立在背景之上：背景闪切时它纹丝不动 */}
       <div
         style={{
@@ -102,7 +104,7 @@ export const CelFlashStomp: React.FC<CelFlashStompProps> = ({
           {word.text}
         </div>
       </div>
-      {/* 底部标签条：第三词落定同帧淡入 */}
+      {/* 底部标签条：第三词落定同帧淡入（icon + 文字，中性占位内容） */}
       <div
         style={{
           position: 'absolute',
@@ -117,11 +119,12 @@ export const CelFlashStomp: React.FC<CelFlashStompProps> = ({
           gap: 20,
           padding: '0 120px',
           boxSizing: 'border-box',
+          fontFamily: FONT_STACK,
         }}
       >
-        <div style={{ width: 40, height: 40, borderRadius: 10, background: G.sideBar }} />
-        <div style={{ height: 16, width: 320, background: G.mid, borderRadius: 8 }} />
-        <div style={{ marginLeft: 'auto', height: 16, width: 180, background: G.sideBar, borderRadius: 8 }} />
+        <div style={{ width: 44, height: 44, borderRadius: 11, background: G.sideBar, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, color: G.bg }}>{footer.icon}</div>
+        <div style={{ fontSize: 30, fontWeight: 700, color: G.bg, letterSpacing: 2 }}>{footer.label}</div>
+        <div style={{ marginLeft: 'auto', fontSize: 24, fontWeight: 600, color: G.sideBar, letterSpacing: 2 }}>{footer.tag}</div>
       </div>
     </div>
   );
