@@ -2,60 +2,114 @@
 // DURATION: 180???????????? DURATION ?????
 // ??: ??? G ???src/_fixtures/Fixtures.tsx????? G.ink / ?? G.bg / ?? G.accent
 // ??: ??,??
-// props: ???????????? video-shotcraft ?????????????
+// props: rows?? A ??????+??+?????2?5 ???detail?? B ???????+???????/???
 // === ???? ===
 // ????????: ???????
 // ???????: ???????????????
 // === ???? ===
 // ? DURATION ?????? interpolate ??????????????????
-// ???????(match-cut ? iris-reveal ??)??? video-shotcraft demo ?????????????
-// ? 0?30:? A(????)hold,? 2 ? 44px ????????? + ??????"???";
+// ???????(match-cut ? iris-reveal ??)??? video-shotcraft demo ?????????? + ????
+// ? A??????????? left ????????????256???? 2?5 ???
+// ? 0?30:? 2 ?????????? + ??????"???";
 // ? 30?75:? B ? clip-path: circle(r at CX CY) ? 22px ??? 2100px(Easing.inOut(cubic)),
 //   ? B ????????,??????? 22px ?? 170px???????????"??"????;
-// ? 45?100:???? sweep ? 78%,???????????;? 100?140 ???????(?35f)?
-// ??:??????????CX/CY ???? A ??? 2 ???????????
+// ? 45?100:???? sweep ? 78%,???????????,?? detail ??;? 100?140 ?????(?35f)?
+// ??:??????????CX/CY ????????? 2 ????????? 2?5 ???
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { useCurrentFrame, interpolate, Easing, Img, staticFile } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+import type { SceneContentData } from '../../_system/scene-content';
 
-// ? A ??? 2 ??? 44px ????????????????? FakeDashboard B?
-const CX = 308;
-const CY = 384.8;
+// ? A ???????????????? left ????????????220+36=256??
+// ???????????? 220????? 1884 ? 1664???? padding 28????? 22
+const PAD_T = 36; // ????? padding
+const ROWS_LEFT = 256; // ?? left???? 220 + ??? padding 36????????
+const ROW_PAD = 28;
+const ICON_HALF = 22;
+const ROW_GAP = 20;
+const CONTENT_TOP = PAD_T;
+const CONTENT_H = 1080 - PAD_T * 2;
 
-// ? A??????????? FakeDashboard B??? G ????????
-const ListPanel: React.FC = () => (
+export interface CircleRow {
+  icon?: string;
+  title?: string;
+  value?: string;
+}
+
+export interface CircleMatchIrisProps {
+  rows?: CircleRow[]; // ? A ????2?5 ??
+  detail?: SceneContentData; // ? B ??????? + ????????????
+}
+
+// ? A????????????????+??+?????
+const ListPanel: React.FC<{ rows: CircleRow[]; n: number; rowH: number }> = ({ rows, n, rowH }) => (
   <div style={{ width: 1920, height: 1080, background: G.bg, display: 'flex' }}>
-    <div style={{ width: 220, background: G.side, padding: '28px 22px', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: 18 }}>
-      <div style={{ width: 40, height: 40, borderRadius: 10, background: G.sideBar, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, fontWeight: 800, color: G.side }}>?</div>
-      {Array.from({ length: 7 }).map((_, i) => (
-        <div key={i} style={{ height: 12, width: `${60 + ((i * 29) % 35)}%`, background: G.sideBar, borderRadius: 6 }} />
-      ))}
-    </div>
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-      <div style={{ height: 72, background: G.panel, borderBottom: `2px solid ${G.line}`, display: 'flex', alignItems: 'center', padding: '0 32px', gap: 20, boxSizing: 'border-box' }}>
-        <div style={{ height: 18, width: 180, background: G.bar, borderRadius: 9 }} />
-        <div style={{ marginLeft: 'auto', height: 36, width: 320, background: G.card, border: `2px solid ${G.line}`, borderRadius: 18, boxSizing: 'border-box' }} />
-        <div style={{ width: 36, height: 36, borderRadius: 18, background: G.mid }} />
-      </div>
-      <div style={{ flex: 1, padding: 36, display: 'flex', flexDirection: 'column', gap: 20, boxSizing: 'border-box' }}>
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} style={{ flex: 1, background: G.card, border: `2px solid ${G.border}`, borderRadius: 14, display: 'flex', alignItems: 'center', gap: 24, padding: '0 28px', boxSizing: 'border-box' }}>
-            <div style={{ width: 44, height: 44, borderRadius: 10, background: G.mid }} />
-            <div style={{ height: 14, width: `${30 + ((i * 23) % 25)}%`, background: G.bar, borderRadius: 7 }} />
-            <div style={{ marginLeft: 'auto', height: 12, width: 120, background: G.line, borderRadius: 6 }} />
+    <div style={{ flex: 1, padding: '36px 256px 36px 256px', display: 'flex', flexDirection: 'column', gap: ROW_GAP, boxSizing: 'border-box' }}>
+      {Array.from({ length: n }).map((_, i) => {
+        const r = rows[i] ?? {};
+        return (
+          <div key={i} style={{ height: rowH, background: G.card, border: `2px solid ${G.border}`, borderRadius: 14, display: 'flex', alignItems: 'center', gap: 24, padding: `0 ${ROW_PAD}px`, boxSizing: 'border-box' }}>
+            <div style={{ width: 44, height: 44, borderRadius: 10, background: G.mid, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 800, color: G.card }}>{r.icon ?? '?'}</div>
+            <div style={{ fontFamily: FONT_STACK, fontSize: 26, fontWeight: 600, color: G.ink }}>{r.title ?? ''}</div>
+            <div style={{ marginLeft: 'auto', fontFamily: FONT_STACK, fontSize: 24, fontWeight: 700, color: G.accent }}>{r.value ?? ''}</div>
           </div>
-        ))}
-      </div>
+        );
+      })}
     </div>
   </div>
 );
 
-export interface CircleMatchIrisProps {
-}
+// ? B ??????? + ?????????????????????
+const DetailBlock: React.FC<{ content: SceneContentData }> = ({ content }) => {
+  const { title, type = 'rows', rows, image } = content;
+  return (
+    <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 40, boxSizing: 'border-box', overflow: 'hidden' }}>
+      {title ? (
+        <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 46, color: G.card, letterSpacing: -1 }}>{title}</div>
+      ) : null}
+      {type === 'image' && image ? (
+        <Img src={staticFile(image)} style={{ width: 760, aspectRatio: '16 / 9', objectFit: 'cover', borderRadius: 20, border: `2px solid ${G.border}`, boxShadow: '0 8px 32px rgba(0,0,0,0.35)', maxWidth: '90%' }} />
+      ) : (
+        <div style={{ width: 760, maxWidth: '90%', background: G.card, border: `2px solid ${G.border}`, borderRadius: 20, padding: '30px 42px', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}>
+          {(rows ?? []).map((r, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', padding: '16px 0', borderBottom: i < (rows ?? []).length - 1 ? `1px solid ${G.line}` : 'none' }}>
+              <span style={{ fontFamily: FONT_STACK, fontSize: 26, color: G.ink, fontWeight: 600 }}>{r.label}</span>
+              <span style={{ marginLeft: 'auto', fontFamily: FONT_STACK, fontSize: 28, color: G.accent, fontWeight: 800 }}>{r.value}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
-export const CircleMatchIris: React.FC<CircleMatchIrisProps> = () => {
+export const CircleMatchIris: React.FC<CircleMatchIrisProps> = ({
+  rows = [
+    { icon: '?', title: '???', value: '+18%' },
+    { icon: '?', title: '???', value: '2.1?' },
+    { icon: '?', title: '???', value: '96.4%' },
+    { icon: '?', title: '???', value: '42ms' },
+    { icon: '?', title: '???', value: '99.98%' },
+  ],
+  detail = {
+    title: '????',
+    type: 'rows',
+    rows: [
+      { label: '???', value: '+18%' },
+      { label: '???', value: '2.1?' },
+      { label: '???', value: '96.4%' },
+    ],
+  },
+}) => {
   const f = useCurrentFrame();
+
+  // ?? 2?5 ????? = ? 2 ????????????????
+  const n = Math.min(5, Math.max(2, rows.length));
+  const ROW_H = (CONTENT_H - (n - 1) * ROW_GAP) / n;
+  const CX = ROWS_LEFT + ROW_PAD + ICON_HALF; // 306
+  const CY = CONTENT_TOP + ROW_H + ROW_GAP + ROW_H / 2; // ? 2 ???
+  const anchorIcon = rows[1]?.icon ?? '?';
 
   // ---- ? A:????(? 0?30,????) ----
   const pulseT = Math.min(f, 30) / 30;
@@ -99,14 +153,18 @@ export const CircleMatchIris: React.FC<CircleMatchIrisProps> = () => {
   return (
     <div style={{ width: 1920, height: 1080, position: 'relative', overflow: 'hidden', background: G.bg }}>
       {/* ===== ? A:???? ===== */}
-      <ListPanel />
+      <ListPanel rows={rows.slice(0, n)} n={n} rowH={ROW_H} />
       {/* ???????????????,????????? */}
       <div style={{ position: 'absolute', left: CX - 23, top: CY - 23, width: 46, height: 46, background: G.card }} />
       <div style={{
         position: 'absolute', left: CX - 22, top: CY - 22, width: 44, height: 44,
         borderRadius: 22, background: G.mid, border: `3px solid ${G.ink}`,
         boxSizing: 'border-box', transform: `scale(${scale})`,
-      }} />
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: 20, fontWeight: 800, color: G.card,
+      }}>
+        {anchorIcon}
+      </div>
       {/* ?????? */}
       <svg width={1920} height={1080} style={{ position: 'absolute', left: 0, top: 0 }}>
         {waves.map((w, i) => (
@@ -136,28 +194,16 @@ export const CircleMatchIris: React.FC<CircleMatchIrisProps> = () => {
           {/* ????? */}
           <div style={{
             position: 'absolute', left: CX - 150, top: CY - 80, width: 300, height: 160,
-            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
             opacity: numOpacity,
           }}>
             <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 96, color: G.card, letterSpacing: -2 }}>
               {num}%
             </div>
-            <div style={{ marginTop: 6, height: 12, width: 130, background: G.mid, borderRadius: 6 }} />
           </div>
-          {/* ??????:?? + ???,??????? */}
-          <div style={{ position: 'absolute', left: 680, top: 260, opacity: furnitureOpacity, display: 'flex', flexDirection: 'column', gap: 30 }}>
-            <div style={{ height: 34, width: 520, background: G.bar, borderRadius: 10 }} />
-            <div style={{ height: 16, width: 780, background: G.sideBar, borderRadius: 8 }} />
-            <div style={{ height: 16, width: 640, background: G.sideBar, borderRadius: 8 }} />
-            <div style={{ height: 16, width: 700, background: G.sideBar, borderRadius: 8 }} />
-            <div style={{ display: 'flex', gap: 28, marginTop: 24 }}>
-              {[0, 1, 2].map((i) => (
-                <div key={i} style={{ width: 240, height: 150, background: G.side, border: `2px solid ${G.sideBar}`, borderRadius: 14, padding: 20, boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: 12 }}>
-                  <div style={{ height: 12, width: `${55 + i * 12}%`, background: G.mid, borderRadius: 6 }} />
-                  <div style={{ height: 30, width: '45%', background: G.bar, borderRadius: 8, marginTop: 'auto' }} />
-                </div>
-              ))}
-            </div>
+          {/* ??????? + ????????????????? */}
+          <div style={{ position: 'absolute', left: 620, top: 200, width: 880, height: 720, opacity: furnitureOpacity }}>
+            <DetailBlock content={detail} />
           </div>
         </div>
       )}
