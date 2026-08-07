@@ -38,6 +38,7 @@ export interface BrandFrameSnapProps {
   contentB?: BrandFrameSnapContent;
   cardWidthA?: number; // 窗口内容卡宽度（设计模式）
   cardWidthB?: number; // 窗口内容卡宽度（开发模式，状态卡 -30%）
+  windowTitle?: string; // 窗口标题
 }
 
 // 窗口内容渲染器：标题 + 行列表（默认）/ 标题 + 圆角图片

@@ -72,7 +72,6 @@ export const IconFlipBloomLogo: React.FC<IconFlipBloomLogoProps> = ({ wordmark =
   // 64–100: mark 左移让位 + wordmark 逐字符方向模糊扫出
   const FLIP_START = 34;
   const FLIP_MID = 46;
-  const BLOOM_END = 62;
   const WORD_START = 66;
 
   // 登场

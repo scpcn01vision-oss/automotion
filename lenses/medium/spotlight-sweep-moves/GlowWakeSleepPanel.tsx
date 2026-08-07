@@ -20,7 +20,6 @@ const H = 860;
 const R = 26;
 
 const ink = G.ink;
-const mid = G.mid;
 const line = G.line;
 
 const Row: React.FC<{ label: string; icon: string }> = ({ label, icon }) => (

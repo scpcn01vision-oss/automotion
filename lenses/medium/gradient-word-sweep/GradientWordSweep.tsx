@@ -15,7 +15,6 @@
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
-import { FONT_STACK } from '../../_system/typography';
 
 const mulberry32 = (a: number) => () => {
   let t = (a += 0x6d2b79f5);

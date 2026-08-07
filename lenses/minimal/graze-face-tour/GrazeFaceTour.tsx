@@ -441,7 +441,9 @@ const SEGS: { cam: Cam; edge: 'left' | 'top'; render: (t: number, ctx: SegCtx) =
 const SEG_LEN = 50; // 每段 50 帧，总 150
 const FADE = 7;
 
-const Stage: React.FC<{ segs: typeof SEGS }> = ({ segs }) => {
+// Stage 收到的 segs 已被包装为单参 render（ctx 在主组件绑定）
+type StageSeg = { cam: Cam; edge: 'left' | 'top'; render: (t: number) => React.ReactNode };
+const Stage: React.FC<{ segs: StageSeg[] }> = ({ segs }) => {
   const frame = useCurrentFrame();
   return (
     <AbsoluteFill style={{ background: G.ink }}>

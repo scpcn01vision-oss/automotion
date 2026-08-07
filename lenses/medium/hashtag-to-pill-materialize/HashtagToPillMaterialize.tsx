@@ -186,8 +186,8 @@ export const HashtagToPillMaterialize: React.FC<HashtagToPillMaterializeProps> =
         }}>
           <div style={{ transform: 'translate(-50%, -50%)' }}>
             {revealed
-              ? <Pill bg={C.pillSage} iconColor={C.iconSage} textColor={C.pillSageText} />
-              : <Pill bg={C.pillGray} iconColor={C.iconGray} textColor={C.pillTextGray} />}
+              ? <Pill bg={C.pillSage} iconColor={C.iconSage} textColor={C.pillSageText} text={pillText} />
+              : <Pill bg={C.pillGray} iconColor={C.iconGray} textColor={C.pillTextGray} text={pillText} />}
           </div>
         </div>
       )}

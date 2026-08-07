@@ -40,7 +40,6 @@ export const LetterformDriftAssembly: React.FC<LetterformDriftAssemblyProps> = (
 }) => {
   const frame = useCurrentFrame();
   const chars = word.split('');
-  const lastLock = (chars.length - 1) * STAG + TRAVEL; // 69
 
   // 整词收束呼吸：80–92 放大到 1.04，92–104 回落，之后恒 1 → 帧确定
   const breath =

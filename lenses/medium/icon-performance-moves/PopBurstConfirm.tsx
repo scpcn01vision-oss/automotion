@@ -22,7 +22,6 @@ import { FONT_STACK } from '../../_system/typography';
 
 const AMBER = G.accent;
 const POP = 27; // 释放帧
-const DUR = 120;
 
 export interface PopBurstConfirmProps {
   label?: string;

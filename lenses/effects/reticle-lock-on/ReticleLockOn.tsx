@@ -24,14 +24,7 @@ import { FONT_STACK } from '../../_system/typography';
 // 布局推导：侧栏 220 + padding 36，网格 3 列 gap 28，
 // 内容区宽 1700-72=1628 → 卡宽 (1628-56)/3 ≈ 524，卡高 (1080-72-72-28)/2 ≈ 454...
 // 实测近似：目标框取第一行中间卡的外接矩形（含少量呼吸边距）。
-const CARD_X = 220 + 36 + 524 + 28; // ≈ 808
-const CARD_Y = 72 + 36; // 108
-const CARD_W = 524;
-const CARD_H = 425;
 const PAD = 14; // 咬合后角标与卡的呼吸距
-
-const TCX = CARD_X + CARD_W / 2;
-const TCY = CARD_Y + CARD_H / 2;
 
 const FLY_IN = 14; // 飞入开始
 const FLY_END = 24; // 飞入结束（大框就位）

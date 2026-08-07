@@ -19,13 +19,6 @@ import React from 'react';
 import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_system/colors';
 
-const mulberry32 = (a: number) => () => {
-  let t = (a += 0x6d2b79f5);
-  t = Math.imul(t ^ (t >>> 15), t | 1);
-  t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-};
-
 const FONT = '"Avenir Next", Futura, "Helvetica Neue", sans-serif';
 
 // ---------- 时间轴（30fps / 130f） ----------

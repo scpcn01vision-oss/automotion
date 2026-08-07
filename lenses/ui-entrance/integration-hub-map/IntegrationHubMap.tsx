@@ -277,7 +277,6 @@ export const IntegrationHubMap: React.FC<IntegrationHubMapProps> = ({
 }) => {
   const frame = useCurrentFrame();
   const activePipes = PIPES.filter((p) => icons.includes(p.kind));
-  const activeCount = activePipes.length;
 
   // --- 相机/面板轨迹：近景正视旧页 → 整体翻转 180°（翻到背面=新页）+ 拉远落定 ---
   const zoom = interpolate(frame, [0, 14, 58, 96], [2.05, 1.95, 1.1, 1.0], {

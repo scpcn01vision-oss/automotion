@@ -15,7 +15,6 @@
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing, Img, staticFile } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
-import { FONT_STACK } from '../../_system/typography';
 
 const CARD_W = 560;
 const CARD_H = 350;

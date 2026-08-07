@@ -54,13 +54,12 @@ export const SceneContent: React.FC<{
         <Img
           src={staticFile(image)}
           style={{
-            width: Math.min(panelWidth, '100%'),
+            width: `min(${panelWidth}px, 90%)`,
             aspectRatio: '16 / 9',
             objectFit: 'cover',
             borderRadius: 24,
             border: `2px solid ${G.border}`,
             boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
-            maxWidth: '90%',
           }}
         />
       ) : (

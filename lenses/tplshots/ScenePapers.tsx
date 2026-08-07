@@ -1,6 +1,5 @@
-import { AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame, Easing } from 'remotion';
+import { Img, interpolate, staticFile, useCurrentFrame, Easing } from 'remotion';
 import { PageCam, CamKey } from './PageCam';
-import { AIFL_SHOTS } from './aifl-shots';
 import layout from './live-layout.json';
 import { DigitRoll } from './DigitRoll';
 import { G } from '../_system/colors';

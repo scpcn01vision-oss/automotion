@@ -21,7 +21,6 @@ import { G } from '../../_fixtures/Fixtures';
  * 相机: 低速匀稳横移 + 视差 + 极缓 zoom, 收尾不急刹。
  */
 
-const W = 1920;
 const H = 1080;
 const DUR = 165; // 5.5s @30fps
 const WORLD_W = 4200;

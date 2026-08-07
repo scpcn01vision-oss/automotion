@@ -18,12 +18,10 @@
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
-import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
 
 const SCROLL_START = 12;
 const BRAKE = 59;
-const DUR = 150;
 
 const PITCH = 156; // 行高 120 + 间距 36
 const ROW_H = 120;

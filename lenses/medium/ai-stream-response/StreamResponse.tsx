@@ -114,7 +114,6 @@ export const StreamResponse: React.FC<StreamResponseProps> = ({
   const ROW_CUES = rows.map((_, i) => 42 + i * 9);
   const panelIn = interpolate(frame, [0, 16], [0, 1], {...clamp, easing: ease});
   const summaryT = interpolate(frame, [18, 30], [0, 1], {...clamp, easing: ease});
-  const camera = interpolate(frame, [0, 100], [1.04, 1], {...clamp, easing: ease});
   const pulse = interpolate(frame, [110, 115, 120], [0.25, 0.55, 0.25], clamp);
   const complete = interpolate(frame, [110, 120], [0, 1], {...clamp, easing: ease});
 

@@ -13,7 +13,6 @@
 import React from 'react';
 import { G } from '../../_fixtures/Fixtures';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
 
 const CARD_W = 760;

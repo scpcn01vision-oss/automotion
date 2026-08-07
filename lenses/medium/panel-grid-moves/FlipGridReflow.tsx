@@ -50,7 +50,6 @@ const SETTLE = 3; // 落定过冲帧数
 const SCALE_END = 1.28;
 const OVERSHOOT = 1.02;
 // 末卡完全落定：30 + 5*1.5 + 16 + 3 = 56.5
-const ALL_SETTLED = BEAT + (N - 1) * STAGGER + MOVE + SETTLE; // 56.5
 
 // 加深脉冲：f58 → f61 谷值 → f64 回正（谷值 brightness 0.78，spec 4f 放宽到 6f 保可感）
 const PULSE_IN = 58;

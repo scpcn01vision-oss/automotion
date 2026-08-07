@@ -12,7 +12,7 @@
 // 照到的区域显影、照不到的沉黑，最终全屏亮起。光即转场。
 import React from 'react';
 import { G } from '../../_fixtures/Fixtures';
-import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
+import { AbsoluteFill, useCurrentFrame, interpolate } from 'remotion';
 import { FONT_STACK } from '../../_system/typography';
 
 const FONT = '"Avenir Next", "Helvetica Neue", Helvetica, sans-serif';

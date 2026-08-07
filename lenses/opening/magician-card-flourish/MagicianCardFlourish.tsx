@@ -23,7 +23,6 @@ import React from 'react';
 import { G } from '../../_fixtures/Fixtures';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { CameraMotionBlur } from '@remotion/motion-blur';
-import { G } from '../../_fixtures/Fixtures';
 import type { SceneContentData } from '../../_system/scene-content';
 
 const CARD_W = 380;
