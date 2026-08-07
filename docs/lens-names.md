@@ -108,7 +108,6 @@
 | CursorPerformancePunchIn | 光标冲入 |
 | HalationBloom | 光晕弥散 |
 | SheenSweepRetry | 光泽扫过 |
-| SpotlightSweepReveal | 追光巡场 |
 | OdometerDigitRoll | 里程滚数 |
 | FlipGridReflow | 格阵重排 |
 | ConfettiCrossfire | 彩纸交叉 |
@@ -131,12 +130,6 @@
 
 | id | 中文名 |
 |---|---|
-| SceneOpen | 场景开场 |
-| SceneFlyIn | 场景飞入 |
-| SceneDetail | 场景特写 |
-| ScenePapers | 场景落卡 |
-| SceneWbr | 场景文档 |
-| SceneOutroLive | 场景收尾 |
 | BrandInkOpen | 墨印开场 |
 | SpotlightHeroCard | 追光主卡 |
 | DeckDealFlyin | 发牌飞入 |

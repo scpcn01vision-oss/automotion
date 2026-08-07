@@ -80,11 +80,13 @@ const SmearCard: React.FC<{ label: string; value: string }> = ({ label, value })
 );
 
 export interface SmearMultiplesProps {
-  card?: { label: string; value: string };
+  cardA?: { label: string; value: string }; // 运动前（左槽）
+  cardB?: { label: string; value: string }; // 运动后（右槽）
 }
 
 export const SmearMultiples: React.FC<SmearMultiplesProps> = ({
-  card = { label: '指标一', value: '+18%' },
+  cardA = { label: '指标一', value: '+18%' },
+  cardB = { label: '节点', value: '4/4' },
 }) => {
   const frame = useCurrentFrame();
   const bodyX = posAt(frame);
@@ -116,12 +118,12 @@ export const SmearMultiples: React.FC<SmearMultiplesProps> = ({
         if (op <= 0.001) return null;
         return (
           <div key={k} style={{ position: 'absolute', left: gx, top: Y, opacity: op }}>
-            <SmearCard label={card.label} value={card.value} />
+            <SmearCard label={cardA.label} value={cardA.value} />
           </div>
         );
       })}
       <div style={{ position: 'absolute', left: bodyX, top: Y }}>
-        <SmearCard label={card.label} value={card.value} />
+        <SmearCard label={frame >= 38 ? cardB.label : cardA.label} value={frame >= 38 ? cardB.value : cardA.value} />
       </div>
     </div>
   );

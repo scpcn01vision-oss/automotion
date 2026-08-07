@@ -60,10 +60,21 @@ const AskIcon: React.FC<{ size: number }> = ({ size }) => (
   </svg>
 );
 
+
+
 export interface SegmentedThumbHeroProps {
+  askLabel?: string; // Ask 段文字
+  computerLabel?: string; // Computer 段文字
+  askIcon?: React.ReactNode; // Ask 段自定义图标（任意节点/SVG/图片），默认内置问号
+  computerIcon?: React.ReactNode; // Computer 段自定义图标，默认内置笔记本
 }
 
-export const SegmentedThumbHero: React.FC<SegmentedThumbHeroProps> = () => {
+export const SegmentedThumbHero: React.FC<SegmentedThumbHeroProps> = ({
+  askLabel = 'Ask',
+  computerLabel = 'Computer',
+  askIcon = <AskIcon size={78} />,
+  computerIcon = <SmileLaptop size={78} />,
+}) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
@@ -200,9 +211,9 @@ export const SegmentedThumbHero: React.FC<SegmentedThumbHeroProps> = () => {
               overflow: 'visible',
             }}
           >
-            <AskIcon size={78} />
+            {askIcon}
           </span>
-          Ask
+          {askLabel}
         </div>
         {/* Computer 段 */}
         <div style={labelStyle(!askActive)}>
@@ -214,9 +225,9 @@ export const SegmentedThumbHero: React.FC<SegmentedThumbHeroProps> = () => {
               overflow: 'visible',
             }}
           >
-            <SmileLaptop size={78} />
+            {computerIcon}
           </span>
-          Computer
+          {computerLabel}
         </div>
       </div>
       <ArrowCursor x={curX} y={curY} press={press} />

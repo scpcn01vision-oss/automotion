@@ -45,6 +45,7 @@ const clamp = { extrapolateLeft: 'clamp' as const, extrapolateRight: 'clamp' as 
 
 export interface ReticleLockOnProps {
   scene?: SceneContentData;
+  focus?: { x: number; y: number; w: number; h: number }; // 对焦框位置与尺寸
 }
 
 export const ReticleLockOn: React.FC<ReticleLockOnProps> = ({
@@ -57,8 +58,15 @@ export const ReticleLockOn: React.FC<ReticleLockOnProps> = ({
       { label: '指标三', value: '96.4%' },
     ],
   },
+  focus = { x: 808, y: 108, w: 524, h: 425 },
 }) => {
   const frame = useCurrentFrame();
+  const fx = focus.x;
+  const fy = focus.y;
+  const fw = focus.w;
+  const fh = focus.h;
+  const tcx = fx + fw / 2;
+  const tcy = fy + fh / 2;
 
   // 飞入：整框从右下画外冲进来，同时是个放大 2.2× 的大框
   const flyT = interpolate(frame, [FLY_IN, FLY_END], [0, 1], {
@@ -75,8 +83,8 @@ export const ReticleLockOn: React.FC<ReticleLockOnProps> = ({
     [2.2, 1.06, 0.94, 1],
     { easing: Easing.inOut(Easing.cubic), ...clamp },
   );
-  const hw = (CARD_W / 2 + PAD) * shrink;
-  const hh = (CARD_H / 2 + PAD) * shrink;
+  const hw = (fw / 2 + PAD) * shrink;
+  const hh = (fh / 2 + PAD) * shrink;
 
   // 咬合帧：卡片微亮（一层白色 overlay 快闪后停在 0.28）
   const glow = interpolate(frame, [LOCK_END, LOCK_END + 3, LOCK_END + 10], [0, 0.55, 0.28], clamp);
@@ -92,10 +100,10 @@ export const ReticleLockOn: React.FC<ReticleLockOnProps> = ({
 
   // 四个 L 角：位置 = 中心 ± (hw, hh)，各自镜像
   const corners = [
-    { x: TCX - hw, y: TCY - hh, sx: 1, sy: 1 },
-    { x: TCX + hw, y: TCY - hh, sx: -1, sy: 1 },
-    { x: TCX - hw, y: TCY + hh, sx: 1, sy: -1 },
-    { x: TCX + hw, y: TCY + hh, sx: -1, sy: -1 },
+    { x: tcx - hw, y: tcy - hh, sx: 1, sy: 1 },
+    { x: tcx + hw, y: tcy - hh, sx: -1, sy: 1 },
+    { x: tcx - hw, y: tcy + hh, sx: 1, sy: -1 },
+    { x: tcx + hw, y: tcy + hh, sx: -1, sy: -1 },
   ];
 
   return (
@@ -106,10 +114,10 @@ export const ReticleLockOn: React.FC<ReticleLockOnProps> = ({
         <div
           style={{
             position: 'absolute',
-            left: CARD_X,
-            top: CARD_Y,
-            width: CARD_W,
-            height: CARD_H,
+            left: fx,
+            top: fy,
+            width: fw,
+            height: fh,
             borderRadius: 14,
             background: G.card,
             opacity: glow,
@@ -140,8 +148,8 @@ export const ReticleLockOn: React.FC<ReticleLockOnProps> = ({
             <div
               style={{
                 position: 'absolute',
-                left: TCX + hw + 18,
-                top: TCY - hh - 6,
+                left: tcx + hw + 18,
+                top: tcy - hh - 6,
                 transform: `scale(${labelT})`,
                 transformOrigin: '0 50%',
                 background: G.ink,

@@ -174,7 +174,6 @@ import { HalationBloom } from "./medium/light-play-moves/HalationBloom.tsx";
 
 import { SheenSweepRetry } from "./medium/light-play-moves/SheenSweepRetry.tsx";
 
-import { SpotlightSweepReveal } from "./medium/light-play-moves/SpotlightSweepReveal.tsx";
 
 import { OdometerDigitRoll } from "./medium/odometer-digit-roll/OdometerDigitRoll.tsx";
 
@@ -213,17 +212,11 @@ import { GridWaveFlip } from "./medium/wall-reveal-moves/GridWaveFlip.tsx";
 
 
 // ============ 模板场景镜头（tplshots，来自 template/src/aifl）============
-import { SceneOpen } from "./tplshots/SceneOpen.tsx";
 
-import { SceneFlyIn } from "./tplshots/SceneFlyIn.tsx";
 
-import { SceneDetail } from "./tplshots/SceneDetail.tsx";
 
-import { ScenePapers } from "./tplshots/ScenePapers.tsx";
 
-import { SceneWbr } from "./tplshots/SceneWbr.tsx";
 
-import { SceneOutroLive } from "./tplshots/SceneOutroLive.tsx";
 
 
 // ============ v7 新增（video-shotcraft 纸墨化）============
@@ -351,7 +344,6 @@ export const RemotionRoot: React.FC = () => {
       <Composition id="CursorPerformancePunchIn" component={CursorPerformancePunchIn} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="HalationBloom" component={HalationBloom} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="SheenSweepRetry" component={SheenSweepRetry} width={1920} height={1080} fps={30} durationInFrames={180} />
-      <Composition id="SpotlightSweepReveal" component={SpotlightSweepReveal} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="OdometerDigitRoll" component={OdometerDigitRoll} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="FlipGridReflow" component={FlipGridReflow} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="ConfettiCrossfire" component={ConfettiCrossfire} width={1920} height={1080} fps={30} durationInFrames={180} />
@@ -395,12 +387,6 @@ export const RemotionRoot: React.FC = () => {
       <Composition id="ListStackPress" component={ListStackPress} width={1920} height={1080} fps={30} durationInFrames={105} />
       <Composition id="DocumentTypewriterReveal" component={DocumentTypewriterReveal} width={1920} height={1080} fps={30} durationInFrames={110} />
       <Composition id="OutroGroupPhotoLaunch" component={OutroGroupPhotoLaunch} width={1920} height={1080} fps={30} durationInFrames={145} />
-      <Composition id="SceneOpen" component={SceneOpen} width={1920} height={1080} fps={30} durationInFrames={83} />
-      <Composition id="SceneFlyIn" component={SceneFlyIn} width={1920} height={1080} fps={30} durationInFrames={128} />
-      <Composition id="SceneDetail" component={SceneDetail} width={1920} height={1080} fps={30} durationInFrames={100} />
-      <Composition id="ScenePapers" component={ScenePapers} width={1920} height={1080} fps={30} durationInFrames={105} />
-      <Composition id="SceneWbr" component={SceneWbr} width={1920} height={1080} fps={30} durationInFrames={110} />
-      <Composition id="SceneOutroLive" component={SceneOutroLive} width={1920} height={1080} fps={30} durationInFrames={145} />
     </>
   );
 };

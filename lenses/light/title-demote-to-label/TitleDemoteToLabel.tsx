@@ -19,49 +19,43 @@ import { FONT_STACK } from '../../_system/typography';
 
 const SEL = 'rgba(211,146,60,0.35)';
 
-// 内容骨架块：随 t 依次生长
-const Skeleton: React.FC<{ t: number }> = ({ t }) => {
-  const blocks = [
-    { w: 1500, h: 26 },
-    { w: 1280, h: 26 },
-    { w: 1420, h: 26 },
-    { w: 760, h: 26 },
-    { w: 1500, h: 300, card: true },
-  ];
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 34 }}>
-      {blocks.map((b, i) => {
-        const bt = interpolate(t, [i * 0.16, i * 0.16 + 0.3], [0, 1], {
-          extrapolateLeft: 'clamp',
-          extrapolateRight: 'clamp',
-          easing: Easing.out(Easing.cubic),
-        });
-        return (
-          <div
-            key={i}
-            style={{
-              width: b.w * (0.35 + 0.65 * bt),
-              height: b.h,
-              background: b.card ? G.card : G.line,
-              border: b.card ? `2px solid ${G.border}` : 'none',
-              borderRadius: b.card ? 16 : 13,
-              opacity: bt,
-              transform: `translateY(${(1 - bt) * 28}px)`,
-              boxSizing: 'border-box',
-            }}
-          />
-        );
-      })}
-    </div>
-  );
-};
+// 内容行：随 t 依次生长（同宽文字行，label/value）
+const RowsBlock: React.FC<{ t: number; rows: { label: string; value: string }[] }> = ({ t, rows }) => (
+  <div style={{ display: 'flex', flexDirection: 'column', gap: 30 }}>
+    {rows.map((r, i) => {
+      const bt = interpolate(t, [i * 0.16, i * 0.16 + 0.3], [0, 1], {
+        extrapolateLeft: 'clamp',
+        extrapolateRight: 'clamp',
+        easing: Easing.out(Easing.cubic),
+      });
+      return (
+        <div
+          key={i}
+          style={{
+            width: 1500,
+            height: 40,
+            display: 'flex',
+            alignItems: 'center',
+            opacity: bt,
+            transform: `translateY(${(1 - bt) * 28}px)`,
+            boxSizing: 'border-box',
+          }}
+        >
+          <span style={{ fontFamily: FONT_STACK, fontSize: 28, fontWeight: 600, color: G.ink }}>{r.label}</span>
+          <span style={{ marginLeft: 'auto', fontFamily: FONT_STACK, fontSize: 28, fontWeight: 700, color: G.mid }}>{r.value}</span>
+        </div>
+      );
+    })}
+  </div>
+);
 
 // 一个完整的"显影→(可选高亮)→降格→内容生长"小节
 const DemoteScene: React.FC<{
   frame: number;
   title: string;
   withSelection: boolean;
-}> = ({ frame, title, withSelection }) => {
+  rows: { label: string; value: string }[];
+}> = ({ frame, title, withSelection, rows }) => {
   // 时间轴（局部帧）
   const REVEAL = 0; // 0–12 显影
   const SEL_ON = 14; // 高亮扫入 14–24
@@ -115,7 +109,7 @@ const DemoteScene: React.FC<{
     <AbsoluteFill style={{ background: G.bg }}>
       {/* 内容骨架区 */}
       <div style={{ position: 'absolute', left: 150, top: 210 }}>
-        <Skeleton t={growT} />
+        <RowsBlock t={growT} rows={rows} />
       </div>
       {/* 标题：transform-origin 左中，位置补间 */}
       <div
@@ -164,17 +158,24 @@ const DemoteScene: React.FC<{
 export interface TitleDemoteToLabelProps {
   titleA?: string;
   titleB?: string;
+  contentRows?: { label: string; value: string }[]; // 降格后内容行
 }
 
 export const TitleDemoteToLabel: React.FC<TitleDemoteToLabelProps> = ({
   titleA = 'Overview',
   titleB = 'Details',
+  contentRows = [
+    { label: '指标一', value: '+18%' },
+    { label: '指标二', value: '2.1×' },
+    { label: '指标三', value: '96.4%' },
+    { label: '指标四', value: '42ms' },
+  ],
 }) => {
   const frame = useCurrentFrame();
   const SPLIT = 92; // 变体 A 时长
 
   if (frame < SPLIT) {
-    return <DemoteScene frame={frame} title={titleA} withSelection={false} />;
+    return <DemoteScene frame={frame} title={titleA} withSelection={false} rows={contentRows} />;
   }
   // 变体 B：文本选中态高亮登场
   const f = frame - SPLIT;
@@ -185,7 +186,7 @@ export const TitleDemoteToLabel: React.FC<TitleDemoteToLabelProps> = ({
   });
   return (
     <AbsoluteFill>
-      <DemoteScene frame={f} title={titleB} withSelection={true} />
+      <DemoteScene frame={f} title={titleB} withSelection={true} rows={contentRows} />
       <AbsoluteFill style={{ background: G.card, opacity: flash, pointerEvents: 'none' }} />
     </AbsoluteFill>
   );
