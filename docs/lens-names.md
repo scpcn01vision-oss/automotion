@@ -1,4 +1,4 @@
-# 镜头命名表（167）
+# 镜头命名表（140）
 
 > id = 组件导出名（PascalCase，全局唯一）｜中文名（初稿，可改）｜组
 
@@ -30,7 +30,7 @@
 | InputMorphsIntoLogo | 输入化标 |
 | WordRelayFilmstrip | 胶片传词 |
 
-## native（20）
+## native（19）
 
 | id | 中文名 |
 |---|---|
@@ -53,7 +53,7 @@
 | TerminalTypewriter | 终端打字 |
 | TypewriterErrorRetype | 错误重打 |
 
-## minimal（46）
+## minimal（28）
 
 | id | 中文名 |
 |---|---|
@@ -85,7 +85,7 @@
 | BlindsSlice | 百叶横切 |
 | ClockWipe | 时钟扫过 |
 
-## medium（44）
+## medium（37）
 
 | id | 中文名 |
 |---|---|
@@ -126,7 +126,7 @@
 | BentoLightUp | 方块点亮 |
 | GridWaveFlip | 格浪翻涌 |
 
-## tplshots（14）
+## tplshots（8）
 
 | id | 中文名 |
 |---|---|
@@ -138,7 +138,7 @@
 | DocumentTypewriterReveal | 文档打字 |
 | OutroGroupPhotoLaunch | 群像收尾 |
 
-## opening（3）
+## opening（4）
 
 | id | 中文名 |
 |---|---|
@@ -146,7 +146,7 @@
 | MagicianCardFlourish | 魔术卡弹 |
 | PaperTitleCard | 纸墨字卡 |
 
-## ui-entrance（3）
+## ui-entrance（4）
 
 | id | 中文名 |
 |---|---|
@@ -154,20 +154,20 @@
 | NeonFrameForerun | 霓虹框跑 |
 | NeonFrameForerunOrbit | 霓虹环绕 |
 
-## rhythm（2）
+## rhythm（3）
 
 | id | 中文名 |
 |---|---|
 | SakugaTimingShift | 作画变速 |
 | SpectrumMorphUi | 频谱标线 |
 
-## typography（1）
+## typography（2）
 
 | id | 中文名 |
 |---|---|
 | CelFlashStomp | 大字跺拍 |
 
-## effects（7）
+## effects（4）
 
 | id | 中文名 |
 |---|---|
@@ -181,7 +181,7 @@
 |---|---|
 | GlitchDisplace | 撕裂位移 |
 
-## data（3）
+## data（4）
 
 | id | 中文名 |
 |---|---|
@@ -189,7 +189,7 @@
 | OscilloscopeStream | 示波流 |
 | UnitDotSwarmRegroup | 点阵重组 |
 
-## interaction（1）
+## interaction（2）
 
 | id | 中文名 |
 |---|---|

@@ -1,4 +1,4 @@
-// M1 污染扫描：演示组件真实使用 / 品牌默认值 / 项目内容词
+// M1 污染扫描：演示组件真实使用 / 品牌默认值 / 项目内容词 / 画面文字=镜头名
 // 用法：node scripts/scan-pollution.mjs [--out <json 报告路径>]
 // 默认报告：out/pollution-report.json（out/ 已被 gitignore）
 // 退出码：0 = 0 命中（验收通过）；1 = 有命中（验收失败）
@@ -7,6 +7,8 @@
 // - 只扫「代码区」，剥离 // 行注释与 /* */ 块注释（来源注释保留策略，不误报）
 // - 字符串内容保留（品牌默认值写在字符串里，必须能扫到）
 // - 词表集中在下方数组，M2/M3 演进时直接改这里
+// - ④ 画面文字=镜头名：从 docs/lens-names.md 读镜头名清单，检测镜头名被当作
+//   字符串值或 JSX 文本渲染到画面（手法名标签残留），排除 import/export/注册 id
 import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -44,6 +46,23 @@ const PROJECT_TERMS = ['Enterprise', 'MQL', 'Q3 Quota', 'Q3'];
 // ---------- 工具 ----------
 const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
+// ④ 从命名表读取镜头名清单（排除表头 id 行）
+function loadLensNames() {
+  const namesPath = path.join(ROOT, 'docs', 'lens-names.md');
+  let src;
+  try {
+    src = readFileSync(namesPath, 'utf8');
+  } catch {
+    return [];
+  }
+  const names = [];
+  for (const line of src.split('\n')) {
+    const m = line.match(/^\| ([A-Z][A-Za-z0-9]+) \|/);
+    if (m && m[1].toLowerCase() !== 'id') names.push(m[1]);
+  }
+  return names;
+}
+
 function walk(dir, acc = []) {
   for (const e of readdirSync(dir, { withFileTypes: true })) {
     if (e.name === 'node_modules') continue;
@@ -54,7 +73,7 @@ function walk(dir, acc = []) {
   return acc;
 }
 
-// 剥离 // 行注释与 /* */ 块注释；字符串内容保留（状态机区分字符串与注释）
+// 剥离 // 行注释与 /* */ 块注释；字符串内容保留（含引号与转义，状态机区分字符串与注释）
 function stripComments(code) {
   const lines = code.split('\n');
   const out = [];
@@ -77,15 +96,24 @@ function stripComments(code) {
       }
       if (inStr) {
         if (ch === '\\') {
+          res += ch;
+          if (next !== undefined) res += next;
           j += 2;
           continue;
         }
-        if (ch === inStr) inStr = null;
+        if (ch === inStr) {
+          inStr = null;
+          res += ch;
+          j++;
+          continue;
+        }
+        res += ch;
         j++;
         continue;
       }
       if (ch === "'" || ch === '"' || ch === '`') {
         inStr = ch;
+        res += ch;
         j++;
         continue;
       }
@@ -109,6 +137,21 @@ const outPath = outArgIdx > -1 ? process.argv[outArgIdx + 1] : DEFAULT_OUT;
 
 const files = walk(LENSES);
 const hits = [];
+const lensNames = loadLensNames();
+
+// ④ 判断一行是否命中「画面文字 = 镜头名」（排除 import/export 声明与注册 id）
+function demoTextHit(line, name) {
+  const esc = escapeRegExp(name);
+  const asString = new RegExp("['\"`]" + esc + "['\"`]");
+  const asJsxText = new RegExp(`>${esc}<`);
+  if (asString.test(line) || asJsxText.test(line)) {
+    // 排除声明与注册行
+    if (/^\s*(import|export)\s/.test(line)) return false;
+    if (new RegExp(`<Composition[^>]*id=["']${esc}["']`).test(line)) return false;
+    return true;
+  }
+  return false;
+}
 
 for (const abs of files) {
   const rel = path.relative(ROOT, abs).replace(/\\/g, '/');
@@ -126,6 +169,11 @@ for (const abs of files) {
     for (const term of PROJECT_TERMS) {
       if (new RegExp(`\\b${escapeRegExp(term)}\\b`).test(line)) {
         hits.push({ file: rel, line: lineNo, kind: 'project', term });
+      }
+    }
+    for (const name of lensNames) {
+      if (demoTextHit(line, name)) {
+        hits.push({ file: rel, line: lineNo, kind: 'demo-text', term: name });
       }
     }
   });
