@@ -42,14 +42,12 @@
 | LineBoil | 墨线沸腾 |
 | MarkerUnderlineTitle | 笔锋划题 |
 | BarnDoorSplit | 谷仓门裂 |
-| CubeRotate | 立方翻转 |
 | PageWaterfallWall | 页墙瀑布 |
 | VerticalTickerWrapper | 滚动字幕 |
 | MaskingTapeSlap | 胶带落纸 |
 | PopupBookRise | 立体书起 |
 | PaperPlaneMessenger | 纸鸢传信 |
 | InkBleedReveal | 墨渗揭幕 |
-| RisoBeatPump | 套印节拍 |
 | RisoMisregistrationHit | 套印错击 |
 | SplitFlapFlip | 翻牌显字 |
 | StrokeSegmentBuild | 断笔成字 |
@@ -61,7 +59,6 @@
 | id | 中文名 |
 |---|---|
 | BeatCutAccelerando | 节拍加速切 |
-| PaparazziFlash | 闪光连拍 |
 | BeatStepListThemeCycle | 拍点列词 |
 | BottomPushStackWipe | 底推换景 |
 | CircleMatchIris | 圆心虹膜 |
@@ -69,7 +66,6 @@
 | CraneRiseReveal | 吊臂升起 |
 | DollyZoomReal | 滑动变焦 |
 | MultiplaneReal | 多层视差 |
-| LogoStingButton | Logo 闪现 |
 | GrazeFaceTour | 掠面巡览 |
 | LineCarryTransition | 线引换场 |
 | DominoCascade | 多米诺 |

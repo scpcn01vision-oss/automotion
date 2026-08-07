@@ -32,6 +32,19 @@ const TARGET = 28;
 // 行高错落（帧确定性：全由 i 决定）
 const rowH = (i: number) => 72 + ((i * 29) % 3) * 22; // 72 / 94 / 116
 
+// 中性 changelog 条目池（34 条默认，标题/标签/元信息均为中性占位内容）
+const TAGS = ['修复', '新增', '优化', '发布'];
+const TITLES = ['稳定性提升', '界面细节调整', '性能优化', '已知问题修复', '新功能上线'];
+const METAS = ['2026-08', '已发布', '2 小时前', '审核中'];
+const DEFAULT_ITEMS: { tag: string; title: string; meta: string }[] = Array.from(
+  { length: 34 },
+  (_, i) => ({
+    tag: TAGS[i % TAGS.length],
+    title: `${TITLES[i % TITLES.length]} #${34 - i}`,
+    meta: METAS[i % METAS.length],
+  }),
+);
+
 // 预计算每行 y
 const rowY: number[] = [];
 {
@@ -51,10 +64,9 @@ const scrollAt = (f: number): number =>
     ...CL,
   });
 
-const Row: React.FC<{ i: number; frame: number }> = ({ i, frame }) => {
+const Row: React.FC<{ i: number; frame: number; item: { tag: string; title: string; meta: string } }> = ({ i, frame, item }) => {
   const isTarget = i === TARGET;
   const h = rowH(i);
-  const titleW = 30 + ((i * 37) % 45);
 
   // 目标行抬升 + 高亮；其余行退暗
   const t = interpolate(frame, [LIFT0, LIFT1], [0, 1], {
@@ -89,17 +101,20 @@ const Row: React.FC<{ i: number; frame: number }> = ({ i, frame }) => {
         zIndex: isTarget ? 2 : 1,
       }}
     >
-      <div style={{ width: 88, height: 26, borderRadius: 13, background: isTarget ? G.ink : G.mid, flexShrink: 0 }} />
-      <div style={{ height: 16, width: `${titleW}%`, background: G.bar, borderRadius: 8 }} />
-      <div style={{ marginLeft: 'auto', height: 12, width: 110, background: G.line, borderRadius: 6, flexShrink: 0 }} />
+      <div style={{ width: 88, height: 26, borderRadius: 13, background: isTarget ? G.ink : G.mid, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, color: G.card }}>{item.tag}</div>
+      <div style={{ flex: 1, fontSize: 16, fontWeight: 600, color: G.ink, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{item.title}</div>
+      <div style={{ flexShrink: 0, fontSize: 13, color: G.mid }}>{item.meta}</div>
     </div>
   );
 };
 
 export interface ChangelogScrollBrakeProps {
+  items?: { tag: string; title: string; meta: string }[];
 }
 
-export const ChangelogScrollBrake: React.FC<ChangelogScrollBrakeProps> = () => {
+export const ChangelogScrollBrake: React.FC<ChangelogScrollBrakeProps> = ({
+  items = DEFAULT_ITEMS,
+}) => {
   const frame = useCurrentFrame();
   const T = scrollAt(frame);
 
@@ -121,7 +136,7 @@ export const ChangelogScrollBrake: React.FC<ChangelogScrollBrakeProps> = () => {
         }}
       >
         {Array.from({ length: N }).map((_, i) => (
-          <Row key={i} i={i} frame={frame} />
+          <Row key={i} i={i} frame={frame} item={items[i % items.length]} />
         ))}
       </div>
     </div>

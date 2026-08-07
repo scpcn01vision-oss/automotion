@@ -172,7 +172,7 @@ export const BubbleSwarmTakeover: React.FC<BubbleSwarmTakeoverProps> = ({
   });
   const breathe = 1 + 0.02 * Math.sin(frame * 0.045);
   return (
-    <AbsoluteFill style={{ background: '#ececea', overflow: 'hidden' }}>
+    <AbsoluteFill style={{ background: G.bg, overflow: 'hidden' }}>
       <AbsoluteFill style={{ transform: `scale(${breathe})` }}>
         {frame < PEAK ? <SceneContent content={sceneA} /> : <SceneContent content={sceneB} />}
       </AbsoluteFill>
@@ -209,7 +209,7 @@ export const BubbleSwarmTakeover: React.FC<BubbleSwarmTakeoverProps> = ({
             border: '2px solid rgba(255,255,255,0.9)',
             boxShadow: '0 8px 32px rgba(211,146,60,0.25)',
             fontFamily: FONT_STACK, fontWeight: 800,
-            fontSize: 46, color: '#b87a2e', whiteSpace: 'nowrap',
+            fontSize: 46, color: G.accent, whiteSpace: 'nowrap',
           }}>{c.text}</div>
         );
       })}

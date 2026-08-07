@@ -121,27 +121,23 @@ const Doodle: React.FC<{ boil: number }> = ({ boil }) => {
 };
 
 // ——— 骨架/内容消息行 ———
-const NAMES = ['Ana', 'Ben', 'Kai', 'Mia'];
 const AVA = ['#5a5a58', '#7a7a78', '#4a4a48', '#8f8f8d'];
-const MSGS = [
-  'Morning! Kicking off the rebrand today',
-  'Logo drafts are ready for review',
-  'Nice — shipping the deck this afternoon',
-  'Love it. Can we make it pink?',
-];
 
-const Row: React.FC<{ i: number; dev: number; wordAt: (w: number, n: number) => number }> = ({
-  i, dev, wordAt,
+const Row: React.FC<{
+  i: number; dev: number; wordAt: (w: number, n: number) => number;
+  msg: { name: string; text: string };
+}> = ({
+  i, dev, wordAt, msg,
 }) => {
-  const words = MSGS[i].split(' ');
+  const words = msg.text.split(' ');
   return (
     <div style={{ position: 'relative', height: 96 }}>
       {/* 骨架层 */}
       <div style={{ position: 'absolute', inset: 0, display: 'flex', gap: 22, opacity: 1 - dev }}>
-        <div style={{ width: 72, height: 72, borderRadius: 16, background: '#d5d5d3' }} />
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 14, paddingTop: 6 }}>
-          <div style={{ height: 18, width: 180 + ((i * 67) % 90), background: '#d5d5d3', borderRadius: 9 }} />
-          <div style={{ height: 16, width: `${58 + ((i * 31) % 30)}%`, background: '#e2e2e0', borderRadius: 8 }} />
+        <div style={{ width: 72, height: 72, borderRadius: 16, background: '#e8e8e6', color: '#b5b5b2', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, fontWeight: 800 }}>{msg.name[0]}</div>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10, paddingTop: 2 }}>
+          <div style={{ fontSize: 26, fontWeight: 800, color: '#c9c9c7' }}>{msg.name}</div>
+          <div style={{ fontSize: 27, color: '#d5d5d3' }}>{msg.text}</div>
         </div>
       </div>
       {/* 内容层（逐词显影） */}
@@ -154,11 +150,11 @@ const Row: React.FC<{ i: number; dev: number; wordAt: (w: number, n: number) => 
             transform: `scale(${0.7 + 0.3 * dev})`,
           }}
         >
-          {NAMES[i][0]}
+          {msg.name[0]}
         </div>
         <div style={{ flex: 1, paddingTop: 2 }}>
           <div style={{ fontSize: 26, fontWeight: 800, color: INK, opacity: dev }}>
-            {NAMES[i]}
+            {msg.name}
             <span style={{ fontWeight: 400, fontSize: 19, color: '#9a9a98', marginLeft: 12 }}>9:0{i + 1} AM</span>
           </div>
           <div style={{ fontSize: 27, color: '#3c3c3a', marginTop: 8 }}>
@@ -186,9 +182,17 @@ const Row: React.FC<{ i: number; dev: number; wordAt: (w: number, n: number) => 
 };
 
 export interface SkeletonRevealProps {
+  messages?: { name: string; text: string }[];
 }
 
-export const SkeletonReveal: React.FC<SkeletonRevealProps> = () => {
+export const SkeletonReveal: React.FC<SkeletonRevealProps> = ({
+  messages = [
+    { name: 'Ana', text: 'Morning! Kicking off the rebrand today' },
+    { name: 'Ben', text: 'Logo drafts are ready for review' },
+    { name: 'Kai', text: 'Nice — shipping the deck this afternoon' },
+    { name: 'Mia', text: 'Love it. Can we make it pink?' },
+  ],
+}) => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
 
@@ -257,20 +261,20 @@ export const SkeletonReveal: React.FC<SkeletonRevealProps> = () => {
           >
             {/* 侧栏 */}
             <div style={{ width: 300, background: '#3a3a3a', padding: '30px 26px', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: 22 }}>
-              <div style={{ width: 46, height: 46, borderRadius: 12, background: '#777775' }} />
-              {Array.from({ length: 7 }).map((_, i) => (
-                <div key={i} style={{ height: 13, width: `${55 + ((i * 37) % 40)}%`, background: '#5a5a58', borderRadius: 7 }} />
+              <div style={{ width: 46, height: 46, borderRadius: 12, background: '#4a4a48', color: '#9a9a98', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}>✦</div>
+              {['仪表盘', '任务', '文档', '成员', '设置', '通知', '帮助'].map((m, i) => (
+                <div key={i} style={{ fontSize: 15, fontWeight: 600, color: i === 0 ? '#d5d5d3' : '#7a7a78' }}>{m}</div>
               ))}
             </div>
             {/* 主区 */}
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
               <div style={{ height: 72, borderBottom: '2px solid #e4e4e2', display: 'flex', alignItems: 'center', padding: '0 34px' }}>
-                <div style={{ height: 18, width: 230, background: '#d5d5d3', borderRadius: 9 }} />
+                <div style={{ fontSize: 18, fontWeight: 700, color: '#a8a8a5' }}>项目工作区</div>
               </div>
               <div style={{ flex: 1, padding: '30px 40px', display: 'flex', flexDirection: 'column', gap: 32, overflow: 'hidden' }}>
                 {Array.from({ length: 4 }).map((_, i) => (
                   <div key={i} style={{ transform: `translateY(${rowSlide(i)}px)`, opacity: rowSlide(i) > 500 ? 0 : 1 }}>
-                    <Row i={i} dev={devAt(i)} wordAt={wordAt(i)} />
+                    <Row i={i} dev={devAt(i)} wordAt={wordAt(i)} msg={messages[i % messages.length]} />
                   </div>
                 ))}
               </div>

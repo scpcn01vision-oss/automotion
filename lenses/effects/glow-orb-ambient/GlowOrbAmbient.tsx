@@ -56,9 +56,16 @@ const orbPos = (o: Orb, t: number) => {
 };
 
 export interface GlowOrbAmbientProps {
+  cardTitle?: string; // 卡片标题
+  rows?: string[]; // 卡片指标行
+  avatarText?: string; // 卡片头像文字
 }
 
-export const GlowOrbAmbient: React.FC<GlowOrbAmbientProps> = () => {
+export const GlowOrbAmbient: React.FC<GlowOrbAmbientProps> = ({
+  cardTitle = '指标概览',
+  rows = ['指标一 +18%', '指标二 24%', '指标三 9%'],
+  avatarText = '我',
+}) => {
   const f = useCurrentFrame();
 
   // 有效时间：0–90f 匀速，90–120f 用 out-sine 减速收敛（起始斜率≈0.94，近似连续），
@@ -133,12 +140,13 @@ export const GlowOrbAmbient: React.FC<GlowOrbAmbientProps> = () => {
           gap: 16,
         }}
       >
-        <div style={{ height: 18, width: '55%', background: G.side, borderRadius: 9 }} />
-        <div style={{ height: 11, width: '82%', background: G.side, borderRadius: 6 }} />
-        <div style={{ height: 11, width: '68%', background: G.side, borderRadius: 6 }} />
+        <div style={{ fontFamily: FONT_STACK, fontSize: 20, fontWeight: 700, color: G.panel }}>{cardTitle}</div>
+        {rows.map((r, i) => (
+          <div key={i} style={{ fontFamily: FONT_STACK, fontSize: 14, color: G.bar }}>{r}</div>
+        ))}
         <div style={{ marginTop: 'auto', display: 'flex', gap: 10, alignItems: 'center' }}>
-          <div style={{ width: 28, height: 28, borderRadius: 14, background: '#3d3022' }} />
-          <div style={{ height: 11, width: 90, background: '#3d3022', borderRadius: 6 }} />
+          <div style={{ width: 28, height: 28, borderRadius: 14, background: G.bar, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 800, color: G.side }}>{avatarText.charAt(0)}</div>
+          <div style={{ fontFamily: FONT_STACK, fontSize: 13, color: G.mid }}>{avatarText}</div>
         </div>
       </div>
     </AbsoluteFill>

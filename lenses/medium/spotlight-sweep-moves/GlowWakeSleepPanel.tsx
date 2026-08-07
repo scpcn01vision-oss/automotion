@@ -13,6 +13,7 @@
 import React from 'react';
 import { G } from '../../_fixtures/Fixtures';
 import { AbsoluteFill, useCurrentFrame, interpolate } from 'remotion';
+import { FONT_STACK } from '../../_system/typography';
 
 const W = 1250;
 const H = 860;
@@ -22,55 +23,65 @@ const ink = G.ink;
 const mid = G.mid;
 const line = G.line;
 
-const Row: React.FC<{ w: number; icon?: boolean }> = ({ w, icon = true }) => (
+const Row: React.FC<{ label: string; icon: string }> = ({ label, icon }) => (
   <div style={{ display: 'flex', alignItems: 'center', gap: 12, height: 30 }}>
-    {icon && <div style={{ width: 18, height: 18, borderRadius: 5, background: mid }} />}
-    <div style={{ height: 11, width: w, background: '#c9c9c7', borderRadius: 6 }} />
+    <div style={{ width: 18, height: 18, borderRadius: 5, background: G.bar, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, color: G.side }}>{icon}</div>
+    <div style={{ fontFamily: FONT_STACK, fontSize: 14, fontWeight: 600, color: G.ink }}>{label}</div>
   </div>
 );
 
-const TaskCard: React.FC<{ seed: number }> = ({ seed }) => (
-  <div style={{ display: 'flex', flexDirection: 'column', gap: 9, padding: '14px 0' }}>
-    <div style={{ height: 9, width: 150 + (seed % 3) * 22, background: line, borderRadius: 5 }} />
-    <div style={{ height: 12, width: 190 + ((seed * 7) % 4) * 18, background: '#b9b9b7', borderRadius: 6 }} />
-    <div style={{ width: 15, height: 11, background: '#d9d9d7', borderRadius: 2 }} />
+const TaskCard: React.FC<{ title: string; sub: string; status?: string }> = ({ title, sub, status }) => (
+  <div style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: '14px 0', borderBottom: `1px solid ${line}` }}>
+    <div style={{ fontFamily: FONT_STACK, fontSize: 15, fontWeight: 700, color: G.ink }}>{title}</div>
+    <div style={{ fontFamily: FONT_STACK, fontSize: 12, color: G.mid }}>{sub}</div>
+    {status ? <div style={{ fontFamily: FONT_STACK, fontSize: 11, color: G.bar }}>{status}</div> : null}
   </div>
 );
 
-// 灰阶斜置面板（ClickUp 布局形：侧栏 + Review/Shipped 两列）
-const Panel: React.FC = () => (
+// 中性面板（侧栏 + 双列任务板；原 ClickUp 灰阶骨架已换文字内容）
+interface PanelProps {
+  panelTitle: string;
+  sidebarItems: { icon: string; label: string }[];
+  sectionLabel: string;
+  subItems: { icon: string; label: string }[];
+  searchText: string;
+  columns: { title: string; rows: { title: string; sub: string; status?: string }[] }[];
+}
+
+const Panel: React.FC<PanelProps> = ({ panelTitle, sidebarItems, sectionLabel, subItems, searchText, columns }) => (
   <div style={{
-    width: W, height: H, background: '#f6f6f5', borderRadius: R,
+    width: W, height: H, background: G.panel, borderRadius: R,
     display: 'flex', overflow: 'hidden', boxSizing: 'border-box',
   }}>
     <div style={{ width: 300, borderRight: `2px solid ${line}`, padding: '30px 28px', boxSizing: 'border-box' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 34 }}>
-        <div style={{ width: 30, height: 30, borderRadius: 8, background: ink }} />
-        <div style={{ height: 16, width: 96, background: ink, borderRadius: 7 }} />
+        <div style={{ width: 30, height: 30, borderRadius: 8, background: ink, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 800, color: G.panel }}>◆</div>
+        <div style={{ fontFamily: FONT_STACK, fontSize: 17, fontWeight: 700, color: G.ink }}>{panelTitle}</div>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-        <Row w={72} /><Row w={128} /><Row w={64} />
+        {sidebarItems.map((it, i) => <Row key={i} label={it.label} icon={it.icon} />)}
       </div>
-      <div style={{ height: 13, width: 84, background: '#b3b3b1', borderRadius: 6, margin: '34px 0 16px' }} />
+      <div style={{ fontFamily: FONT_STACK, fontSize: 13, fontWeight: 700, color: G.mid, margin: '34px 0 16px' }}>{sectionLabel}</div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-        <Row w={110} /><Row w={140} /><Row w={104} /><Row w={126} />
+        {subItems.map((it, i) => <Row key={i} label={it.label} icon={it.icon} />)}
       </div>
     </div>
     <div style={{ flex: 1, padding: '30px 36px', boxSizing: 'border-box' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 30 }}>
-        <div style={{ width: 24, height: 20, background: mid, borderRadius: 4 }} />
-        <div style={{ height: 17, width: 250, background: '#6f6f6d', borderRadius: 8 }} />
-        <div style={{ height: 12, width: 96, background: line, borderRadius: 6, marginLeft: 40 }} />
-        <div style={{ height: 12, width: 76, background: line, borderRadius: 6 }} />
+        <div style={{ fontFamily: FONT_STACK, fontSize: 20, fontWeight: 800, color: G.ink }}>{panelTitle}</div>
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ fontFamily: FONT_STACK, fontSize: 13, color: G.mid }}>{searchText}</div>
+          <div style={{ width: 22, height: 22, borderRadius: 11, border: `2px solid ${line}` }} />
+        </div>
       </div>
       <div style={{ display: 'flex', gap: 44 }}>
-        {[0, 1].map((col) => (
-          <div key={col} style={{ flex: 1 }}>
-            <div style={{ borderTop: `4px solid ${col === 0 ? '#b9a44c' : G.accent}`, paddingTop: 16, display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ height: 14, width: 88, background: '#5a5a58', borderRadius: 7 }} />
+        {columns.map((col, ci) => (
+          <div key={ci} style={{ flex: 1 }}>
+            <div style={{ borderTop: `4px solid ${G.accent}`, paddingTop: 16, display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ fontFamily: FONT_STACK, fontSize: 15, fontWeight: 700, color: G.ink }}>{col.title}</div>
               <div style={{ width: 22, height: 22, borderRadius: 11, border: `2px solid ${line}` }} />
             </div>
-            {[0, 1, 2].map((i) => <TaskCard key={i} seed={col * 3 + i + 1} />)}
+            {col.rows.map((r, i) => <TaskCard key={i} title={r.title} sub={r.sub} status={r.status} />)}
           </div>
         ))}
       </div>
@@ -106,9 +117,51 @@ const EdgeStreak: React.FC<{ cx: number; y: number; len: number; opacity: number
   };
 
 export interface GlowWakeSleepPanelProps {
+  panelTitle?: string; // 工作区名
+  sidebarItems?: { icon: string; label: string }[]; // 侧栏主菜单
+  sectionLabel?: string; // 侧栏分区标签
+  subItems?: { icon: string; label: string }[]; // 侧栏次级菜单
+  searchText?: string; // 搜索占位
+  columns?: { title: string; rows: { title: string; sub: string; status?: string }[] }[]; // 任务列
 }
 
-export const GlowWakeSleepPanel: React.FC<GlowWakeSleepPanelProps> = () => {
+export const GlowWakeSleepPanel: React.FC<GlowWakeSleepPanelProps> = ({
+  panelTitle = '项目工作区',
+  sidebarItems = [
+    { icon: '◆', label: '仪表盘' },
+    { icon: '●', label: '任务' },
+    { icon: '▲', label: '文档' },
+    { icon: '●', label: '成员' },
+    { icon: '▲', label: '设置' },
+    { icon: '◆', label: '通知' },
+  ],
+  sectionLabel = '常用',
+  subItems = [
+    { icon: '●', label: '消息' },
+    { icon: '▲', label: '收藏' },
+    { icon: '◆', label: '最近' },
+    { icon: '●', label: '归档' },
+  ],
+  searchText = '搜索',
+  columns = [
+    {
+      title: '进行中',
+      rows: [
+        { title: '任务 01', sub: '说明 01', status: '待办' },
+        { title: '任务 02', sub: '说明 02', status: '进行' },
+        { title: '任务 03', sub: '说明 03', status: '完成' },
+      ],
+    },
+    {
+      title: '待处理',
+      rows: [
+        { title: '任务 04', sub: '说明 04', status: '待办' },
+        { title: '任务 05', sub: '说明 05', status: '待办' },
+        { title: '任务 06', sub: '说明 06', status: '进行' },
+      ],
+    },
+  ],
+}) => {
   const frame = useCurrentFrame();
 
   // 聚光沿面板顶边从左向右匀速扫过（面板本地座标）
@@ -151,7 +204,14 @@ export const GlowWakeSleepPanel: React.FC<GlowWakeSleepPanelProps> = () => {
           {/* 后层重影面板（截图④⑤双层） */}
           <div style={{ position: 'absolute', left: -46, top: 34 }}>
             <div style={{ position: 'relative', filter: 'brightness(0.92)' }}>
-              <Panel />
+              <Panel
+                panelTitle={panelTitle}
+                sidebarItems={sidebarItems}
+                sectionLabel={sectionLabel}
+                subItems={subItems}
+                searchText={searchText}
+                columns={columns}
+              />
               {/* 重影面板同样受聚光范围控制 */}
               <div style={{
                 position: 'absolute', inset: 0, borderRadius: R,
@@ -161,7 +221,14 @@ export const GlowWakeSleepPanel: React.FC<GlowWakeSleepPanelProps> = () => {
           </div>
           {/* 面板本体：聚光范围内显影，范围外沉黑 */}
           <div style={{ position: 'relative' }}>
-            <Panel />
+            <Panel
+              panelTitle={panelTitle}
+              sidebarItems={sidebarItems}
+              sectionLabel={sectionLabel}
+              subItems={subItems}
+              searchText={searchText}
+              columns={columns}
+            />
             <div style={{
               position: 'absolute', inset: 0, borderRadius: R,
               background: `radial-gradient(circle 640px at ${sx}px ${sy}px, rgba(4,3,8,${0.12 * (1 - env)}) 0%, rgba(4,3,8,${1 - 0.72 * env}) 58%, rgba(4,3,8,0.985) 92%)`,

@@ -29,6 +29,7 @@ const serveUrl = await bundle({
   entryPoint: ENTRY,
   rootDir: ROOT,
   publicDir: PUBLIC_DIR,
+  enableCaching: false,
 });
 
 console.log("getCompositions...");

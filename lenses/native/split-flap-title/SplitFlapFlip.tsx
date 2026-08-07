@@ -11,7 +11,6 @@
 import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
-import { SceneContent, SceneContentData } from '../../_system/scene-content';
 import { FONT_STACK } from '../../_system/typography';
 
 // split-flap-flip：机场翻牌字。每字符一个深底翻牌格（上下两半），
@@ -176,31 +175,21 @@ const FlapCell: React.FC<{ target: string; i: number; frame: number }> = ({
 };
 
 export interface SplitFlapFlipProps {
-  text?: string;
-  backdrop?: SceneContentData;
+  text?: string; // 翻牌文本（任意字符串）
+  previewLabel?: string; // 翻牌板上方预览字样
 }
 
 export const SplitFlapFlip: React.FC<SplitFlapFlipProps> = ({
   text = 'READY GO',
-  backdrop = {
-    title: '概览',
-    type: 'rows',
-    rows: [
-      { label: '指标一', value: '+18%' },
-      { label: '指标二', value: '2.1×' },
-      { label: '指标三', value: '96.4%' },
-    ],
-  },
+  previewLabel = '预览',
 }) => {
   const frame = useCurrentFrame();
   let letterIdx = 0;
   return (
-    <AbsoluteFill style={{ background: G.bg, overflow: 'hidden' }}>
-      {/* 背景内容压暗，突出翻牌板 */}
-      <div style={{ position: 'absolute', inset: 0, opacity: 0.3, filter: 'saturate(0.8)' }}>
-        <SceneContent content={backdrop} />
-      </div>
-      <AbsoluteFill style={{ alignItems: 'center', justifyContent: 'center' }}>
+    <AbsoluteFill style={{ background: G.bg, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
+      {/* 卡片 + 上方预览字样 */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 30 }}>
+        <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 34, letterSpacing: 12, color: G.mid }}>{previewLabel}</div>
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
           {text.split('').map((ch, idx) => {
             if (ch === ' ') {
@@ -210,7 +199,7 @@ export const SplitFlapFlip: React.FC<SplitFlapFlipProps> = ({
             return <FlapCell key={idx} target={ch} i={i} frame={frame} />;
           })}
         </div>
-      </AbsoluteFill>
+      </div>
     </AbsoluteFill>
   );
 };

@@ -21,9 +21,14 @@ const CARD_H = 420;
 const SHEEN_W = CARD_W * 1.6; // 1216
 
 export interface SheenSweepRetryProps {
+  title?: string; // 卡片大字
+  rows?: string[]; // 卡片指标行
 }
 
-export const SheenSweepRetry: React.FC<SheenSweepRetryProps> = () => {
+export const SheenSweepRetry: React.FC<SheenSweepRetryProps> = ({
+  title = '指标',
+  rows = ['指标一 +18%', '指标二 2.1×'],
+}) => {
   const frame = useCurrentFrame();
 
   // 扫光：40–68f，从卡左外(-SHEEN_W)扫到卡右外(CARD_W)，inOut(cubic)，只一次
@@ -72,10 +77,11 @@ export const SheenSweepRetry: React.FC<SheenSweepRetryProps> = () => {
             lineHeight: 1,
           }}
         >
-          PRO
+          {title}
         </div>
-        <div style={{ height: 16, width: 380, background: G.sideBar, borderRadius: 8 }} />
-        <div style={{ height: 16, width: 260, background: G.sideBar, borderRadius: 8 }} />
+        {rows.map((r, i) => (
+          <div key={i} style={{ fontFamily: FONT_STACK, fontSize: 22, fontWeight: 600, color: G.card }}>{r}</div>
+        ))}
 
         {/* 高光带：条件挂载，扫完即摘罩，收尾真静止 */}
         {sweepActive && (

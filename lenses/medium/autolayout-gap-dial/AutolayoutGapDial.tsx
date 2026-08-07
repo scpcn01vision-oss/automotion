@@ -26,11 +26,13 @@ const GROW_END = 52;
 const HOLD_END = 66;
 
 export interface AutolayoutGapDialProps {
-  blocks?: number[];
+  blocks?: number[]; // 块宽
+  blockLabels?: string[]; // 块内文字
 }
 
 export const AutolayoutGapDial: React.FC<AutolayoutGapDialProps> = ({
   blocks = [230, 190, 265, 210, 245],
+  blockLabels = ['条目 01', '条目 02', '条目 03', '条目 04', '条目 05'],
 }) => {
   const frame = useCurrentFrame();
   const BLOCK_WIDTHS = blocks;
@@ -147,7 +149,7 @@ export const AutolayoutGapDial: React.FC<AutolayoutGapDialProps> = ({
             boxSizing: 'border-box',
           }}
         >
-          <div style={{ height: 16, width: w - 76, background: G.bar, borderRadius: 8 }} />
+          <div style={{ fontFamily: FONT_STACK, fontSize: 18, fontWeight: 600, color: G.ink, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: w - 76 }}>{blockLabels[i] ?? '条目'}</div>
         </div>
       ))}
 

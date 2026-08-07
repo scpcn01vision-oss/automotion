@@ -48,11 +48,11 @@ const valueAt = (frame: number): number => {
 };
 
 export interface TapeScrollFixedPointerProps {
-  label?: string;
+  readoutLabel?: string; // 读数窗标签（中性内容）
 }
 
 export const TapeScrollFixedPointer: React.FC<TapeScrollFixedPointerProps> = ({
-  label = 'FIXED POINTER',
+  readoutLabel = '当前读数',
 }) => {
   const frame = useCurrentFrame();
   const v = valueAt(frame);
@@ -87,10 +87,6 @@ export const TapeScrollFixedPointer: React.FC<TapeScrollFixedPointerProps> = ({
 
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', top: 90, width: '100%', textAlign: 'center' }}>
-        <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 68, color: G.ink, letterSpacing: -1 }}>{label}</div>
-      </div>
-
       {/* 刻度带容器（世界层：整体在动） */}
       <div style={{
         position: 'absolute', left: TAPE_X, top: 180, width: TAPE_W, height: 830,
@@ -126,7 +122,7 @@ export const TapeScrollFixedPointer: React.FC<TapeScrollFixedPointerProps> = ({
         display: 'flex', flexDirection: 'column', justifyContent: 'center',
         padding: '0 36px', boxSizing: 'border-box',
       }}>
-        <div style={{ height: 12, width: 150, background: G.line, borderRadius: 6, marginBottom: 12 }} />
+        <div style={{ fontFamily: FONT_STACK, fontSize: 16, fontWeight: 700, color: G.mid, marginBottom: 12, letterSpacing: 1 }}>{readoutLabel}</div>
         <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 96, color: AMBER, letterSpacing: -2, lineHeight: 1 }}>
           {Math.round(v)}
         </div>

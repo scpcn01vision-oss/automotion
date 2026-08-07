@@ -63,11 +63,20 @@ const CursorActor: React.FC<{ x: number; y: number; a: Actor; badge: number; sca
 export interface CursorCastEnsembleProps {
   names?: string[];
   typed?: string;
+  notes?: { title: string; lines: string[] }[]; // 便签内容
+  noteTitle?: string; // 中央便签标题
 }
 
 export const CursorCastEnsemble: React.FC<CursorCastEnsembleProps> = ({
   names = ['Lisa', 'Lucas', 'Marta', 'Niko', 'Rita'],
   typed = 'Our customers love it',
+  notes = [
+    { title: '要点', lines: ['第一行', '第二行'] },
+    { title: '备忘', lines: ['第一行', '第二行'] },
+    { title: '灵感', lines: ['第一行', '第二行'] },
+    { title: '跟进', lines: ['第一行', '第二行'] },
+  ],
+  noteTitle = '协作便签',
 }) => {
   const f = useCurrentFrame();
   const TYPED = typed;
@@ -107,9 +116,10 @@ export const CursorCastEnsemble: React.FC<CursorCastEnsembleProps> = ({
           boxShadow: '0 4px 14px rgba(0,0,0,0.10)', transform: `rotate(${noteRots[i]}deg)`,
           padding: 18, boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: 12,
         }}>
-          <div style={{ height: 12, width: '70%', background: G.bar, borderRadius: 6 }} />
-          <div style={{ height: 10, width: '86%', background: G.line, borderRadius: 5 }} />
-          <div style={{ height: 10, width: '58%', background: G.line, borderRadius: 5 }} />
+          <div style={{ fontFamily: FONT_STACK, fontSize: 18, fontWeight: 700, color: G.ink }}>{notes[i % notes.length].title}</div>
+          {notes[i % notes.length].lines.map((ln, li) => (
+            <div key={li} style={{ fontFamily: FONT_STACK, fontSize: 14, color: G.mid }}>{ln}</div>
+          ))}
         </div>
       ))}
       {/* 中央大便签：Rita 打字的舞台 */}
@@ -118,7 +128,7 @@ export const CursorCastEnsemble: React.FC<CursorCastEnsembleProps> = ({
         background: '#ffffff', border: `2px solid ${G.border}`, borderRadius: 12,
         boxShadow: '0 6px 22px rgba(0,0,0,0.12)', padding: 30, boxSizing: 'border-box',
       }}>
-        <div style={{ height: 14, width: 180, background: G.bar, borderRadius: 7, marginBottom: 24 }} />
+        <div style={{ fontFamily: FONT_STACK, fontSize: 22, fontWeight: 700, color: G.ink, marginBottom: 16 }}>{noteTitle}</div>
         <div style={{
           fontFamily: FONT_STACK, fontWeight: 700, fontSize: 44,
           color: G.ink, letterSpacing: -0.5, minHeight: 56,

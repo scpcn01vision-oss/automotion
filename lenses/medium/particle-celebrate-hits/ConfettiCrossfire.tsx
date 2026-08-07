@@ -58,11 +58,17 @@ const LEFT_POS = { x: 140, y: 1040 };
 const RIGHT_POS = { x: 1780, y: 1040 };
 
 export interface ConfettiCrossfireProps {
-  label?: string;
+  label?: string; // 顶部标题（手法名标签默认去掉）
+  title?: string; // KPI 卡标题
+  value?: string; // KPI 数值
+  subtitle?: string; // KPI 副标题
 }
 
 export const ConfettiCrossfire: React.FC<ConfettiCrossfireProps> = ({
-  label = 'CELEBRATE',
+  label = '',
+  title = '达成率',
+  value = '98.5%',
+  subtitle = '同比增长',
 }) => {
   const frame = useCurrentFrame();
   const age = frame - FIRE;
@@ -102,9 +108,11 @@ export const ConfettiCrossfire: React.FC<ConfettiCrossfireProps> = ({
 
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', top: 110, width: '100%', textAlign: 'center' }}>
-        <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1 }}>{label}</div>
-      </div>
+      {label ? (
+        <div style={{ position: 'absolute', top: 110, width: '100%', textAlign: 'center' }}>
+          <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1 }}>{label}</div>
+        </div>
+      ) : null}
 
       {/* 中央 KPI 卡 */}
       <div style={{
@@ -114,14 +122,14 @@ export const ConfettiCrossfire: React.FC<ConfettiCrossfireProps> = ({
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         transform: `scale(${cardScale})`, opacity: cardOp,
       }}>
-        <div style={{ height: 14, width: 220, background: G.bar, borderRadius: 7 }} />
+        <div style={{ fontFamily: FONT_STACK, fontSize: 24, fontWeight: 700, color: G.ink }}>{title}</div>
         <div style={{
           fontFamily: FONT_STACK, fontWeight: 800, fontSize: 150,
           color: AMBER, letterSpacing: -3, lineHeight: 1.1, fontVariantNumeric: 'tabular-nums',
         }}>
-          98.5%
+          {value}
         </div>
-        <div style={{ height: 10, width: 150, background: G.line, borderRadius: 5 }} />
+        <div style={{ fontFamily: FONT_STACK, fontSize: 18, color: G.mid }}>{subtitle}</div>
       </div>
 
       {renderGun(LEFT_GUN, LEFT_POS, 'L')}

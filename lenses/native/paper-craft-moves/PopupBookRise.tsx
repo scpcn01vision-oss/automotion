@@ -104,18 +104,18 @@ const PageCard: React.FC<{
             background: G.card,
             border: `2px solid ${G.border}`,
             borderRadius: 14,
-            padding: 20,
+            padding: Math.max(18, Math.floor(cellW * 0.055)),
             boxSizing: 'border-box',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
-            gap: 12,
+            gap: Math.max(12, Math.floor(cellH * 0.06)),
           }}
         >
-          <div style={{ fontFamily: FONT_STACK, fontSize: 22, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
+          <div style={{ fontFamily: FONT_STACK, fontSize: Math.max(22, Math.floor(cellW * 0.085)), fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
             {label}
           </div>
-          <div style={{ fontFamily: FONT_STACK, fontSize: 34, fontWeight: 800, color: G.accent }}>
+          <div style={{ fontFamily: FONT_STACK, fontSize: Math.max(30, Math.floor(cellW * 0.125)), fontWeight: 800, color: G.accent }}>
             {value}
           </div>
         </div>
@@ -126,7 +126,10 @@ const PageCard: React.FC<{
 
 export interface PopupBookRiseProps {
   cards?: { label: string; value: string }[];
-  pageTitle?: string;
+  pageTitle?: string; // 顶栏标题
+  menuItems?: { icon: string; label: string }[]; // 侧栏菜单
+  searchText?: string; // 搜索占位文字
+  avatarText?: string; // 顶栏头像首字母
 }
 
 export const PopupBookRise: React.FC<PopupBookRiseProps> = ({
@@ -139,6 +142,17 @@ export const PopupBookRise: React.FC<PopupBookRiseProps> = ({
     { label: '可用性', value: '99.98%' },
   ],
   pageTitle = '概览',
+  menuItems = [
+    { icon: '◆', label: '仪表盘' },
+    { icon: '●', label: '任务' },
+    { icon: '▲', label: '文档' },
+    { icon: '●', label: '成员' },
+    { icon: '▲', label: '设置' },
+    { icon: '◆', label: '通知' },
+    { icon: '●', label: '帮助' },
+  ],
+  searchText = '搜索',
+  avatarText = '我',
 }) => {
   const frame = useCurrentFrame();
   const cols = 3;
@@ -169,15 +183,18 @@ export const PopupBookRise: React.FC<PopupBookRiseProps> = ({
           {/* 书页底板：dashboard 的壳（侧栏+顶栏+空白页面） */}
           <div style={{ position: 'absolute', inset: 0, background: G.bg, boxShadow: '0 40px 80px rgba(0,0,0,0.25)' }}>
             <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 220, background: G.side, padding: '28px 22px', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: 18 }}>
-              <div style={{ width: 40, height: 40, borderRadius: 10, background: G.bar }} />
-              {Array.from({ length: 7 }).map((_, i) => (
-                <div key={i} style={{ height: 12, width: `${60 + ((i * 29) % 35)}%`, background: G.sideBar, borderRadius: 6 }} />
+              <div style={{ width: 40, height: 40, borderRadius: 10, background: G.sideBar, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 800, color: G.side }}>◆</div>
+              {menuItems.map((it, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div style={{ width: 26, height: 26, borderRadius: 6, background: G.sideBar, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, color: G.side }}>{it.icon}</div>
+                  <div style={{ fontSize: 16, fontWeight: 600, color: G.panel }}>{it.label}</div>
+                </div>
               ))}
             </div>
             <div style={{ position: 'absolute', left: 220, right: 0, top: 0, height: 72, background: G.panel, borderBottom: `2px solid ${G.line}`, display: 'flex', alignItems: 'center', padding: '0 32px', gap: 20, boxSizing: 'border-box' }}>
               <div style={{ fontFamily: FONT_STACK, fontSize: 22, fontWeight: 700, color: G.ink }}>{pageTitle}</div>
-              <div style={{ marginLeft: 'auto', height: 36, width: 320, background: G.card, border: `2px solid ${G.line}`, borderRadius: 18, boxSizing: 'border-box' }} />
-              <div style={{ width: 36, height: 36, borderRadius: 18, background: G.mid }} />
+              <div style={{ marginLeft: 'auto', height: 38, minWidth: 240, display: 'flex', alignItems: 'center', padding: '0 16px', background: G.card, border: `2px solid ${G.line}`, borderRadius: 19, boxSizing: 'border-box', fontSize: 18, color: G.mid }}>{searchText}</div>
+              <div style={{ width: 38, height: 38, borderRadius: 19, background: G.mid, color: G.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, fontWeight: 800 }}>{avatarText}</div>
             </div>
           </div>
           {/* 纸片卡沿底边立起（3 列，行数随数量自适应） */}

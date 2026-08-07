@@ -7,14 +7,12 @@ import { LetterspaceMaterialize } from "./native/letterspace-materialize/Letters
 import { LineBoil } from "./native/line-boil/LineBoil.tsx";
 import { MarkerUnderlineTitle } from "./native/marker-underline-title/MarkerUnderlineTitle.tsx";
 import { BarnDoorSplit } from "./native/page-turn-transitions/BarnDoorSplit.tsx";
-import { CubeRotate } from "./native/page-turn-transitions/CubeRotate.tsx";
 import { PageWaterfallWall } from "./native/page-waterfall-wall/PageWaterfallWall.tsx";
 import { VerticalTickerWrapper } from "./native/page-waterfall-wall/VerticalTickerWrapper.tsx";
 import { MaskingTapeSlap } from "./native/paper-craft-moves/MaskingTapeSlap.tsx";
 import { PopupBookRise } from "./native/paper-craft-moves/PopupBookRise.tsx";
 import { PaperPlaneMessenger } from "./native/paper-plane-messenger/PaperPlaneMessenger.tsx";
 import { InkBleedReveal } from "./native/print-texture-transitions/InkBleedReveal.tsx";
-import { RisoBeatPump } from "./native/riso-print-hits/RisoBeatPump.tsx";
 import { RisoMisregistrationHit } from "./native/riso-print-hits/RisoMisregistrationHit.tsx";
 import { SplitFlapFlip } from "./native/split-flap-title/SplitFlapFlip.tsx";
 import { StrokeSegmentBuild } from "./native/stroke-segment-build/StrokeSegmentBuild.tsx";
@@ -23,14 +21,12 @@ import { TypewriterErrorRetype } from "./native/typewriter-moves/TypewriterError
 
 // ============ 极轻（minimal）============
 import { BeatCutAccelerando } from "./minimal/beat-cut-moves/BeatCutAccelerando.tsx";
-import { PaparazziFlash } from "./minimal/beat-cut-moves/PaparazziFlash.tsx";
 import { BottomPushStackWipe } from "./minimal/bottom-push-stack-wipe/BottomPushStackWipe.tsx";
 import { CircleMatchIris } from "./minimal/circle-match-iris/CircleMatchIris.tsx";
 import { ColorBlockStepWipe } from "./minimal/color-block-step-wipe/ColorBlockStepWipe.tsx";
 import { CraneRiseReveal } from "./minimal/crane-rise-reveal/CraneRiseReveal.tsx";
 import { DollyZoomReal } from "./minimal/depth-layer-moves/DollyZoomReal.tsx";
 import { MultiplaneReal } from "./minimal/depth-layer-moves/MultiplaneReal.tsx";
-import { LogoStingButton } from "./minimal/edit-hook-moves/LogoStingButton.tsx";
 import { GrazeFaceTour } from "./minimal/graze-face-tour/GrazeFaceTour.tsx";
 import { LineCarryTransition } from "./minimal/line-carry-transition/LineCarryTransition.tsx";
 import { DominoCascade } from "./minimal/montage-rhythm-moves/DominoCascade.tsx";
@@ -180,14 +176,12 @@ export const RemotionRoot: React.FC = () => {
       <Composition id="LineBoil" component={LineBoil} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="MarkerUnderlineTitle" component={MarkerUnderlineTitle} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="BarnDoorSplit" component={BarnDoorSplit} width={1920} height={1080} fps={30} durationInFrames={180} />
-      <Composition id="CubeRotate" component={CubeRotate} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="PageWaterfallWall" component={PageWaterfallWall} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="VerticalTickerWrapper" component={VerticalTickerWrapper} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="MaskingTapeSlap" component={MaskingTapeSlap} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="PopupBookRise" component={PopupBookRise} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="PaperPlaneMessenger" component={PaperPlaneMessenger} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="InkBleedReveal" component={InkBleedReveal} width={1920} height={1080} fps={30} durationInFrames={180} />
-      <Composition id="RisoBeatPump" component={RisoBeatPump} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="RisoMisregistrationHit" component={RisoMisregistrationHit} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="SplitFlapFlip" component={SplitFlapFlip} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="StrokeSegmentBuild" component={StrokeSegmentBuild} width={1920} height={1080} fps={30} durationInFrames={180} />
@@ -195,14 +189,12 @@ export const RemotionRoot: React.FC = () => {
       <Composition id="TypewriterErrorRetype" component={TypewriterErrorRetype} width={1920} height={1080} fps={30} durationInFrames={180} />
       {/* === 极轻（风格中性）=== */}
       <Composition id="BeatCutAccelerando" component={BeatCutAccelerando} width={1920} height={1080} fps={30} durationInFrames={180} />
-      <Composition id="PaparazziFlash" component={PaparazziFlash} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="BottomPushStackWipe" component={BottomPushStackWipe} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="CircleMatchIris" component={CircleMatchIris} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="ColorBlockStepWipe" component={ColorBlockStepWipe} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="CraneRiseReveal" component={CraneRiseReveal} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="DollyZoomReal" component={DollyZoomReal} width={1920} height={1080} fps={30} durationInFrames={135} />
       <Composition id="MultiplaneReal" component={MultiplaneReal} width={1920} height={1080} fps={30} durationInFrames={135} />
-      <Composition id="LogoStingButton" component={LogoStingButton} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="GrazeFaceTour" component={GrazeFaceTour} width={1920} height={1080} fps={30} durationInFrames={150} />
       <Composition id="LineCarryTransition" component={LineCarryTransition} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="DominoCascade" component={DominoCascade} width={1920} height={1080} fps={30} durationInFrames={180} />

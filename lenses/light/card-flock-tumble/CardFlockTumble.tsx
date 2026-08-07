@@ -98,42 +98,43 @@ const NeonWall: React.FC<{ frame: number }> = ({ frame }) => {
   );
 };
 
-// ---------- ClickUp 风格 UI 卡 ----------
-const UiCard: React.FC<{ seed: number; title: string }> = ({ seed, title }) => (
+// ---------- 中性 UI 卡（原 ClickUp 风格灰条已换文字） ----------
+const UiCard: React.FC<{ title: string; sub: string; sidebar: string[]; rows: string[]; actions: string[] }> = ({ title, sub, sidebar, rows, actions }) => (
   <div
     style={{
       width: 560,
       height: 400,
-      background: '#fbfbfc',
+      background: G.card,
       borderRadius: 14,
       padding: 0,
       boxSizing: 'border-box',
-      boxShadow: '0 0 60px rgba(211,146,60,0.3), 0 22px 60px rgba(0,0,0,0.55)',
+      boxShadow: `0 0 60px rgba(211,146,60,0.3), 0 22px 60px rgba(0,0,0,0.55)`,
       display: 'flex',
       overflow: 'hidden',
     }}
   >
-    <div style={{ width: 128, background: '#f3f3f6', padding: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
+    <div style={{ width: 128, background: G.nav, padding: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-        <div style={{ width: 14, height: 14, borderRadius: 4, background: `linear-gradient(135deg,${G.accent},#e8a44a)` }} />
-        <div style={{ height: 8, width: 52, background: '#c9c9d2', borderRadius: 4 }} />
+        <div style={{ width: 14, height: 14, borderRadius: 4, background: `linear-gradient(135deg,${G.accent},${G.mid})` }} />
+        <div style={{ fontFamily: FONT, fontSize: 13, fontWeight: 700, color: G.ink }}>工作台</div>
       </div>
-      {Array.from({ length: 8 }).map((_, i) => (
-        <div key={i} style={{ height: 7, width: `${52 + ((i * 31 + seed * 17) % 42)}%`, background: '#d9d9df', borderRadius: 4 }} />
+      {sidebar.map((s, i) => (
+        <div key={i} style={{ fontFamily: FONT, fontSize: 12, fontWeight: 600, color: G.mid }}>{s}</div>
       ))}
     </div>
     <div style={{ flex: 1, padding: 18, display: 'flex', flexDirection: 'column', gap: 10 }}>
-      <div style={{ fontFamily: FONT, fontWeight: 700, fontSize: 26, color: '#3a3a44' }}>{title}</div>
-      <div style={{ height: 10, width: '58%', background: '#ececf1', borderRadius: 5 }} />
-      {Array.from({ length: 6 }).map((_, i) => (
+      <div style={{ fontFamily: FONT, fontWeight: 700, fontSize: 26, color: G.ink }}>{title}</div>
+      <div style={{ fontFamily: FONT, fontWeight: 600, fontSize: 14, color: G.mid }}>{sub}</div>
+      {rows.map((r, i) => (
         <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <div style={{ width: 11, height: 11, borderRadius: '50%', background: [G.accent, '#e8a44a', '#b87a2e'][(i + seed) % 3], opacity: 0.7 }} />
-          <div style={{ height: 8, width: `${78 - ((i * 23 + seed * 29) % 40)}%`, background: '#e8e8ee', borderRadius: 4 }} />
+          <div style={{ width: 11, height: 11, borderRadius: '50%', background: i % 3 === 0 ? G.accent : i % 3 === 1 ? G.mid : G.bar, opacity: 0.7 }} />
+          <div style={{ fontFamily: FONT, fontSize: 13, color: G.ink }}>{r}</div>
         </div>
       ))}
       <div style={{ marginTop: 'auto', display: 'flex', gap: 8 }}>
-        <div style={{ width: 74, height: 22, background: G.accent, opacity: 0.75, borderRadius: 6 }} />
-        <div style={{ width: 46, height: 22, background: '#e4e4ea', borderRadius: 6 }} />
+        {actions.map((a, i) => (
+          <div key={i} style={{ padding: '4px 16px', fontFamily: FONT, fontSize: 13, fontWeight: 700, borderRadius: 6, background: i === 0 ? G.accent : G.nav, color: i === 0 ? G.side : G.ink }}>{a}</div>
+        ))}
       </div>
     </div>
   </div>
@@ -274,11 +275,31 @@ const lerpPose = (a: Pose, b: Pose, t: number): Pose => {
 export interface CardFlockTumbleProps {
   word?: string;
   cards?: string[];
+  cardSubs?: string[]; // 每卡副标题
+  cardSidebars?: string[][]; // 每卡侧栏菜单
+  cardRows?: string[][]; // 每卡指标行
+  cardActions?: string[][]; // 每卡按钮
 }
 
 export const CardFlockTumble: React.FC<CardFlockTumbleProps> = ({
   word = 'STRONGER',
   cards = ['Inbox', 'List view', 'Home'],
+  cardSubs = ['概览', '列表', '主页'],
+  cardSidebars = [
+    ['仪表盘', '任务', '文档', '成员', '设置', '通知'],
+    ['仪表盘', '任务', '文档', '成员', '设置', '通知'],
+    ['仪表盘', '任务', '文档', '成员', '设置', '通知'],
+  ],
+  cardRows = [
+    ['指标一 +18%', '指标二 2.1×', '指标三 96.4%', '指标四 24%', '指标五 9%', '指标六 41%'],
+    ['指标一 +18%', '指标二 2.1×', '指标三 96.4%', '指标四 24%', '指标五 9%', '指标六 41%'],
+    ['指标一 +18%', '指标二 2.1×', '指标三 96.4%', '指标四 24%', '指标五 9%', '指标六 41%'],
+  ],
+  cardActions = [
+    ['新建', '编辑'],
+    ['新建', '编辑'],
+    ['新建', '编辑'],
+  ],
 }) => {
   const frame = useCurrentFrame();
   const CARDS = CARD_POSES.map((p, i) => ({ ...p, title: cards[i] ?? '' }));
@@ -343,7 +364,7 @@ export const CardFlockTumble: React.FC<CardFlockTumbleProps> = ({
                   zIndex: 10 + i,
                 }}
               >
-                <UiCard seed={i} title={c.title} />
+                <UiCard title={c.title} sub={cardSubs[i] ?? ''} sidebar={cardSidebars[i] ?? []} rows={cardRows[i] ?? []} actions={cardActions[i] ?? []} />
               </div>
             );
           })}

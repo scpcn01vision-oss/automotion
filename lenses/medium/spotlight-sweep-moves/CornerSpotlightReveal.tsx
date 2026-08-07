@@ -13,11 +13,12 @@
 import React from 'react';
 import { G } from '../../_fixtures/Fixtures';
 import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
+import { FONT_STACK } from '../../_system/typography';
 
 const FONT = '"Avenir Next", "Helvetica Neue", Helvetica, sans-serif';
 
 // 灰阶 Inbox 界面（自绘，替代真 UI）
-const InboxPanel: React.FC = () => (
+const InboxPanel: React.FC<{ rows: { title: string; meta: string; detail: string; note: string }[] }> = ({ rows }) => (
   <div
     style={{
       width: 1920,
@@ -49,18 +50,18 @@ const InboxPanel: React.FC = () => (
     </div>
     {[0, 1, 2].map((row) => (
       <div key={row} style={{ display: 'flex', alignItems: 'center', gap: 30, marginTop: row === 0 ? 96 : 64 }}>
-        <div style={{ width: 42, height: 42, border: '3px solid #c9c9c7', borderRadius: 10 }} />
+        <div style={{ width: 42, height: 42, border: `3px solid ${G.border}`, borderRadius: 10 }} />
         <div style={{ width: 14, height: 14, borderRadius: 7, background: G.accent }} />
         <div style={{ width: 56, height: 56, borderRadius: 28, background: G.panel }} />
         <div>
           <div style={{ display: 'flex', gap: 22, alignItems: 'center' }}>
-            <div style={{ height: 22, width: 220 + ((row * 67) % 90), background: '#3f3f3f', borderRadius: 11 }} />
-            <div style={{ width: 8, height: 8, borderRadius: 4, background: '#bbb' }} />
-            <div style={{ height: 18, width: 260, background: '#c9c9c7', borderRadius: 9 }} />
+            <div style={{ fontFamily: FONT_STACK, fontSize: 24, fontWeight: 700, color: G.ink }}>{rows[row].title}</div>
+            <div style={{ width: 8, height: 8, borderRadius: 4, background: G.mid }} />
+            <div style={{ fontFamily: FONT_STACK, fontSize: 18, color: G.mid }}>{rows[row].meta}</div>
           </div>
           <div style={{ display: 'flex', gap: 14, marginTop: 16 }}>
-            <div style={{ height: 18, width: 300, background: G.mid, borderRadius: 9, opacity: 0.75 }} />
-            <div style={{ height: 18, width: 340 - ((row * 91) % 120), background: '#d8d8d6', borderRadius: 9 }} />
+            <div style={{ fontFamily: FONT_STACK, fontSize: 16, color: G.ink, opacity: 0.85 }}>{rows[row].detail}</div>
+            <div style={{ fontFamily: FONT_STACK, fontSize: 16, color: G.mid }}>{rows[row].note}</div>
           </div>
         </div>
       </div>
@@ -69,9 +70,16 @@ const InboxPanel: React.FC = () => (
 );
 
 export interface CornerSpotlightRevealProps {
+  rows?: { title: string; meta: string; detail: string; note: string }[]; // 内容行
 }
 
-export const CornerSpotlightReveal: React.FC<CornerSpotlightRevealProps> = () => {
+export const CornerSpotlightReveal: React.FC<CornerSpotlightRevealProps> = ({
+  rows = [
+    { title: '任务 01', meta: '说明 01', detail: '负责人 甲', note: '备注 01' },
+    { title: '任务 02', meta: '说明 02', detail: '负责人 乙', note: '备注 02' },
+    { title: '任务 03', meta: '说明 03', detail: '负责人 丙', note: '备注 03' },
+  ],
+}) => {
   const frame = useCurrentFrame();
 
   // 聚光半径扩张：全程匀速（用户裁决"整个过程要匀速"——严格 linear，无缓动）
@@ -110,7 +118,7 @@ export const CornerSpotlightReveal: React.FC<CornerSpotlightRevealProps> = () =>
           transformOrigin: '18% 12%',
         }}
       >
-        <InboxPanel />
+        <InboxPanel rows={rows} />
       </AbsoluteFill>
       {/* 聚光自身的白热光晕（叠在界面上方，光心最亮） */}
       <div

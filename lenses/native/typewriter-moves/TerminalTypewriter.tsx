@@ -34,7 +34,8 @@ const TerminalWindow: React.FC<{
   cursorOn: boolean;
   command: string;
   history: string;
-}> = ({ chars, cursorOn, command, history }) => (
+  windowTitle: string;
+}> = ({ chars, cursorOn, command, history, windowTitle }) => (
   <div style={{
     width: TW, height: TH, background: '#1e1e1c', borderRadius: 14,
     boxShadow: '0 24px 64px rgba(0,0,0,0.35)',
@@ -49,7 +50,7 @@ const TerminalWindow: React.FC<{
       {['#6a6a68', '#8f8f8d', '#b5b5b3'].map((c, i) => (
         <div key={i} style={{ width: 16, height: 16, borderRadius: 8, background: c }} />
       ))}
-      <div style={{ margin: '0 auto', height: 10, width: 200, background: '#4a4a48', borderRadius: 5 }} />
+      <div style={{ margin: '0 auto', fontSize: 15, color: '#8f8f8d', fontWeight: 600 }}>{windowTitle}</div>
       <div style={{ width: 72 }} />
     </div>
     {/* 内容区 */}
@@ -75,11 +76,13 @@ export interface TerminalTypewriterProps {
   command?: string;
   history?: string;
   result?: SceneContentData;
+  windowTitle?: string; // 终端窗口标题
 }
 
 export const TerminalTypewriter: React.FC<TerminalTypewriterProps> = ({
   command = 'deploy --prod',
   history = '~ (main)',
+  windowTitle = '未命名终端',
   result = {
     title: '概览',
     type: 'rows',
@@ -134,7 +137,7 @@ export const TerminalTypewriter: React.FC<TerminalTypewriterProps> = ({
           ...(pushBlur > 0 ? { filter: `blur(${pushBlur}px)` } : {}),
         }}>
           <div style={{ position: 'absolute', left: TL, top: TT }}>
-            <TerminalWindow chars={chars} cursorOn={cursorOn} command={command} history={history} />
+            <TerminalWindow chars={chars} cursorOn={cursorOn} command={command} history={history} windowTitle={windowTitle} />
           </div>
         </div>
       ) : (

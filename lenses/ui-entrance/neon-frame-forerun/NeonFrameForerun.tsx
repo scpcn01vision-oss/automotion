@@ -16,6 +16,7 @@
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const easeFall = Easing.bezier(0.5, 0.05, 0.6, 1); // 加速下落、末端软着陆
 
@@ -61,81 +62,107 @@ const PL = 1000; // 归一路径长
 // 直角矩形路径：从左缘中点出发（对应截图①左缘先亮）
 const FRAME_D = `M 0 ${PH / 2} L 0 0 L ${PW} 0 L ${PW} ${PH} L 0 ${PH} Z`;
 
-const Chip: React.FC<{ w: number }> = ({ w }) => (
+const Chip: React.FC<{ w: number; data: { title: string; sub: string } }> = ({ w, data }) => (
   <div style={{
     width: w, height: 74, background: G.card, border: `2px solid ${line}`,
     borderRadius: 10, padding: '12px 14px', boxSizing: 'border-box',
-    display: 'flex', flexDirection: 'column', gap: 9,
+    display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 6,
   }}>
-    <div style={{ height: 11, width: '70%', background: G.bar, borderRadius: 5 }} />
-    <div style={{ height: 9, width: '48%', background: line, borderRadius: 5 }} />
+    <div style={{ fontFamily: FONT_STACK, fontSize: 16, fontWeight: 700, color: G.ink, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{data.title}</div>
+    <div style={{ fontFamily: FONT_STACK, fontSize: 13, color: G.mid, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{data.sub}</div>
   </div>
 );
 
 /* t = 贴落进程(0..1)。各组件按页面展示顺序（侧栏自上而下、主区自上而下）
  * 错峰从空中贴落，悬空时投同形软影（对标截图③虚影→④⑤贴合） */
-const GrayHome: React.FC<{ t?: number }> = ({ t = 1 }) => {
+interface GrayHomeProps {
+  t?: number;
+  appName: string;
+  menuItems: { icon: string; label: string }[];
+  subMenuItems: { icon: string; label: string }[];
+  sectionLabel: string;
+  mainTitle: string;
+  searchText: string;
+  chips: { title: string; sub: string }[];
+  statLabels: string[];
+  rows: { title: string; avatars: string[] }[];
+}
+
+const GrayHome: React.FC<GrayHomeProps> = ({
+  t = 1,
+  appName,
+  menuItems,
+  subMenuItems,
+  sectionLabel,
+  mainTitle,
+  searchText,
+  chips,
+  statLabels,
+  rows,
+}) => {
   const L = (land: number, H = 72) => liftOf(t, land, H * 1.7);
   return (
   <div style={{ width: PW, height: PH, background: G.card, borderRadius: 6, display: 'flex', overflow: 'hidden', boxSizing: 'border-box' }}>
     <div style={{ width: 290, borderRight: `2px solid ${line}`, padding: '26px 24px', boxSizing: 'border-box' }}>
       <FloatWrap h={L(0.24, 84)}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 28 }}>
-          <div style={{ width: 28, height: 28, borderRadius: 8, background: ink }} />
-          <div style={{ height: 15, width: 88, background: ink, borderRadius: 7 }} />
+          <div style={{ width: 28, height: 28, borderRadius: 8, background: ink, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 800, color: G.panel }}>◆</div>
+          <div style={{ fontFamily: FONT_STACK, fontSize: 17, fontWeight: 700, color: G.panel }}>{appName}</div>
         </div>
       </FloatWrap>
-      {[76, 56, 96, 110, 66, 60].map((w, i) => (
+      {menuItems.map((it, i) => (
         <FloatWrap key={i} h={L(0.3 + i * 0.045, 66)}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 11, height: 34 }}>
-            <div style={{ width: 17, height: 17, borderRadius: 5, background: mid }} />
-            <div style={{ height: 10, width: w, background: G.bar, borderRadius: 5 }} />
+            <div style={{ width: 17, height: 17, borderRadius: 5, background: mid, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, color: G.panel }}>{it.icon}</div>
+            <div style={{ fontFamily: FONT_STACK, fontSize: 14, fontWeight: 600, color: G.panel }}>{it.label}</div>
           </div>
         </FloatWrap>
       ))}
       <FloatWrap h={L(0.56, 62)}>
-        <div style={{ height: 11, width: 70, background: G.mid, borderRadius: 5, margin: '24px 0 12px' }} />
+        <div style={{ fontFamily: FONT_STACK, fontSize: 13, fontWeight: 700, color: G.mid, margin: '24px 0 12px' }}>{sectionLabel}</div>
       </FloatWrap>
-      {[104, 126, 96, 118, 88].map((w, i) => (
+      {subMenuItems.map((it, i) => (
         <FloatWrap key={i} h={L(0.62 + i * 0.05, 66)}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 11, height: 32 }}>
-            <div style={{ width: 16, height: 16, borderRadius: 4, background: G.bar }} />
-            <div style={{ height: 10, width: w, background: G.bar, borderRadius: 5 }} />
+            <div style={{ width: 16, height: 16, borderRadius: 4, background: G.bar, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, color: G.side }}>{it.icon}</div>
+            <div style={{ fontFamily: FONT_STACK, fontSize: 13, fontWeight: 600, color: G.panel }}>{it.label}</div>
           </div>
         </FloatWrap>
       ))}
     </div>
     <div style={{ flex: 1, padding: '30px 40px', boxSizing: 'border-box' }}>
       <FloatWrap h={L(0.26, 90)}>
-        <div style={{ height: 24, width: 130, background: G.mid, borderRadius: 10, marginBottom: 22 }} />
+        <div style={{ fontFamily: FONT_STACK, fontSize: 26, fontWeight: 800, color: G.ink, marginBottom: 18 }}>{mainTitle}</div>
       </FloatWrap>
       <FloatWrap h={L(0.34, 80)}>
-        <div style={{ height: 46, border: `2px solid ${line}`, borderRadius: 12, marginBottom: 26, display: 'flex', alignItems: 'center', padding: '0 16px', background: '#fefcf8' }}>
-          <div style={{ width: 17, height: 17, borderRadius: 9, border: `2px solid ${mid}` }} />
-          <div style={{ height: 10, width: 250, background: line, borderRadius: 5, marginLeft: 12 }} />
+        <div style={{ height: 46, border: `2px solid ${line}`, borderRadius: 12, marginBottom: 26, display: 'flex', alignItems: 'center', padding: '0 16px', background: G.card, fontFamily: FONT_STACK, fontSize: 17, color: G.mid }}>
+          <span style={{ marginRight: 12, fontWeight: 700 }}>⌕</span>
+          {searchText}
         </div>
       </FloatWrap>
       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 30 }}>
-        {[0, 1, 2, 3, 4, 5, 6].map((i) => (
+        {chips.map((chip, i) => (
           <FloatWrap key={i} h={L(0.42 + i * 0.04, 76)}>
-            <Chip w={222} />
+            <Chip w={222} data={chip} />
           </FloatWrap>
         ))}
       </div>
       <FloatWrap h={L(0.72, 60)}>
         <div style={{ display: 'flex', gap: 18, marginBottom: 18 }}>
-          {[54, 84, 50, 82].map((w, i) => (
-            <div key={i} style={{ height: 11, width: w, background: i === 0 ? G.mid : line, borderRadius: 5 }} />
+          {statLabels.map((s, i) => (
+            <div key={i} style={{ fontFamily: FONT_STACK, fontSize: 15, fontWeight: 700, color: i === 0 ? G.ink : G.mid }}>{s}</div>
           ))}
         </div>
       </FloatWrap>
-      {[0, 1, 2, 3].map((i) => (
+      {rows.map((r, i) => (
         <FloatWrap key={i} h={L(0.78 + i * 0.055, 64)}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14, height: 46, borderBottom: `2px solid ${line}` }}>
-            <div style={{ width: 13, height: 13, borderRadius: 7, background: '#c26a6a' }} />
-            <div style={{ height: 11, width: 160 + ((i * 37) % 70), background: G.bar, borderRadius: 5 }} />
+            <div style={{ width: 13, height: 13, borderRadius: 7, background: G.accent }} />
+            <div style={{ fontFamily: FONT_STACK, fontSize: 17, fontWeight: 600, color: G.ink }}>{r.title}</div>
             <div style={{ marginLeft: 'auto', display: 'flex', gap: 7 }}>
-              {[0, 1, 2].map((k) => <div key={k} style={{ width: 20, height: 20, borderRadius: 10, background: G.bar }} />)}
+              {r.avatars.map((a, k) => (
+                <div key={k} style={{ width: 20, height: 20, borderRadius: 10, background: G.bar, color: G.side, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, fontWeight: 800 }}>{a}</div>
+              ))}
             </div>
           </div>
         </FloatWrap>
@@ -158,9 +185,54 @@ const BG_FRAMES: BgFrame[] = Array.from({ length: 18 }).map(() => ({
 }));
 
 export interface NeonFrameForerunProps {
+  appName?: string; // 侧栏品牌文字
+  menuItems?: { icon: string; label: string }[]; // 侧栏主菜单
+  subMenuItems?: { icon: string; label: string }[]; // 侧栏次级菜单
+  sectionLabel?: string; // 侧栏分区标签
+  mainTitle?: string; // 主区标题
+  searchText?: string; // 搜索占位文字
+  chips?: { title: string; sub: string }[]; // 卡片组
+  statLabels?: string[]; // 统计文字
+  rows?: { title: string; avatars: string[] }[]; // 列表行
 }
 
-export const NeonFrameForerun: React.FC<NeonFrameForerunProps> = () => {
+export const NeonFrameForerun: React.FC<NeonFrameForerunProps> = ({
+  appName = '工作台',
+  menuItems = [
+    { icon: '◆', label: '仪表盘' },
+    { icon: '●', label: '任务' },
+    { icon: '▲', label: '文档' },
+    { icon: '●', label: '成员' },
+    { icon: '▲', label: '设置' },
+    { icon: '◆', label: '通知' },
+  ],
+  subMenuItems = [
+    { icon: '●', label: '消息' },
+    { icon: '▲', label: '收藏' },
+    { icon: '◆', label: '最近' },
+    { icon: '●', label: '归档' },
+    { icon: '▲', label: '回收站' },
+  ],
+  sectionLabel = '常用',
+  mainTitle = '项目工作区',
+  searchText = '搜索',
+  chips = [
+    { title: '指标一', sub: '说明 01' },
+    { title: '指标二', sub: '说明 02' },
+    { title: '指标三', sub: '说明 03' },
+    { title: '指标四', sub: '说明 04' },
+    { title: '指标五', sub: '说明 05' },
+    { title: '指标六', sub: '说明 06' },
+    { title: '指标七', sub: '说明 07' },
+  ],
+  statLabels = ['完成', '进行', '待办', '总计'],
+  rows = [
+    { title: '条目 01', avatars: ['A', 'B', 'C'] },
+    { title: '条目 02', avatars: ['D', 'E', 'F'] },
+    { title: '条目 03', avatars: ['G', 'H', 'I'] },
+    { title: '条目 04', avatars: ['J', 'K', 'L'] },
+  ],
+}) => {
   const frame = useCurrentFrame();
   // 主框描画：左缘中点向两头奔跑，26 帧成型（截图①→②）
   const trace = interpolate(frame, [2, 28], [0, 1], {
@@ -230,7 +302,7 @@ export const NeonFrameForerun: React.FC<NeonFrameForerunProps> = () => {
         }}>
           {/* 面板：原地由暗转亮（无位移缩放） */}
           <div style={{ opacity: trace > 0.55 ? 1 : 0, filter: `brightness(${Math.max(0.05, lit)})` }}>
-            <GrayHome t={drop} />
+            <GrayHome t={drop} appName={appName} menuItems={menuItems} subMenuItems={subMenuItems} sectionLabel={sectionLabel} mainTitle={mainTitle} searchText={searchText} chips={chips} statLabels={statLabels} rows={rows} />
             {/* 未点亮时的冷色压暗罩 */}
             <div style={{
               position: 'absolute', inset: 0, borderRadius: 6,

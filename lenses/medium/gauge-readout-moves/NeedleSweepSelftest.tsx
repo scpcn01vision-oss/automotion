@@ -134,23 +134,25 @@ const Gauge: React.FC<{ start: number; target: number }> = ({ start, target }) =
 };
 
 export interface NeedleSweepSelftestProps {
-  label?: string;
+  title?: string; // 顶部居中标题（中性内容）
+  cardTitle?: string; // 卡片标题条（中性内容）
 }
 
 export const NeedleSweepSelftest: React.FC<NeedleSweepSelftestProps> = ({
-  label = 'SELF-TEST',
+  title = '核心指标',
+  cardTitle = '指标总览',
 }) => {
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: 110, width: '100%', textAlign: 'center' }}>
-        <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1 }}>{label}</div>
+        <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1 }}>{title}</div>
       </div>
       <div style={{
         position: 'absolute', left: CARD_X, top: CARD_Y, width: CARD_W, height: CARD_H,
         background: G.card, border: `2px solid ${G.border}`, borderRadius: 14,
         boxSizing: 'border-box', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', padding: 32,
       }}>
-        <div style={{ height: 16, width: 320, background: G.bar, borderRadius: 8 }} />
+        <div style={{ fontFamily: FONT_STACK, fontSize: 26, fontWeight: 700, color: G.ink }}>{cardTitle}</div>
         <div style={{ position: 'absolute', left: 0, top: 96, display: 'flex' }}>
           {GAUGES.map((g, i) => (
             <Gauge key={i} start={g.start} target={g.target} />

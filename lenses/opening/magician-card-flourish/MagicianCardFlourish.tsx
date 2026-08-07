@@ -53,7 +53,7 @@ const CardFace: React.FC<{ card: SceneContentData }> = ({ card }) => (
     {card.title ? (
       <div style={{ fontSize: 32, fontWeight: 700, color: G.ink }}>{card.title}</div>
     ) : null}
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly' }}>
       {(card.rows ?? []).map((r, i) => (
         <div
           key={i}

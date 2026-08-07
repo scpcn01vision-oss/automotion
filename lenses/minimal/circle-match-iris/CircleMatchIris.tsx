@@ -1,50 +1,66 @@
-// === 可调参数 ===
-// DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
-// 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
-// 功能: 承接,转折
-// props: scene（景 A 内容承载，光圈圆心 = 画面中心）
-// === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
-// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
-// === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
-// 圆心匹配光圈切(match-cut × iris-reveal 组合):
-// 帧 0–30:景 A(列表面板)hold,第 2 行 44px 圆形头像做两次脉冲 + 扩散光环提示"看这里";
-// 帧 30–75:景 B 以 clip-path: circle(r at CX CY) 从 22px 炸开到 2100px(Easing.inOut(cubic)),
-//   景 B 是深色圆环图表页,圆环半径同步从 22px 长到 170px——在光圈吃满全屏前就"接住"头像的圆;
-// 帧 45–100:圆环描边 sweep 到 78%,中央大数字随之浮现计数;帧 100–140 全属性静止收尾(≥35f)。
-// 命门:两景的圆严格同心——CX/CY 写死为 FakeDashboard B 第 2 行头像的屏幕坐标常量。
+// === ???? ===
+// DURATION: 180???????????? DURATION ?????
+// ??: ??? G ???src/_fixtures/Fixtures.tsx????? G.ink / ?? G.bg / ?? G.accent
+// ??: ??,??
+// props: ???????????? video-shotcraft ?????????????
+// === ???? ===
+// ????????: ???????
+// ???????: ???????????????
+// === ???? ===
+// ? DURATION ?????? interpolate ??????????????????
+// ???????(match-cut ? iris-reveal ??)??? video-shotcraft demo ?????????????
+// ? 0?30:? A(????)hold,? 2 ? 44px ????????? + ??????"???";
+// ? 30?75:? B ? clip-path: circle(r at CX CY) ? 22px ??? 2100px(Easing.inOut(cubic)),
+//   ? B ????????,??????? 22px ?? 170px???????????"??"????;
+// ? 45?100:???? sweep ? 78%,???????????;? 100?140 ???????(?35f)?
+// ??:??????????CX/CY ???? A ??? 2 ???????????
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
-import { SceneContent, SceneContentData } from '../../_system/scene-content';
 import { FONT_STACK } from '../../_system/typography';
 
-// 光圈圆心 = 画面中心（景 A 内容承载的面板中心）
-const CX = 960;
-const CY = 540;
+// ? A ??? 2 ??? 44px ????????????????? FakeDashboard B?
+const CX = 308;
+const CY = 384.8;
+
+// ? A??????????? FakeDashboard B??? G ????????
+const ListPanel: React.FC = () => (
+  <div style={{ width: 1920, height: 1080, background: G.bg, display: 'flex' }}>
+    <div style={{ width: 220, background: G.side, padding: '28px 22px', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: 18 }}>
+      <div style={{ width: 40, height: 40, borderRadius: 10, background: G.sideBar, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, fontWeight: 800, color: G.side }}>?</div>
+      {Array.from({ length: 7 }).map((_, i) => (
+        <div key={i} style={{ height: 12, width: `${60 + ((i * 29) % 35)}%`, background: G.sideBar, borderRadius: 6 }} />
+      ))}
+    </div>
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <div style={{ height: 72, background: G.panel, borderBottom: `2px solid ${G.line}`, display: 'flex', alignItems: 'center', padding: '0 32px', gap: 20, boxSizing: 'border-box' }}>
+        <div style={{ height: 18, width: 180, background: G.bar, borderRadius: 9 }} />
+        <div style={{ marginLeft: 'auto', height: 36, width: 320, background: G.card, border: `2px solid ${G.line}`, borderRadius: 18, boxSizing: 'border-box' }} />
+        <div style={{ width: 36, height: 36, borderRadius: 18, background: G.mid }} />
+      </div>
+      <div style={{ flex: 1, padding: 36, display: 'flex', flexDirection: 'column', gap: 20, boxSizing: 'border-box' }}>
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div key={i} style={{ flex: 1, background: G.card, border: `2px solid ${G.border}`, borderRadius: 14, display: 'flex', alignItems: 'center', gap: 24, padding: '0 28px', boxSizing: 'border-box' }}>
+            <div style={{ width: 44, height: 44, borderRadius: 10, background: G.mid }} />
+            <div style={{ height: 14, width: `${30 + ((i * 23) % 25)}%`, background: G.bar, borderRadius: 7 }} />
+            <div style={{ marginLeft: 'auto', height: 12, width: 120, background: G.line, borderRadius: 6 }} />
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
 
 export interface CircleMatchIrisProps {
-  scene?: SceneContentData;
 }
 
-export const CircleMatchIris: React.FC<CircleMatchIrisProps> = ({
-  scene = {
-    title: '概览',
-    type: 'rows',
-    rows: [
-      { label: '指标一', value: '+18%' },
-      { label: '指标二', value: '2.1×' },
-      { label: '指标三', value: '96.4%' },
-    ],
-  },
-}) => {
+export const CircleMatchIris: React.FC<CircleMatchIrisProps> = () => {
   const f = useCurrentFrame();
 
-  // ---- 景 A:头像脉冲(帧 0–30,两次呼吸) ----
+  // ---- ? A:????(? 0?30,????) ----
   const pulseT = Math.min(f, 30) / 30;
   const scale = f < 30 ? 1 + 0.45 * Math.abs(Math.sin(pulseT * Math.PI * 2)) : 1;
-  // 两道扩散光环
+  // ??????
   const waves = [0, 14].map((start) => {
     const p = interpolate(f, [start, start + 16], [0, 1], {
       extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
@@ -52,13 +68,13 @@ export const CircleMatchIris: React.FC<CircleMatchIrisProps> = ({
     return { r: 22 + p * 40, o: f < start + 16 ? 0.85 * (1 - p) : 0 };
   });
 
-  // ---- 光圈:景 B 从同一圆心炸开 ----
+  // ---- ??:? B ??????? ----
   const irisR = interpolate(f, [30, 75], [22, 2100], {
     easing: Easing.inOut(Easing.cubic),
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
 
-  // ---- 景 B 圆环:半径从 22 长到 170,"接住"头像的圆 ----
+  // ---- ? B ??:??? 22 ?? 170,"??"???? ----
   const ringR = interpolate(f, [30, 70], [22, 170], {
     easing: Easing.inOut(Easing.cubic),
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
@@ -66,7 +82,7 @@ export const CircleMatchIris: React.FC<CircleMatchIrisProps> = ({
   const ringW = interpolate(f, [30, 70], [12, 40], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
-  // 描边 sweep 到 78%
+  // ?? sweep ? 78%
   const sweep = interpolate(f, [45, 100], [0, 0.78], {
     easing: Easing.out(Easing.cubic),
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
@@ -82,62 +98,63 @@ export const CircleMatchIris: React.FC<CircleMatchIrisProps> = ({
 
   return (
     <div style={{ width: 1920, height: 1080, position: 'relative', overflow: 'hidden', background: G.bg }}>
-      {/* ===== 景 A:内容承载 ===== */}
-      <SceneContent content={scene} />
-      {/* 圆形脉冲头像（光圈起点） */}
+      {/* ===== ? A:???? ===== */}
+      <ListPanel />
+      {/* ???????????????,????????? */}
+      <div style={{ position: 'absolute', left: CX - 23, top: CY - 23, width: 46, height: 46, background: G.card }} />
       <div style={{
         position: 'absolute', left: CX - 22, top: CY - 22, width: 44, height: 44,
         borderRadius: 22, background: G.mid, border: `3px solid ${G.ink}`,
         boxSizing: 'border-box', transform: `scale(${scale})`,
       }} />
-      {/* 脉冲扩散光环 */}
+      {/* ?????? */}
       <svg width={1920} height={1080} style={{ position: 'absolute', left: 0, top: 0 }}>
         {waves.map((w, i) => (
           <circle key={i} cx={CX} cy={CY} r={w.r} fill="none" stroke={G.ink} strokeWidth={4} opacity={w.o} />
         ))}
       </svg>
 
-      {/* ===== 景 B:深色圆环图表页,从同一圆心以光圈长出 ===== */}
+      {/* ===== ? B:???????,?????????? ===== */}
       {f >= 30 && (
         <div style={{
           position: 'absolute', left: 0, top: 0, width: 1920, height: 1080,
           background: G.ink,
           clipPath: `circle(${irisR}px at ${CX}px ${CY}px)`,
         }}>
-          {/* 圆环 donut:圆心与头像严格同点 */}
+          {/* ?? donut:????????? */}
           <svg width={1920} height={1080} style={{ position: 'absolute', left: 0, top: 0 }}>
-            {/* 底轨 */}
-            <circle cx={CX} cy={CY} r={ringR} fill="none" stroke="#5a5a58" strokeWidth={ringW} />
-            {/* sweep 弧,从正上方起 */}
+            {/* ?? */}
+            <circle cx={CX} cy={CY} r={ringR} fill="none" stroke={G.sideBar} strokeWidth={ringW} />
+            {/* sweep ?,????? */}
             <circle
-              cx={CX} cy={CY} r={ringR} fill="none" stroke="#ececea"
+              cx={CX} cy={CY} r={ringR} fill="none" stroke={G.bg}
               strokeWidth={ringW} strokeLinecap="round"
               strokeDasharray={`${sweep * circ} ${circ}`}
               transform={`rotate(-90 ${CX} ${CY})`}
             />
           </svg>
-          {/* 中央大数字 */}
+          {/* ????? */}
           <div style={{
             position: 'absolute', left: CX - 150, top: CY - 80, width: 300, height: 160,
             display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
             opacity: numOpacity,
           }}>
-            <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 96, color: '#f2f2f0', letterSpacing: -2 }}>
+            <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 96, color: G.card, letterSpacing: -2 }}>
               {num}%
             </div>
-            <div style={{ marginTop: 6, height: 12, width: 130, background: '#6a6a68', borderRadius: 6 }} />
+            <div style={{ marginTop: 6, height: 12, width: 130, background: G.mid, borderRadius: 6 }} />
           </div>
-          {/* 右侧页面家具:标题 + 统计条,证明这是一整页 */}
+          {/* ??????:?? + ???,??????? */}
           <div style={{ position: 'absolute', left: 680, top: 260, opacity: furnitureOpacity, display: 'flex', flexDirection: 'column', gap: 30 }}>
-            <div style={{ height: 34, width: 520, background: '#c2c2c0', borderRadius: 10 }} />
-            <div style={{ height: 16, width: 780, background: '#5a5a58', borderRadius: 8 }} />
-            <div style={{ height: 16, width: 640, background: '#5a5a58', borderRadius: 8 }} />
-            <div style={{ height: 16, width: 700, background: '#5a5a58', borderRadius: 8 }} />
+            <div style={{ height: 34, width: 520, background: G.bar, borderRadius: 10 }} />
+            <div style={{ height: 16, width: 780, background: G.sideBar, borderRadius: 8 }} />
+            <div style={{ height: 16, width: 640, background: G.sideBar, borderRadius: 8 }} />
+            <div style={{ height: 16, width: 700, background: G.sideBar, borderRadius: 8 }} />
             <div style={{ display: 'flex', gap: 28, marginTop: 24 }}>
               {[0, 1, 2].map((i) => (
-                <div key={i} style={{ width: 240, height: 150, background: '#454543', border: '2px solid #5a5a58', borderRadius: 14, padding: 20, boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: 12 }}>
-                  <div style={{ height: 12, width: `${55 + i * 12}%`, background: '#8f8f8d', borderRadius: 6 }} />
-                  <div style={{ height: 30, width: '45%', background: '#c2c2c0', borderRadius: 8, marginTop: 'auto' }} />
+                <div key={i} style={{ width: 240, height: 150, background: G.side, border: `2px solid ${G.sideBar}`, borderRadius: 14, padding: 20, boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  <div style={{ height: 12, width: `${55 + i * 12}%`, background: G.mid, borderRadius: 6 }} />
+                  <div style={{ height: 30, width: '45%', background: G.bar, borderRadius: 8, marginTop: 'auto' }} />
                 </div>
               ))}
             </div>

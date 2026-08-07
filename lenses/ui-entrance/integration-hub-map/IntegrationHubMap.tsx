@@ -55,6 +55,7 @@ export interface IntegrationHubMapProps {
   rows?: IntegrationHubRow[];
   icons?: string[];
   hubStyle?: IntegrationHubStyle;
+  docLines?: string[]; // 文档段落（中性文字行）
 }
 
 // ---------- 中枢面板（默认内容保留原版，可参数化） ----------
@@ -144,7 +145,7 @@ const HubPanel: React.FC<{
 };
 
 // ---------- 翻转前的旧页面（正面）：另一张页面，翻面后才得到中枢页 ----------
-const FrontPanel: React.FC<{ glow: number; frontTitle: string }> = ({ glow, frontTitle }) => (
+const FrontPanel: React.FC<{ glow: number; frontTitle: string; docLines: string[] }> = ({ glow, frontTitle, docLines }) => (
   <div
     style={{
       width: 820,
@@ -179,23 +180,10 @@ const FrontPanel: React.FC<{ glow: number; frontTitle: string }> = ({ glow, fron
       ))}
     </div>
     <div style={{ height: 1, background: G.line, marginTop: 18 }} />
-    {/* 文档灰条段落 */}
-    {[420, 700, 660, 540, 0, 690, 630, 380, 0, 580, 640, 460].map((w, i) =>
-      w === 0 ? (
-        <div key={i} style={{ height: 14 }} />
-      ) : (
-        <div
-          key={i}
-          style={{
-            width: w,
-            height: 13,
-            borderRadius: 6,
-            background: i % 5 === 0 ? G.line : G.line,
-            marginTop: 13,
-          }}
-        />
-      ),
-    )}
+    {/* 文档段落（中性文字行） */}
+    {docLines.map((line, i) => (
+      <div key={i} style={{ fontSize: 13, color: G.mid, marginTop: 13, lineHeight: 1.4 }}>{line}</div>
+    ))}
   </div>
 );
 
@@ -282,6 +270,10 @@ export const IntegrationHubMap: React.FC<IntegrationHubMapProps> = ({
   rows = DEFAULT_ROWS,
   icons = ['ring', 'disc', 'cloud', 'triangle', 'diamond'],
   hubStyle = {},
+  docLines = [
+    '文档内容 01', '文档内容 02', '文档内容 03', '文档内容 04', '文档内容 05', '文档内容 06',
+    '文档内容 07', '文档内容 08', '文档内容 09', '文档内容 10', '文档内容 11', '文档内容 12',
+  ],
 }) => {
   const frame = useCurrentFrame();
   const activePipes = PIPES.filter((p) => icons.includes(p.kind));
@@ -501,7 +493,7 @@ export const IntegrationHubMap: React.FC<IntegrationHubMapProps> = ({
               backfaceVisibility: 'hidden',
             }}
           >
-            <FrontPanel glow={panelGlow} frontTitle={frontTitle} />
+            <FrontPanel glow={panelGlow} frontTitle={frontTitle} docLines={docLines} />
           </div>
           {/* 背面：翻正后得到的新中枢页（预转 180° 使翻完时朝向镜头且不镜像） */}
           <div

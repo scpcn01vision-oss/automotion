@@ -15,7 +15,7 @@ import { AbsoluteFill, useCurrentFrame, interpolate, spring, useVideoConfig, Eas
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
 
-const PROMPT = 'Generate an entity-relationship diagram';
+const PROMPT = '生成实体关系图';
 const TYPE_START = 6;
 const TYPE_CPS = 1.1; // 字符/帧
 
@@ -62,15 +62,28 @@ const edgeLen = (p: (typeof NODES)[number], c: (typeof NODES)[number]) => {
 };
 
 export interface DiagramCascadeBuildProps {
+  prompt?: string; // 输入框文字
+  nodes?: { title: string; sub: string }[]; // 节点文字（按 NODES 布局顺序）
 }
 
-export const DiagramCascadeBuild: React.FC<DiagramCascadeBuildProps> = () => {
+export const DiagramCascadeBuild: React.FC<DiagramCascadeBuildProps> = ({
+  prompt = PROMPT,
+  nodes = [
+    { title: '根节点', sub: '实体' },
+    { title: '节点 01', sub: '说明 01' },
+    { title: '节点 02', sub: '说明 02' },
+    { title: '节点 03', sub: '说明 03' },
+    { title: '节点 04', sub: '说明 04' },
+    { title: '节点 05', sub: '说明 05' },
+    { title: '节点 06', sub: '说明 06' },
+  ],
+}) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const typed = Math.min(PROMPT.length, Math.max(0, Math.floor((frame - TYPE_START) * TYPE_CPS)));
+  const typed = Math.min(prompt.length, Math.max(0, Math.floor((frame - TYPE_START) * TYPE_CPS)));
   const caretOn = Math.floor(frame / 8) % 2 === 0;
-  const promptDone = typed >= PROMPT.length;
+  const promptDone = typed >= prompt.length;
 
   // 成树后整体呼吸一拍
   const lastStart = nodeStart(NODES[NODES.length - 1]);
@@ -111,11 +124,11 @@ export const DiagramCascadeBuild: React.FC<DiagramCascadeBuildProps> = () => {
           color: G.ink,
         }}
       >
-        <div style={{ width: 30, height: 30, borderRadius: 15, background: G.mid, marginRight: 20, flexShrink: 0 }} />
-        <span>
-          {PROMPT.slice(0, typed)}
-          <span style={{ opacity: caretOn ? 1 : 0, fontWeight: 400 }}>|</span>
-        </span>
+<div style={{ width: 30, height: 30, borderRadius: 15, background: G.mid, marginRight: 20, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, fontWeight: 800, color: G.bg }}>◆</div>
+<span>
+{prompt.slice(0, typed)}
+<span style={{ opacity: caretOn ? 1 : 0, fontWeight: 400 }}>|</span>
+</span>
       </div>
 
       {/* 树（呼吸缩放以树心为原点） */}
@@ -174,8 +187,8 @@ export const DiagramCascadeBuild: React.FC<DiagramCascadeBuildProps> = () => {
                 padding: '0 24px',
               }}
             >
-              <div style={{ height: 16, width: `${44 + (n.id * 17) % 34}%`, background: n.level === 0 ? G.mid : G.bar, borderRadius: 8 }} />
-              <div style={{ height: 10, width: `${70 - (n.id * 13) % 26}%`, background: n.level === 0 ? G.sideBar : G.line, borderRadius: 5 }} />
+<div style={{ fontFamily: FONT_STACK, fontSize: 20, fontWeight: 700, color: n.level === 0 ? G.panel : G.ink, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{nodes[n.id].title}</div>
+<div style={{ fontFamily: FONT_STACK, fontSize: 14, color: n.level === 0 ? G.bar : G.mid, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{nodes[n.id].sub}</div>
             </div>
           );
         })}

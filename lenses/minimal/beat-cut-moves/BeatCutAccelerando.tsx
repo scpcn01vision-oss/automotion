@@ -62,22 +62,12 @@ export interface BeatCutAccelerandoProps {
 
 export const BeatCutAccelerando: React.FC<BeatCutAccelerandoProps> = ({
   sceneA = {
-    title: '概览',
-    type: 'rows',
-    rows: [
-      { label: '指标一', value: '+18%' },
-      { label: '指标二', value: '2.1×' },
-      { label: '指标三', value: '96.4%' },
-    ],
+    type: 'image',
+    image: 'textures/card1.png',
   },
   sceneB = {
-    title: '状态',
-    type: 'rows',
-    rows: [
-      { label: '节点', value: '4/4' },
-      { label: '延迟', value: '42ms' },
-      { label: '可用性', value: '99.98%' },
-    ],
+    type: 'image',
+    image: 'textures/card6.png',
   },
 }) => {
   const frame = useCurrentFrame();

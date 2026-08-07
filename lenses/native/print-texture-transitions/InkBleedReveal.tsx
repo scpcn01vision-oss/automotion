@@ -83,7 +83,7 @@ const NewScene: React.FC<{ scene: InkBleedRevealNewScene }> = ({ scene }) => {
 export const InkBleedReveal: React.FC<InkBleedRevealProps> = ({
   oldTitle = 'BEFORE',
   newScene = {
-    title: 'AFTER',
+    title: '状态说明',
     type: 'rows',
     rows: [
       { label: 'Metric', value: '+25%' },

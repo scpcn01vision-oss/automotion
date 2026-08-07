@@ -35,13 +35,13 @@ export interface StreamResponseProps {
 }
 
 const DEFAULT_ROWS: StreamResponseRow[] = [
-  { title: 'Indexed the workspace', meta: '128 files' },
-  { title: 'Mapped the authentication flow', meta: '12 modules' },
-  { title: 'Checked recent error traces', meta: 'No blockers' },
-  { title: 'Matched API contracts to handlers', meta: '24 routes' },
-  { title: 'Verified permission boundaries', meta: '6 roles' },
-  { title: 'Cross-checked release notes', meta: '3 changes' },
-  { title: 'Prepared an implementation plan', meta: 'Ready' },
+  { title: '索引工作区', meta: '128 个文件' },
+  { title: '梳理认证流程', meta: '12 个模块' },
+  { title: '检查近期错误日志', meta: '无阻潜' },
+  { title: '匹配接口合约', meta: '24 条路由' },
+  { title: '校验权限边界', meta: '6 个角色' },
+  { title: '核对发版说明', meta: '3 处变更' },
+  { title: '准备实施方案', meta: '就绪' },
 ];
 
 const CheckIcon: React.FC<{progress: number}> = ({progress}) => {
@@ -101,13 +101,13 @@ const EvidenceRow: React.FC<{cue: number; title: string; meta: string; index: nu
 };
 
 export const StreamResponse: React.FC<StreamResponseProps> = ({
-  agentName = 'Ask Atlas',
-  query = 'Review this codebase and identify the safest implementation path',
-  summaryLabel = 'Result summary',
-  summary = 'The codebase is ready for a focused, low-risk implementation.',
+  agentName = '工作区代理',
+  query = '检查代码库并找出最稳妥的实现路径',
+  summaryLabel = '结果摘要',
+  summary = '代码库已准备就绪，可采用聚焦、低风险的实现方案。',
   rows = DEFAULT_ROWS,
-  completeText = 'Analysis complete',
-  completeMeta = '7 checks finished · ready to build',
+  completeText = '分析完成',
+  completeMeta = '7 项检查完成 · 可开始构建',
 }) => {
   const frame = useCurrentFrame();
   // 行入场时序：按行数动态（间隔 9f）
@@ -136,7 +136,7 @@ export const StreamResponse: React.FC<StreamResponseProps> = ({
           <div style={{width: 29, height: 29, borderRadius: 9, background: G.accent, color: G.card, display: 'grid', placeItems: 'center', fontWeight: 800, fontSize: 17}}>A</div>
           <div style={{marginLeft: 13, fontSize: 22, fontWeight: 590, color: G.ink}}>{agentName}</div>
           <div style={{marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 9, color: G.mid, fontSize: 15}}>
-            <span style={{width: 7, height: 7, background: G.accent, borderRadius: 99}}/> Workspace agent
+            <span style={{width: 7, height: 7, background: G.accent, borderRadius: 99}}/> 工作区代理
           </div>
         </div>
 

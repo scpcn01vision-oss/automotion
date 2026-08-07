@@ -44,13 +44,13 @@ const SHAPES: ((c: string) => React.ReactNode)[] = [
 ];
 
 const COLS = 17, ROWS = 10, CELL = 110, ICON = 44;
-const GRAYS = ['#9a9a9a', '#7c7c7c', '#b0b0b0', '#8b8b8b'];
+const GRAYS = [G.bar, G.mid, G.line, G.nav];
 // 四道色波：蓝覆盖全场，橙/绿/红依次覆盖更低的行带 → 终态四色横带
 const WAVES = [
-  { color: '#b87a2e', fromRow: 0, start: 78 },
-  { color: '#e7a03c', fromRow: 3, start: 90 },
+  { color: G.accent, fromRow: 0, start: 78 },
+  { color: G.mid, fromRow: 3, start: 90 },
   { color: G.accent, fromRow: 6, start: 100 },
-  { color: '#e2606b', fromRow: 9, start: 110 },
+  { color: G.side, fromRow: 9, start: 110 },
 ];
 
 export interface IconFieldColorizeProps {

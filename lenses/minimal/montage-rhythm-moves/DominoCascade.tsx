@@ -40,7 +40,7 @@ const shake = (f: number, at: number, amp: number) => {
 const CARD_W = 340;
 const CARD_H = 220;
 const GAP = 40;
-const CARD_TOP = 700; // 卡片底边 920，落在地板线上
+const CARD_TOP = 730; // 卡片底边 950，落在地板线上
 
 const DominoCard: React.FC<{ label: string; value: string }> = ({ label, value }) => (
   <div
@@ -71,6 +71,7 @@ const DominoCard: React.FC<{ label: string; value: string }> = ({ label, value }
 export interface DominoCascadeProps {
   title?: string;
   cards?: { label: string; value: string }[];
+  menuItems?: { icon: string; label: string }[]; // 侧栏菜单
 }
 
 export const DominoCascade: React.FC<DominoCascadeProps> = ({
@@ -80,6 +81,16 @@ export const DominoCascade: React.FC<DominoCascadeProps> = ({
     { label: '指标二', value: '2.1×' },
     { label: '指标三', value: '96.4%' },
     { label: '节点', value: '4/4' },
+  ],
+  menuItems = [
+    { icon: '◆', label: '仪表盘' },
+    { icon: '●', label: '任务' },
+    { icon: '▲', label: '文档' },
+    { icon: '●', label: '成员' },
+    { icon: '▲', label: '设置' },
+    { icon: '◆', label: '通知' },
+    { icon: '●', label: '帮助' },
+    { icon: '▲', label: '归档' },
   ],
 }) => {
   const frame = useCurrentFrame();
@@ -91,7 +102,7 @@ export const DominoCascade: React.FC<DominoCascadeProps> = ({
   const ROW_LEFT = 1080 - ROW_W / 2;
 
   // ① 标题砸落：画外顶 → 上半屏，ease-in 加速读作"砸"
-  const titleTop = interpolate(frame, [TITLE_START, IMPACT_1], [-260, 240], {
+  const titleTop = interpolate(frame, [TITLE_START, IMPACT_1], [-260, 320], {
     easing: easeInCubic,
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
@@ -133,7 +144,7 @@ export const DominoCascade: React.FC<DominoCascadeProps> = ({
       {/* 全画面震动容器 */}
       <div style={{ position: 'absolute', inset: 0, transform: `translateY(${shakeY}px)` }}>
         {/* 地板线：卡片落点 */}
-        <div style={{ position: 'absolute', left: ROW_LEFT - 30, top: 928, width: ROW_W + 60, height: 6, background: G.bar, borderRadius: 3 }} />
+        <div style={{ position: 'absolute', left: ROW_LEFT - 30, top: 958, width: ROW_W + 60, height: 6, background: G.bar, borderRadius: 3 }} />
 
         {/* ① 砸落的标题 */}
         <div style={{ position: 'absolute', left: 240, width: 1680, top: titleTop, display: 'flex', justifyContent: 'center' }}>
@@ -167,9 +178,12 @@ export const DominoCascade: React.FC<DominoCascadeProps> = ({
             display: 'flex', flexDirection: 'column', gap: 22,
           }}
         >
-          <div style={{ width: 44, height: 44, borderRadius: 10, background: G.bar }} />
-          {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} style={{ height: 13, width: `${58 + ((i * 31) % 38)}%`, background: G.sideBar, borderRadius: 6 }} />
+          <div style={{ width: 44, height: 44, borderRadius: 10, background: G.sideBar, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, fontWeight: 800, color: G.side }}>◆</div>
+          {menuItems.map((it, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ width: 26, height: 26, borderRadius: 6, background: G.sideBar, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, color: G.side }}>{it.icon}</div>
+              <div style={{ fontSize: 16, fontWeight: 600, color: G.panel }}>{it.label}</div>
+            </div>
           ))}
         </div>
       </div>

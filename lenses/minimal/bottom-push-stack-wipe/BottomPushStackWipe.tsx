@@ -30,7 +30,8 @@ const ChapterScene: React.FC<{
   label: string;
   value: string;
   chapter: number;
-}> = ({ color, label, value, chapter }) => {
+  windowTitle: string;
+}> = ({ color, label, value, chapter, windowTitle }) => {
   return (
     <AbsoluteFill style={{ background: color, justifyContent: 'center', alignItems: 'center' }}>
       {/* 底色上的淡装饰条，让"底色也在动"更可读 */}
@@ -44,10 +45,10 @@ const ChapterScene: React.FC<{
       {/* 中央钉住的灰阶窗口卡 */}
       <div style={{ boxShadow: '0 30px 80px rgba(0,0,0,0.28)', borderRadius: 18 }}>
         <div style={{ width: 860, background: G.panel, borderRadius: '18px 18px 0 0', height: 52, display: 'flex', alignItems: 'center', gap: 10, padding: '0 22px', boxSizing: 'border-box', border: `2px solid ${G.border}`, borderBottom: 'none' }}>
-          {['#e0605a', '#e8b93e', '#67bb5a'].map((dot, i) => (
+          {[G.bar, G.mid, G.line].map((dot, i) => (
             <div key={i} style={{ width: 16, height: 16, borderRadius: 8, background: dot }} />
           ))}
-          <div style={{ marginLeft: 18, height: 14, width: 220, background: G.bar, borderRadius: 7 }} />
+          <div style={{ marginLeft: 18, fontFamily: FONT_STACK, fontSize: 15, fontWeight: 700, color: G.ink }}>{windowTitle}</div>
         </div>
         <div
           style={{
@@ -85,6 +86,7 @@ export interface PushChapter {
 
 export interface BottomPushStackWipeProps {
   chapters?: PushChapter[];
+  windowTitle?: string; // 窗口标题
 }
 
 export const BottomPushStackWipe: React.FC<BottomPushStackWipeProps> = ({
@@ -94,6 +96,7 @@ export const BottomPushStackWipe: React.FC<BottomPushStackWipeProps> = ({
     { color: G.mid, label: '指标二', value: '2.1×' },
     { color: G.side, label: '指标三', value: '96.4%' },
   ],
+  windowTitle = '概览',
 }) => {
   const frame = useCurrentFrame();
   // 每章的推入进度
@@ -112,7 +115,7 @@ export const BottomPushStackWipe: React.FC<BottomPushStackWipeProps> = ({
         if (y <= -H || y >= H) return null;
         return (
           <AbsoluteFill key={i} style={{ transform: `translateY(${y}px)` }}>
-            <ChapterScene color={c.color} label={c.label} value={c.value} chapter={i} />
+            <ChapterScene color={c.color} label={c.label} value={c.value} chapter={i} windowTitle={windowTitle} />
             {/* 推入时上缘接缝阴影，强化"顶出"的物理感 */}
             {i > 0 && (
               <div style={{ position: 'absolute', top: -40, left: 0, right: 0, height: 40, background: 'linear-gradient(to top, rgba(0,0,0,0.30), rgba(0,0,0,0))', opacity: pushedIn < 1 ? 1 : 0 }} />

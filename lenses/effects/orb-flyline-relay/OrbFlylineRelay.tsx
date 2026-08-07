@@ -195,7 +195,7 @@ const RelayCard: React.FC<{
       {card.title ? (
         <div style={{ fontSize: 26, fontWeight: 700, color: G.ink }}>{card.title}</div>
       ) : null}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly' }}>
         {(card.rows ?? []).map((r, i) => (
           <div
             key={i}
@@ -206,8 +206,8 @@ const RelayCard: React.FC<{
               borderBottom: i < (card.rows ?? []).length - 1 ? `1px solid ${G.line}` : 'none',
             }}
           >
-            <span style={{ fontSize: 18, color: G.ink, fontWeight: 600 }}>{r.label}</span>
-            <span style={{ marginLeft: 'auto', fontSize: 19, color: G.accent, fontWeight: 800 }}>{r.value}</span>
+            <span style={{ flex: 1, textAlign: 'center', fontSize: 18, color: G.ink, fontWeight: 600 }}>{r.label}</span>
+            <span style={{ flex: 1, textAlign: 'center', fontSize: 19, color: G.accent, fontWeight: 800 }}>{r.value}</span>
           </div>
         ))}
       </div>

@@ -36,7 +36,6 @@ export interface DrawSvgTraceContent {
 }
 
 export interface DrawSvgTraceProps {
-  title?: string;
   content?: DrawSvgTraceContent;
 }
 
@@ -82,7 +81,6 @@ const CardContent: React.FC<{ content: DrawSvgTraceContent }> = ({ content }) =>
 };
 
 export const DrawSvgTrace: React.FC<DrawSvgTraceProps> = ({
-  title = 'OVERVIEW',
   content = {
     title: '标题',
     type: 'rows',
@@ -145,11 +143,6 @@ export const DrawSvgTrace: React.FC<DrawSvgTraceProps> = ({
 
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', left: 120, top: 96 }}>
-        <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 54, color: G.ink, letterSpacing: -1 }}>
-          {title}
-        </div>
-      </div>
 
       {/* 卡片内容（标题条 + rows/image 承载），闭合后 8f 淡入 */}
       <div

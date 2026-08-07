@@ -14,6 +14,7 @@
 import React from 'react';
 import { G } from '../../_fixtures/Fixtures';
 import { AbsoluteFill, useCurrentFrame, interpolate } from 'remotion';
+import { FONT_STACK } from '../../_system/typography';
 
 const ink = G.ink;
 const mid = G.mid;
@@ -24,73 +25,131 @@ const PH = 1400;
 const TOP = 150;   // 面板顶边在屏幕座标的 y
 const CR = 60;     // 面板圆角
 
-const SideRow: React.FC<{ w: number }> = ({ w }) => (
+const SideRow: React.FC<{ label: string; icon: string }> = ({ label, icon }) => (
   <div style={{ display: 'flex', alignItems: 'center', gap: 16, height: 44 }}>
-    <div style={{ width: 26, height: 26, borderRadius: 7, background: mid }} />
-    <div style={{ height: 15, width: w, background: G.bar, borderRadius: 7 }} />
+    <div style={{ width: 26, height: 26, borderRadius: 7, background: mid, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, color: G.panel }}>{icon}</div>
+    <div style={{ fontFamily: FONT_STACK, fontSize: 17, fontWeight: 600, color: G.ink }}>{label}</div>
   </div>
 );
 
-const Task: React.FC<{ seed: number }> = ({ seed }) => (
-  <div style={{ display: 'flex', flexDirection: 'column', gap: 13, padding: '26px 0' }}>
-    <div style={{ height: 13, width: 210 + (seed % 3) * 30, background: line, borderRadius: 6 }} />
-    <div style={{ height: 17, width: 260 + ((seed * 7) % 4) * 26, background: '#aeaeac', borderRadius: 8 }} />
-    <div style={{ width: 22, height: 16, background: '#d6d6d4', borderRadius: 3 }} />
+const Task: React.FC<{ title: string; sub: string }> = ({ title, sub }) => (
+  <div style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: '26px 0', borderBottom: `1px solid ${line}` }}>
+    <div style={{ fontFamily: FONT_STACK, fontSize: 16, fontWeight: 700, color: G.ink }}>{title}</div>
+    <div style={{ fontFamily: FONT_STACK, fontSize: 14, color: G.mid }}>{sub}</div>
   </div>
 );
 
-const Col: React.FC<{ accent: string; seed: number; w: number }> = ({ accent, seed, w }) => (
+const Col: React.FC<{ accent: string; title: string; rows: { title: string; sub: string }[]; w: number }> = ({ accent, title, rows, w }) => (
   <div style={{ width: w, flexShrink: 0 }}>
     <div style={{ borderTop: `6px solid ${accent}`, paddingTop: 24, display: 'flex', alignItems: 'center', gap: 14 }}>
-      <div style={{ height: 20, width: 120, background: '#525250', borderRadius: 9 }} />
+      <div style={{ fontFamily: FONT_STACK, fontSize: 20, fontWeight: 700, color: G.ink }}>{title}</div>
       <div style={{ width: 32, height: 32, borderRadius: 16, border: `3px solid ${line}` }} />
-      <div style={{ marginLeft: 'auto', width: 22, height: 22, background: line, borderRadius: 4 }} />
+      <div style={{ marginLeft: 'auto', fontFamily: FONT_STACK, fontSize: 14, color: G.mid }}>查看全部</div>
     </div>
-    {[0, 1].map((i) => <Task key={i} seed={seed + i} />)}
+    {rows.map((r, i) => <Task key={i} title={r.title} sub={r.sub} />)}
   </div>
 );
 
-// 超宽面板内容（放大特写级别）：侧栏 + 顶栏 + 三列看板
-const WidePanel: React.FC = () => (
+// 超宽面板内容（放大特写级别）：侧栏 + 顶栏 + 三列看板（占位条已换文字）
+const WidePanel: React.FC<{
+  panelTitle: string;
+  sidebarItems: { icon: string; label: string }[];
+  sectionLabel: string;
+  subItems: { icon: string; label: string }[];
+  searchText: string;
+  actions: string[];
+  columns: { title: string; rows: { title: string; sub: string }[] }[];
+}> = ({ panelTitle, sidebarItems, sectionLabel, subItems, searchText, actions, columns }) => (
   <div style={{
-    width: PW, height: PH, background: '#f4f4f3',
+    width: PW, height: PH, background: G.panel,
     display: 'flex', boxSizing: 'border-box',
     borderRadius: `${CR}px ${CR}px 0 0`,
+    fontFamily: FONT_STACK,
   }}>
     <div style={{ width: 560, borderRight: `3px solid ${line}`, padding: '52px 48px', boxSizing: 'border-box' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 18, marginBottom: 56 }}>
-        <div style={{ width: 46, height: 46, borderRadius: 12, background: ink }} />
-        <div style={{ height: 26, width: 150, background: ink, borderRadius: 10 }} />
+        <div style={{ width: 46, height: 46, borderRadius: 12, background: ink, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, fontWeight: 800, color: G.panel }}>◆</div>
+        <div style={{ fontFamily: FONT_STACK, fontSize: 24, fontWeight: 700, color: G.ink }}>{panelTitle}</div>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-        <SideRow w={110} /><SideRow w={200} /><SideRow w={100} />
+        {sidebarItems.map((it, i) => <SideRow key={i} label={it.label} icon={it.icon} />)}
       </div>
-      <div style={{ height: 20, width: 130, background: '#adadab', borderRadius: 9, margin: '58px 0 24px' }} />
+      <div style={{ fontFamily: FONT_STACK, fontSize: 18, fontWeight: 700, color: G.mid, margin: '58px 0 24px' }}>{sectionLabel}</div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-        <SideRow w={180} /><SideRow w={220} /><SideRow w={170} />
+        {subItems.map((it, i) => <SideRow key={i} label={it.label} icon={it.icon} />)}
       </div>
     </div>
     <div style={{ flex: 1, padding: '52px 64px', boxSizing: 'border-box' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 22, marginBottom: 48 }}>
-        <div style={{ width: 36, height: 30, background: mid, borderRadius: 6 }} />
-        <div style={{ height: 26, width: 400, background: '#606060', borderRadius: 11 }} />
-        <div style={{ height: 18, width: 150, background: line, borderRadius: 8, marginLeft: 64 }} />
-        <div style={{ height: 18, width: 120, background: line, borderRadius: 8 }} />
-        <div style={{ height: 18, width: 90, background: line, borderRadius: 8 }} />
+        <div style={{ fontFamily: FONT_STACK, fontSize: 26, fontWeight: 800, color: G.ink }}>{searchText}</div>
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: 16 }}>
+          {actions.map((a, i) => (
+            <div key={i} style={{ fontFamily: FONT_STACK, fontSize: 16, fontWeight: 600, color: G.mid, padding: '8px 18px', borderRadius: 10, border: `2px solid ${line}` }}>{a}</div>
+          ))}
+        </div>
       </div>
       <div style={{ display: 'flex', gap: 84 }}>
-        <Col accent="#c4ad45" seed={1} w={620} />
-        <Col accent={G.accent} seed={4} w={620} />
-        <Col accent="#b87a2e" seed={7} w={620} />
+        {columns.map((c, i) => (
+          <Col key={i} accent={[G.accent, G.mid, G.bar][i % 3]} title={c.title} rows={c.rows} w={620} />
+        ))}
       </div>
     </div>
   </div>
 );
 
 export interface SlideSpotlightPanProps {
+  panelTitle?: string; // 工作区名
+  sidebarItems?: { icon: string; label: string }[]; // 侧栏主菜单
+  sectionLabel?: string; // 侧栏分区标签
+  subItems?: { icon: string; label: string }[]; // 侧栏次级菜单
+  searchText?: string; // 顶栏搜索
+  actions?: string[]; // 顶栏操作
+  columns?: { title: string; rows: { title: string; sub: string }[] }[]; // 看板列
 }
 
-export const SlideSpotlightPan: React.FC<SlideSpotlightPanProps> = () => {
+export const SlideSpotlightPan: React.FC<SlideSpotlightPanProps> = ({
+  panelTitle = '项目工作区',
+  sidebarItems = [
+    { icon: '◆', label: '仪表盘' },
+    { icon: '●', label: '任务' },
+    { icon: '▲', label: '文档' },
+    { icon: '●', label: '成员' },
+    { icon: '▲', label: '设置' },
+    { icon: '◆', label: '通知' },
+  ],
+  sectionLabel = '常用',
+  subItems = [
+    { icon: '●', label: '消息' },
+    { icon: '▲', label: '收藏' },
+    { icon: '◆', label: '最近' },
+    { icon: '●', label: '归档' },
+  ],
+  searchText = '搜索',
+  actions = ['新建', '筛选', '排序'],
+  columns = [
+    {
+      title: '进行中',
+      rows: [
+        { title: '任务 01', sub: '说明 01' },
+        { title: '任务 02', sub: '说明 02' },
+      ],
+    },
+    {
+      title: '待处理',
+      rows: [
+        { title: '任务 03', sub: '说明 03' },
+        { title: '任务 04', sub: '说明 04' },
+      ],
+    },
+    {
+      title: '已完成',
+      rows: [
+        { title: '任务 05', sub: '说明 05' },
+        { title: '任务 06', sub: '说明 06' },
+      ],
+    },
+  ],
+}) => {
   const frame = useCurrentFrame();
   // 面板匀速左滑（相机右摇）——严格 linear
   const slide = interpolate(frame, [0, 132], [180, -1100]);
@@ -118,7 +177,15 @@ export const SlideSpotlightPan: React.FC<SlideSpotlightPanProps> = () => {
     <AbsoluteFill style={{ background: '#050409', overflow: 'hidden' }}>
       {/* 面板层：聚光范围内显影 */}
       <div style={{ position: 'absolute', left: 0, top: TOP, transform: `translateX(${slide}px)` }}>
-        <WidePanel />
+        <WidePanel
+          panelTitle={panelTitle}
+          sidebarItems={sidebarItems}
+          sectionLabel={sectionLabel}
+          subItems={subItems}
+          searchText={searchText}
+          actions={actions}
+          columns={columns}
+        />
         {/* 贴面泛光：光头下方的紫光晕染进 UI 顶部（贴着界面泛光的关键层） */}
         <div style={{
           position: 'absolute', left: onTop - 620, top: -30, width: 1240, height: 380,

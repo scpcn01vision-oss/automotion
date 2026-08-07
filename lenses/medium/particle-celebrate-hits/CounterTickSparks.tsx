@@ -45,12 +45,16 @@ const GRAV = 0.9;
 
 export interface CounterTickSparksProps {
   target?: string;
-  label?: string;
+  label?: string; // 顶部标题（手法名标签默认去掉）
+  title?: string; // 计数卡标题
+  subtitle?: string; // 计数卡副标题
 }
 
 export const CounterTickSparks: React.FC<CounterTickSparksProps> = ({
   target = '42',
-  label = 'COUNT',
+  label = '',
+  title = '累计值',
+  subtitle = '实时统计',
 }) => {
   const frame = useCurrentFrame();
   const value = valueAt(frame);
@@ -70,9 +74,11 @@ export const CounterTickSparks: React.FC<CounterTickSparksProps> = ({
 
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', top: 110, width: '100%', textAlign: 'center' }}>
-        <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1 }}>{label}</div>
-      </div>
+      {label ? (
+        <div style={{ position: 'absolute', top: 110, width: '100%', textAlign: 'center' }}>
+          <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1 }}>{label}</div>
+        </div>
+      ) : null}
 
       {/* 计数卡 */}
       <div style={{
@@ -81,7 +87,7 @@ export const CounterTickSparks: React.FC<CounterTickSparksProps> = ({
         boxSizing: 'border-box', boxShadow: '0 4px 14px rgba(0,0,0,0.08)',
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 20,
       }}>
-        <div style={{ height: 14, width: 220, background: G.bar, borderRadius: 7 }} />
+        <div style={{ fontFamily: FONT_STACK, fontSize: 24, fontWeight: 700, color: G.ink }}>{title}</div>
         <div style={{
           fontFamily: FONT_STACK, fontWeight: 800, fontSize: 168,
           color: G.ink, letterSpacing: -3, lineHeight: 1, fontVariantNumeric: 'tabular-nums',
@@ -89,7 +95,7 @@ export const CounterTickSparks: React.FC<CounterTickSparksProps> = ({
         }}>
           {value.toLocaleString('en-US')}
         </div>
-        <div style={{ height: 10, width: 150, background: G.line, borderRadius: 5 }} />
+        <div style={{ fontFamily: FONT_STACK, fontSize: 18, color: G.mid }}>{subtitle}</div>
       </div>
 
       {/* 火星：每个 tick 一簇，寿命耗尽条件卸载 */}

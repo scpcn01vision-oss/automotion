@@ -33,7 +33,7 @@ const EXPAND_END = 57;         // 第三格 12f 扩张结束
 const outCubic = Easing.out(Easing.cubic);
 
 // 页面 = scene + 左上卡片内 KPI 数字块（给"数字区特写"一个锚点）
-const PageA: React.FC<{ scene: SceneContentData }> = ({ scene }) => (
+const PageA: React.FC<{ scene: SceneContentData; kpiValue: string; kpiLabel: string }> = ({ scene, kpiValue, kpiLabel }) => (
   <div style={{ width: 1920, height: 1080, position: 'relative' }}>
     <SceneContent content={scene} />
     <div style={{
@@ -42,9 +42,9 @@ const PageA: React.FC<{ scene: SceneContentData }> = ({ scene }) => (
       alignItems: 'center', justifyContent: 'center', gap: 8,
     }}>
       <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 96, color: G.ink, letterSpacing: -2, lineHeight: 1 }}>
-        1,284
+        {kpiValue}
       </div>
-      <div style={{ height: 10, width: 150, background: G.mid, borderRadius: 5 }} />
+      <div style={{ fontFamily: FONT_STACK, fontSize: 22, fontWeight: 600, color: G.mid }}>{kpiLabel}</div>
     </div>
   </div>
 );
@@ -60,6 +60,8 @@ type PanelSpec = {
 
 export interface ComicPanelSplitProps {
   scene?: SceneContentData;
+  kpiValue?: string; // KPI 数字
+  kpiLabel?: string; // KPI 标签
 }
 
 export const ComicPanelSplit: React.FC<ComicPanelSplitProps> = ({
@@ -72,6 +74,8 @@ export const ComicPanelSplit: React.FC<ComicPanelSplitProps> = ({
       { label: '指标三', value: '96.4%' },
     ],
   },
+  kpiValue = '1,284',
+  kpiLabel = '指标',
 }) => {
   const frame = useCurrentFrame();
 
@@ -84,7 +88,7 @@ export const ComicPanelSplit: React.FC<ComicPanelSplitProps> = ({
           transform: 'translate(442px, 140px) scale(2.6)',
           transformOrigin: '518px 400px',
         }}>
-          <PageA scene={scene} />
+          <PageA scene={scene} kpiValue={kpiValue} kpiLabel={kpiLabel} />
         </div>
       </AbsoluteFill>
     );
@@ -94,7 +98,7 @@ export const ComicPanelSplit: React.FC<ComicPanelSplitProps> = ({
   if (frame < SPLIT) {
     return (
       <AbsoluteFill style={{ background: G.bg }}>
-        <PageA scene={scene} />
+        <PageA scene={scene} kpiValue={kpiValue} kpiLabel={kpiLabel} />
       </AbsoluteFill>
     );
   }
@@ -166,7 +170,7 @@ export const ComicPanelSplit: React.FC<ComicPanelSplitProps> = ({
               transform: `translate(${p.tx}px, ${p.ty}px) scale(${p.baseScale})`,
               transformOrigin: `${p.originX}px ${p.originY}px`,
             }}>
-              <PageA scene={scene} />
+              <PageA scene={scene} kpiValue={kpiValue} kpiLabel={kpiLabel} />
             </div>
             {pulse > 0.005 && (
               <div style={{ position: 'absolute', inset: 0, background: `rgba(0,0,0,${pulse})` }} />

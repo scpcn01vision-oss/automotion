@@ -53,7 +53,11 @@ const scrollAt = (f: number): number => {
 };
 
 // 一行 changelog：图标块 + 标题条 + 尾部日期条，宽度由行号确定（帧确定）
-const Row: React.FC<{ i: number; highlight: number }> = ({ i, highlight }) => (
+const Row: React.FC<{
+  i: number;
+  highlight: number;
+  data: { icon: string; title: string; sub: string; value: string };
+}> = ({ i, highlight, data }) => (
   <div
     style={{
       position: 'absolute',
@@ -72,10 +76,10 @@ const Row: React.FC<{ i: number; highlight: number }> = ({ i, highlight }) => (
       boxShadow: highlight > 0 ? `0 10px 34px rgba(0,0,0,${0.2 * highlight})` : 'none',
     }}
   >
-    <div style={{ width: 44, height: 44, borderRadius: 10, background: G.mid }} />
-    <div style={{ height: 14, width: `${28 + ((i * 31) % 34)}%`, background: G.bar, borderRadius: 7 }} />
-    <div style={{ height: 10, width: `${12 + ((i * 17) % 18)}%`, background: G.line, borderRadius: 5 }} />
-    <div style={{ marginLeft: 'auto', height: 12, width: 120, background: G.line, borderRadius: 6 }} />
+    <div style={{ width: 44, height: 44, borderRadius: 10, background: G.mid, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 800, color: G.bg }}>{data.icon}</div>
+    <div style={{ fontFamily: FONT_STACK, fontSize: 24, fontWeight: 600, color: G.ink }}>{data.title}</div>
+    <div style={{ fontFamily: FONT_STACK, fontSize: 20, color: G.mid }}>{data.sub}</div>
+    <div style={{ marginLeft: 'auto', fontFamily: FONT_STACK, fontSize: 20, fontWeight: 700, color: G.accent }}>{data.value}</div>
   </div>
 );
 
@@ -88,9 +92,25 @@ const Corner: React.FC<{ flip: [number, number]; style: React.CSSProperties }> =
 );
 
 export interface BrakeReticleLockProps {
+  dashTitle?: string; // 顶栏标题
+  avatarText?: string; // 顶栏头像首字母
+  rows?: { icon: string; title: string; sub: string; value: string }[]; // changelog 行内容
+  tagText?: string; // 急停后右侧小标签
 }
+const defaultRows = () =>
+  Array.from({ length: 38 }, (_, i) => ({
+    icon: ['◆', '●', '▲', '●'][i % 4],
+    title: `记录 ${String(i + 1).padStart(2, '0')}`,
+    sub: '中性说明',
+    value: '已同步',
+  }));
 
-export const BrakeReticleLock: React.FC<BrakeReticleLockProps> = () => {
+export const BrakeReticleLock: React.FC<BrakeReticleLockProps> = ({
+  dashTitle = '项目工作区',
+  avatarText = '我',
+  rows = defaultRows(),
+  tagText = 'v2.41',
+}) => {
   const f = useCurrentFrame();
   const scroll = scrollAt(f);
 
@@ -135,15 +155,15 @@ export const BrakeReticleLock: React.FC<BrakeReticleLockProps> = () => {
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       {/* 顶栏（不随滚动） */}
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 72, background: G.panel, borderBottom: `2px solid ${G.line}`, display: 'flex', alignItems: 'center', padding: '0 32px', gap: 20, boxSizing: 'border-box', zIndex: 3 }}>
-        <div style={{ height: 18, width: 220, background: G.bar, borderRadius: 9 }} />
-        <div style={{ marginLeft: 'auto', width: 36, height: 36, borderRadius: 18, background: G.mid }} />
+        <div style={{ fontFamily: FONT_STACK, fontSize: 24, fontWeight: 700, color: G.ink }}>{dashTitle}</div>
+        <div style={{ marginLeft: 'auto', width: 38, height: 38, borderRadius: 19, background: G.mid, color: G.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, fontWeight: 800 }}>{avatarText}</div>
       </div>
 
       {/* changelog 长列表：整体上掠，速度段 blur */}
       <div style={{ position: 'absolute', left: LIST_X, top: 0, width: LIST_W, height: 1080, filter: blur > 0.5 ? `blur(${blur}px)` : 'none' }}>
         <div style={{ position: 'absolute', top: -scroll, left: 0, width: LIST_W, height: 40 * PITCH }}>
           {Array.from({ length: 38 }).map((_, i) => (
-            <Row key={i} i={i} highlight={i === TARGET_ROW ? highlight : 0} />
+            <Row key={i} i={i} highlight={i === TARGET_ROW ? highlight : 0} data={rows[i % rows.length]} />
           ))}
         </div>
       </div>
@@ -177,7 +197,7 @@ export const BrakeReticleLock: React.FC<BrakeReticleLockProps> = () => {
             letterSpacing: 0.5,
           }}
         >
-          v2.41
+          {tagText}
         </div>
       )}
     </div>

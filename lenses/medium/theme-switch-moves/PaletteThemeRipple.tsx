@@ -39,41 +39,50 @@ const D = {
   side: '#0e0e10', sideBar: '#555553',
 };
 
-const DarkCard: React.FC<{ seed: number }> = ({ seed }) => {
-  const titleW = 45 + ((seed * 37) % 40);
-  const lines = 2 + (seed % 3);
-  return (
-    <div style={{ width: '100%', height: '100%', background: D.card, border: `2px solid ${D.border}`, borderRadius: 14, padding: 18, boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: 10 }}>
-      <div style={{ height: 16, width: `${titleW}%`, background: D.bar, borderRadius: 8 }} />
-      {Array.from({ length: lines }).map((_, i) => (
-        <div key={i} style={{ height: 10, width: `${88 - i * 14 - (seed % 5) * 3}%`, background: D.line, borderRadius: 5 }} />
-      ))}
-      <div style={{ marginTop: 'auto', display: 'flex', gap: 8, alignItems: 'center' }}>
-        <div style={{ width: 26, height: 26, borderRadius: 13, background: D.mid }} />
-        <div style={{ height: 10, width: 64, background: D.line, borderRadius: 5 }} />
-      </div>
+const DarkCard: React.FC<{ title: string; rows: string[] }> = ({ title, rows }) => (
+  <div style={{ width: '100%', height: '100%', background: D.card, border: `2px solid ${D.border}`, borderRadius: 14, padding: 18, boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: 10 }}>
+    <div style={{ fontFamily: FONT_STACK, fontSize: 16, fontWeight: 700, color: D.ink }}>{title}</div>
+    {rows.map((r, i) => (
+      <div key={i} style={{ fontFamily: FONT_STACK, fontSize: 13, color: D.mid }}>{r}</div>
+    ))}
+    <div style={{ marginTop: 'auto', display: 'flex', gap: 8, alignItems: 'center' }}>
+      <div style={{ width: 26, height: 26, borderRadius: 13, background: D.mid, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 800, color: D.bg }}>{title.charAt(0)}</div>
+      <div style={{ fontFamily: FONT_STACK, fontSize: 12, color: D.line }}>成员</div>
     </div>
-  );
-};
+  </div>
+);
 
 // 与 FakeDashboard variant A 布局逐像素一致的深色版——扫场读作"同一 UI 换肤"
-const DarkDashboard: React.FC = () => (
-  <div style={{ width: 1920, height: 1080, background: D.bg, display: 'flex' }}>
+const DarkDashboard: React.FC<{
+  appName: string;
+  menuItems: { icon: string; label: string }[];
+  mainTitle: string;
+  searchText: string;
+  avatarText: string;
+  cards: { title: string; rows: string[] }[];
+}> = ({ appName, menuItems, mainTitle, searchText, avatarText, cards }) => (
+  <div style={{ width: 1920, height: 1080, background: D.bg, display: 'flex', fontFamily: FONT_STACK }}>
     <div style={{ width: 220, background: D.side, padding: '28px 22px', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: 18 }}>
-      <div style={{ width: 40, height: 40, borderRadius: 10, background: '#8a8a88' }} />
-      {Array.from({ length: 7 }).map((_, i) => (
-        <div key={i} style={{ height: 12, width: `${60 + ((i * 29) % 35)}%`, background: D.sideBar, borderRadius: 6 }} />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{ width: 40, height: 40, borderRadius: 10, background: D.sideBar, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 800, color: D.bg }}>◆</div>
+        <div style={{ fontSize: 16, fontWeight: 700, color: D.sideBar }}>{appName}</div>
+      </div>
+      {menuItems.map((it, i) => (
+        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, height: 30 }}>
+          <div style={{ width: 18, height: 18, borderRadius: 5, background: D.sideBar, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, color: D.bg }}>{it.icon}</div>
+          <div style={{ fontSize: 14, fontWeight: 600, color: D.sideBar }}>{it.label}</div>
+        </div>
       ))}
     </div>
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
       <div style={{ height: 72, background: D.panel, borderBottom: `2px solid ${D.line}`, display: 'flex', alignItems: 'center', padding: '0 32px', gap: 20, boxSizing: 'border-box' }}>
-        <div style={{ height: 18, width: 180, background: D.bar, borderRadius: 9 }} />
-        <div style={{ marginLeft: 'auto', height: 36, width: 320, background: D.card, border: `2px solid ${D.line}`, borderRadius: 18, boxSizing: 'border-box' }} />
-        <div style={{ width: 36, height: 36, borderRadius: 18, background: D.mid }} />
+        <div style={{ fontSize: 20, fontWeight: 800, color: D.ink }}>{mainTitle}</div>
+        <div style={{ marginLeft: 'auto', height: 36, minWidth: 320, display: 'flex', alignItems: 'center', padding: '0 18px', background: D.card, border: `2px solid ${D.line}`, borderRadius: 18, boxSizing: 'border-box', fontSize: 14, color: D.mid }}>{searchText}</div>
+        <div style={{ width: 36, height: 36, borderRadius: 18, background: D.mid, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 800, color: D.bg }}>{avatarText}</div>
       </div>
       <div style={{ flex: 1, padding: 36, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gridAutoRows: '1fr', gap: 28, boxSizing: 'border-box' }}>
-        {Array.from({ length: 6 }).map((_, i) => (
-          <DarkCard key={i} seed={i + 1} />
+        {cards.map((c, i) => (
+          <DarkCard key={i} title={c.title} rows={c.rows} />
         ))}
       </div>
     </div>
@@ -81,7 +90,15 @@ const DarkDashboard: React.FC = () => (
 );
 
 export interface PaletteThemeRippleProps {
-  scene?: SceneContentData;
+  scene?: SceneContentData; // 浅色层内容
+  query?: string; // 面板输入文字
+  appName?: string; // 深色层侧栏品牌
+  menuItems?: { icon: string; label: string }[]; // 深色层菜单
+  mainTitle?: string; // 深色层顶栏标题
+  searchText?: string; // 深色层搜索
+  avatarText?: string; // 深色层头像
+  cards?: { title: string; rows: string[] }[]; // 深色层卡片组
+  commands?: { icon: string; label: string }[]; // 面板结果行
 }
 
 export const PaletteThemeRipple: React.FC<PaletteThemeRippleProps> = ({
@@ -94,6 +111,33 @@ export const PaletteThemeRipple: React.FC<PaletteThemeRippleProps> = ({
       { label: '指标三', value: '96.4%' },
     ],
   },
+  query = 'dark',
+  appName = '工作台',
+  menuItems = [
+    { icon: '◆', label: '仪表盘' },
+    { icon: '●', label: '任务' },
+    { icon: '▲', label: '文档' },
+    { icon: '●', label: '成员' },
+    { icon: '▲', label: '设置' },
+    { icon: '◆', label: '通知' },
+    { icon: '●', label: '帮助' },
+  ],
+  mainTitle = '项目工作区',
+  searchText = '搜索',
+  avatarText = '我',
+  cards = [
+    { title: '指标一', rows: ['明细 01', '明细 02'] },
+    { title: '指标二', rows: ['明细 01', '明细 02', '明细 03'] },
+    { title: '指标三', rows: ['明细 01', '明细 02'] },
+    { title: '指标四', rows: ['明细 01', '明细 02', '明细 03', '明细 04'] },
+    { title: '指标五', rows: ['明细 01', '明细 02', '明细 03'] },
+    { title: '指标六', rows: ['明细 01', '明细 02'] },
+  ],
+  commands = [
+    { icon: '◆', label: '切换主题' },
+    { icon: '●', label: '新建文档' },
+    { icon: '▲', label: '打开设置' },
+  ],
 }) => {
   const f = useCurrentFrame();
 
@@ -150,7 +194,14 @@ export const PaletteThemeRipple: React.FC<PaletteThemeRippleProps> = ({
       {/* 深色层：从收缩点起被圆形 clip 揭开；完成后铺满且无 clip */}
       {(rippling || done) && (
         <div style={{ position: 'absolute', inset: 0, clipPath: done ? 'none' : `circle(${r}px at ${ORIGIN.x}px ${ORIGIN.y}px)` }}>
-          <DarkDashboard />
+          <DarkDashboard
+            appName={appName}
+            menuItems={menuItems}
+            mainTitle={mainTitle}
+            searchText={searchText}
+            avatarText={avatarText}
+            cards={cards}
+          />
         </div>
       )}
 
@@ -211,18 +262,18 @@ export const PaletteThemeRipple: React.FC<PaletteThemeRippleProps> = ({
         >
           {/* 输入行：⌘K 标识 + 逐字灰块 */}
           <div style={{ height: 62, border: `2px solid ${G.line}`, borderRadius: 12, display: 'flex', alignItems: 'center', gap: 14, padding: '0 18px', boxSizing: 'border-box' }}>
-            <div style={{ padding: '6px 12px', borderRadius: 8, background: G.side, color: '#fff', fontFamily: FONT_STACK, fontWeight: 800, fontSize: 22 }}>⌘K</div>
+            <div style={{ padding: '6px 12px', borderRadius: 8, background: G.side, color: G.card, fontFamily: FONT_STACK, fontWeight: 800, fontSize: 22 }}>⌘K</div>
             {TYPE_FRAMES.map((_, i) => (
-              <div key={i} style={{ width: 30, height: 30, borderRadius: 6, background: G.ink, transform: `scale(${charScale(i)})` }} />
+              <div key={i} style={{ fontFamily: FONT_STACK, fontSize: 26, fontWeight: 700, color: G.ink, transform: `scale(${charScale(i)})` }}>{query[i] ?? ''}</div>
             ))}
             {/* 光标：帧确定闪烁（每 8f 翻转） */}
             <div style={{ width: 4, height: 34, background: G.ink, opacity: Math.floor(f / 8) % 2 === 0 ? 1 : 0 }} />
           </div>
           {/* 结果行：输入完成后首行加深表示选中 */}
-          {Array.from({ length: 3 }).map((_, i) => (
+          {commands.map((c, i) => (
             <div key={i} style={{ height: 44, borderRadius: 10, background: i === 0 && typedCount === 4 ? G.line : G.panel, display: 'flex', alignItems: 'center', gap: 14, padding: '0 16px', boxSizing: 'border-box' }}>
-              <div style={{ width: 24, height: 24, borderRadius: 6, background: G.mid }} />
-              <div style={{ height: 12, width: `${34 + i * 16}%`, background: G.bar, borderRadius: 6 }} />
+              <div style={{ width: 24, height: 24, borderRadius: 6, background: G.mid, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, color: G.bg }}>{c.icon}</div>
+              <div style={{ fontFamily: FONT_STACK, fontSize: 16, fontWeight: 600, color: G.ink }}>{c.label}</div>
             </div>
           ))}
         </div>

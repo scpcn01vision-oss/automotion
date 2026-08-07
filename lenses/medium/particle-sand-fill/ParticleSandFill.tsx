@@ -43,11 +43,15 @@ const fallTime = (dist: number) => Math.sqrt((2 * dist) / GRAV);
 const departOf = (bar: number, i: number) => 8 + bar * STAGGER + i * RATE + rnd(i, bar * 7 + 1) * 1.5;
 
 export interface ParticleSandFillProps {
-  label?: string;
+  label?: string; // 顶部主标题
+  cardTitle?: string; // 图表卡标题
+  cardSubtitle?: string; // 图表卡副标题
 }
 
 export const ParticleSandFill: React.FC<ParticleSandFillProps> = ({
   label = 'FILL',
+  cardTitle = '指标概览',
+  cardSubtitle = '实时更新',
 }) => {
   const frame = useCurrentFrame();
 
@@ -63,8 +67,8 @@ export const ParticleSandFill: React.FC<ParticleSandFillProps> = ({
         background: G.card, border: `2px solid ${G.border}`, borderRadius: 14,
         boxSizing: 'border-box', padding: 28, boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
       }}>
-        <div style={{ height: 14, width: 260, background: G.bar, borderRadius: 7 }} />
-        <div style={{ height: 10, width: 160, background: G.line, borderRadius: 5, marginTop: 10 }} />
+        <div style={{ fontFamily: FONT_STACK, fontSize: 30, fontWeight: 700, color: G.ink }}>{cardTitle}</div>
+        <div style={{ fontFamily: FONT_STACK, fontSize: 20, color: G.mid, marginTop: 6 }}>{cardSubtitle}</div>
       </div>
       {/* 基线 */}
       <div style={{ position: 'absolute', left: CARD.x + 40, top: PLOT_BOTTOM, width: CARD.w - 80, height: 3, background: G.line }} />

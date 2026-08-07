@@ -27,7 +27,7 @@ const DEFAULT_STEPS: { word: string; dur: number }[] = [
   { word: 'SETTINGS DESIGN', dur: 8 },
   { word: 'AI CHAT', dur: 10 },
   { word: 'FILE SEARCH', dur: 12 },
-  { word: 'RAYCAST', dur: 999 }, // 最后一词：停稳后触发唯一一次合拢
+  { word: 'FINAL', dur: 999 }, // 最后一词：停稳后触发唯一一次合拢
 ];
 
 const START = 8; // 开场黑场立静
@@ -105,13 +105,13 @@ export const TextColumnConverge: React.FC<TextColumnConvergeProps> = ({
     fontWeight: 500,
     fontSize: FS,
     letterSpacing: 3,
-    color: G.panel,
+    color: G.ink,
     whiteSpace: 'nowrap',
     lineHeight: 1,
   };
 
   return (
-    <AbsoluteFill style={{ background: G.ink, overflow: 'hidden' }}>
+    <AbsoluteFill style={{ background: G.bg, overflow: 'hidden' }}>
       {visible && (
         <div style={{ position: 'absolute', inset: 0 }}>
           {/* 左固定词：左缘定位（轮换期间钉死在左屏边距处） */}
@@ -133,7 +133,7 @@ export const TextColumnConverge: React.FC<TextColumnConvergeProps> = ({
           <div style={{
             ...font,
             fontStyle: 'italic',
-            color: G.line,
+            color: G.mid,
             position: 'absolute',
             left: MERGED_LEFT, top: 519 + FS + 14,
             opacity: subOp,

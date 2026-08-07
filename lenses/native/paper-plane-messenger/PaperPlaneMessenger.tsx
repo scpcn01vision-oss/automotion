@@ -83,12 +83,8 @@ const Window: React.FC<{
 }> = ({ cx, cy, content, sendBtn, btnPulse = 0, sendLabel = '发送' }) => (
   <div style={{ position: 'absolute', left: cx - WIN_W / 2, top: cy - WIN_H / 2, width: WIN_W, height: WIN_H, borderRadius: 18, background: G.card, border: `2px solid ${G.border}`, boxShadow: '0 40px 100px rgba(0,0,0,0.30)', boxSizing: 'border-box', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
     <div style={{ height: 54, background: G.panel, borderBottom: `2px solid ${G.line}`, display: 'flex', alignItems: 'center', gap: 10, padding: '0 20px', boxSizing: 'border-box' }}>
-      {[0, 1, 2].map((i) => <div key={i} style={{ width: 15, height: 15, borderRadius: 8, background: G.bar }} />)}
-      {content.title ? (
-        <div style={{ marginLeft: 14, fontFamily: FONT_STACK, fontSize: 18, fontWeight: 700, color: G.ink }}>{content.title}</div>
-      ) : (
-        <div style={{ marginLeft: 14, height: 13, width: 200, background: G.bar, borderRadius: 7 }} />
-      )}
+      {['◆', '●', '▲'].map((g, i) => <div key={i} style={{ width: 15, height: 15, borderRadius: 8, background: G.bar, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, color: G.side }}>{g}</div>)}
+      <div style={{ marginLeft: 14, fontFamily: FONT_STACK, fontSize: 18, fontWeight: 700, color: G.ink }}>{content.title || '未命名窗口'}</div>
     </div>
     <div style={{ padding: 26, display: 'flex', flexDirection: 'column', gap: 12, flex: 1, boxSizing: 'border-box' }}>
       {(content.rows ?? []).map((r, i) => (
@@ -165,9 +161,9 @@ export const PaperPlaneMessenger: React.FC<PaperPlaneMessengerProps> = ({
   cy = AY + (Math.max(pos.y, 150) - AY) * followW;
   cx = cx * (1 - takeP) + BX * takeP;
   cy = cy * (1 - takeP) + BY * takeP;
-  // 变焦：1.55（贴脸 A）→ 0.62（拉远伴飞）→ 2.6（B 接管全屏）
+  // 变焦：1.55（贴脸 A）→ 0.62（拉远伴飞）→ 1.55（B 接管，倍率与 A 一致）
   const zBase = 1.55 + (0.62 - 1.55) * zoomOutP;
-  const zTake = 0.62 + (3.1 - 0.62) * takeP;
+  const zTake = 0.62 + (1.55 - 0.62) * takeP;
   const z = frame < TAKEOVER[0] ? zBase : zTake;
 
   const camX = (wx: number, d: number) => 960 + (wx - cx) * z * d;

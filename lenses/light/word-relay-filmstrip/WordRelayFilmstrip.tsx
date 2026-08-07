@@ -18,6 +18,7 @@
 import React from 'react';
 import { AbsoluteFill, interpolate, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const mulberry32 = (a: number) => () => {
   let t = (a += 0x6d2b79f5);
@@ -33,29 +34,27 @@ const STEP = CARD_H + GAP;
 
 // —— 页面卡集合：黑白相间（奇偶强制交替），内容各异 ——
 const DarkArticle: React.FC<{ seed: number }> = ({ seed }) => {
-  const rand = mulberry32(seed);
   return (
-    <div style={{ position: 'absolute', inset: 0, background: '#101318', padding: '38px 46px' }}>
+    <div style={{ position: 'absolute', inset: 0, background: G.ink, padding: '38px 46px', fontFamily: FONT_STACK }}>
       <div style={{ display: 'flex', gap: 26, alignItems: 'center', marginBottom: 34 }}>
-        <div style={{ width: 90, height: 13, background: '#d8b25a', borderRadius: 3, opacity: 0.9 }} />
+        <div style={{ fontSize: 20, fontWeight: 800, color: G.accent }}>文章</div>
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 18 }}>
-          {[0, 1, 2, 3].map((i) => <div key={i} style={{ width: 54, height: 9, background: '#3a3f48', borderRadius: 3 }} />)}
+          {['概览', '分析', '报告', '设置'].map((t) => <div key={t} style={{ fontSize: 14, color: G.bar }}>{t}</div>)}
         </div>
       </div>
-      <div style={{ width: 150, height: 9, background: '#a8452e', borderRadius: 3, marginBottom: 20 }} />
-      <div style={{ width: '62%', height: 30, background: '#e8e6df', borderRadius: 5, marginBottom: 14 }} />
-      <div style={{ width: '44%', height: 30, background: '#e8e6df', borderRadius: 5, marginBottom: 30 }} />
+      <div style={{ width: 150, fontSize: 15, color: G.mid, marginBottom: 20 }}>专栏</div>
+      <div style={{ fontSize: 34, fontWeight: 700, color: G.card, marginBottom: 14 }}>标题一</div>
+      <div style={{ fontSize: 34, fontWeight: 700, color: G.card, marginBottom: 30 }}>标题二</div>
       <div style={{ display: 'flex', gap: 30 }}>
         <div style={{ flex: 1.3 }}>
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} style={{ height: 9, width: `${62 + rand() * 34}%`, background: '#41454e', borderRadius: 3, marginBottom: 13 }} />
+          {['段落一', '段落二', '段落三', '段落四', '段落五', '段落六'].map((t) => (
+            <div key={t} style={{ fontSize: 14, color: G.mid, marginBottom: 13 }}>{t}</div>
           ))}
         </div>
-        <div style={{ flex: 1, border: '1px solid #2c313a', borderRadius: 8, background: '#151a22', padding: 20 }}>
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 15 }}>
-              <div style={{ width: 58, height: 12, background: '#6d5423', borderRadius: 3 }} />
-              <div style={{ width: `${34 + rand() * 30}%`, height: 9, background: '#4a4f58', borderRadius: 3 }} />
+        <div style={{ flex: 1, border: `1px solid ${G.line}`, borderRadius: 8, background: G.side, padding: 20 }}>
+          {['指标一 +18%', '指标二 2.1×', '指标三 96.4%', '指标四 24%'].map((t) => (
+            <div key={t} style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 15 }}>
+              <div style={{ fontSize: 14, color: G.accent, fontWeight: 700 }}>{t}</div>
             </div>
           ))}
         </div>
@@ -65,28 +64,27 @@ const DarkArticle: React.FC<{ seed: number }> = ({ seed }) => {
 };
 
 const LightMedal: React.FC<{ seed: number }> = ({ seed }) => {
-  const rand = mulberry32(seed);
   return (
-    <div style={{ position: 'absolute', inset: 0, background: '#ffffff', padding: '36px 44px' }}>
-      <div style={{ width: 120, height: 9, background: '#b9bcc2', borderRadius: 3, marginBottom: 14 }} />
+    <div style={{ position: 'absolute', inset: 0, background: G.card, padding: '36px 44px', fontFamily: FONT_STACK }}>
+      <div style={{ fontSize: 18, fontWeight: 700, color: G.mid, marginBottom: 14 }}>奖项</div>
       <div style={{ display: 'flex', gap: 14, marginBottom: 24 }}>
-        <div style={{ width: 150, height: 32, background: '#17181a', borderRadius: 5 }} />
-        <div style={{ width: 170, height: 32, background: '#2f6fd6', borderRadius: 5, opacity: 0.85 }} />
+        <div style={{ fontSize: 26, fontWeight: 800, color: G.ink }}>金奖</div>
+        <div style={{ fontSize: 26, fontWeight: 800, color: G.accent }}>银奖</div>
       </div>
       <div style={{ display: 'flex', gap: 10, marginBottom: 22 }}>
-        {[64, 96, 78, 110, 70, 88, 92].map((w, i) => (
-          <div key={i} style={{ width: w, height: 24, borderRadius: 12, background: i === 0 ? '#2f6fd6' : '#f2f3f5', border: i === 0 ? 'none' : '1px solid #dfe1e5' }} />
+        {['最佳', '创新', '设计', '体验', '效率', '协作', '成长'].map((t, i) => (
+          <div key={t} style={{ padding: '5px 12px', fontSize: 13, fontWeight: 700, borderRadius: 12, background: i === 0 ? G.accent : G.nav, border: i === 0 ? 'none' : `1px solid ${G.line}`, color: i === 0 ? G.side : G.ink }}>{t}</div>
         ))}
       </div>
-      <div style={{ height: 34, borderRadius: 6, border: '1px solid #dfe1e5', marginBottom: 26 }} />
+      <div style={{ height: 34, borderRadius: 6, border: `1px solid ${G.line}`, marginBottom: 26, display: 'flex', alignItems: 'center', padding: '0 14px', fontSize: 14, color: G.mid }}>评审概要</div>
       <div style={{ display: 'flex', gap: 16 }}>
-        {[0, 1, 2].map((c) => (
-          <div key={c} style={{ flex: 1, border: '1px solid #e4e6ea', borderRadius: 8, padding: 18 }}>
-            <div style={{ width: 74, height: 8, background: '#9aa0aa', borderRadius: 3, marginBottom: 12 }} />
-            <div style={{ width: `${52 + rand() * 30}%`, height: 13, background: '#1c1d20', borderRadius: 4, marginBottom: 10 }} />
+        {['创新度', '完成度', '影响力'].map((c, ci) => (
+          <div key={c} style={{ flex: 1, border: `1px solid ${G.line}`, borderRadius: 8, padding: 18 }}>
+            <div style={{ fontSize: 13, color: G.mid, marginBottom: 12 }}>{c}</div>
+            <div style={{ fontSize: 18, fontWeight: 800, color: G.ink, marginBottom: 10 }}>{['8.9', '9.2', '7.6'][ci]}</div>
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <div style={{ width: 20, height: 13, background: c === 0 ? '#c8342f' : c === 1 ? '#2c8a4b' : '#c8342f', borderRadius: 2 }} />
-              <div style={{ width: 60, height: 8, background: '#c3c7cd', borderRadius: 3 }} />
+              <div style={{ width: 20, height: 13, background: G.accent, borderRadius: 2 }} />
+              <div style={{ fontSize: 12, color: G.mid }}>评级 A</div>
             </div>
           </div>
         ))}
@@ -96,25 +94,24 @@ const LightMedal: React.FC<{ seed: number }> = ({ seed }) => {
 };
 
 const DarkStats: React.FC<{ seed: number }> = ({ seed }) => {
-  const rand = mulberry32(seed);
   return (
-    <div style={{ position: 'absolute', inset: 0, background: '#0e0d12', padding: '44px 52px' }}>
-      <div style={{ borderLeft: '3px solid #6a2430', paddingLeft: 34 }}>
+    <div style={{ position: 'absolute', inset: 0, background: G.side, padding: '44px 52px', fontFamily: FONT_STACK }}>
+      <div style={{ borderLeft: `3px solid ${G.accent}`, paddingLeft: 34 }}>
         {[
-          { n: 92, accent: false }, { n: 74, accent: false }, { n: 58, accent: false }, { n: 118, accent: true },
+          { label: '指标一', value: '92%', accent: false }, { label: '指标二', value: '74%', accent: false }, { label: '指标三', value: '58%', accent: false }, { label: '指标四', value: '118%', accent: true },
         ].map((row, i) => (
           <div key={i} style={{ display: 'flex', gap: 20, alignItems: 'center', marginBottom: 26 }}>
-            <div style={{ width: row.n, height: row.accent ? 30 : 20, background: row.accent ? '#c33b2e' : '#d6d3cc', borderRadius: 4, opacity: row.accent ? 0.95 : 0.85 }} />
-            <div style={{ width: 130, height: 11, background: row.accent ? '#7a3328' : '#4c4a52', borderRadius: 3 }} />
-            <div style={{ width: `${20 + rand() * 26}%`, height: 8, background: '#33323a', borderRadius: 3 }} />
+            <div style={{ fontSize: 22, fontWeight: 800, color: row.accent ? G.accent : G.card, width: 92 }}>{row.value}</div>
+            <div style={{ width: 130, fontSize: 15, color: G.bar }}>{row.label}</div>
+            <div style={{ fontSize: 13, color: G.mid }}>{row.accent ? '重点' : '常态'}</div>
           </div>
         ))}
       </div>
-      <div style={{ marginTop: 30, background: '#1c1216', borderRadius: 8, padding: '22px 30px', display: 'flex', gap: 60 }}>
-        {[0, 1, 2].map((i) => (
+      <div style={{ marginTop: 30, background: G.ink, borderRadius: 8, padding: '22px 30px', display: 'flex', gap: 60 }}>
+        {['概览', '明细', '汇总'].map((t, i) => (
           <div key={i}>
-            <div style={{ width: 96, height: 16, background: '#c3564a', borderRadius: 3, marginBottom: 10, opacity: 0.9 }} />
-            <div style={{ width: 76, height: 8, background: '#5a4448', borderRadius: 3 }} />
+            <div style={{ fontSize: 16, fontWeight: 800, color: G.card, marginBottom: 10 }}>{t}</div>
+            <div style={{ fontSize: 13, color: G.mid }}>{['数值一', '数值二', '数值三'][i]}</div>
           </div>
         ))}
       </div>
@@ -123,28 +120,27 @@ const DarkStats: React.FC<{ seed: number }> = ({ seed }) => {
 };
 
 const LightTable: React.FC<{ seed: number }> = ({ seed }) => {
-  const rand = mulberry32(seed);
   return (
-    <div style={{ position: 'absolute', inset: 0, background: '#ffffff', padding: '34px 44px' }}>
+    <div style={{ position: 'absolute', inset: 0, background: G.card, padding: '34px 44px', fontFamily: FONT_STACK }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 26 }}>
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-          <div style={{ width: 34, height: 22, background: '#1d4f9e', borderRadius: 4 }} />
-          <div style={{ width: 130, height: 11, background: '#2a2b2e', borderRadius: 3 }} />
+          <div style={{ width: 34, height: 22, background: G.accent, borderRadius: 4 }} />
+          <div style={{ fontSize: 18, fontWeight: 800, color: G.ink }}>数据表</div>
         </div>
         <div style={{ display: 'flex', gap: 16 }}>
-          <div style={{ width: 84, height: 10, background: '#c6c9cf', borderRadius: 3 }} />
-          <div style={{ width: 70, height: 10, background: '#c6c9cf', borderRadius: 3 }} />
+          <div style={{ fontSize: 14, color: G.mid }}>筛选</div>
+          <div style={{ fontSize: 14, color: G.mid }}>排序</div>
         </div>
       </div>
-      {Array.from({ length: 7 }).map((_, i) => (
-        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 20, padding: '13px 0', borderBottom: '1px solid #eceef1' }}>
-          <div style={{ width: 22, height: 10, background: '#9aa0aa', borderRadius: 3 }} />
-          <div style={{ width: 26, height: 16, background: ['#b23a3a', '#2c62b8', '#caa53c', '#3a8a52'][i % 4], borderRadius: 2, opacity: 0.85 }} />
-          <div style={{ width: 90 + rand() * 60, height: 10, background: '#3a3c40', borderRadius: 3 }} />
+      {['任务 01', '任务 02', '任务 03', '任务 04', '任务 05', '任务 06', '任务 07'].map((t, i) => (
+        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 20, padding: '13px 0', borderBottom: `1px solid ${G.line}` }}>
+          <div style={{ fontSize: 14, color: G.mid, width: 60 }}>{['A', 'B', 'C', 'D', 'E', 'F', 'G'][i]}</div>
+          <div style={{ width: 26, height: 16, background: [G.accent, G.mid, G.bar, G.side][i % 4], borderRadius: 2, opacity: 0.85 }} />
+          <div style={{ fontSize: 16, fontWeight: 600, color: G.ink }}>{t}</div>
           <div style={{ marginLeft: 'auto', display: 'flex', gap: 46 }}>
-            <div style={{ width: 16, height: 16, background: i % 3 === 1 ? '#8d8f94' : '#eceef1', borderRadius: 3 }} />
-            <div style={{ width: 16, height: 16, background: i % 3 === 2 ? '#a5772e' : '#eceef1', borderRadius: 3 }} />
-            <div style={{ width: 14, height: 10, background: '#5a5c60', borderRadius: 3 }} />
+            <div style={{ fontSize: 13, color: i % 3 === 1 ? G.mid : G.line }}>{i % 3 === 1 ? '编辑' : '已读'}</div>
+            <div style={{ fontSize: 13, color: i % 3 === 2 ? G.accent : G.line }}>{i % 3 === 2 ? '收藏' : '已读'}</div>
+            <div style={{ fontSize: 13, color: G.mid }}>{['8:00', '9:30', '11:00', '14:00', '16:30', '18:00', '20:30'][i]}</div>
           </div>
         </div>
       ))}
@@ -153,18 +149,18 @@ const LightTable: React.FC<{ seed: number }> = ({ seed }) => {
 };
 
 const DarkMri: React.FC = () => (
-  <div style={{ position: 'absolute', inset: 0, background: '#08090b', padding: 0 }}>
-    <div style={{ height: 44, borderBottom: '1px solid #1c1e22', display: 'flex', alignItems: 'center', gap: 16, padding: '0 26px' }}>
-      <div style={{ width: 100, height: 10, background: '#cfd2d6', borderRadius: 3, opacity: 0.8 }} />
-      <div style={{ marginLeft: 'auto', width: 60, height: 8, background: '#2c2f34', borderRadius: 3 }} />
+  <div style={{ position: 'absolute', inset: 0, background: G.ink, padding: 0, fontFamily: FONT_STACK }}>
+    <div style={{ height: 44, borderBottom: `1px solid ${G.line}`, display: 'flex', alignItems: 'center', gap: 16, padding: '0 26px' }}>
+      <div style={{ fontSize: 16, fontWeight: 700, color: G.card, opacity: 0.8 }}>影像查看</div>
+      <div style={{ marginLeft: 'auto', fontSize: 13, color: G.mid }}>扫描</div>
     </div>
     <div style={{ display: 'flex', height: CARD_H - 44 }}>
-      <div style={{ width: 190, borderRight: '1px solid #17191d', padding: 20 }}>
-        <div style={{ width: 110, height: 10, background: '#b8a24e', borderRadius: 3, marginBottom: 14 }} />
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} style={{ height: 7, width: `${58 + (i * 13) % 36}%`, background: '#2e3138', borderRadius: 3, marginBottom: 10 }} />
+      <div style={{ width: 190, borderRight: `1px solid ${G.line}`, padding: 20 }}>
+        <div style={{ fontSize: 15, fontWeight: 800, color: G.accent, marginBottom: 14 }}>序列</div>
+        {['影像 01', '影像 02', '影像 03', '影像 04', '影像 05'].map((t, i) => (
+          <div key={t} style={{ fontSize: 13, color: G.bar, marginBottom: 10 }}>{t}</div>
         ))}
-        <div style={{ marginTop: 24, width: 44, height: 130, margin: '24px auto 0', border: '1px solid #4a4330', borderRadius: 6 }} />
+        <div style={{ marginTop: 24, width: 44, height: 130, margin: '24px auto 0', border: `1px solid ${G.mid}`, borderRadius: 6 }} />
       </div>
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{
@@ -177,9 +173,9 @@ const DarkMri: React.FC = () => (
           ))}
         </div>
       </div>
-      <div style={{ width: 170, borderLeft: '1px solid #17191d', padding: 18 }}>
-        {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} style={{ height: 7, width: `${50 + (i * 17) % 44}%`, background: '#26292f', borderRadius: 3, marginBottom: 11 }} />
+      <div style={{ width: 170, borderLeft: `1px solid ${G.line}`, padding: 18 }}>
+        {['参数 01', '参数 02', '参数 03', '参数 04', '参数 05', '参数 06', '参数 07', '参数 08'].map((t, i) => (
+          <div key={t} style={{ fontSize: 12, color: G.mid, marginBottom: 11 }}>{t}</div>
         ))}
       </div>
     </div>
@@ -187,17 +183,17 @@ const DarkMri: React.FC = () => (
 );
 
 const LightPortfolio: React.FC = () => (
-  <div style={{ position: 'absolute', inset: 0, background: '#f7f7f8', padding: '40px 60px', textAlign: 'center' }}>
-    <div style={{ width: 340, height: 26, background: '#242528', borderRadius: 5, margin: '10px auto 18px' }} />
-    {[420, 470, 300].map((w, i) => (
-      <div key={i} style={{ width: w, height: 9, background: '#b6b9bf', borderRadius: 3, margin: '0 auto 11px' }} />
+  <div style={{ position: 'absolute', inset: 0, background: G.panel, padding: '40px 60px', textAlign: 'center', fontFamily: FONT_STACK }}>
+    <div style={{ fontSize: 28, fontWeight: 800, color: G.ink, margin: '10px auto 18px' }}>作品集</div>
+    {['简介一', '简介二', '简介三'].map((t, i) => (
+      <div key={t} style={{ width: [420, 470, 300][i], fontSize: 15, color: G.mid, margin: '0 auto 11px' }}>{t}</div>
     ))}
     <div style={{ display: 'flex', gap: 18, marginTop: 36 }}>
-      {[0, 1, 2, 3].map((i) => (
-        <div key={i} style={{ flex: 1, height: 150, background: '#ffffff', border: '1px solid #e2e4e8', borderRadius: 10, padding: 16, textAlign: 'left' }}>
-          <div style={{ width: '54%', height: 12, background: '#2c2d30', borderRadius: 3, marginBottom: 12 }} />
-          <div style={{ width: '80%', height: 8, background: '#d3d6db', borderRadius: 3, marginBottom: 8 }} />
-          <div style={{ width: '66%', height: 8, background: '#d3d6db', borderRadius: 3 }} />
+      {['项目一', '项目二', '项目三', '项目四'].map((t, i) => (
+        <div key={t} style={{ flex: 1, height: 150, background: G.card, border: `1px solid ${G.line}`, borderRadius: 10, padding: 16, textAlign: 'left' }}>
+          <div style={{ fontSize: 16, fontWeight: 700, color: G.ink, marginBottom: 12 }}>{t}</div>
+          <div style={{ fontSize: 13, color: G.mid, marginBottom: 8 }}>说明一</div>
+          <div style={{ fontSize: 13, color: G.mid }}>说明二</div>
         </div>
       ))}
     </div>

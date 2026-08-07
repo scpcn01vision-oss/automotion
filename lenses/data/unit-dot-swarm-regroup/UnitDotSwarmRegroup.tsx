@@ -47,7 +47,7 @@ const scatter = (i: number): [number, number] => [
 const groupOf = (i: number): number => (i < 180 ? 0 : i < 282 ? 1 : 2);
 const idxInGroup = (i: number): number => (i < 180 ? i : i < 282 ? i - 180 : i - 282);
 const GROUP_N = [180, 102, 38];
-const GROUP_LABEL = ['Free · 7,210', 'Pro · 4,102', 'Enterprise · 1,535'];
+const GROUP_LABEL = ['方案一 · 7,210', '方案二 · 4,102', '方案三 · 1,535'];
 
 // —— 阶段 1：三簇（圆盘散布，sqrt 半径均匀） ——
 const CLUSTER_C: [number, number][] = [
@@ -131,13 +131,15 @@ const fade = (frame: number, inA: number, inB: number, outA?: number, outB?: num
 const LABEL_FONT = FONT_STACK;
 
 export interface UnitDotSwarmRegroupProps {
-  label?: string;
-  groups?: string[];
+  label?: string; // 顶部标题（手法名标签默认去掉，可传入内容标题）
+  groups?: string[]; // 分组名
+  caption?: string; // 图例说明
 }
 
 export const UnitDotSwarmRegroup: React.FC<UnitDotSwarmRegroupProps> = ({
-  label = 'REGROUP',
-  groups = ['Free', 'Pro', 'Enterprise'],
+  label = '',
+  groups = ['组一', '组二', '组三'],
+  caption = '每点 ≈ 40 用户',
 }) => {
   const frame = useCurrentFrame();
 
@@ -165,9 +167,11 @@ export const UnitDotSwarmRegroup: React.FC<UnitDotSwarmRegroupProps> = ({
 
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', top: 110, width: '100%', textAlign: 'center' }}>
-        <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1 }}>{label}</div>
-      </div>
+      {label ? (
+        <div style={{ position: 'absolute', top: 110, width: '100%', textAlign: 'center' }}>
+          <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1 }}>{label}</div>
+        </div>
+      ) : null}
 
       {/* 图例：每点的含义（全程挂角） */}
       <div
@@ -185,7 +189,7 @@ export const UnitDotSwarmRegroup: React.FC<UnitDotSwarmRegroupProps> = ({
         }}
       >
         <div style={{ width: 18, height: 18, borderRadius: 9, background: G.mid }} />
-        Each dot ≈ 40 customers
+        {caption}
       </div>
 
       <svg width={1920} height={1080} style={{ position: 'absolute', inset: 0 }}>

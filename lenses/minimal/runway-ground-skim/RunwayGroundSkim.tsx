@@ -19,9 +19,9 @@ import { AbsoluteFill, interpolate, useCurrentFrame, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
 
-const INK = '#3c3c42';
-const MID = '#8d8d94';
-const FAINT = '#d2d2d5';
+const INK = G.ink;
+const MID = G.mid;
+const FAINT = G.line;
 
 const easeRise = Easing.bezier(0.42, 0, 0.16, 1);
 
@@ -40,7 +40,7 @@ const MiniCardFace: React.FC<{ title: string; sub: string }> = ({ title, sub }) 
     background: '#fcfcfb', display: 'flex', flexDirection: 'column', gap: 14, boxSizing: 'border-box',
   }}>
     <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-      <div style={{ width: 40, height: 40, border: '6px solid #85858b', borderRadius: 8, flexShrink: 0 }} />
+      <div style={{ width: 40, height: 40, border: `6px solid ${G.mid}`, borderRadius: 8, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, fontWeight: 800, color: G.mid }}>◆</div>
       <div style={{ fontFamily: FONT_STACK, fontSize: 46, color: INK, fontWeight: 650, whiteSpace: 'nowrap' }}>{title}</div>
     </div>
     <div style={{ fontFamily: FONT_STACK, fontSize: 36, color: MID, paddingLeft: 64, whiteSpace: 'nowrap' }}>{sub}</div>
@@ -63,31 +63,31 @@ const GRID_X = 1180, GRID_Y = 760, COL_GAP = 850, ROW_GAP = 250;
 const slotPos = (col: number, row: number) => ({ x: GRID_X + col * COL_GAP, y: GRID_Y + row * ROW_GAP });
 
 /* 平躺地面：Home 仪表盘（卡片槽位留空，由悬浮卡片落入） */
-const Ground: React.FC<{ workspaceName: string }> = ({ workspaceName }) => (
+const Ground: React.FC<{ workspaceName: string; rowMeta: string }> = ({ workspaceName, rowMeta }) => (
   <div style={{ width: 4600, height: 2600, background: G.bg, borderRadius: 60, position: 'relative', overflow: 'hidden' }}>
     <div style={{ display: 'flex', height: '100%' }}>
       {/* 左侧栏 */}
-      <div style={{ width: 860, borderRight: `4px solid ${FAINT}`, padding: '70px 60px 0', background: '#f1f1f0' }}>
+      <div style={{ width: 860, borderRight: `4px solid ${FAINT}`, padding: '70px 60px 0', background: G.panel }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 26 }}>
-          <div style={{ width: 64, height: 64, borderRadius: 18, background: 'linear-gradient(135deg,#adadb3,#6b6b72)' }} />
+          <div style={{ width: 64, height: 64, borderRadius: 18, background: `linear-gradient(135deg,${G.bar},${G.mid})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 30, fontWeight: 800, color: G.card }}>◆</div>
           <div style={{ fontFamily: FONT_STACK, fontSize: 56, fontWeight: 800, color: INK }}>{workspaceName}</div>
         </div>
         <div style={{ height: 46 }} />
         {['Home', 'Inbox', 'Company', 'People & Teams', 'Goals', 'Docs', 'More'].map((t, i) => (
           <div key={t} style={{
             display: 'flex', alignItems: 'center', gap: 30, height: 108, paddingLeft: 32,
-            background: i === 0 ? '#e6e6f0' : 'transparent', borderRadius: 20,
+            background: i === 0 ? G.nav : 'transparent', borderRadius: 20,
           }}>
-            <div style={{ width: 36, height: 36, border: '6px solid #90909a', borderRadius: 9 }} />
+            <div style={{ width: 36, height: 36, border: `6px solid ${G.mid}`, borderRadius: 9, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, fontWeight: 800, color: G.mid }}>◆</div>
             <div style={{ fontFamily: FONT_STACK, fontSize: 46, color: INK, fontWeight: i === 0 ? 650 : 400 }}>{t}</div>
           </div>
         ))}
         <div style={{ height: 60 }} />
         <div style={{ fontFamily: FONT_STACK, fontSize: 38, letterSpacing: 5, color: MID, fontWeight: 600, paddingLeft: 32 }}>SPACES</div>
         <div style={{ height: 16 }} />
-        {['EPD', 'Product roadmap', 'Design', 'Designer handbook', '3.0', 'Design system'].map((t) => (
+        {['需求池', '产品路线', '设计', '设计手册', '版本三', '设计规范'].map((t) => (
           <div key={t} style={{ display: 'flex', alignItems: 'center', gap: 30, height: 96, paddingLeft: 32 }}>
-            <div style={{ width: 44, height: 44, borderRadius: 12, background: '#d6d6da' }} />
+            <div style={{ width: 44, height: 44, borderRadius: 12, background: G.bar, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, fontWeight: 800, color: G.side }}>◆</div>
             <div style={{ fontFamily: FONT_STACK, fontSize: 42, color: INK }}>{t}</div>
           </div>
         ))}
@@ -96,17 +96,17 @@ const Ground: React.FC<{ workspaceName: string }> = ({ workspaceName }) => (
       <div style={{ flex: 1, padding: '70px 100px 0', position: 'relative' }}>
         {/* 顶部 tab 条 */}
         <div style={{ display: 'flex', gap: 110, fontFamily: FONT_STACK, fontSize: 42, color: MID, marginBottom: 60 }}>
-          <div>Product analytics</div><div style={{ fontWeight: 700, color: INK }}>{workspaceName} 3.0</div>
-          <div>Widget brainstorm</div><div>Design system</div><div>Design</div>
+          <div>数据分析</div><div style={{ fontWeight: 700, color: INK }}>{workspaceName} 版本</div>
+          <div>方案讨论</div><div>设计规范</div><div>设计</div>
         </div>
         <div style={{ fontFamily: FONT_STACK, fontSize: 110, fontWeight: 750, color: INK }}>Home</div>
         <div style={{ height: 40 }} />
         <div style={{
           display: 'flex', alignItems: 'center', gap: 30, border: `4px solid ${FAINT}`,
-          borderRadius: 24, padding: '28px 42px', background: '#fff', width: 1400,
+          borderRadius: 24, padding: '28px 42px', background: G.card, width: 1400,
         }}>
-          <div style={{ width: 38, height: 38, borderRadius: 19, border: '6px solid #9a9aa0' }} />
-          <div style={{ fontFamily: FONT_STACK, fontSize: 42, color: MID }}>Search by app, filetype, or keyword</div>
+          <div style={{ width: 38, height: 38, borderRadius: 19, border: `6px solid ${G.mid}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, fontWeight: 800, color: G.mid }}>⌕</div>
+          <div style={{ fontFamily: FONT_STACK, fontSize: 42, color: MID }}>搜索内容或关键字</div>
         </div>
         <div style={{ height: 66 }} />
         <div style={{ display: 'flex', gap: 70, fontFamily: FONT_STACK, fontSize: 46 }}>
@@ -123,18 +123,18 @@ const Ground: React.FC<{ workspaceName: string }> = ({ workspaceName }) => (
         </div>
         <div style={{ height: 36 }} />
         <div style={{
-          display: 'inline-block', padding: '16px 40px', background: '#e4e4e3', borderRadius: 14,
-          fontFamily: FONT_STACK, fontSize: 36, letterSpacing: 4, color: '#6f6f75', fontWeight: 600,
-        }}>TODAY</div>
+          display: 'inline-block', padding: '16px 40px', background: G.panel, borderRadius: 14,
+          fontFamily: FONT_STACK, fontSize: 36, letterSpacing: 4, color: G.mid, fontWeight: 600,
+        }}>今日</div>
         <div style={{ height: 40 }} />
-        {['New Bugs Per Week', 'Designer handbook', 'Mobile screens', 'Product roadmap'].map((t) => (
+        {['每周新增问题', '设计手册', '移动端页面', '产品路线'].map((t) => (
           <div key={t} style={{
             display: 'flex', alignItems: 'center', gap: 34, height: 118,
-            borderBottom: '3px solid #e5e5e3', width: 2600,
+            borderBottom: `3px solid ${G.line}`, width: 2600,
           }}>
             <div style={{ width: 32, height: 32, borderRadius: 9, background: G.accent }} />
             <div style={{ fontFamily: FONT_STACK, fontSize: 46, color: INK, fontWeight: 550 }}>{t}</div>
-            <div style={{ marginLeft: 'auto', width: 180, height: 16, background: '#e3e3e8', borderRadius: 8 }} />
+            <div style={{ marginLeft: 'auto', fontFamily: FONT_STACK, fontSize: 34, color: MID }}>{rowMeta}</div>
           </div>
         ))}
       </div>
@@ -145,19 +145,21 @@ const Ground: React.FC<{ workspaceName: string }> = ({ workspaceName }) => (
 export interface RunwayGroundSkimProps {
   workspaceName?: string;
   cards?: { title: string; sub: string }[];
+  rowMeta?: string; // 任务行尾注
 }
 
 export const RunwayGroundSkim: React.FC<RunwayGroundSkimProps> = ({
   workspaceName = 'Workspace',
   cards = [
-    { title: 'Creative Refresh', sub: 'New logo exploration' },
-    { title: 'New Bugs Per Week', sub: 'Bug tracker Dashboard' },
-    { title: 'Tiger Team Roadmap', sub: 'Roadmap Outline' },
-    { title: 'Design System', sub: 'Design Handbook Inspo' },
-    { title: 'Development Sprint Dashboard', sub: 'Dev Team Sprints' },
-    { title: 'CSS Bug Tracker', sub: 'Query Reports' },
-    { title: 'Platform', sub: 'System Health Monitor' },
+    { title: '创意焕新', sub: '新标识探索' },
+    { title: '每周新增问题', sub: '问题跟踪看板' },
+    { title: '团队路线规划', sub: '路线大纲' },
+    { title: '设计规范', sub: '设计手册灵感' },
+    { title: '迭代冲刺看板', sub: '研发团队冲刺' },
+    { title: '样式问题跟踪', sub: '查询报告' },
+    { title: '平台', sub: '系统健康监控' },
   ],
+  rowMeta = '刚刚',
 }) => {
   const frame = useCurrentFrame();
   const rand = mulberry32(20260718);
@@ -214,7 +216,7 @@ export const RunwayGroundSkim: React.FC<RunwayGroundSkimProps> = ({
     <div style={{ position: 'absolute', transformStyle: 'preserve-3d', transform: 'translate(-2300px, -1500px)' }}>
       {/* 地面 */}
       <div style={{ filter: `brightness(${bright})` }}>
-        <Ground workspaceName={workspaceName} />
+        <Ground workspaceName={workspaceName} rowMeta={rowMeta} />
       </div>
       {/* 地面上的软影（z≈0，卡片同形，随悬浮高度变化大小/偏移/浓度） */}
       {CARDS.map((c, i) => {

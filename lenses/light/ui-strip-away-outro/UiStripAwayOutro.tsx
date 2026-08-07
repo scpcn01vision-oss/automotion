@@ -48,6 +48,12 @@ export interface UiStripAwayOutroProps {
   buttonText?: string;
   wordmark?: string;
   cards?: SceneContentData[];
+  sidebarItems?: { icon: string; label: string }[]; // 左侧栏条目
+  toolbarChips?: string[]; // 顶部工具条 chips
+  panelFields?: { label: string; value: string }[]; // 右侧面板字段
+  canvasTitle?: string; // 顶部工具条中段标题
+  canvasAddress?: string; // 画布地址条
+  inviteLabel?: string; // 顶部右段按钮
 }
 
 export const UiStripAwayOutro: React.FC<UiStripAwayOutroProps> = ({
@@ -59,6 +65,27 @@ export const UiStripAwayOutro: React.FC<UiStripAwayOutroProps> = ({
     { title: '汇总', rows: [{ label: '指标五', value: '7.1×' }, { label: '指标六', value: '88%' }] },
     { title: '备注', rows: [{ label: '指标七', value: '✓' }, { label: '指标八', value: '—' }] },
   ],
+  sidebarItems = [
+    { icon: '◧', label: '图层 01' },
+    { icon: '◨', label: '图层 02' },
+    { icon: '▣', label: '图层 03' },
+    { icon: '◫', label: '图层 04' },
+    { icon: '▤', label: '图层 05' },
+    { icon: '▥', label: '图层 06' },
+    { icon: '◱', label: '图层 07' },
+    { icon: '◲', label: '图层 08' },
+    { icon: '▦', label: '图层 09' },
+  ],
+  toolbarChips = ['搜索', '筛选', '排序', '视图', '导出'],
+  panelFields = [
+    { label: '名称', value: '未命名项目' },
+    { label: '尺寸', value: '1920 × 1080' },
+    { label: '帧率', value: '30 fps' },
+    { label: '背景', value: '纸色' },
+  ],
+  canvasTitle = '未命名项目',
+  canvasAddress = 'https://workspace.example/design',
+  inviteLabel = '邀请',
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -118,35 +145,38 @@ export const UiStripAwayOutro: React.FC<UiStripAwayOutroProps> = ({
 
       {/* 左侧栏（图层面板） */}
       <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 240, background: G.side, padding: '90px 24px', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: 20, ...sidebar }}>
-        {Array.from({ length: 9 }).map((_, i) => (
-          <div key={i} style={{ height: 13, width: `${55 + ((i * 31) % 40)}%`, background: G.sideBar, borderRadius: 6 }} />
+        {sidebarItems.map((it, i) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ width: 22, height: 22, borderRadius: 6, background: G.sideBar, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, color: G.side }}>{it.icon}</div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: G.panel }}>{it.label}</div>
+          </div>
         ))}
       </div>
 
       {/* 右侧属性面板 */}
       <div style={{ position: 'absolute', right: 0, top: 60, bottom: 0, width: 300, background: G.panel, borderLeft: `2px solid ${G.line}`, padding: 28, boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: 18, ...leftPanel }}>
-        {Array.from({ length: 4 }).map((_, i) => (
+        {panelFields.map((f, i) => (
           <React.Fragment key={i}>
-            <div style={{ height: 12, width: '45%', background: G.bar, borderRadius: 6 }} />
-            <div style={{ height: 34, background: '#fff', border: `2px solid ${G.line}`, borderRadius: 8, boxSizing: 'border-box' }} />
+            <div style={{ fontSize: 13, fontWeight: 600, color: G.ink }}>{f.label}</div>
+            <div style={{ height: 34, display: 'flex', alignItems: 'center', padding: '0 10px', background: '#fff', border: `2px solid ${G.line}`, borderRadius: 8, boxSizing: 'border-box', fontSize: 13, color: G.mid }}>{f.value}</div>
           </React.Fragment>
         ))}
       </div>
 
       {/* 顶部工具条左半（logo + 工具 chips） */}
       <div style={{ position: 'absolute', left: 0, top: 0, width: 760, height: 60, background: G.panel, borderBottom: `2px solid ${G.line}`, display: 'flex', alignItems: 'center', gap: 16, padding: '0 24px', boxSizing: 'border-box', ...topLeft }}>
-        <div style={{ width: 32, height: 32, borderRadius: 8, background: G.mid }} />
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} style={{ width: 30, height: 30, borderRadius: 8, background: G.line }} />
+        <div style={{ width: 32, height: 32, borderRadius: 8, background: G.mid, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, color: G.bg }}>✦</div>
+        {toolbarChips.map((t, i) => (
+          <div key={i} style={{ padding: '5px 12px', borderRadius: 7, background: G.line, fontSize: 13, fontWeight: 600, color: G.ink }}>{t}</div>
         ))}
       </div>
       {/* 顶部工具条中段（标题） */}
       <div style={{ position: 'absolute', left: 760, top: 0, right: 400, height: 60, background: G.panel, borderBottom: `2px solid ${G.line}`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box', ...toolbarShell }}>
-        <div style={{ height: 14, width: 220, background: G.bar, borderRadius: 7 }} />
+        <div style={{ fontSize: 14, fontWeight: 700, color: G.ink, letterSpacing: 1 }}>{canvasTitle}</div>
       </div>
       {/* 顶部工具条右段底板（Invite 假按钮；Publish 单独渲染在最上层） */}
       <div style={{ position: 'absolute', right: 0, top: 0, width: 400, height: 60, background: G.panel, borderBottom: `2px solid ${G.line}`, display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: 14, padding: '0 24px', boxSizing: 'border-box', ...topRight }}>
-        <div style={{ height: 36, width: 100, borderRadius: 18, border: `2px solid ${G.bar}`, boxSizing: 'border-box' }} />
+        <div style={{ height: 32, padding: '0 16px', borderRadius: 16, border: `2px solid ${G.bar}`, display: 'flex', alignItems: 'center', fontSize: 13, fontWeight: 600, color: G.ink }}>{inviteLabel}</div>
       </div>
 
       {/* 画布区：一张浏览器式大卡 + 两张小卡 */}
@@ -156,7 +186,7 @@ export const UiStripAwayOutro: React.FC<UiStripAwayOutroProps> = ({
             {[0, 1, 2].map((i) => (
               <div key={i} style={{ width: 14, height: 14, borderRadius: 7, background: G.line }} />
             ))}
-            <div style={{ marginLeft: 16, height: 20, width: 380, background: G.bg, borderRadius: 10 }} />
+            <div style={{ marginLeft: 16, height: 22, flex: 1, maxWidth: 440, display: 'flex', alignItems: 'center', padding: '0 12px', background: G.bg, borderRadius: 10, fontSize: 12, color: G.mid }}>{canvasAddress}</div>
           </div>
         </div>
         {[0, 1, 2, 3].map((i) => {

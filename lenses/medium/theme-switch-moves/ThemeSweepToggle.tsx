@@ -14,55 +14,67 @@
 // 扫完深版整体 scale 0.995→1 "坐实"。f=70 后全静止（70f）。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 const CL = { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' } as const;
 
-// 浅色板 = Fixtures G；深色板手工反转映射
+// 浅色板 = G 色板（v7 唯一风格权威）；深色板为深色主题对照（表现需要，保持深色）
 type Pal = {
   bg: string; panel: string; line: string; bar: string;
   mid: string; card: string; border: string; side: string; sideBar: string;
 };
 const LIGHT: Pal = {
-  bg: '#ececea', panel: '#f7f7f6', line: '#dcdcda', bar: '#c2c2c0',
-  mid: '#8f8f8d', card: '#ffffff', border: '#d8d8d6', side: '#3a3a3a', sideBar: '#5a5a58',
+  bg: G.bg, panel: G.panel, line: G.line, bar: G.bar,
+  mid: G.mid, card: G.card, border: G.border, side: G.side, sideBar: G.sideBar,
 };
 const DARK: Pal = {
   bg: '#1c1c1b', panel: '#242423', line: '#3a3a38', bar: '#6e6e6c',
   mid: '#8f8f8d', card: '#2c2c2b', border: '#454543', side: '#0f0f0e', sideBar: '#6a6a68',
 };
 
-// 带色板参数的 dashboard（结构同 Fixtures.FakeDashboard variant A）
-const Dash: React.FC<{ p: Pal }> = ({ p }) => (
-  <div style={{ width: 1920, height: 1080, background: p.bg, display: 'flex' }}>
+// 带色板参数的 dashboard（结构同原 FakeDashboard variant A，占位条已换文字内容）
+const Dash: React.FC<{
+  p: Pal;
+  appName: string;
+  menuItems: { icon: string; label: string }[];
+  mainTitle: string;
+  searchText: string;
+  avatarText: string;
+  cards: { title: string; rows: string[] }[];
+}> = ({ p, appName, menuItems, mainTitle, searchText, avatarText, cards }) => (
+  <div style={{ width: 1920, height: 1080, background: p.bg, display: 'flex', fontFamily: FONT_STACK }}>
     <div style={{ width: 220, background: p.side, padding: '28px 22px', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: 18 }}>
-      <div style={{ width: 40, height: 40, borderRadius: 10, background: p.sideBar }} />
-      {Array.from({ length: 7 }).map((_, i) => (
-        <div key={i} style={{ height: 12, width: `${60 + ((i * 29) % 35)}%`, background: p.sideBar, borderRadius: 6 }} />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{ width: 40, height: 40, borderRadius: 10, background: p.sideBar, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 800, color: p.bg }}>◆</div>
+        <div style={{ fontSize: 16, fontWeight: 700, color: p.sideBar }}>{appName}</div>
+      </div>
+      {menuItems.map((it, i) => (
+        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, height: 30 }}>
+          <div style={{ width: 18, height: 18, borderRadius: 5, background: p.sideBar, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, color: p.bg }}>{it.icon}</div>
+          <div style={{ fontSize: 14, fontWeight: 600, color: p.sideBar }}>{it.label}</div>
+        </div>
       ))}
     </div>
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
       <div style={{ height: 72, background: p.panel, borderBottom: `2px solid ${p.line}`, display: 'flex', alignItems: 'center', padding: '0 32px', gap: 20, boxSizing: 'border-box' }}>
-        <div style={{ height: 18, width: 180, background: p.bar, borderRadius: 9 }} />
-        <div style={{ marginLeft: 'auto', height: 36, width: 320, background: p.card, border: `2px solid ${p.line}`, borderRadius: 18, boxSizing: 'border-box' }} />
-        <div style={{ width: 36, height: 36, borderRadius: 18, background: p.mid }} />
+        <div style={{ fontSize: 20, fontWeight: 800, color: p.sideBar }}>{mainTitle}</div>
+        <div style={{ marginLeft: 'auto', height: 36, minWidth: 320, display: 'flex', alignItems: 'center', padding: '0 18px', background: p.card, border: `2px solid ${p.line}`, borderRadius: 18, boxSizing: 'border-box', fontSize: 14, color: p.bar }}>{searchText}</div>
+        <div style={{ width: 36, height: 36, borderRadius: 18, background: p.mid, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 800, color: p.bg }}>{avatarText}</div>
       </div>
       <div style={{ flex: 1, padding: 36, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gridAutoRows: '1fr', gap: 28, boxSizing: 'border-box' }}>
-        {Array.from({ length: 6 }).map((_, i) => {
-          const titleW = 45 + (((i + 1) * 37) % 40);
-          const lines = 2 + ((i + 1) % 3);
-          return (
-            <div key={i} style={{ background: p.card, border: `2px solid ${p.border}`, borderRadius: 14, padding: 18, boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <div style={{ height: 16, width: `${titleW}%`, background: p.bar, borderRadius: 8 }} />
-              {Array.from({ length: lines }).map((_, j) => (
-                <div key={j} style={{ height: 10, width: `${88 - j * 14 - ((i + 1) % 5) * 3}%`, background: p.line, borderRadius: 5 }} />
-              ))}
-              <div style={{ marginTop: 'auto', display: 'flex', gap: 8, alignItems: 'center' }}>
-                <div style={{ width: 26, height: 26, borderRadius: 13, background: p.mid }} />
-                <div style={{ height: 10, width: 64, background: p.line, borderRadius: 5 }} />
-              </div>
+        {cards.map((c, i) => (
+          <div key={i} style={{ background: p.card, border: `2px solid ${p.border}`, borderRadius: 14, padding: 18, boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ fontSize: 16, fontWeight: 700, color: p.sideBar }}>{c.title}</div>
+            {c.rows.map((r, j) => (
+              <div key={j} style={{ fontSize: 13, color: p.bar }}>{r}</div>
+            ))}
+            <div style={{ marginTop: 'auto', display: 'flex', gap: 8, alignItems: 'center' }}>
+              <div style={{ width: 26, height: 26, borderRadius: 13, background: p.mid, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 800, color: p.bg }}>{c.title.charAt(0)}</div>
+              <div style={{ fontSize: 12, color: p.line }}>成员 {i + 1}</div>
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
     </div>
   </div>
@@ -77,9 +89,37 @@ const SETTLE1 = 64; // 坐实结束 → 之后全静止
 const SLANT = 1080 * Math.tan((15 * Math.PI) / 180); // ≈ 289px，15° 斜边
 
 export interface ThemeSweepToggleProps {
+  appName?: string; // 侧栏品牌文字
+  menuItems?: { icon: string; label: string }[]; // 侧栏主菜单
+  mainTitle?: string; // 顶栏标题
+  searchText?: string; // 搜索占位
+  avatarText?: string; // 头像文字
+  cards?: { title: string; rows: string[] }[]; // 卡片组
 }
 
-export const ThemeSweepToggle: React.FC<ThemeSweepToggleProps> = () => {
+export const ThemeSweepToggle: React.FC<ThemeSweepToggleProps> = ({
+  appName = '工作台',
+  menuItems = [
+    { icon: '◆', label: '仪表盘' },
+    { icon: '●', label: '任务' },
+    { icon: '▲', label: '文档' },
+    { icon: '●', label: '成员' },
+    { icon: '▲', label: '设置' },
+    { icon: '◆', label: '通知' },
+    { icon: '●', label: '帮助' },
+  ],
+  mainTitle = '项目工作区',
+  searchText = '搜索',
+  avatarText = '我',
+  cards = [
+    { title: '指标一', rows: ['明细 01', '明细 02'] },
+    { title: '指标二', rows: ['明细 01', '明细 02', '明细 03'] },
+    { title: '指标三', rows: ['明细 01', '明细 02'] },
+    { title: '指标四', rows: ['明细 01', '明细 02', '明细 03', '明细 04'] },
+    { title: '指标五', rows: ['明细 01', '明细 02', '明细 03'] },
+    { title: '指标六', rows: ['明细 01', '明细 02'] },
+  ],
+}) => {
   const frame = useCurrentFrame();
 
   // 边界顶端 x：先快后缓（poly(3) out）；从左外扫到右外+SLANT 保证底边也扫尽
@@ -101,7 +141,7 @@ export const ThemeSweepToggle: React.FC<ThemeSweepToggleProps> = () => {
   return (
     <div style={{ width: 1920, height: 1080, position: 'relative', overflow: 'hidden', background: LIGHT.bg }}>
       {/* 底层浅色版 */}
-      <Dash p={LIGHT} />
+      <Dash p={LIGHT} appName={appName} menuItems={menuItems} mainTitle={mainTitle} searchText={searchText} avatarText={avatarText} cards={cards} />
       {/* 上层深色版，clip-path 斜切揭出 */}
       <div
         style={{
@@ -112,7 +152,7 @@ export const ThemeSweepToggle: React.FC<ThemeSweepToggleProps> = () => {
           transformOrigin: '50% 50%',
         }}
       >
-        <Dash p={DARK} />
+        <Dash p={DARK} appName={appName} menuItems={menuItems} mainTitle={mainTitle} searchText={searchText} avatarText={avatarText} cards={cards} />
       </div>
       {/* 2px 亮线边界（条件卸载） */}
       {sweeping && (

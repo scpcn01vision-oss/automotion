@@ -16,6 +16,7 @@ import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+import { FONT_STACK } from '../../_system/typography';
 
 const CL = { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' } as const;
 
@@ -31,22 +32,19 @@ const BLINK_END = 104; // 光标停止闪烁（常亮）
 
 const PANEL_W = 780;
 const PANEL_X = (1920 - PANEL_W) / 2;
-const PANEL_Y = 290;
-const ROW_H = 72;
-const ROW_GAP = 8;
+const PANEL_Y = 330;
+const ROW_H = 66;
+const ROW_GAP = 6;
 const EXIT_DUR = 10;
 
-// exitAt: 0=留到最后，1=第一次按键后退出，2=第二次按键后退出
-const ROWS = [
-  { titleW: 52, exitAt: 0 },
-  { titleW: 38, exitAt: 0 },
-  { titleW: 61, exitAt: 2 },
-  { titleW: 45, exitAt: 1 },
-  { titleW: 56, exitAt: 1 },
-];
+// exitAt: 0=留到最后，1=第一次按键后退出，2=第二次按键后退出（由 commands prop 提供）
 
-const PaletteRow: React.FC<{ i: number; frame: number }> = ({ i, frame }) => {
-  const { titleW, exitAt } = ROWS[i];
+const PaletteRow: React.FC<{
+  i: number;
+  frame: number;
+  rows: { icon: string; label: string; kbd: string; exitAt: number }[];
+}> = ({ i, frame, rows }) => {
+  const { icon, label, kbd, exitAt } = rows[i];
   const inStart = ROWS_START + i * 4;
   const exitStart = exitAt === 1 ? KEY1 + 3 : exitAt === 2 ? KEY2 + 3 : null;
 
@@ -90,16 +88,19 @@ const PaletteRow: React.FC<{ i: number; frame: number }> = ({ i, frame }) => {
           transform: `translateY(${inY}px)`,
         }}
       >
-        <div style={{ width: 36, height: 36, borderRadius: 9, background: G.mid }} />
-        <div style={{ height: 14, width: `${titleW}%`, background: G.bar, borderRadius: 7 }} />
-        <div style={{ marginLeft: 'auto', width: 58, height: 24, borderRadius: 6, background: G.line }} />
+        <div style={{ width: 36, height: 36, borderRadius: 9, background: G.mid, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, fontWeight: 800, color: G.bg }}>{icon}</div>
+        <div style={{ fontFamily: FONT_STACK, fontSize: 24, fontWeight: 600, color: G.ink }}>{label}</div>
+        <div style={{ marginLeft: 'auto', padding: '4px 12px', borderRadius: 6, background: G.line, fontFamily: FONT_STACK, fontSize: 18, fontWeight: 700, color: G.ink }}>{kbd}</div>
       </div>
     </div>
   );
 };
 
 export interface CommandPaletteSummonProps {
-  scene?: SceneContentData;
+  scene?: SceneContentData; // 背景内容
+  query?: string; // 已键入字符
+  placeholder?: string; // 输入提示
+  commands?: { icon: string; label: string; kbd: string; exitAt: number }[]; // 候选命令
 }
 
 export const CommandPaletteSummon: React.FC<CommandPaletteSummonProps> = ({
@@ -112,6 +113,15 @@ export const CommandPaletteSummon: React.FC<CommandPaletteSummonProps> = ({
       { label: '指标三', value: '96.4%' },
     ],
   },
+  query = 'AB',
+  placeholder = '输入命令…',
+  commands = [
+    { icon: '◆', label: '新建文档', kbd: '⌘N', exitAt: 0 },
+    { icon: '●', label: '打开文件', kbd: '⌘O', exitAt: 0 },
+    { icon: '▲', label: '切换窗口', kbd: '⌘K', exitAt: 2 },
+    { icon: '●', label: '搜索内容', kbd: '⌘P', exitAt: 1 },
+    { icon: '◆', label: '运行命令', kbd: '⌘S', exitAt: 1 },
+  ],
 }) => {
   const frame = useCurrentFrame();
 
@@ -139,7 +149,8 @@ export const CommandPaletteSummon: React.FC<CommandPaletteSummonProps> = ({
 
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
-      <div style={{ filter: frame < DIM0 ? undefined : `blur(${blur}px)` }}>
+      {/* 背景 SceneContent：整体下移 130px，视觉重心下沉（Y 轴重新排版） */}
+      <div style={{ filter: frame < DIM0 ? undefined : `blur(${blur}px)`, transform: 'translateY(130px)' }}>
         <SceneContent content={scene} />
       </div>
       <div style={{ position: 'absolute', inset: 0, background: `rgba(20,20,20,${dim})` }} />
@@ -164,31 +175,31 @@ export const CommandPaletteSummon: React.FC<CommandPaletteSummonProps> = ({
           {/* 输入框 */}
           <div
             style={{
-              height: 76,
+              height: 68,
               borderBottom: `2px solid ${G.line}`,
               display: 'flex',
               alignItems: 'center',
               gap: 14,
-              padding: '0 10px 14px 10px',
+              padding: '0 10px 10px 10px',
               boxSizing: 'border-box',
             }}
           >
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: G.bar }} />
-            {/* 已敲入的字符灰块 */}
+            <div style={{ width: 32, height: 32, borderRadius: 8, background: G.mid, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, fontWeight: 800, color: G.bg }}>◆</div>
+            {/* 已敲入字符 */}
             {Array.from({ length: typed }).map((_, c) => (
-              <div key={c} style={{ width: 28, height: 38, borderRadius: 6, background: G.mid }} />
+              <div key={c} style={{ fontFamily: FONT_STACK, fontSize: 26, fontWeight: 700, color: G.ink }}>{query[c] ?? '?'}</div>
             ))}
             {/* 光标 */}
             {cursorOn && <div style={{ width: 4, height: 42, background: G.ink, borderRadius: 2 }} />}
-            {/* 占位提示条：敲第一个字母时卸载 */}
+            {/* 占位提示 */}
             {typed === 0 && (
-              <div style={{ width: 260, height: 14, borderRadius: 7, background: G.line, opacity: 0.8 }} />
+              <div style={{ fontFamily: FONT_STACK, fontSize: 24, color: G.mid, opacity: 0.8 }}>{placeholder}</div>
             )}
           </div>
           {/* 候选行 */}
           <div style={{ paddingTop: 14 }}>
-            {ROWS.map((_, i) => (
-              <PaletteRow key={i} i={i} frame={frame} />
+            {commands.map((_, i) => (
+              <PaletteRow key={i} i={i} frame={frame} rows={commands} />
             ))}
           </div>
         </div>

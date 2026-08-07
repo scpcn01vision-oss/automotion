@@ -39,6 +39,7 @@ export interface LetterformZoomProps {
   text?: string;
   origin?: { x: number; y: number };
   sceneB?: SceneContentData;
+  subLabels?: string[]; // 盖板下副标文字
 }
 
 export const LetterformZoom: React.FC<LetterformZoomProps> = ({
@@ -53,6 +54,7 @@ export const LetterformZoom: React.FC<LetterformZoomProps> = ({
       { label: '可用性', value: '99.98%' },
     ],
   },
+  subLabels = ['副标题 01', '副标题 02'],
 }) => {
   const frame = useCurrentFrame();
 
@@ -161,8 +163,9 @@ export const LetterformZoom: React.FC<LetterformZoomProps> = ({
               gap: 16,
             }}
           >
-            <div style={{ width: 240, height: 16, background: G.bar, borderRadius: 8 }} />
-            <div style={{ width: 130, height: 16, background: G.line, borderRadius: 8 }} />
+            {subLabels.map((s, i) => (
+              <div key={i} style={{ fontFamily: FONT_STACK, fontSize: 20, fontWeight: 600, color: G.mid }}>{s}</div>
+            ))}
           </div>
         </div>
       )}

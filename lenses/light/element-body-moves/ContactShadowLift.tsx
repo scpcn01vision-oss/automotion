@@ -69,6 +69,8 @@ const STARTS = [2, 42, 82]; // 三张卡依次点名，间隔 40f；末次动画
 
 export interface ContactShadowLiftProps {
   cards?: { label: string; value: string }[];
+  dashTitle?: string; // 顶栏标题
+  avatarText?: string; // 顶栏头像首字母
 }
 
 const MiniCard: React.FC<{ w: number; h: number; label: string; value: string }> = ({ w, h, label, value }) => (
@@ -102,6 +104,8 @@ export const ContactShadowLift: React.FC<ContactShadowLiftProps> = ({
     { label: '指标二', value: '2.1×' },
     { label: '指标三', value: '96.4%' },
   ],
+  dashTitle = '项目工作区',
+  avatarText = '我',
 }) => {
   const frame = useCurrentFrame();
   const rowW = CARD_W * 3 + GAP * 2;
@@ -112,9 +116,9 @@ export const ContactShadowLift: React.FC<ContactShadowLiftProps> = ({
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       {/* 假 dashboard 式顶栏，给浅底一点场景感 */}
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 84, background: G.panel, borderBottom: `2px solid ${G.line}`, display: 'flex', alignItems: 'center', padding: '0 48px', gap: 24, boxSizing: 'border-box' }}>
-        <div style={{ width: 40, height: 40, borderRadius: 10, background: G.side }} />
-        <div style={{ height: 18, width: 220, background: G.bar, borderRadius: 9 }} />
-        <div style={{ marginLeft: 'auto', width: 36, height: 36, borderRadius: 18, background: G.mid }} />
+        <div style={{ width: 40, height: 40, borderRadius: 10, background: G.side, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 800, color: G.card }}>◆</div>
+        <div style={{ fontFamily: FONT_STACK, fontSize: 26, fontWeight: 700, color: G.ink }}>{dashTitle}</div>
+        <div style={{ marginLeft: 'auto', width: 38, height: 38, borderRadius: 19, background: G.mid, color: G.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, fontWeight: 800 }}>{avatarText}</div>
       </div>
 
       {[0, 1, 2].map((i) => {

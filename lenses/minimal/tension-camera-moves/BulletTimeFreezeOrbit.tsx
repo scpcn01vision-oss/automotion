@@ -35,17 +35,17 @@ export interface BulletTimeFreezeOrbitProps {
 }
 
 export const BulletTimeFreezeOrbit: React.FC<BulletTimeFreezeOrbitProps> = ({
-  panelTitle = 'METRICS',
-  panelSubtitle = 'Q3 OVERVIEW',
+  panelTitle = '指标',
+  panelSubtitle = '季度概览',
   bars = [
-    { value: 62, label: 'Q1' },
-    { value: 74, label: 'Q2' },
-    { value: 58, label: 'Q3' },
-    { value: 89, label: 'Q4' },
-    { value: 97, label: 'FY' },
+    { value: 62, label: '一季度' },
+    { value: 74, label: '二季度' },
+    { value: 58, label: '三季度' },
+    { value: 89, label: '四季度' },
+    { value: 97, label: '全年' },
   ],
-  sideTitle = 'Momentum',
-  sideSubtitle = 'Quarterly growth trend',
+  sideTitle = '增长势头',
+  sideSubtitle = '季度增长趋势',
 }) => {
   const frame = useCurrentFrame();
 

@@ -36,10 +36,12 @@ export interface BrandFrameSnapProps {
   labelB?: string;
   contentA?: BrandFrameSnapContent;
   contentB?: BrandFrameSnapContent;
+  cardWidthA?: number; // 窗口内容卡宽度（设计模式）
+  cardWidthB?: number; // 窗口内容卡宽度（开发模式，状态卡 -30%）
 }
 
 // 窗口内容渲染器：标题 + 行列表（默认）/ 标题 + 圆角图片
-const ContentRenderer: React.FC<{ content: BrandFrameSnapContent }> = ({ content }) => {
+const ContentRenderer: React.FC<{ content: BrandFrameSnapContent; cardWidth: number }> = ({ content, cardWidth }) => {
   const { title, type = 'rows', rows, image } = content;
   return (
     <div
@@ -57,14 +59,14 @@ const ContentRenderer: React.FC<{ content: BrandFrameSnapContent }> = ({ content
         <Img
           src={staticFile(image)}
           style={{
-            width: 1400, height: 787, objectFit: 'cover', borderRadius: 20,
+            width: cardWidth, height: Math.round(cardWidth * 0.562), objectFit: 'cover', borderRadius: 20,
             border: `2px solid ${G.border}`, boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
           }}
         />
       ) : (
         <div
           style={{
-            width: 1400, background: G.card, border: `2px solid ${G.border}`, borderRadius: 20,
+            width: cardWidth, background: G.card, border: `2px solid ${G.border}`, borderRadius: 20,
             padding: '36px 48px', display: 'flex', flexDirection: 'column',
           }}
         >
@@ -109,6 +111,9 @@ export const BrandFrameSnap: React.FC<BrandFrameSnapProps> = ({
       { label: '可用性', value: '99.98%' },
     ],
   },
+  windowTitle = '概览',
+  cardWidthA = 980,
+  cardWidthB = 980,
 }) => {
   const f = useCurrentFrame();
   const mode: 'design' | 'dev' = f < FLIP_FRAME ? 'design' : 'dev';
@@ -154,10 +159,10 @@ export const BrandFrameSnap: React.FC<BrandFrameSnapProps> = ({
             height: 52, background: G.nav, borderBottom: `2px solid ${G.line}`,
             display: 'flex', alignItems: 'center', gap: 10, padding: '0 22px', boxSizing: 'border-box',
           }}>
-            {[0, 1, 2].map((i) => (
-              <div key={i} style={{ width: 16, height: 16, borderRadius: 8, background: G.bar }} />
+            {['◆', '●', '▲'].map((g, i) => (
+              <div key={i} style={{ width: 16, height: 16, borderRadius: 8, background: G.bar, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, color: G.side }}>{g}</div>
             ))}
-            <div style={{ marginLeft: 18, height: 12, width: 260, background: G.line, borderRadius: 6 }} />
+            <div style={{ marginLeft: 18, fontFamily: FONT_STACK, fontSize: 15, fontWeight: 700, color: G.ink }}>{windowTitle}</div>
             {/* 模式徽标：随画框同帧换色换字 */}
             <div style={{
               marginLeft: 'auto', background: frameColor, color: G.card,
@@ -170,7 +175,7 @@ export const BrandFrameSnap: React.FC<BrandFrameSnapProps> = ({
           </div>
           {/* 窗口内容：翻色同帧换布局 A→B */}
           <div style={{ transform: 'scale(0.81)', transformOrigin: '0 0', width: 1920, height: 1080 }}>
-            <ContentRenderer content={mode === 'design' ? contentA : contentB} />
+            <ContentRenderer content={mode === 'design' ? contentA : contentB} cardWidth={mode === 'design' ? cardWidthA : cardWidthB} />
           </div>
         </div>
       </div>

@@ -151,7 +151,7 @@ export const GridWaveFlip: React.FC<GridWaveFlipProps> = ({
                     borderRadius: 14,
                   }}
                 >
-                  <NeutralCard w={CELL_W} h={CELL_H} content={cards[i % cards.length]} style={{ width: '100%', height: '100%' }} />
+                  <NeutralCard w={CELL_W} h={CELL_H} content={cards[i % cards.length]} split style={{ width: '100%', height: '100%' }} />
                 </div>
               </div>
               {/* 最薄处高光线：不随卡旋转，贴在格位上随角度纵向移动 */}

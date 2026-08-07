@@ -46,54 +46,70 @@ type Layer = {
   node: React.ReactNode;
 };
 
-const Sidebar: React.FC = () => (
+const Sidebar: React.FC<{ items: { icon: string; label: string }[] }> = ({ items }) => (
   <div style={{ width: SIDE_W, height: 1080, background: G.side, padding: '28px 22px', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: 18 }}>
-    <div style={{ width: 40, height: 40, borderRadius: 10, background: G.bar }} />
-    {Array.from({ length: 7 }).map((_, i) => (
-      <div key={i} style={{ height: 12, width: `${60 + ((i * 29) % 35)}%`, background: G.sideBar, borderRadius: 6 }} />
+    <div style={{ width: 40, height: 40, borderRadius: 10, background: G.sideBar, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 800, color: G.side }}>◆</div>
+    {items.map((it, i) => (
+      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{ width: 26, height: 26, borderRadius: 6, background: G.sideBar, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, color: G.side }}>{it.icon}</div>
+        <div style={{ fontSize: 16, fontWeight: 600, color: G.panel }}>{it.label}</div>
+      </div>
     ))}
   </div>
 );
 
-const Topbar: React.FC = () => (
+const Topbar: React.FC<{ dashTitle: string; searchText: string; avatarText: string }> = ({ dashTitle, searchText, avatarText }) => (
   <div style={{ width: 1920 - SIDE_W, height: TOP_H, background: G.panel, borderBottom: `2px solid ${G.line}`, display: 'flex', alignItems: 'center', padding: '0 32px', gap: 20, boxSizing: 'border-box' }}>
-    <div style={{ height: 18, width: 180, background: G.bar, borderRadius: 9 }} />
-    <div style={{ marginLeft: 'auto', height: 36, width: 320, background: G.card, border: `2px solid ${G.line}`, borderRadius: 18, boxSizing: 'border-box' }} />
-    <div style={{ width: 36, height: 36, borderRadius: 18, background: G.mid }} />
+    <div style={{ fontFamily: FONT_STACK, fontSize: 24, fontWeight: 700, color: G.ink }}>{dashTitle}</div>
+    <div style={{ marginLeft: 'auto', height: 38, minWidth: 240, display: 'flex', alignItems: 'center', padding: '0 16px', background: G.card, border: `2px solid ${G.line}`, borderRadius: 19, boxSizing: 'border-box', fontSize: 18, color: G.mid }}>{searchText}</div>
+    <div style={{ width: 38, height: 38, borderRadius: 19, background: G.mid, color: G.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, fontWeight: 800 }}>{avatarText}</div>
   </div>
 );
 
 // 六卡深度：错落分布在 60–320，近的自然更大（perspective 缩放）
 const CARD_Z = [150, 300, 80, 230, 320, 110];
 
-const MiniCard: React.FC<{ w: number; h: number; label: string; value: string }> = ({ w, h, label, value }) => (
-  <div
-    style={{
-      width: w,
-      height: h,
-      background: G.card,
-      border: `2px solid ${G.border}`,
-      borderRadius: 14,
-      padding: 22,
-      boxSizing: 'border-box',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      gap: 10,
-    }}
-  >
-    <div style={{ fontFamily: FONT_STACK, fontSize: 26, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
-      {label}
+const MiniCard: React.FC<{ w: number; h: number; label: string; value: string }> = ({ w, h, label, value }) => {
+  // 字号随卡宽自适应（卡 524×454 时约 44/65px），Y 轴居中重排拉开层次
+  const pad = Math.max(20, Math.floor(w * 0.06));
+  const labelSize = Math.max(24, Math.floor(w * 0.085));
+  const valueSize = Math.max(32, Math.floor(w * 0.125));
+  const gapY = Math.max(14, Math.floor(h * 0.06));
+  return (
+    <div
+      style={{
+        width: w,
+        height: h,
+        background: G.card,
+        border: `2px solid ${G.border}`,
+        borderRadius: 14,
+        padding: pad,
+        boxSizing: 'border-box',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        gap: gapY,
+      }}
+    >
+      <div style={{ fontFamily: FONT_STACK, fontSize: labelSize, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
+        {label}
+      </div>
+      <div style={{ fontFamily: FONT_STACK, fontSize: valueSize, fontWeight: 800, color: G.accent }}>
+        {value}
+      </div>
     </div>
-    <div style={{ fontFamily: FONT_STACK, fontSize: 38, fontWeight: 800, color: G.accent }}>
-      {value}
-    </div>
-  </div>
-);
+  );
+};
 
-const buildLayers = (cards: { label: string; value: string }[]): Layer[] => [
-  { key: 'top', x: SIDE_W, y: 0, w: 1920 - SIDE_W, h: TOP_H, z: 260, order: 0, radius: 0, node: <Topbar /> },
-  { key: 'side', x: 0, y: 0, w: SIDE_W, h: 1080, z: 190, order: 1, radius: 0, node: <Sidebar /> },
+const buildLayers = (
+  cards: { label: string; value: string }[],
+  sidebarItems: { icon: string; label: string }[],
+  dashTitle: string,
+  searchText: string,
+  avatarText: string,
+): Layer[] => [
+  { key: 'top', x: SIDE_W, y: 0, w: 1920 - SIDE_W, h: TOP_H, z: 260, order: 0, radius: 0, node: <Topbar dashTitle={dashTitle} searchText={searchText} avatarText={avatarText} /> },
+  { key: 'side', x: 0, y: 0, w: SIDE_W, h: 1080, z: 190, order: 1, radius: 0, node: <Sidebar items={sidebarItems} /> },
   ...Array.from({ length: 6 }).map((_, i) => {
     const col = i % 3;
     const row = Math.floor(i / 3);
@@ -114,6 +130,10 @@ const buildLayers = (cards: { label: string; value: string }[]): Layer[] => [
 
 export interface ExplodedViewProps {
   cards?: { label: string; value: string }[];
+  sidebarItems?: { icon: string; label: string }[]; // 侧栏菜单
+  dashTitle?: string; // 顶栏标题
+  searchText?: string; // 搜索占位文字
+  avatarText?: string; // 顶栏头像首字母
 }
 
 export const ExplodedView: React.FC<ExplodedViewProps> = ({
@@ -125,9 +145,21 @@ export const ExplodedView: React.FC<ExplodedViewProps> = ({
     { label: '延迟', value: '42ms' },
     { label: '可用性', value: '99.98%' },
   ],
+  sidebarItems = [
+    { icon: '◆', label: '仪表盘' },
+    { icon: '●', label: '任务' },
+    { icon: '▲', label: '文档' },
+    { icon: '●', label: '成员' },
+    { icon: '▲', label: '设置' },
+    { icon: '◆', label: '通知' },
+    { icon: '●', label: '帮助' },
+  ],
+  dashTitle = '项目工作区',
+  searchText = '搜索',
+  avatarText = '我',
 }) => {
   const frame = useCurrentFrame();
-  const LAYERS = buildLayers(cards);
+  const LAYERS = buildLayers(cards, sidebarItems, dashTitle, searchText, avatarText);
 
   // 每层进度：炸开 ease-out-back（带一点回弹的“咔”）× 合体逆序 ease-in
   const layerP = (order: number) => {

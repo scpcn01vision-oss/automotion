@@ -85,7 +85,7 @@ const QuadGlyph: React.FC<{ size: number }> = ({ size }) => (
 const PW = 6200;
 const PH = 2400;
 
-const Panel: React.FC<{ shade: number; t?: number; workspaceName: string }> = ({ shade, t = 1, workspaceName }) => (
+const Panel: React.FC<{ shade: number; t?: number; workspaceName: string; pageTitle: string; tabs: string[]; listTitle: string; tasks: string[] }> = ({ shade, t = 1, workspaceName, pageTitle, tabs, listTitle, tasks }) => (
   <div style={{
     width: PW, height: PH, background: G.panel, borderRadius: 64,
     position: 'relative', overflow: 'hidden',
@@ -101,22 +101,22 @@ const Panel: React.FC<{ shade: number; t?: number; workspaceName: string }> = ({
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <svg width={58} height={58} viewBox="0 0 40 40" style={{ marginRight: 34 }}>
             {[[4, 4], [23, 4], [4, 23], [23, 23]].map(([x, y], i) => (
-              <rect key={i} x={x} y={y} width={13} height={13} rx={3} fill="none" stroke="#5c4a34" strokeWidth={3.5} />
+            <rect key={i} x={x} y={y} width={13} height={13} rx={3} fill="none" stroke={G.ink} strokeWidth={3.5} />
             ))}
           </svg>
-          <div style={{ fontSize: 66, color: INK, fontWeight: 500 }}>Product analytics</div>
+          <div style={{ fontSize: 66, color: INK, fontWeight: 500 }}>{pageTitle}</div>
         </div>
       </FloatWrap>
       <FloatWrap h={liftOf(t, 0.42, 280)}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <div style={{ width: 72, height: 72, borderRadius: 20, background: '#4147f5', marginLeft: 150, flexShrink: 0 }} />
+          <div style={{ width: 72, height: 72, borderRadius: 20, background: G.accent, marginLeft: 150, flexShrink: 0 }} />
           <div style={{ fontSize: 165, color: G.ink, fontWeight: 550, marginLeft: 110, letterSpacing: 1, whiteSpace: 'nowrap' }}>{workspaceName} 3.0</div>
         </div>
       </FloatWrap>
       {/* 顶栏右延的淡 tab（对齐 clickup04 顶栏 Widget brainstorm / Design system） */}
-      {[['Widget brainstorm', 3050], ['Design system', 3900], ['Design', 4650]].map(([tb, x]) => (
-        <div key={tb as string} style={{ position: 'absolute', left: x as number, top: 88, fontSize: 58, color: G.mid }}>{tb}</div>
-      ))}
+          {tabs.map((tb, ti) => (
+            <div key={tb} style={{ position: 'absolute', left: 3050 + ti * 850, top: 88, fontSize: 58, color: G.mid }}>{tb}</div>
+          ))}
     </div>
     {/* 工作区 logo 行 */}
     <div style={{ position: 'absolute', left: 120, top: 560 }}>
@@ -180,7 +180,7 @@ const Panel: React.FC<{ shade: number; t?: number; workspaceName: string }> = ({
       <div key={tb} style={{ position: 'absolute', left: 166, top: 1310 + i * 240 }}>
         <FloatWrap h={liftOf(t, 0.86 + i * 0.06, 230)}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 40 }}>
-            <div style={{ width: 58, height: 58, border: `6px solid ${G.bar}`, borderRadius: 14 }} />
+            <div style={{ width: 58, height: 58, border: `6px solid ${G.bar}`, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 30, fontWeight: 800, color: G.mid }}>◆</div>
             <div style={{ fontSize: 70, color: INK }}>{tb}</div>
           </div>
         </FloatWrap>
@@ -201,12 +201,12 @@ const Panel: React.FC<{ shade: number; t?: number; workspaceName: string }> = ({
         background: G.card, borderRadius: 56, boxShadow: '0 6px 60px rgba(139,115,85,0.3)',
       }} />
     ))}
-    {/* —— 右段：Product Management 列表（原片尾程满幅白页） —— */}
+    {/* —— 右段：任务列表页 —— */}
     <div style={{
       position: 'absolute', left: 3560, top: 230, width: PW - 3560, height: PH - 230,
       background: G.card,
     }}>
-      <div style={{ position: 'absolute', left: 220, top: 200, fontSize: 150, fontWeight: 750, color: G.ink, letterSpacing: -2, whiteSpace: 'nowrap' }}>Product Management</div>
+      <div style={{ position: 'absolute', left: 220, top: 200, fontSize: 150, fontWeight: 750, color: G.ink, letterSpacing: -2, whiteSpace: 'nowrap' }}>{listTitle}</div>
       {/* List / Board tabs */}
       <div style={{ position: 'absolute', left: 240, top: 480, display: 'flex', gap: 110, alignItems: 'center' }}>
         <div style={{
@@ -235,15 +235,15 @@ const Panel: React.FC<{ shade: number; t?: number; workspaceName: string }> = ({
       <div style={{ position: 'absolute', left: 900, top: 620, width: 1500, height: 3, background: G.line }} />
       {/* IN PROGRESS chip */}
       <div style={{
-        position: 'absolute', left: 240, top: 850, background: '#f6d9a8', color: '#b87a2e',
+        position: 'absolute', left: 240, top: 850, background: G.nav, color: G.mid,
         fontSize: 46, fontWeight: 650, letterSpacing: 2, padding: '14px 30px', borderRadius: 14,
-      }}>IN PROGRESS</div>
-      <div style={{ position: 'absolute', left: 244, top: 1030, fontSize: 44, fontWeight: 600, color: G.mid, letterSpacing: 1 }}>TASK NAME</div>
+      }}>进行中</div>
+      <div style={{ position: 'absolute', left: 244, top: 1030, fontSize: 44, fontWeight: 600, color: G.mid, letterSpacing: 1 }}>任务名称</div>
       {/* 任务行 */}
-      {[['New Feature Launch', G.ink], ['Roadmap Q3', G.ink], ['User Testing', G.mid], ['Bug Triage', G.bar]].map(([name, col], i) => (
-        <div key={name as string} style={{ position: 'absolute', left: 280, top: 1180 + i * 210, display: 'flex', alignItems: 'center', gap: 56 }}>
+      {tasks.map((name, i) => (
+        <div key={name} style={{ position: 'absolute', left: 280, top: 1180 + i * 210, display: 'flex', alignItems: 'center', gap: 56 }}>
           <div style={{ width: 42, height: 42, borderRadius: 12, background: G.accent }} />
-          <div style={{ fontSize: 64, fontWeight: 550, color: col as string, whiteSpace: 'nowrap' }}>{name}</div>
+          <div style={{ fontSize: 64, fontWeight: 550, color: i % 3 === 0 ? G.ink : i % 3 === 1 ? G.mid : G.bar, whiteSpace: 'nowrap' }}>{name}</div>
         </div>
       ))}
     </div>
@@ -271,7 +271,11 @@ const PanelLayer: React.FC<{
   opacity: number;
   t: number;
   workspaceName: string;
-}> = ({ lx, shade, opacity, t, workspaceName }) => (
+  pageTitle: string;
+  tabs: string[];
+  listTitle: string;
+  tasks: string[];
+}> = ({ lx, shade, opacity, t, workspaceName, pageTitle, tabs, listTitle, tasks }) => (
   <AbsoluteFill style={{ opacity }}>
     <AbsoluteFill style={{ perspective: CAM.persp, perspectiveOrigin: CAM.origin }}>
       <div style={{
@@ -280,7 +284,7 @@ const PanelLayer: React.FC<{
       }}>
         {/* 页面自身在其 3D 平面内横移（局部 X 轴） */}
         <div style={{ transform: `scale(${CAM.scale}) translateX(${lx}px)`, transformOrigin: 'left top' }}>
-          <Panel shade={shade} t={t} workspaceName={workspaceName} />
+          <Panel shade={shade} t={t} workspaceName={workspaceName} pageTitle={pageTitle} tabs={tabs} listTitle={listTitle} tasks={tasks} />
         </div>
       </div>
     </AbsoluteFill>
@@ -289,10 +293,18 @@ const PanelLayer: React.FC<{
 
 export interface SteepTiltGlideProps {
   workspaceName?: string;
+  pageTitle?: string; // 顶栏工作区标题
+  tabs?: string[]; // 顶栏延伸 tab
+  listTitle?: string; // 右段列表页标题
+  tasks?: string[]; // 任务行
 }
 
 export const SteepTiltGlide: React.FC<SteepTiltGlideProps> = ({
   workspaceName = 'Workspace',
+  pageTitle = '产品分析',
+  tabs = ['概览', '文档', '设计'],
+  listTitle = '任务列表',
+  tasks = ['任务 01', '任务 02', '任务 03', '任务 04'],
 }) => {
   const frame = useCurrentFrame();
 
@@ -324,10 +336,10 @@ export const SteepTiltGlide: React.FC<SteepTiltGlideProps> = ({
         background: 'radial-gradient(ellipse 40% 50% at 20% 66%, rgba(211,146,60,0.30), transparent 70%)',
       }} />
       {/* 重影（先画，垫在本体后面；位置=过去时刻的页面局部位移） */}
-      {g2 > 0.02 && <PanelLayer lx={lxAt(frame - 5)} shade={shade} opacity={g2} t={drop} workspaceName={workspaceName} />}
-      {g1 > 0.02 && <PanelLayer lx={lxAt(frame - 2.5)} shade={shade} opacity={g1} t={drop} workspaceName={workspaceName} />}
+      {g2 > 0.02 && <PanelLayer lx={lxAt(frame - 5)} shade={shade} opacity={g2} t={drop} workspaceName={workspaceName} pageTitle={pageTitle} tabs={tabs} listTitle={listTitle} tasks={tasks} />}
+      {g1 > 0.02 && <PanelLayer lx={lxAt(frame - 2.5)} shade={shade} opacity={g1} t={drop} workspaceName={workspaceName} pageTitle={pageTitle} tabs={tabs} listTitle={listTitle} tasks={tasks} />}
       {/* 本体 */}
-      <PanelLayer lx={lx} shade={shade} opacity={1} t={drop} workspaceName={workspaceName} />
+      <PanelLayer lx={lx} shade={shade} opacity={1} t={drop} workspaceName={workspaceName} pageTitle={pageTitle} tabs={tabs} listTitle={listTitle} tasks={tasks} />
       {/* 暗角 */}
       <AbsoluteFill style={{
         background: 'radial-gradient(ellipse 105% 95% at 55% 42%, transparent 60%, rgba(44,36,22,0.25) 85%, rgba(44,36,22,0.5) 100%)',

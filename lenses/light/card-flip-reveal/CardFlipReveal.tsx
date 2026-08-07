@@ -82,7 +82,6 @@ export interface CardFlipRevealCard {
 }
 
 export interface CardFlipRevealProps {
-  title?: string;
   cards?: CardFlipRevealCard[];
 }
 
@@ -167,7 +166,6 @@ const FlipCard: React.FC<{ i: number; frame: number; card: CardFlipRevealCard; w
 };
 
 export const CardFlipReveal: React.FC<CardFlipRevealProps> = ({
-  title = 'OVERVIEW',
   cards = [
     { label: '指标一', result: '+18%' },
     { label: '指标二', result: '2.4×' },
@@ -193,11 +191,6 @@ export const CardFlipReveal: React.FC<CardFlipRevealProps> = ({
   const X0 = (1920 - (n * cardW + (n - 1) * GAP)) / 2;
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', left: 120, top: 96 }}>
-        <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 54, color: G.ink, letterSpacing: -1 }}>
-          {title}
-        </div>
-      </div>
       {cards.map((card, i) => (
         <div key={i} style={{ position: 'absolute', left: X0 + i * (cardW + GAP), top: 0, width: cardW, height: CH }}>
           <FlipCard i={i} frame={frame} card={card} w={cardW} />

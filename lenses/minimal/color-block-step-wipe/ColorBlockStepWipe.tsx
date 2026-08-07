@@ -57,11 +57,11 @@ const AiBadge: React.FC<{ scale: number; opacity: number }> = ({ scale, opacity 
 );
 
 // 变体 B 背景：极简灰阶页面（不动 Fixtures，只组合）
-const GrayPage: React.FC<{ cards: { label: string; value: string }[] }> = ({ cards }) => (
+const GrayPage: React.FC<{ cards: { label: string; value: string }[]; pageTitle: string; pageRows: string[] }> = ({ cards, pageTitle, pageRows }) => (
   <AbsoluteFill style={{ background: G.panel, padding: '90px 160px', boxSizing: 'border-box' }}>
-    <div style={{ height: 40, width: 560, background: G.bar, borderRadius: 12, marginBottom: 40 }} />
-    {[92, 78, 86, 60].map((w, i) => (
-      <div key={i} style={{ height: 18, width: `${w}%`, background: G.line, borderRadius: 9, marginBottom: 24 }} />
+    <div style={{ fontFamily: FONT_STACK, fontSize: 40, fontWeight: 800, color: G.ink, marginBottom: 40 }}>{pageTitle}</div>
+    {pageRows.map((r, i) => (
+      <div key={i} style={{ fontFamily: FONT_STACK, fontSize: 20, fontWeight: 600, color: G.mid, marginBottom: 24 }}>{r}</div>
     ))}
     <div style={{ display: 'flex', gap: 32, marginTop: 30 }}>
       {cards.map((c, i) => (
@@ -97,15 +97,19 @@ export interface ColorBlockStepWipeProps {
   blockColorA?: string;
   blockColorB?: string;
   cards?: { label: string; value: string }[];
+  pageTitle?: string; // 变体 B 页面标题
+  pageRows?: string[]; // 变体 B 行文字
 }
 
 export const ColorBlockStepWipe: React.FC<ColorBlockStepWipeProps> = ({
-  blockColorA = '#2383e2',
-  blockColorB = '#e8503a',
+  blockColorA = G.accent,
+  blockColorB = G.mid,
   cards = [
     { label: '指标一', value: '+18%' },
     { label: '指标二', value: '2.1×' },
   ],
+  pageTitle = '概览',
+  pageRows = ['条目 01', '条目 02', '条目 03', '条目 04'],
 }) => {
   const frame = useCurrentFrame();
 
@@ -185,7 +189,7 @@ export const ColorBlockStepWipe: React.FC<ColorBlockStepWipeProps> = ({
 
   return (
     <AbsoluteFill>
-      <GrayPage cards={cards} />
+      <GrayPage cards={cards} pageTitle={pageTitle} pageRows={pageRows} />
       <AbsoluteFill style={{ background: blockColorB, clipPath: clip }} />
       {p > 0 && (
         <div

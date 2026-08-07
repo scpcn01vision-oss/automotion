@@ -33,10 +33,9 @@ const PLOT_H = 360;
 const PLOT_X = PAD + AXIS_W;
 const PLOT_Y = 130;
 
-// 历史数据（$k，0–100 量程内温和爬升），最后一点爆表 340
-const DATA = [22, 30, 26, 38, 35, 47, 44, 58, 55, 66, 72, 340];
-const N = DATA.length;
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+// 历史数据默认示例（0–100 量程内温和爬升，末点爆表 340），可经 props 覆盖
+const DEFAULT_DATA = [22, 30, 26, 38, 35, 47, 44, 58, 55, 66, 72, 340];
+const DEFAULT_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 const HOLD = 12;
 const DRAW_END = HOLD + 34; // f46：历史段画完
@@ -49,13 +48,28 @@ const VAL_END = MARK_END + 10; // f108：真值标签弹出
 const easeDraw = Easing.inOut(Easing.cubic);
 
 export interface AxisRescaleShockProps {
-  label?: string;
+  label?: string; // 顶部标题（手法名标签默认去掉）
+  data?: number[]; // 数据序列（末点为爆表值）
+  months?: string[]; // X 轴月份标签
+  title?: string; // 卡标题
+  subtitle?: string; // 卡副标题
+  oldTicks?: string[]; // 重标前刻度
+  newTicks?: string[]; // 重标后刻度
 }
 
 export const AxisRescaleShock: React.FC<AxisRescaleShockProps> = ({
-  label = 'RESCALE',
+  label = '',
+  data: dataProp,
+  months: monthsProp,
+  title = '月度指标',
+  subtitle = '本财年 · 全产品线',
+  oldTicks: oldTicksProp,
+  newTicks: newTicksProp,
 }) => {
   const frame = useCurrentFrame();
+  const data = dataProp ?? DEFAULT_DATA;
+  const months = monthsProp ?? DEFAULT_MONTHS;
+  const N = data.length;
 
   // 量程：0–100 → 0–400，重标 12f out-cubic
   const range = interpolate(frame, [BEAT, RESCALE_END], [100, 400], {
@@ -89,12 +103,12 @@ export const AxisRescaleShock: React.FC<AxisRescaleShockProps> = ({
   // 历史段点集
   const basePts: string[] = [];
   const upto = Math.min(drawT, N - 2);
-  for (let i = 0; i <= Math.floor(upto); i++) basePts.push(`${xOf(i).toFixed(2)},${yOf(DATA[i]).toFixed(2)}`);
+  for (let i = 0; i <= Math.floor(upto); i++) basePts.push(`${xOf(i).toFixed(2)},${yOf(data[i]).toFixed(2)}`);
   if (upto < N - 2 && upto > Math.floor(upto)) {
     const i = Math.floor(upto);
     const f = upto - i;
     const x = xOf(i) + (xOf(i + 1) - xOf(i)) * f;
-    const y = yOf(DATA[i]) + (yOf(DATA[i + 1]) - yOf(DATA[i])) * f;
+    const y = yOf(data[i]) + (yOf(data[i + 1]) - yOf(data[i])) * f;
     basePts.push(`${x.toFixed(2)},${y.toFixed(2)}`);
   }
 
@@ -104,9 +118,9 @@ export const AxisRescaleShock: React.FC<AxisRescaleShockProps> = ({
   let shockSeg: string[] = [];
   if (shockT > 0) {
     const x0 = xOf(N - 2);
-    const y0 = yOf(DATA[N - 2]);
+    const y0 = yOf(data[N - 2]);
     const x = x0 + (xOf(N - 1) - x0) * shockT;
-    const yEnd = SHOCK_Y + (yOf(DATA[N - 1]) - SHOCK_Y) * rescaleP;
+    const yEnd = SHOCK_Y + (yOf(data[N - 1]) - SHOCK_Y) * rescaleP;
     const y = y0 + (yEnd - y0) * shockT;
     shockSeg = [`${x0.toFixed(2)},${y0.toFixed(2)}`, `${x.toFixed(2)},${y.toFixed(2)}`];
     headX = x;
@@ -119,8 +133,8 @@ export const AxisRescaleShock: React.FC<AxisRescaleShockProps> = ({
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
-  const OLD_TICKS = ['$25k', '$50k', '$75k', '$100k'];
-  const NEW_TICKS = ['$100k', '$200k', '$300k', '$400k'];
+  const OLD_TICKS = oldTicksProp ?? ['$25k', '$50k', '$75k', '$100k'];
+  const NEW_TICKS = newTicksProp ?? ['$100k', '$200k', '$300k', '$400k'];
 
   // 网格密度 4→8：新增的 4 根细网格随 swap 浮现
   const denseOp = swap;
@@ -147,7 +161,7 @@ export const AxisRescaleShock: React.FC<AxisRescaleShockProps> = ({
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: 100, width: '100%', textAlign: 'center' }}>
-        <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1 }}>{label}</div>
+        {label ? <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 72, color: G.ink, letterSpacing: -1 }}>{label}</div> : null}
       </div>
 
       <div
@@ -168,8 +182,8 @@ export const AxisRescaleShock: React.FC<AxisRescaleShockProps> = ({
       >
         {/* 真卡头 */}
         <div style={{ position: 'absolute', left: PAD, top: 34, fontFamily: FONT_STACK }}>
-          <div style={{ fontSize: 30, fontWeight: 700, color: G.ink }}>Monthly revenue</div>
-          <div style={{ fontSize: 19, fontWeight: 500, color: G.mid, marginTop: 6 }}>FY2026 · all products · USD</div>
+          <div style={{ fontSize: 30, fontWeight: 700, color: G.ink }}>{title}</div>
+          <div style={{ fontSize: 19, fontWeight: 500, color: G.mid, marginTop: 6 }}>{subtitle}</div>
         </div>
 
         <div style={{ position: 'absolute', left: PLOT_X, top: PLOT_Y, width: PLOT_W, height: PLOT_H }}>
@@ -274,7 +288,7 @@ export const AxisRescaleShock: React.FC<AxisRescaleShockProps> = ({
           )}
 
           {/* x 轴真月份 */}
-          {MONTHS.map((m, i) => (
+          {months.map((m, i) => (
             <div
               key={`m${i}`}
               style={{

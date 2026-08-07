@@ -17,9 +17,9 @@ import { AbsoluteFill, interpolate, useCurrentFrame, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
 
-const INK = '#3a3a40';
-const MID = '#8b8b92';
-const FAINT = '#c8c8ce';
+const INK = G.ink;
+const MID = G.mid;
+const FAINT = G.line;
 
 const easeIO = Easing.bezier(0.45, 0, 0.25, 1);
 const easeFall = Easing.bezier(0.5, 0.05, 0.6, 1); // 加速下落、末端软着陆
@@ -55,30 +55,30 @@ const Chip: React.FC<{ letter: string; tone: string }> = ({ letter, tone }) => (
   <div style={{
     width: 64, height: 64, borderRadius: 16, background: tone,
     display: 'flex', alignItems: 'center', justifyContent: 'center',
-    fontFamily: FONT_STACK, fontWeight: 700, fontSize: 36, color: '#666',
+    fontFamily: FONT_STACK, fontWeight: 700, fontSize: 36, color: G.side,
   }}>{letter}</div>
 );
 
 const Tri: React.FC<{ open?: boolean }> = ({ open }) => (
   <div style={{
     width: 0, height: 0,
-    borderLeft: open ? '16px solid transparent' : '22px solid #9a9aa0',
+    borderLeft: open ? '16px solid transparent' : `22px solid ${G.mid}`,
     borderRight: open ? '16px solid transparent' : '0 solid transparent',
-    borderTop: open ? '22px solid #9a9aa0' : '14px solid transparent',
+    borderTop: open ? `22px solid ${G.mid}` : '14px solid transparent',
     borderBottom: open ? '0' : '14px solid transparent',
   }} />
 );
 
 const DocIcon: React.FC = () => (
-  <div style={{ width: 44, height: 54, border: '5px solid #9a9aa0', borderRadius: 8, position: 'relative' }}>
-    <div style={{ position: 'absolute', left: 7, top: 10, width: 22, height: 5, background: '#b6b6bc' }} />
-    <div style={{ position: 'absolute', left: 7, top: 22, width: 22, height: 5, background: '#b6b6bc' }} />
+  <div style={{ width: 44, height: 54, border: `5px solid ${G.mid}`, borderRadius: 8, position: 'relative' }}>
+    <div style={{ position: 'absolute', left: 7, top: 10, width: 22, height: 5, background: G.line }} />
+    <div style={{ position: 'absolute', left: 7, top: 22, width: 22, height: 5, background: G.line }} />
   </div>
 );
 
 const FolderIcon: React.FC = () => (
-  <div style={{ width: 54, height: 42, background: '#8f8f95', borderRadius: 7, position: 'relative' }}>
-    <div style={{ position: 'absolute', left: 0, top: -10, width: 24, height: 12, background: '#8f8f95', borderRadius: '6px 6px 0 0' }} />
+  <div style={{ width: 54, height: 42, background: G.mid, borderRadius: 7, position: 'relative' }}>
+    <div style={{ position: 'absolute', left: 0, top: -10, width: 24, height: 12, background: G.mid, borderRadius: '6px 6px 0 0' }} />
   </div>
 );
 
@@ -94,8 +94,8 @@ const TreeRow: React.FC<{
     {icon === 'triOpen' && <Tri open />}
     {icon === 'doc' && <DocIcon />}
     {icon === 'folder' && <FolderIcon />}
-    {icon === 'dash' && <div style={{ width: 40, height: 40, border: '6px dashed #a2a2a8', borderRadius: 10 }} />}
-    {chip && <Chip letter={chip} tone="#d4d4da" />}
+    {icon === 'dash' && <div style={{ width: 40, height: 40, border: `6px dashed ${G.mid}`, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, color: G.mid }}>▤</div>}
+    {chip && <Chip letter={chip} tone={G.bar} />}
     <div style={{ fontFamily: FONT_STACK, fontSize: size, color: INK, fontWeight: 500 }}>{label}</div>
     {count && <div style={{ marginLeft: 'auto', marginRight: 80, fontFamily: FONT_STACK, fontSize: size * 0.85, color: MID }}>{count}</div>}
   </div>
@@ -104,10 +104,10 @@ const TreeRow: React.FC<{
 const RecentCard: React.FC<{ title: string; sub: string; w?: number }> = ({ title, sub, w = 880 }) => (
   <div style={{
     width: w, border: `4px solid ${FAINT}`, borderRadius: 24, padding: '36px 44px',
-    display: 'flex', flexDirection: 'column', gap: 18, background: '#fbfbfa',
+    display: 'flex', flexDirection: 'column', gap: 18, background: G.card,
   }}>
     <div style={{ display: 'flex', alignItems: 'center', gap: 26 }}>
-      <div style={{ width: 44, height: 44, border: '6px solid #85858b', borderRadius: 8 }} />
+      <div style={{ width: 44, height: 44, border: `6px solid ${G.mid}`, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, fontWeight: 800, color: G.mid }}>◆</div>
       <div style={{ fontFamily: FONT_STACK, fontSize: 52, color: INK, fontWeight: 600 }}>{title}</div>
     </div>
     <div style={{ fontFamily: FONT_STACK, fontSize: 42, color: MID, paddingLeft: 70 }}>{sub}</div>
@@ -120,6 +120,7 @@ export interface GrazeFaceTourProps {
   workspaceName?: string;
   recentCards?: { title: string; sub: string }[];
   tasks?: string[];
+  rowMeta?: string; // 任务行尾注
 }
 
 const SceneTree: React.FC<{ t?: number; recentCards: { title: string; sub: string }[] }> = ({ t = 1, recentCards }) => {
@@ -130,20 +131,20 @@ const SceneTree: React.FC<{ t?: number; recentCards: { title: string; sub: strin
     [0, 'Goals', 'doc', undefined, undefined],
     [0, 'Docs', 'doc', undefined, undefined],
     [0, 'More', 'dash', undefined, undefined],
-    [0, 'EPD', 'tri', 'E', undefined],
-    [0, 'Product roadmap', 'tri', 'P', undefined],
+    [0, '需求池', 'tri', '需', undefined],
+    [0, '产品路线', 'tri', '产', undefined],
     [0, 'Design', 'triOpen', 'D', undefined],
-    [1, 'Designer handbook', 'doc', undefined, undefined],
-    [1, '3.0', 'folder', undefined, undefined],
-    [1, 'Design system', 'folder', undefined, undefined],
-    [2, 'Design system', 'doc', undefined, undefined],
+    [1, '设计手册', 'doc', undefined, undefined],
+    [1, '版本三', 'folder', undefined, undefined],
+    [1, '设计规范', 'folder', undefined, undefined],
+    [2, '设计规范', 'doc', undefined, undefined],
     [2, 'Components', 'dash', undefined, '56'],
     [2, 'Patterns', 'dash', undefined, '8'],
     [2, 'Tokens', 'dash', undefined, '256'],
   ];
   return (
-    <div style={{ width: 2900, height: 2400, background: '#f5f5f4', display: 'flex' }}>
-      <div style={{ width: 1500, borderRight: `4px solid ${FAINT}`, paddingTop: 60, background: '#f2f2f1' }}>
+    <div style={{ width: 2900, height: 2400, background: G.panel, display: 'flex' }}>
+      <div style={{ width: 1500, borderRight: `4px solid ${FAINT}`, paddingTop: 60, background: G.panel }}>
         {rows.slice(0, 4).map((r, i) => (
           <FloatWrap key={r[1] + i} h={L(i)}>
             <TreeRow depth={r[0]} label={r[1]} icon={r[2]} chip={r[3]} count={r[4]} />
@@ -207,14 +208,15 @@ const SceneTopNav: React.FC<{ t?: number; workspaceName: string }> = ({ t = 1, w
       height: 150, borderBottom: `4px solid ${FAINT}`, display: 'flex', alignItems: 'center',
       gap: 120, paddingLeft: 90, fontFamily: FONT_STACK, fontSize: 54, color: INK,
     }}>
-      {['Product analytics', `${workspaceName} 3.0`, 'Widget brainstorm', 'Design system'].map((tb, i) => (
+      {['数据分析', `${workspaceName} 版本`, '方案讨论', '设计规范'].map((tb, i) => (
         <FloatWrap key={tb} h={liftOf(t, 0.2 + i * 0.1, 140)}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 26, fontWeight: i === 1 ? 700 : 400, opacity: i > 1 ? 0.75 : 1 }}>
             <div style={{
               width: 40, height: 40, borderRadius: i === 1 ? 14 : 8,
-              background: i === 1 ? '#7d7d84' : 'transparent',
-              border: i === 1 ? 'none' : '5px solid #9a9aa0',
-            }} />
+              background: i === 1 ? G.mid : 'transparent',
+              border: i === 1 ? 'none' : `5px solid ${G.mid}`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, fontWeight: 800, color: G.card,
+            }}>{i === 1 ? '◆' : '●'}</div>
             {tb}
           </div>
         </FloatWrap>
@@ -224,22 +226,22 @@ const SceneTopNav: React.FC<{ t?: number; workspaceName: string }> = ({ t = 1, w
       <div style={{ width: 1250, padding: '70px 70px 0' }}>
         <FloatWrap h={liftOf(t, 0.34, 150)}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 30 }}>
-            <div style={{ width: 74, height: 74, borderRadius: 20, background: 'linear-gradient(135deg,#a9a9af,#6f6f76)' }} />
+            <div style={{ width: 74, height: 74, borderRadius: 20, background: `linear-gradient(135deg,${G.bar},${G.mid})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 36, fontWeight: 800, color: G.card }}>◆</div>
             <div style={{ fontFamily: FONT_STACK, fontSize: 66, fontWeight: 800, color: INK }}>{workspaceName}</div>
-            <div style={{ marginLeft: 'auto', width: 130, height: 90, border: `4px solid ${FAINT}`, borderRadius: 22, background: '#fff' }} />
+            <div style={{ marginLeft: 'auto', width: 130, height: 90, border: `4px solid ${FAINT}`, borderRadius: 22, background: G.card, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40, color: G.mid }}>▦</div>
           </div>
         </FloatWrap>
         <div style={{ height: 60 }} />
         <FloatWrap h={liftOf(t, 0.46, 160)}>
           <div style={{
-            display: 'flex', alignItems: 'center', gap: 34, background: '#e6e6f0',
-            border: '4px solid #c5c5d4', borderRadius: 24, padding: '30px 44px',
+            display: 'flex', alignItems: 'center', gap: 34, background: G.nav,
+            border: `4px solid ${G.line}`, borderRadius: 24, padding: '30px 44px',
           }}>
-            <div style={{ width: 48, height: 44, border: '6px solid #5f5f66', borderBottom: 'none', borderRadius: '10px 10px 0 0' }} />
-            <div style={{ fontFamily: FONT_STACK, fontSize: 56, color: '#4a4a55', fontWeight: 600 }}>Home</div>
+            <div style={{ width: 48, height: 44, border: `6px solid ${G.ink}`, borderBottom: 'none', borderRadius: '10px 10px 0 0' }} />
+            <div style={{ fontFamily: FONT_STACK, fontSize: 56, color: G.ink, fontWeight: 600 }}>Home</div>
             <div style={{
-              marginLeft: 'auto', width: 62, height: 62, borderRadius: 31, background: '#a5a5ab',
-              color: '#fff', fontFamily: FONT_STACK, fontSize: 38, fontWeight: 700,
+              marginLeft: 'auto', width: 62, height: 62, borderRadius: 31, background: G.mid,
+              color: G.card, fontFamily: FONT_STACK, fontSize: 38, fontWeight: 700,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>3</div>
           </div>
@@ -247,7 +249,7 @@ const SceneTopNav: React.FC<{ t?: number; workspaceName: string }> = ({ t = 1, w
         {['Inbox', 'Company', 'People & Teams', 'Goals', 'Docs'].map((tb, i) => (
           <FloatWrap key={tb} h={liftOf(t, 0.55 + i * 0.08, 140)}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 34, height: 128, paddingLeft: 44 }}>
-              <div style={{ width: 44, height: 44, border: '6px solid #93939a', borderRadius: 10 }} />
+              <div style={{ width: 44, height: 44, border: `6px solid ${G.mid}`, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, fontWeight: 800, color: G.mid }}>◆</div>
               <div style={{ fontFamily: FONT_STACK, fontSize: 54, color: INK }}>{tb}</div>
             </div>
           </FloatWrap>
@@ -257,7 +259,7 @@ const SceneTopNav: React.FC<{ t?: number; workspaceName: string }> = ({ t = 1, w
         <FloatWrap h={liftOf(t, 0.4, 150)}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 40, color: MID, fontFamily: FONT_STACK, fontSize: 52 }}>
             <div>‹</div><div>›</div>
-            <div style={{ width: 44, height: 40, border: '6px solid #93939a', borderBottom: 'none', borderRadius: '10px 10px 0 0' }} />
+            <div style={{ width: 44, height: 40, border: `6px solid ${G.mid}`, borderBottom: 'none', borderRadius: '10px 10px 0 0' }} />
             <div style={{ color: INK }}>Home</div>
           </div>
         </FloatWrap>
@@ -269,10 +271,10 @@ const SceneTopNav: React.FC<{ t?: number; workspaceName: string }> = ({ t = 1, w
         <FloatWrap h={liftOf(t, 0.74, 160)}>
           <div style={{
             display: 'flex', alignItems: 'center', gap: 36, border: `4px solid ${FAINT}`,
-            borderRadius: 26, padding: '34px 46px', background: '#fff', width: 1100,
+            borderRadius: 26, padding: '34px 46px', background: G.card, width: 1100,
           }}>
-            <div style={{ width: 44, height: 44, borderRadius: 22, border: '6px solid #9a9aa0' }} />
-            <div style={{ fontFamily: FONT_STACK, fontSize: 48, color: MID }}>Search by app, filetype…</div>
+            <div style={{ width: 44, height: 44, borderRadius: 22, border: `6px solid ${G.mid}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, fontWeight: 800, color: G.mid }}>⌕</div>
+            <div style={{ fontFamily: FONT_STACK, fontSize: 48, color: MID }}>搜索内容或关键字</div>
           </div>
         </FloatWrap>
       </div>
@@ -282,7 +284,7 @@ const SceneTopNav: React.FC<{ t?: number; workspaceName: string }> = ({ t = 1, w
 
 /* 场景 C：列表行（对标截图 4 右下 TODAY/TASK NAME 区）
  * v2：Todo 头/TODAY 徽章/任务行自上而下先后贴落 */
-const SceneListRows: React.FC<{ t?: number; tasks: string[] }> = ({ t = 1, tasks }) => (
+const SceneListRows: React.FC<{ t?: number; tasks: string[]; rowMeta: string }> = ({ t = 1, tasks, rowMeta }) => (
   <div style={{ width: 2900, height: 2200, background: G.bg, paddingTop: 60 }}>
     <FloatWrap h={liftOf(t, 0.22, 150)}>
       <div style={{ display: 'flex', gap: 100, paddingLeft: 120, fontFamily: FONT_STACK, fontSize: 54 }}>
@@ -296,7 +298,7 @@ const SceneListRows: React.FC<{ t?: number; tasks: string[] }> = ({ t = 1, tasks
     <FloatWrap h={liftOf(t, 0.32, 150)}>
       <div style={{ display: 'flex', gap: 44, alignItems: 'center', paddingLeft: 120 }}>
         <div style={{
-          padding: '24px 52px', background: '#e2e2ea', borderRadius: 20,
+          padding: '24px 52px', background: G.nav, borderRadius: 20,
           fontFamily: FONT_STACK, fontSize: 50, color: INK, fontWeight: 600,
         }}>≡ List</div>
         <div style={{ fontFamily: FONT_STACK, fontSize: 50, color: MID }}>▦ Gallery</div>
@@ -309,24 +311,24 @@ const SceneListRows: React.FC<{ t?: number; tasks: string[] }> = ({ t = 1, tasks
     <div style={{ height: 60 }} />
     <FloatWrap h={liftOf(t, 0.44, 160)}>
       <div style={{
-        marginLeft: 120, display: 'inline-block', padding: '20px 48px', background: '#e4e4e3',
-        borderRadius: 16, fontFamily: FONT_STACK, fontSize: 44, letterSpacing: 4, color: '#6f6f75', fontWeight: 600,
-      }}>TODAY</div>
+        marginLeft: 120, display: 'inline-block', padding: '20px 48px', background: G.panel,
+        borderRadius: 16, fontFamily: FONT_STACK, fontSize: 44, letterSpacing: 4, color: G.mid, fontWeight: 600,
+      }}>今日</div>
     </FloatWrap>
     <div style={{ height: 60 }} />
     <FloatWrap h={liftOf(t, 0.54, 150)}>
-      <div style={{ paddingLeft: 120, fontFamily: FONT_STACK, fontSize: 42, letterSpacing: 5, color: MID }}>TASK NAME</div>
+      <div style={{ paddingLeft: 120, fontFamily: FONT_STACK, fontSize: 42, letterSpacing: 5, color: MID }}>任务名称</div>
     </FloatWrap>
     <div style={{ height: 30 }} />
     {tasks.map((tb, i) => (
       <FloatWrap key={tb} h={liftOf(t, 0.62 + i * 0.09, 160)}>
         <div style={{
           display: 'flex', alignItems: 'center', gap: 44, height: 170, marginLeft: 120, marginRight: 120,
-          borderBottom: '3px solid #e6e6e4',
+          borderBottom: `3px solid ${G.line}`,
         }}>
-          <div style={{ width: 40, height: 40, borderRadius: 12, background: '#88888e' }} />
+          <div style={{ width: 40, height: 40, borderRadius: 12, background: G.mid, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 800, color: G.card }}>◆</div>
           <div style={{ fontFamily: FONT_STACK, fontSize: 58, color: INK, fontWeight: 550 }}>{tb}</div>
-          <div style={{ marginLeft: 'auto', width: 220, height: 20, background: '#e2e2e8', borderRadius: 10 }} />
+          <div style={{ marginLeft: 'auto', fontFamily: FONT_STACK, fontSize: 40, color: MID }}>{rowMeta}</div>
           <div style={{ color: MID, fontSize: 60 }}>…</div>
         </div>
       </FloatWrap>
@@ -415,7 +417,7 @@ const NeonRects: React.FC<{ drift: number }> = ({ drift }) => (
   </AbsoluteFill>
 );
 
-type SegCtx = { workspaceName: string; recentCards: { title: string; sub: string }[]; tasks: string[] };
+type SegCtx = { workspaceName: string; recentCards: { title: string; sub: string }[]; tasks: string[]; rowMeta: string };
 
 // 平移目标以内容坐标 (cx,cy) 给出：translate = (W/2-cx, H/2-cy)
 const SEGS: { cam: Cam; edge: 'left' | 'top'; render: (t: number, ctx: SegCtx) => React.ReactNode }[] = [
@@ -432,7 +434,7 @@ const SEGS: { cam: Cam; edge: 'left' | 'top'; render: (t: number, ctx: SegCtx) =
   {
     // 列表行：沿 TASK NAME 行右扫
     cam: { rx: 14, ry: 28, rz: -5, scale: 1.05, x: [1450 - 900, 1450 - 680], y: [1100 - 620, 1100 - 1240] },
-    edge: 'left', render: (t, ctx) => <SceneListRows t={t} tasks={ctx.tasks} />,
+    edge: 'left', render: (t, ctx) => <SceneListRows t={t} tasks={ctx.tasks} rowMeta={ctx.rowMeta} />,
   },
 ];
 
@@ -467,12 +469,13 @@ export const GrazeFaceTour: React.FC<GrazeFaceTourProps> = ({
     { title: 'Logo', sub: 'Brand refresh' },
     { title: 'Design handbook', sub: 'Team docs' },
   ],
-  tasks = ['New Bugs Per Week', 'Designer handbook', 'Mobile screens', 'Product roadmap'],
+  tasks = ['每周新增问题', '设计手册', '移动端页面', '产品路线'],
+  rowMeta = '刚刚',
 }) => {
   const frame = useCurrentFrame();
   const segs = SEGS.map((s) => ({
     ...s,
-    render: (t: number) => s.render(t, { workspaceName, recentCards, tasks }),
+    render: (t: number) => s.render(t, { workspaceName, recentCards, tasks, rowMeta }),
   }));
   // 呼吸感的焦点带（浅景深）：焦点椭圆随段落略移
   const seg = Math.min(2, Math.floor(frame / SEG_LEN));

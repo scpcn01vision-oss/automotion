@@ -35,9 +35,28 @@ const BUTTON_FRAME = 46; // 按钮按下
 const FLY_START = [54, 60, 66]; // 三行错峰起飞
 
 export interface PanelToCanvasMaterializeProps {
+  panelTitle?: string; // 面板标题
+  panelSubtitle?: string; // 面板副标题
+  buttonText?: string; // 底部按钮文字
+  rows?: { icon: string; title: string; value: string }[]; // 面板行（3 条）
+  cards?: { title: string; rows: { label: string; value: string }[]; name: string }[]; // 飞卡卡态内容（3 张）
 }
 
-export const PanelToCanvasMaterialize: React.FC<PanelToCanvasMaterializeProps> = () => {
+export const PanelToCanvasMaterialize: React.FC<PanelToCanvasMaterializeProps> = ({
+  panelTitle = '待办面板',
+  panelSubtitle = '3 项待添加',
+  buttonText = '全部添加到画布',
+  rows = [
+    { icon: '●', title: '任务一', value: '今天' },
+    { icon: '▲', title: '任务二', value: '明天' },
+    { icon: '◆', title: '任务三', value: '本周' },
+  ],
+  cards = [
+    { title: '概览', rows: [{ label: '指标一', value: '+18%' }, { label: '指标二', value: '2.4×' }], name: '成员 01' },
+    { title: '明细', rows: [{ label: '指标三', value: '99%' }, { label: '指标四', value: '45%' }], name: '成员 02' },
+    { title: '汇总', rows: [{ label: '指标五', value: '7.1×' }, { label: '指标六', value: '88%' }], name: '成员 03' },
+  ],
+}) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
@@ -73,13 +92,16 @@ export const PanelToCanvasMaterialize: React.FC<PanelToCanvasMaterializeProps> =
         }}
       >
         {/* 面板标题 */}
-        <div style={{ height: 20, width: 260, background: G.bar, borderRadius: 10, marginBottom: 14 }} />
-        <div style={{ height: 12, width: 380, background: G.line, borderRadius: 6, marginBottom: 26 }} />
+        <div style={{ fontFamily: FONT_STACK, fontSize: 30, fontWeight: 700, color: G.ink }}>{panelTitle}</div>
+        <div style={{ fontFamily: FONT_STACK, fontSize: 20, color: G.mid, marginBottom: 16 }}>{panelSubtitle}</div>
         {/* 表头 */}
-        <div style={{ height: 34, background: G.line, borderRadius: 8, marginBottom: 12, opacity: 0.6 }} />
+        <div style={{ display: 'flex', alignItems: 'center', padding: '8px 20px', marginBottom: 8, background: G.line, borderRadius: 8, opacity: 0.7 }}>
+          <span style={{ fontFamily: FONT_STACK, fontSize: 18, fontWeight: 700, color: G.ink }}>事项</span>
+          <span style={{ marginLeft: 'auto', fontFamily: FONT_STACK, fontSize: 18, fontWeight: 700, color: G.ink }}>状态</span>
+        </div>
         {/* 行槽位（行飞走后留白） */}
         {[0, 1, 2].map((i) => (
-          <RowSlot key={i} idx={i} frame={frame} fps={fps} />
+          <RowSlot key={i} idx={i} frame={frame} fps={fps} row={rows[i % rows.length]} />
         ))}
         {/* 面板底部按钮 */}
         <div
@@ -98,14 +120,14 @@ export const PanelToCanvasMaterialize: React.FC<PanelToCanvasMaterializeProps> =
           }}
         >
           <div style={{ fontFamily: FONT_STACK, fontWeight: 700, fontSize: 22, color: G.card, letterSpacing: 0.5 }}>
-            Add all to canvas
+            {buttonText}
           </div>
         </div>
       </div>
 
       {/* 飞行中/落位的三张卡（行→卡形态插值） */}
       {[0, 1, 2].map((i) => (
-        <FlyingCard key={i} idx={i} frame={frame} fps={fps} />
+        <FlyingCard key={i} idx={i} frame={frame} fps={fps} row={rows[i % rows.length]} card={cards[i % cards.length]} />
       ))}
 
       {/* 光标 */}
@@ -115,7 +137,12 @@ export const PanelToCanvasMaterialize: React.FC<PanelToCanvasMaterializeProps> =
 };
 
 // 面板内的一行：复选框自动打勾；起飞后槽位塌陷成虚线留白
-const RowSlot: React.FC<{ idx: number; frame: number; fps: number }> = ({ idx, frame, fps }) => {
+const RowSlot: React.FC<{
+  idx: number;
+  frame: number;
+  fps: number;
+  row: { icon: string; title: string; value: string };
+}> = ({ idx, frame, fps, row }) => {
   const checkF = CHECK_FRAMES[idx];
   const flyF = FLY_START[idx];
   const checked = frame >= checkF;
@@ -161,8 +188,8 @@ const RowSlot: React.FC<{ idx: number; frame: number; fps: number }> = ({ idx, f
               </svg>
             )}
           </div>
-          <div style={{ height: 14, width: 180 + idx * 40, background: G.bar, borderRadius: 7 }} />
-          <div style={{ marginLeft: 'auto', height: 12, width: 90, background: G.line, borderRadius: 6 }} />
+          <div style={{ fontFamily: FONT_STACK, fontSize: 24, fontWeight: 600, color: G.ink }}>{row.title}</div>
+          <div style={{ marginLeft: 'auto', fontFamily: FONT_STACK, fontSize: 20, fontWeight: 700, color: G.accent }}>{row.value}</div>
         </>
       )}
     </div>
@@ -170,7 +197,13 @@ const RowSlot: React.FC<{ idx: number; frame: number; fps: number }> = ({ idx, f
 };
 
 // 行→卡：位置沿贝塞尔弧线飞、尺寸/圆角/内容布局同步插值
-const FlyingCard: React.FC<{ idx: number; frame: number; fps: number }> = ({ idx, frame, fps }) => {
+const FlyingCard: React.FC<{
+  idx: number;
+  frame: number;
+  fps: number;
+  row: { icon: string; title: string; value: string };
+  card: { title: string; rows: { label: string; value: string }[]; name: string };
+}> = ({ idx, frame, fps, row, card }) => {
   const flyF = FLY_START[idx];
   if (frame < flyF) return null;
 
@@ -219,17 +252,21 @@ const FlyingCard: React.FC<{ idx: number; frame: number; fps: number }> = ({ idx
     >
       {/* 行形态内容 */}
       <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', gap: 18, padding: '0 20px', opacity: rowOp }}>
-        <div style={{ width: 30, height: 30, borderRadius: 8, background: G.ink }} />
-        <div style={{ height: 14, width: 180 + idx * 40, background: G.bar, borderRadius: 7 }} />
+        <div style={{ width: 30, height: 30, borderRadius: 8, background: G.ink, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, fontWeight: 800, color: G.card }}>{row.icon}</div>
+        <div style={{ fontFamily: FONT_STACK, fontSize: 22, fontWeight: 600, color: G.ink }}>{row.title}</div>
       </div>
       {/* 卡形态内容 */}
       <div style={{ position: 'absolute', inset: 0, padding: 24, display: 'flex', flexDirection: 'column', gap: 12, opacity: cardOp, boxSizing: 'border-box' }}>
-        <div style={{ height: 18, width: `${52 + idx * 12}%`, background: G.bar, borderRadius: 9 }} />
-        <div style={{ height: 11, width: '84%', background: G.line, borderRadius: 5 }} />
-        <div style={{ height: 11, width: '66%', background: G.line, borderRadius: 5 }} />
+        <div style={{ fontFamily: FONT_STACK, fontSize: 26, fontWeight: 700, color: G.ink }}>{card.title}</div>
+        {card.rows.map((r, ri) => (
+          <div key={ri} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <span style={{ fontFamily: FONT_STACK, fontSize: 18, fontWeight: 600, color: G.ink }}>{r.label}</span>
+            <span style={{ marginLeft: 'auto', fontFamily: FONT_STACK, fontSize: 18, fontWeight: 700, color: G.accent }}>{r.value}</span>
+          </div>
+        ))}
         <div style={{ marginTop: 'auto', display: 'flex', gap: 10, alignItems: 'center' }}>
-          <div style={{ width: 28, height: 28, borderRadius: 14, background: G.mid }} />
-          <div style={{ height: 11, width: 70, background: G.line, borderRadius: 5 }} />
+          <div style={{ width: 28, height: 28, borderRadius: 14, background: G.mid, color: G.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 800 }}>{card.name[0]}</div>
+          <div style={{ fontFamily: FONT_STACK, fontSize: 16, fontWeight: 600, color: G.mid }}>{card.name}</div>
         </div>
       </div>
     </div>
