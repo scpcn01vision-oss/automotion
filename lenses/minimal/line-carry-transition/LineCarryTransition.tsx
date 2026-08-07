@@ -197,11 +197,6 @@ export const LineCarryTransition: React.FC<LineCarryTransitionProps> = ({
             top: 375,
             width: 560,
             height: 330,
-            boxSizing: 'border-box',
-            padding: 26,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 14,
             opacity: contentOpacity,
           }}
         >

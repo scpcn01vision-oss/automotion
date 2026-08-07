@@ -190,6 +190,7 @@ export const MorphFromPrimitive: React.FC<MorphFromPrimitiveProps> = ({
           padding: 36,
           display: 'flex',
           flexDirection: 'column',
+          justifyContent: 'center',
           gap: 18,
           opacity: contentOpacity,
         }}

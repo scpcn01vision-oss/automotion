@@ -2,7 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 对比,举证
-// props: scene（前后对比内容承载）
+// props: before / after（前后对比两侧各自内容承载）
 // === 时间特性 ===
 // 刚性（不可压缩）: 无（全程弹性）
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
@@ -37,17 +37,27 @@ const posAt = (f: number): number => {
 };
 
 export interface BeforeAfterSliderScrubProps {
-  scene?: SceneContentData;
+  before?: SceneContentData; // 左侧（处理前）
+  after?: SceneContentData; // 右侧（处理后）
 }
 
 export const BeforeAfterSliderScrub: React.FC<BeforeAfterSliderScrubProps> = ({
-  scene = {
+  before = {
     title: '概览',
     type: 'rows',
     rows: [
       { label: '指标一', value: '+18%' },
       { label: '指标二', value: '2.1×' },
       { label: '指标三', value: '96.4%' },
+    ],
+  },
+  after = {
+    title: '状态',
+    type: 'rows',
+    rows: [
+      { label: '节点', value: '4/4' },
+      { label: '延迟', value: '42ms' },
+      { label: '可用性', value: '99.98%' },
     ],
   },
 }) => {
@@ -63,14 +73,12 @@ export const BeforeAfterSliderScrub: React.FC<BeforeAfterSliderScrubProps> = ({
     <div style={{ width: 1920, height: 1080, position: 'relative', overflow: 'hidden', background: G.bg }}>
       {/* before：低对比灰蒙版模拟"处理前" */}
       <div style={{ position: 'absolute', inset: 0, filter: 'contrast(0.55) brightness(1.06) grayscale(1)' }}>
-        <SceneContent content={scene} />
-      </div>
+        <SceneContent content={before} />    </div>
       <div style={{ position: 'absolute', inset: 0, background: 'rgba(160,160,158,0.35)' }} />
 
       {/* after：正常清晰版，杆左侧揭出 */}
       <div style={{ position: 'absolute', inset: 0, clipPath: `inset(0 ${1920 - x}px 0 0)` }}>
-        <SceneContent content={scene} />
-      </div>
+        <SceneContent content={after} />     </div>
 
       {/* 分割杆 + 圆手柄 */}
       <div

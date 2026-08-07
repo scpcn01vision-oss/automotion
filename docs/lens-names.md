@@ -10,7 +10,6 @@
 |---|---|
 | CardFlipReveal | 翻牌揭结 |
 | CardFlockTumble | 卡群翻飞 |
-| ClonerDepthEcho | 纵深复印 |
 | AxialStretch | 轴向拉伸 |
 | ContactShadowLift | 阴影抬升 |
 | MorphFromPrimitive | 原形化卡 |
@@ -62,41 +61,26 @@
 | BeatStepListThemeCycle | 拍点列词 |
 | BottomPushStackWipe | 底推换景 |
 | CircleMatchIris | 圆心虹膜 |
-| ColorBlockStepWipe | 色块分吞 |
 | CraneRiseReveal | 吊臂升起 |
 | DollyZoomReal | 滑动变焦 |
 | MultiplaneReal | 多层视差 |
 | GrazeFaceTour | 掠面巡览 |
 | LineCarryTransition | 线引换场 |
 | DominoCascade | 多米诺 |
-| DropBlackoutSlam | 黑场砸落 |
-| WrightTripleCut | 三连切 |
-| OverheadTabletopDrop | 桌面俯冲 |
 | TiltReveal | 倾斜揭面 |
-| JumpCutPunchIn | 跳切冲入 |
-| StrobeBlackFrames | 频闪黑帧 |
 | RunwayGroundSkim | 低空掠卡 |
-| MaskWipeReal | 遮罩擦除 |
-| PortalWipeV2 | 传送门转场 |
-| WhipBrakeReal | 甩镜急停 |
-| WhipPanReal | 甩镜平移 |
 | SmearMultiples | 残影多联 |
 | DroneDiveLanding | 俯冲降落 |
 | ExplodedView | 爆炸分解 |
 | FreezeAnnotateReal | 冻结标注 |
 | SpeedRampReal | 变速急停 |
-| SteepTiltGlide | 陡角滑过 |
 | BulletTimeFreezeOrbit | 子弹时间 |
 | DutchRollToLevel | 荷兰角回正 |
 | PullBackIsolation | 拉远孤立 |
 | SlowPushIn | 缓推压近 |
-| CardFootageCadence | 卡片节拍 |
-| SmashCut | 硬切砸场 |
-| TrailerBumper | 预告片头 |
 | InvisibleCut | 隐形切 |
 | LightLeakBurn | 漏光烧灼 |
 | VersusSlam | 对决砸幕 |
-| LetterformZoom | 字形穿行 |
 | SharedElementMorph | 共享形变 |
 | BlindsSlice | 百叶横切 |
 | ClockWipe | 时钟扫过 |
@@ -122,14 +106,11 @@
 | AttentionBounce | 注目弹跳 |
 | PopBurstConfirm | 爆点确认 |
 | CursorPerformancePunchIn | 光标冲入 |
-| KeycapSmashCut | 键帽砸切 |
 | HalationBloom | 光晕弥散 |
 | SheenSweepRetry | 光泽扫过 |
 | SpotlightSweepReveal | 追光巡场 |
 | OdometerDigitRoll | 里程滚数 |
-| ComicPanelSplit | 漫画分格 |
 | FlipGridReflow | 格阵重排 |
-| GridFlashMosaic | 闪格马赛克 |
 | ConfettiCrossfire | 彩纸交叉 |
 | CounterTickSparks | 计数星火 |
 | ParticleSandFill | 沙粒填形 |
@@ -141,14 +122,10 @@
 | CornerSpotlightReveal | 角落追光 |
 | GlowWakeSleepPanel | 光眠醒板 |
 | SlideSpotlightPan | 滑光扫视 |
-| PaletteThemeRipple | 换肤涟漪 |
-| ThemeSweepToggle | 主题横扫 |
 | TimelineTravel | 时间轴行 |
-| FontWeightPump | 字重脉动 |
 | KaraokeFillSync | 歌词填充 |
 | BentoLightUp | 方块点亮 |
 | GridWaveFlip | 格浪翻涌 |
-| WireframeDrawOn | 线框自绘 |
 
 ## tplshots（14）
 
@@ -163,7 +140,6 @@
 | BrandInkOpen | 墨印开场 |
 | SpotlightHeroCard | 追光主卡 |
 | DeckDealFlyin | 发牌飞入 |
-| TypeAndFilter | 键入筛选 |
 | RowEmbed | 行嵌入 |
 | ListStackPress | 列表压叠 |
 | DocumentTypewriterReveal | 文档打字 |
@@ -202,19 +178,14 @@
 
 | id | 中文名 |
 |---|---|
-| AnimeImpact | 动画冲击 |
-| FlylineArc | 飞线弧 |
 | GlowOrbAmbient | 辉光漫游 |
-| HitCounter | 连击计数 |
 | LineUnfoldPanel | 线展成板 |
-| OrbFlylineRelay | 光球接力 |
 | ReticleLockOn | 准星锁定 |
 
 ## transition（2）
 
 | id | 中文名 |
 |---|---|
-| FlashCut | 白闪硬切 |
 | GlitchDisplace | 撕裂位移 |
 
 ## data（3）
@@ -235,4 +206,3 @@
 
 | id | 中文名 |
 |---|---|
-| NeonTripleMarquee | 霓虹跑马 |

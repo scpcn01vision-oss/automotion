@@ -98,19 +98,19 @@ export const VersusSlam: React.FC<VersusSlamProps> = ({
         )}
         {/* 左半屏：FakeDashboard A 裁左半，斜边 78° */}
         <div style={{
-          position: 'absolute', inset: 0,
+          position: 'absolute', left: 0, top: 0, width: 960, height: 1080, overflow: 'hidden',
           transform: `translateX(${leftX}px)`,
           clipPath: `polygon(0px 0px, ${SEAM_TOP_X}px 0px, ${SEAM_BOT_X}px 1080px, 0px 1080px)`,
         }}>
-          <SceneContent content={sceneA} />
+          <SceneContent content={sceneA} titleSize={46} panelWidth={720} />
         </div>
         {/* 右半屏：FakeDashboard B 裁右半 */}
         <div style={{
-          position: 'absolute', inset: 0,
+          position: 'absolute', left: 960, top: 0, width: 960, height: 1080, overflow: 'hidden',
           transform: `translateX(${rightX}px)`,
           clipPath: `polygon(${SEAM_TOP_X}px 0px, 1920px 0px, 1920px 1080px, ${SEAM_BOT_X}px 1080px)`,
         }}>
-          <SceneContent content={sceneB} />
+          <SceneContent content={sceneB} titleSize={46} panelWidth={720} />
         </div>
         {/* 撞合后的实体斜缝条 */}
         {impacted && (

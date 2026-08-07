@@ -1,6 +1,6 @@
 // === 可调参数 ===
 // DURATION: 见各 Composition（BrandInkOpen 83 / SpotlightHeroCard 138 / DeckDealFlyin 128 /
-//   TypeAndFilter 62 / RowEmbed 100 / ListStackPress 105 / DocumentTypewriterReveal 110 / OutroGroupPhotoLaunch 145）
+//   RowEmbed 100 / ListStackPress 105 / DocumentTypewriterReveal 110 / OutroGroupPhotoLaunch 145）
 // 色彩: 模板片原生纸墨风（INK oklch(18%) / AMBER oklch(52%) / PAPER 暖白），走自身常量
 // 依赖: PageCam（2.5D 相机，需 three）+ live-layout.json（template 版）+ textures/live 纹理
 // props: 无内容可变项（wrapper 仅做帧段裁剪；模板场景内容由 Scene 组件承载）
@@ -27,8 +27,6 @@ export const SpotlightHeroCard: React.FC = () => <SceneOpen start={82} />;
 // deck-deal-flyin：实体牌堆加速甩进网格（0–127）
 export const DeckDealFlyin: React.FC = () => <SceneFlyIn start={0} />;
 
-// type-and-filter：打字搜索 + 网格收敛过滤（128–190）
-export const TypeAndFilter: React.FC = () => <SceneFlyIn start={128} />;
 
 // row-embed：内容行逐条飞入嵌入 + 强调色缝（0–100）
 export const RowEmbed: React.FC = () => <SceneDetail start={0} />;
