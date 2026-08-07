@@ -129,13 +129,14 @@ export const CircleMatchIris: React.FC<CircleMatchIrisProps> = ({
   });
 
   // ---- ? B ??:??? 22 ?? 170,"??"???? ----
-  const ringR = interpolate(f, [30, 70], [22, 170], {
+  // 圆环生长进度（同时驱动圆心从图标向屏幕中央移动）
+  const ringP = interpolate(f, [30, 70], [0, 1], {
     easing: Easing.inOut(Easing.cubic),
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
-  const ringW = interpolate(f, [30, 70], [12, 40], {
-    extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
-  });
+  const ringR = 22 + ringP * 148; // 22 → 170
+  const ringW = 12 + ringP * 28; // 12 → 40
+  const cy = interpolate(ringP, [0, 1], [CY, 540]); // 圆心 Y：图标 → 屏幕中央
   // ?? sweep ? 78%
   const sweep = interpolate(f, [45, 100], [0, 0.78], {
     easing: Easing.out(Easing.cubic),
@@ -177,23 +178,23 @@ export const CircleMatchIris: React.FC<CircleMatchIrisProps> = ({
         <div style={{
           position: 'absolute', left: 0, top: 0, width: 1920, height: 1080,
           background: G.ink,
-          clipPath: `circle(${irisR}px at ${CX}px ${CY}px)`,
+          clipPath: `circle(${irisR}px at ${CX}px ${cy}px)`,
         }}>
           {/* ?? donut:????????? */}
           <svg width={1920} height={1080} style={{ position: 'absolute', left: 0, top: 0 }}>
             {/* ?? */}
-            <circle cx={CX} cy={CY} r={ringR} fill="none" stroke={G.sideBar} strokeWidth={ringW} />
+            <circle cx={CX} cy={cy} r={ringR} fill="none" stroke={G.sideBar} strokeWidth={ringW} />
             {/* sweep ?,????? */}
             <circle
-              cx={CX} cy={CY} r={ringR} fill="none" stroke={G.bg}
+              cx={CX} cy={cy} r={ringR} fill="none" stroke={G.bg}
               strokeWidth={ringW} strokeLinecap="round"
               strokeDasharray={`${sweep * circ} ${circ}`}
-              transform={`rotate(-90 ${CX} ${CY})`}
+              transform={`rotate(-90 ${CX} ${cy})`}
             />
           </svg>
           {/* ????? */}
           <div style={{
-            position: 'absolute', left: CX - 150, top: CY - 80, width: 300, height: 160,
+            position: 'absolute', left: CX - 150, top: cy - 80, width: 300, height: 160,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             opacity: numOpacity,
           }}>
@@ -202,7 +203,7 @@ export const CircleMatchIris: React.FC<CircleMatchIrisProps> = ({
             </div>
           </div>
           {/* ??????? + ????????????????? */}
-          <div style={{ position: 'absolute', left: 620, top: 200, width: 880, height: 720, opacity: furnitureOpacity }}>
+          <div style={{ position: 'absolute', left: 620, top: 180, width: 880, height: 720, opacity: furnitureOpacity }}>
             <DetailBlock content={detail} />
           </div>
         </div>
