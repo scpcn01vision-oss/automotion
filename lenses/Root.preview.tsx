@@ -4,6 +4,8 @@ import { BrandInkOpen, SpotlightHeroCard, RowEmbed, ListStackPress, DocumentType
 // ============ 纸墨原生（native）============
 import { BrandFrameSnap } from "./native/brand-frame-snap/BrandFrameSnap.tsx";
 
+import { RedHeadFileQuote } from "./native/redhead-file-quote/RedHeadFileQuote.tsx";
+
 import { DrawSvgTrace } from "./native/draw-svg-trace/DrawSvgTrace.tsx";
 
 import { LetterspaceMaterialize } from "./native/letterspace-materialize/LetterspaceMaterialize.tsx";
@@ -39,6 +41,8 @@ import { TypewriterErrorRetype } from "./native/typewriter-moves/TypewriterError
 
 // ============ 极轻（minimal）============
 import { BeatCutAccelerando } from "./minimal/beat-cut-moves/BeatCutAccelerando.tsx";
+
+import { BeatStepListThemeCycle } from "./minimal/beat-step-list-theme-cycle/BeatStepListThemeCycle.tsx";
 
 import { BottomPushStackWipe } from "./minimal/bottom-push-stack-wipe/BottomPushStackWipe.tsx";
 
@@ -83,8 +87,6 @@ import { LightLeakBurn } from "./minimal/transition-hidden-cut/LightLeakBurn.tsx
 
 import { VersusSlam } from "./minimal/transition-hidden-cut/VersusSlam.tsx";
 
-import { SharedElementMorph } from "./minimal/transition-travel/SharedElementMorph.tsx";
-
 import { BlindsSlice } from "./minimal/wipe-transitions/BlindsSlice.tsx";
 
 import { ClockWipe } from "./minimal/wipe-transitions/ClockWipe.tsx";
@@ -104,8 +106,6 @@ import { MorphFromPrimitive } from "./light/morph-from-primitive/MorphFromPrimit
 import { ImpactBurstKit } from "./light/slam-entrance-moves/ImpactBurstKit.tsx";
 
 import { KanadaPerspectiveSnap } from "./light/slam-entrance-moves/KanadaPerspectiveSnap.tsx";
-
-import { ScoreSlam } from "./light/slam-entrance-moves/ScoreSlam.tsx";
 
 import { TextAsMask } from "./light/text-as-mask/TextAsMask.tsx";
 
@@ -258,6 +258,7 @@ export const RemotionRoot: React.FC = () => {
     <>
       {/* === 纸墨原生 === */}
       <Composition id="BrandFrameSnap" component={BrandFrameSnap} width={1920} height={1080} fps={30} durationInFrames={180} />
+      <Composition id="RedHeadFileQuote" component={RedHeadFileQuote} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="DrawSvgTrace" component={DrawSvgTrace} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="LetterspaceMaterialize" component={LetterspaceMaterialize} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="LineBoil" component={LineBoil} width={1920} height={1080} fps={30} durationInFrames={180} />
@@ -276,6 +277,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition id="TypewriterErrorRetype" component={TypewriterErrorRetype} width={1920} height={1080} fps={30} durationInFrames={180} />
       {/* === 极轻（风格中性）=== */}
       <Composition id="BeatCutAccelerando" component={BeatCutAccelerando} width={1920} height={1080} fps={30} durationInFrames={180} />
+      <Composition id="BeatStepListThemeCycle" component={BeatStepListThemeCycle} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="BottomPushStackWipe" component={BottomPushStackWipe} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="CircleMatchIris" component={CircleMatchIris} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="CraneRiseReveal" component={CraneRiseReveal} width={1920} height={1080} fps={30} durationInFrames={180} />
@@ -297,7 +299,6 @@ export const RemotionRoot: React.FC = () => {
       <Composition id="InvisibleCut" component={InvisibleCut} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="LightLeakBurn" component={LightLeakBurn} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="VersusSlam" component={VersusSlam} width={1920} height={1080} fps={30} durationInFrames={180} />
-      <Composition id="SharedElementMorph" component={SharedElementMorph} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="BlindsSlice" component={BlindsSlice} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="ClockWipe" component={ClockWipe} width={1920} height={1080} fps={30} durationInFrames={180} />
       {/* === 轻（排版/卡片/结尾）=== */}
@@ -308,7 +309,6 @@ export const RemotionRoot: React.FC = () => {
       <Composition id="MorphFromPrimitive" component={MorphFromPrimitive} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="ImpactBurstKit" component={ImpactBurstKit} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="KanadaPerspectiveSnap" component={KanadaPerspectiveSnap} width={1920} height={1080} fps={30} durationInFrames={180} />
-      <Composition id="ScoreSlam" component={ScoreSlam} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="TextAsMask" component={TextAsMask} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="TextColumnConverge" component={TextColumnConverge} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="TitleDemoteToLabel" component={TitleDemoteToLabel} width={1920} height={1080} fps={30} durationInFrames={180} />

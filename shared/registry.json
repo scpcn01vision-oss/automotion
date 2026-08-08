@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generatedAt": "2026-08-08T09:53:51.441Z",
+    "generatedAt": "2026-08-08T23:19:23.064Z",
     "count": 122,
     "source": "Root.preview.tsx + docs/lens-names.md + 组件 XxxProps 接口 + docs/lens-scenes-draft.md"
   },
@@ -62,6 +62,43 @@
         "承接"
       ],
       "usage": "模式切换"
+    },
+    {
+      "id": "RedHeadFileQuote",
+      "name": "红头引文",
+      "file": "lenses/native/redhead-file-quote/RedHeadFileQuote.tsx",
+      "group": "native",
+      "props": [
+        {
+          "name": "organ",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "docTitle",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "docNo",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "body",
+          "type": "string[]",
+          "optional": true
+        },
+        {
+          "name": "tag",
+          "type": "string",
+          "optional": true
+        }
+      ],
+      "scenes": [
+        "举证"
+      ],
+      "usage": "引用官方文件/政策原文（红头文件样式）"
     },
     {
       "id": "DrawSvgTrace",
@@ -438,6 +475,21 @@
           "name": "keepChars",
           "type": "number",
           "optional": true
+        },
+        {
+          "name": "typeFrames",
+          "type": "number",
+          "optional": true
+        },
+        {
+          "name": "deleteFrames",
+          "type": "number",
+          "optional": true
+        },
+        {
+          "name": "pauseFrames",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -469,6 +521,44 @@
       "usage": "单一事物局部的展示或强调"
     },
     {
+      "id": "BeatStepListThemeCycle",
+      "name": "拍点列词",
+      "file": "lenses/minimal/beat-step-list-theme-cycle/BeatStepListThemeCycle.tsx",
+      "group": "minimal",
+      "props": [
+        {
+          "name": "words",
+          "type": "string[]",
+          "optional": true
+        },
+        {
+          "name": "beats",
+          "type": "number",
+          "optional": true
+        },
+        {
+          "name": "beatFrames",
+          "type": "number",
+          "optional": true
+        },
+        {
+          "name": "firstBeat",
+          "type": "number",
+          "optional": true
+        },
+        {
+          "name": "fontSize",
+          "type": "number",
+          "optional": true
+        }
+      ],
+      "scenes": [
+        "宣告",
+        "节奏"
+      ],
+      "usage": "多个关键词/形容词的连打轮换（多主题、多气质体量展示，节奏密集）"
+    },
+    {
       "id": "BottomPushStackWipe",
       "name": "底推换景",
       "file": "lenses/minimal/bottom-push-stack-wipe/BottomPushStackWipe.tsx",
@@ -488,7 +578,7 @@
       "scenes": [
         "转折"
       ],
-      "usage": "多个事物先后提及或展示"
+      "usage": "多个事物按顺序逐一展现/换景（一页推一页）"
     },
     {
       "id": "CircleMatchIris",
@@ -742,10 +832,9 @@
         }
       ],
       "scenes": [
-        "展开",
-        "对比"
+        "展开"
       ],
-      "usage": "单一事物在两个阶段的变化对比"
+      "usage": "从高空俯冲到单一事物的展示/强调（空间运动感，聚焦落地）"
     },
     {
       "id": "ExplodedView",
@@ -882,10 +971,9 @@
       ],
       "scenes": [
         "宣告",
-        "举证",
-        "对比"
+        "举证"
       ],
-      "usage": "单一事物在两个阶段的变化对比，问题的解决，事态的推进"
+      "usage": "问题被解决的声明（痛点斜置 → 滚正解决）；不能用作两个阶段/前后对比"
     },
     {
       "id": "PullBackIsolation",
@@ -993,28 +1081,6 @@
         "对比"
       ],
       "usage": "两个事物的对比"
-    },
-    {
-      "id": "SharedElementMorph",
-      "name": "共享形变",
-      "file": "lenses/minimal/transition-travel/SharedElementMorph.tsx",
-      "group": "minimal",
-      "props": [
-        {
-          "name": "scene",
-          "type": "SceneContentData",
-          "optional": true
-        },
-        {
-          "name": "card",
-          "type": "{ label: string; value: string }",
-          "optional": true
-        }
-      ],
-      "scenes": [
-        "承接"
-      ],
-      "usage": "一个事物的特点或指标"
     },
     {
       "id": "BlindsSlice",
@@ -1223,29 +1289,6 @@
       "usage": "展示单个参数或事情"
     },
     {
-      "id": "ScoreSlam",
-      "name": "得分砸落",
-      "file": "lenses/light/slam-entrance-moves/ScoreSlam.tsx",
-      "group": "light",
-      "props": [
-        {
-          "name": "value",
-          "type": "string",
-          "optional": true
-        },
-        {
-          "name": "scene",
-          "type": "SceneContentData",
-          "optional": true
-        }
-      ],
-      "scenes": [
-        "钩子",
-        "宣告"
-      ],
-      "usage": "展示单个参数或事情"
-    },
-    {
       "id": "TextAsMask",
       "name": "字底藏印",
       "file": "lenses/light/text-as-mask/TextAsMask.tsx",
@@ -1313,7 +1356,7 @@
       "scenes": [
         "宣告"
       ],
-      "usage": "标题或主旨的展示，宣告"
+      "usage": "品牌或标题式宣告（两个词咬合成主旨），不适合概念对比或论据阐述"
     },
     {
       "id": "TitleDemoteToLabel",
@@ -1454,7 +1497,7 @@
         "钩子",
         "宣告"
       ],
-      "usage": "标题展示或揭示"
+      "usage": "仅适合英文/数字内容（乱码字符集为字母与数字）；不适合中文标题或段落"
     },
     {
       "id": "UiStripAwayOutro",
@@ -1638,7 +1681,7 @@
       "scenes": [
         "展开"
       ],
-      "usage": "ui间隙调整"
+      "usage": "仅适合 UI 布局/间距调整的画面，不适合文字含义或抽象概念"
     },
     {
       "id": "BeforeAfterSliderScrub",
@@ -1661,7 +1704,7 @@
         "对比",
         "举证"
       ],
-      "usage": "两事物对比，动态分栏"
+      "usage": "视觉上的前后对比专用（如修图前后、界面改造前后），动态分栏拉杆"
     },
     {
       "id": "BubbleSwarmTakeover",
@@ -1869,7 +1912,7 @@
       "scenes": [
         "举证"
       ],
-      "usage": "单指标刻度展示"
+      "usage": "仅适合有统计意义的单指标刻度展示（如价格、数量、比例）；不适合文字含义或抽象概念"
     },
     {
       "id": "GradientWordSweep",
@@ -1886,7 +1929,7 @@
       "scenes": [
         "宣告"
       ],
-      "usage": "句内单词突出展示"
+      "usage": "仅适合单个短词的扫光强调（如单句口号）；不适合长句、结论或段落级内容"
     },
     {
       "id": "HashtagToPillMaterialize",
@@ -1901,6 +1944,11 @@
         },
         {
           "name": "pillText",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "icon",
           "type": "string",
           "optional": true
         },
@@ -2158,7 +2206,7 @@
       "scenes": [
         "举证"
       ],
-      "usage": "数据可视化：多个值的柱状图"
+      "usage": "多个数字用图形（沙粒填柱）展现，仅适合有具体数值的数据"
     },
     {
       "id": "PillSlotCycle",
@@ -2291,6 +2339,21 @@
       "file": "lenses/medium/spotlight-sweep-moves/CornerSpotlightReveal.tsx",
       "group": "medium",
       "props": [
+        {
+          "name": "panelTitle",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "tabs",
+          "type": "string[]",
+          "optional": true
+        },
+        {
+          "name": "activeTab",
+          "type": "number",
+          "optional": true
+        },
         {
           "name": "rows",
           "type": "{ title: string; meta: string; detail: string; note: string }[]",
@@ -2858,12 +2921,17 @@
           "name": "baseValue",
           "type": "number",
           "optional": true
+        },
+        {
+          "name": "zeroFrom",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
         "举证"
       ],
-      "usage": "描述量持续波动变化的，有数字进行匹配更好"
+      "usage": "展现数据随时间变化的图形（资金/指标随时间波动），适合有数字的时间序列"
     },
     {
       "id": "UnitDotSwarmRegroup",
@@ -2890,7 +2958,7 @@
       "scenes": [
         "举证"
       ],
-      "usage": "描述几个量的对比关系的，有数字进行匹配更好"
+      "usage": "仅适合数字/统计强关联内容：几组数量的点阵对比（如比例、占比、数量差）"
     },
     {
       "id": "AxisRescaleShock",

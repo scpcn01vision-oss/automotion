@@ -17,23 +17,8 @@
 //     原片没有"胶囊飞入下方滑入卡片"的段落（批次 8 的飞行段为杜撰，已砍）
 import React from 'react';
 import { AbsoluteFill, interpolate, useCurrentFrame, Easing } from 'remotion';
-
-const FONT = "Futura, 'Century Gothic', 'Avenir Next', 'Trebuchet MS', sans-serif";
-
-const C = {
-  bgWhite: '#fcfcfb',
-  bgCream: '#f4f1e5',
-  ink: '#454543',
-  cursor: '#e0453f',
-  pillGray: '#e9e9e7',
-  pillTextGray: '#4b4b49',
-  iconGray: '#7e7e7c',
-  pillSage: '#d5e0cf',
-  iconSage: '#5c7a63',
-  titleGreen: '#b87a2e',
-  pillSageText: '#3f5e4c',
-  body: '#4c4b43',
-};
+import { G } from '../../_fixtures/Fixtures';
+import { FONT_STACK } from '../../_system/typography';
 
 // ---- mulberry32（仅用于打字节奏的人手抖动，确定性）----
 function mulberry32(seed: number) {
@@ -71,26 +56,32 @@ const FS = 132;                       // 打字/胶囊文字字号（原片 glyp
 const HERO = { x: 960, y: 540 };      // 大胶囊中心
 const PILL_W = 740, PILL_H = 236;     // 原片实测 493x157 @720p ×1.5
 const END_SCALE = 0.554;              // 落位缩放（原片 273/493）
-const SLOT = { x: 361, y: 473 };      // 标签位中心（原片灰胶囊落点 (244.5,317.5)×1.5 与揭示位折中）
+const SLOT_Y = 473;
+const ALIGN_X = 160;                  // 成品页左对齐基准：标题/正文/落位胶囊左缘统一
+const isFullW = (c: string) => /[\u2E80-\u9FFF\uF900-\uFAFF\uFF00-\uFFEF\u3000-\u303F]/.test(c);
 
-// 灰色双八分音符图标（原片是 beamed 双音符，非 ♪）
-const NoteIcon: React.FC<{ size: number; color: string }> = ({ size, color }) => (
-  <svg width={size} height={size} viewBox="0 0 48 48" style={{ display: 'block' }}>
-    <ellipse cx="11" cy="39" rx="7.2" ry="5.6" fill={color} transform="rotate(-18 11 39)" />
-    <ellipse cx="35" cy="35" rx="7.2" ry="5.6" fill={color} transform="rotate(-18 35 35)" />
-    <rect x="15.4" y="12.5" width="3" height="27" fill={color} />
-    <rect x="39.4" y="8.5" width="3" height="27" fill={color} />
-    <polygon points="15.4,12.5 42.4,8.5 42.4,16.5 15.4,20.5" fill={color} />
-  </svg>
+// v7 重做：原版音乐双音符图标改为可配字符符号（如 ¥/#/♪），
+// 字符字号与胶囊文字一致，避免内容主题不符且大小失调（段 15 计费用 ¥）。
+const SimpleIcon: React.FC<{ ch: string; color: string }> = ({ ch, color }) => (
+  <span style={{ fontSize: FS, fontWeight: 800, color, lineHeight: 1, flexShrink: 0 }}>{ch}</span>
 );
 
 // 胶囊（大字号绘制，整体 transform 缩放，保证实体化前后文字原位等大）
-const Pill: React.FC<{ bg: string; iconColor: string; textColor: string; text: string }> = ({ bg, iconColor, textColor, text }) => (
+const Pill: React.FC<{ bg: string; iconColor: string; textColor: string; text: string; icon: string; width: number }> = ({
+  bg,
+  iconColor,
+  textColor,
+  text,
+  icon,
+  width,
+}) => (
   <div style={{
-    width: PILL_W, height: PILL_H, borderRadius: PILL_H / 2, background: bg,
+    // v7 修复：胶囊宽度按文本自适应（中文全角按 FS、英文按 0.55×FS），不低于原最小宽
+    width,
+    height: PILL_H, borderRadius: PILL_H / 2, background: bg,
     display: 'flex', alignItems: 'center', paddingLeft: 96, boxSizing: 'border-box', gap: 66,
   }}>
-    <NoteIcon size={104} color={iconColor} />
+    <SimpleIcon ch={icon} color={iconColor} />
     <span style={{ fontSize: FS, fontWeight: 500, color: textColor, letterSpacing: 2 }}>{text}</span>
   </div>
 );
@@ -98,13 +89,15 @@ const Pill: React.FC<{ bg: string; iconColor: string; textColor: string; text: s
 export interface HashtagToPillMaterializeProps {
   hashtag?: string;
   pillText?: string;
+  icon?: string; // 胶囊图标字符（默认 #，段 15 用 ¥）
   title?: string;
-  body?: string[];
+  body?: string[]; // 成品页要点（短词，建议 ≤6 字，排版固定）
 }
 
 export const HashtagToPillMaterialize: React.FC<HashtagToPillMaterializeProps> = ({
-  hashtag = '#music',
+  hashtag = '#music', // 默认值保持原版参考 demo，段内容一律走 props 隔离
   pillText = 'music',
+  icon = '♪',
   title = 'My favorite bands',
   body = [
     'I want to share a few of my favorite bands',
@@ -116,6 +109,13 @@ export const HashtagToPillMaterialize: React.FC<HashtagToPillMaterializeProps> =
   const TEXT = hashtag;
   const TYPE_AT = typeAt(TEXT);
 
+  // 胶囊自适应宽度 + 落位中心 x（左缘对齐标题，短文本接近原版 361）
+  const pillW = Math.max(
+    PILL_W,
+    96 + 66 + 104 + [...pillText].reduce((s, c) => s + (isFullW(c) ? FS : FS * 0.55), 0) + 64,
+  );
+  const slotX = ALIGN_X + (pillW * END_SCALE) / 2;
+
   // ---- 打字 ----
   const typedCount = TYPE_AT.filter((t) => frame >= t).length;
   const typed = TEXT.slice(0, typedCount);
@@ -125,8 +125,8 @@ export const HashtagToPillMaterialize: React.FC<HashtagToPillMaterializeProps> =
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
     easing: Easing.bezier(0.5, 0, 0.25, 1),
   });
-  const px = interpolate(moveT, [0, 1], [HERO.x, SLOT.x]);
-  const py = interpolate(moveT, [0, 1], [HERO.y, SLOT.y]);
+  const px = interpolate(moveT, [0, 1], [HERO.x, slotX]);
+  const py = interpolate(moveT, [0, 1], [HERO.y, SLOT_Y]);
   const ps = interpolate(moveT, [0, 1], [1, END_SCALE]);
   // 实体化瞬间极轻微落定（原片近乎硬切，仅 3 帧 1.03→1，避免死板）
   const settle = interpolate(frame, [MORPH, MORPH + 3], [1.03, 1], {
@@ -136,20 +136,35 @@ export const HashtagToPillMaterialize: React.FC<HashtagToPillMaterializeProps> =
   const revealed = frame >= REVEAL;
 
   return (
-    <AbsoluteFill style={{ background: revealed ? C.bgCream : C.bgWhite, fontFamily: FONT }}>
+    <AbsoluteFill style={{ background: revealed ? G.panel : G.bg, fontFamily: FONT_STACK }}>
       {/* 成品页（硬切揭示，之后全静） */}
       {revealed && (
         <>
-          <div style={{
-            position: 'absolute', left: 160, top: 168,
-            fontSize: 122, fontWeight: 700, color: C.titleGreen, letterSpacing: 0.5,
-          }}>
+          <div
+            style={{
+              position: 'absolute',
+              left: 160,
+              top: 168,
+              fontSize: 122,
+              fontWeight: 700,
+              color: G.accent,
+              letterSpacing: 0.5,
+            }}
+          >
             {title}
           </div>
-          <div style={{
-            position: 'absolute', left: 152, top: 618,
-            fontSize: 70, fontWeight: 500, color: C.body, lineHeight: 1.33, letterSpacing: 0.3,
-          }}>
+          <div
+            style={{
+              position: 'absolute',
+              left: ALIGN_X,
+              top: 618,
+              fontSize: 70,
+              fontWeight: 500,
+              color: G.ink,
+              lineHeight: 1.33,
+              letterSpacing: 0.3,
+            }}
+          >
             {body.map((b, i) => (
               <span key={i}>
                 {b}
@@ -164,12 +179,12 @@ export const HashtagToPillMaterialize: React.FC<HashtagToPillMaterializeProps> =
       {frame < MORPH && (
         <AbsoluteFill style={{ justifyContent: 'center', alignItems: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <span style={{ fontSize: FS, fontWeight: 500, color: C.ink, letterSpacing: 2, whiteSpace: 'pre' }}>
+            <span style={{ fontSize: FS, fontWeight: 500, color: G.ink, letterSpacing: 2, whiteSpace: 'pre' }}>
               {typed}
             </span>
             <span style={{
               display: 'inline-block', width: 7, height: 150,
-              background: C.cursor, marginLeft: 8, borderRadius: 2,
+              background: G.accent, marginLeft: 8, borderRadius: 2,
             }} />
           </div>
         </AbsoluteFill>
@@ -186,8 +201,8 @@ export const HashtagToPillMaterialize: React.FC<HashtagToPillMaterializeProps> =
         }}>
           <div style={{ transform: 'translate(-50%, -50%)' }}>
             {revealed
-              ? <Pill bg={C.pillSage} iconColor={C.iconSage} textColor={C.pillSageText} text={pillText} />
-              : <Pill bg={C.pillGray} iconColor={C.iconGray} textColor={C.pillTextGray} text={pillText} />}
+              ? <Pill bg={G.panel} iconColor={G.accent} textColor={G.ink} text={pillText} icon={icon} width={pillW} />
+              : <Pill bg={G.card} iconColor={G.mid} textColor={G.ink} text={pillText} icon={icon} width={pillW} />}
           </div>
         </div>
       )}

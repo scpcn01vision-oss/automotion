@@ -8,8 +8,9 @@
 // === 适配注意 ===
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 // corner-spotlight-reveal —— 对标 clickup-30.mp4 41.5–44.6s：
-// 黑场上，左上角径向聚光从小到大扩张，把白色 Inbox 界面逐步"点亮"，
+// 黑场上，左上角径向聚光从小到大扩张，把界面逐步"点亮"，
 // 照到的区域显影、照不到的沉黑，最终全屏亮起。光即转场。
+// v7 全参数化：面板标题、标签组、高亮标签、内容行全部可传（原 Inbox/All/Tasks 外壳已参数化）。
 import React from 'react';
 import { G } from '../../_fixtures/Fixtures';
 import { AbsoluteFill, useCurrentFrame, interpolate } from 'remotion';
@@ -17,8 +18,13 @@ import { FONT_STACK } from '../../_system/typography';
 
 const FONT = '"Avenir Next", "Helvetica Neue", Helvetica, sans-serif';
 
-// 灰阶 Inbox 界面（自绘，替代真 UI）
-const InboxPanel: React.FC<{ rows: { title: string; meta: string; detail: string; note: string }[] }> = ({ rows }) => (
+// 灰阶界面（自绘，替代真 UI；标题/标签组/高亮/内容行全部参数化）
+const Panel: React.FC<{
+  rows: { title: string; meta: string; detail: string; note: string }[];
+  panelTitle: string;
+  tabs: string[];
+  activeTab: number;
+}> = ({ rows, panelTitle, tabs, activeTab }) => (
   <div
     style={{
       width: 1920,
@@ -31,22 +37,31 @@ const InboxPanel: React.FC<{ rows: { title: string; meta: string; detail: string
     }}
   >
     <div style={{ display: 'flex', alignItems: 'center', gap: 26 }}>
-      <div style={{ fontSize: 118, fontWeight: 700, letterSpacing: -2 }}>Inbox</div>
+      <div style={{ fontSize: 118, fontWeight: 700, letterSpacing: -2 }}>{panelTitle}</div>
       <div
         style={{
           width: 0, height: 0, marginTop: 26,
           borderLeft: '16px solid transparent',
           borderRight: '16px solid transparent',
-          borderTop: '20px solid #3a3a3a',
+          borderTop: `20px solid ${G.ink}`,
         }}
       />
     </div>
-    <div style={{ display: 'flex', gap: 64, marginTop: 90, fontSize: 44, color: '#555' }}>
-      <div style={{ background: G.nav, color: G.accent, padding: '10px 34px', borderRadius: 14, fontWeight: 600 }}>All</div>
-      <div style={{ padding: '10px 0' }}>Tasks</div>
-      <div style={{ padding: '10px 0' }}>Docs</div>
-      <div style={{ padding: '10px 0' }}>People</div>
-      <div style={{ padding: '10px 0' }}>Chat</div>
+    <div style={{ display: 'flex', gap: 64, marginTop: 90, fontSize: 44, color: G.mid }}>
+      {tabs.map((t, i) => (
+        <div
+          key={i}
+          style={{
+            background: i === activeTab ? G.nav : 'transparent',
+            color: i === activeTab ? G.accent : G.mid,
+            padding: i === activeTab ? '10px 34px' : '10px 0',
+            borderRadius: 14,
+            fontWeight: 600,
+          }}
+        >
+          {t}
+        </div>
+      ))}
     </div>
     {[0, 1, 2].map((row) => (
       <div key={row} style={{ display: 'flex', alignItems: 'center', gap: 30, marginTop: row === 0 ? 96 : 64 }}>
@@ -70,10 +85,16 @@ const InboxPanel: React.FC<{ rows: { title: string; meta: string; detail: string
 );
 
 export interface CornerSpotlightRevealProps {
+  panelTitle?: string; // 面板标题（原 Inbox 外壳，已参数化）
+  tabs?: string[]; // 标签组（原 All/Tasks/Docs/People/Chat 外壳，已参数化）
+  activeTab?: number; // 高亮标签索引
   rows?: { title: string; meta: string; detail: string; note: string }[]; // 内容行
 }
 
 export const CornerSpotlightReveal: React.FC<CornerSpotlightRevealProps> = ({
+  panelTitle = '工作台',
+  tabs = ['全部', '任务', '文档', '成员', '聊天'],
+  activeTab = 0,
   rows = [
     { title: '任务 01', meta: '说明 01', detail: '负责人 甲', note: '备注 01' },
     { title: '任务 02', meta: '说明 02', detail: '负责人 乙', note: '备注 02' },
@@ -118,7 +139,7 @@ export const CornerSpotlightReveal: React.FC<CornerSpotlightRevealProps> = ({
           transformOrigin: '18% 12%',
         }}
       >
-        <InboxPanel rows={rows} />
+        <Panel rows={rows} panelTitle={panelTitle} tabs={tabs} activeTab={activeTab} />
       </AbsoluteFill>
       {/* 聚光自身的白热光晕（叠在界面上方，光心最亮） */}
       <div

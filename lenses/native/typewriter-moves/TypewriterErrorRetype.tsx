@@ -13,12 +13,18 @@
 // 16f(光标闪两下=犹豫) → f48 起 1.5f/字符逐字退格删掉 "a dashboard"(11 字符，
 // 字符直接消失) → 起 1.5f/字符果断打出 second → 光标闪两个周期后永久熄灭。节奏三档：打 2f/删
 // 1.5f/重打 1.5f 且无停顿。f110 后全静止，160f 总长 → 收尾真静止 50f。
-// 等宽感：逐字符固定宽 span，无 letter-spacing 动画。全部帧确定。
+// 等宽感：逐字符 span，无 letter-spacing 动画。v7 修复：全角（中文）字符宽 96px、
+// 半角（英文/数字）字符宽 58px，按字符动态取宽，避免中文叠字；打字/删除/停顿节奏参数化，
+// 供按口播时长校准（typeFrames / deleteFrames / pauseFrames）。
 import React from 'react';
 import { useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 
-const CHAR_W = 58; // fontSize 96 的等宽感字符宽
+const CHAR_W_HALF = 58; // 半角（英文/数字）字符宽
+const CHAR_W_FULL = 96; // 全角（中文）字符宽
+// 全角判断：CJK 统一表意文字 + 全角标点/符号
+const charW = (c: string) =>
+  /[\u2E80-\u9FFF\uF900-\uFAFF\uFF00-\uFFEF\u3000-\u303F]/.test(c) ? CHAR_W_FULL : CHAR_W_HALF;
 
 // 光标可见性：打字/删除时常亮；停顿段 8f 周期闪两下；打完后 10f 周期闪两下；之后永灭
 const cursorOn = (
@@ -45,30 +51,36 @@ export interface TypewriterErrorRetypeProps {
   first?: string;
   second?: string;
   keepChars?: number;
+  typeFrames?: number; // 打 1 字帧数（默认 2，可调慢以适配口播）
+  deleteFrames?: number; // 删 1 字帧数（默认 1.5）
+  pauseFrames?: number; // 第一遍打完后的犹豫停顿帧数（默认 16）
 }
 
 export const TypewriterErrorRetype: React.FC<TypewriterErrorRetypeProps> = ({
   first = 'just a prototype',
   second = 'the real thing',
   keepChars = 5,
+  typeFrames = 2,
+  deleteFrames = 1.5,
+  pauseFrames = 16,
 }) => {
   const f = useCurrentFrame();
 
-  const T1 = 2; // 第一遍打字起点，2f/字符
-  const PAUSE_START = T1 + (first.length - 1) * 2;
-  const DS = PAUSE_START + 16; // 停顿后开删，1.5f/字符
+  const T1 = 2; // 第一遍打字起点
+  const PAUSE_START = T1 + (first.length - 1) * typeFrames;
+  const DS = PAUSE_START + pauseFrames; // 停顿后开删
   const KEEP = Math.min(keepChars, first.length); // 保留前缀
   const DEL = first.length - KEEP;
-  const RS = Math.max(68, DS + DEL * 1.5 + 4); // 重打起点（删完小顿）
-  const TYPE2_END = RS + (second.length - 1) * 1.5;
+  const RS = Math.max(68, DS + DEL * deleteFrames + 4); // 重打起点（删完小顿）
+  const TYPE2_END = RS + (second.length - 1) * deleteFrames;
   const CURSOR_OFF = TYPE2_END + 20; // 两个 10f 闪烁周期后熄灭
 
   // 第一遍已打出字符数
-  const n1 = f < T1 ? 0 : Math.min(first.length, Math.floor((f - T1) / 2) + 1);
+  const n1 = f < T1 ? 0 : Math.min(first.length, Math.floor((f - T1) / typeFrames) + 1);
   // 已删除字符数（从尾部删）
-  const removed = f < DS ? 0 : Math.min(DEL, Math.floor((f - DS) / 1.5) + 1);
+  const removed = f < DS ? 0 : Math.min(DEL, Math.floor((f - DS) / deleteFrames) + 1);
   // 第二遍已打出字符数
-  const n2 = f < RS ? 0 : Math.min(second.length, Math.floor((f - RS) / 1.5) + 1);
+  const n2 = f < RS ? 0 : Math.min(second.length, Math.floor((f - RS) / deleteFrames) + 1);
 
   const shown =
     first.slice(0, Math.max(KEEP, n1 - removed)).slice(0, n1) +
@@ -104,7 +116,7 @@ export const TypewriterErrorRetype: React.FC<TypewriterErrorRetypeProps> = ({
             key={i}
             style={{
               display: 'inline-block',
-              width: CHAR_W,
+              width: charW(c),
               textAlign: 'center',
               fontFamily: '"Courier New", Courier, monospace',
               fontSize: 96,

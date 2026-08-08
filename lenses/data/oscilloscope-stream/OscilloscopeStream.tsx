@@ -13,6 +13,8 @@
 // 流动中途插入一次突发尖峰（振幅 2.2×、持续 ~20 帧写入后随流带走），尖峰经过写入点时
 // 卡头实时读数跳大并变琥珀；真图表语境：真标题/真 y 轴刻度/真时间轴/实时读数。
 // 刹停逻辑保留：f100–112 out-cubic 刹停，f112 后真静止 48f。
+// v7 扩展：zeroFrom 参数——波形照常流动，走到归零点后「新写入」的轨迹开始跌向
+// 0 刻度线并贴底，已写出的历史轨迹保持不变（表达"指标最后走向 0"），默认不传保持原版。
 // 帧确定性：波形与尖峰包络都是纯 worldX 函数，无 Math.random / Date.now。
 import React from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
@@ -69,7 +71,6 @@ const wave = (x: number): number =>
   0.12 * Math.sin(x * 0.087 + 2.3);
 
 const signal = (x: number): number => wave(x) * env(x) * AMP; // ∈ ~[-1.6, 1.6]，常态 [-0.65, 0.65]
-const yOf = (x: number): number => PLOT_H / 2 - signal(x) * (PLOT_H / 2);
 const fmt = (n: number): string => n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
 const X_TICKS = ['-60s', '-50s', '-40s', '-30s', '-20s', '-10s', 'now'];
@@ -79,6 +80,7 @@ export interface OscilloscopeStreamProps {
   subtitle?: string;
   unit?: string;
   baseValue?: number;
+  zeroFrom?: number; // 从该帧起波形衰减归零（默认不启用）
 }
 
 export const OscilloscopeStream: React.FC<OscilloscopeStreamProps> = ({
@@ -86,11 +88,24 @@ export const OscilloscopeStream: React.FC<OscilloscopeStreamProps> = ({
   subtitle = 'api-gateway · production · last 60 s',
   unit = 'req/s',
   baseValue = 1000,
+  zeroFrom = Number.POSITIVE_INFINITY,
 }) => {
   const frame = useCurrentFrame();
   const T = effTime(frame);
+
+  // 走向 0 的轨迹宽度（世界像素）：归零点之后的新轨迹在 span 内跌到 0 线
+  const COLLAPSE_SPAN = 240;
+  const collapseAt = Number.isFinite(zeroFrom) ? effTime(zeroFrom) : Number.POSITIVE_INFINITY;
+  // 世界坐标衰减：x ≤ 归零点 → 1（历史轨迹不变）；之后线性跌到 0
+  const dAt = (x: number): number => {
+    if (!Number.isFinite(collapseAt) || x <= collapseAt) return 1;
+    return Math.max(0, 1 - (x - collapseAt) / COLLAPSE_SPAN);
+  };
+  // 波形 y：新写入轨迹随 d 跌到 0 刻度线（y=PLOT_H），历史轨迹 d=1 保持原样
+  const sigAt = (x: number): number => signal(x) * dAt(x) - (1 - dAt(x));
+  const yOf = (x: number): number => PLOT_H / 2 - sigAt(x) * (PLOT_H / 2);
   // 读数映射：绘图区中线 = baseValue，上下沿 = 2× / 0
-  const valueOf = (x: number): number => Math.round(baseValue + signal(x) * baseValue);
+  const valueOf = (x: number): number => Math.round((baseValue + signal(x) * baseValue) * dAt(x));
   // y 轴刻度按 baseValue 生成
   const Y_TICKS = [2, 1.5, 1, 0.5, 0].map((m) => fmt(Math.round(m * baseValue)));
 

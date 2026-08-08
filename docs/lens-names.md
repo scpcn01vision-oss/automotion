@@ -15,7 +15,6 @@
 | MorphFromPrimitive | 原形化卡 |
 | ImpactBurstKit | 冲击迸发 |
 | KanadaPerspectiveSnap | 透视瞬折 |
-| ScoreSlam | 得分砸落 |
 | TextAsMask | 字底藏印 |
 | TextColumnConverge | 双词咬合 |
 | TitleDemoteToLabel | 题降为签 |
@@ -36,6 +35,7 @@
 |---|---|
 | BrandFrameSnap | 品牌框定 |
 | DocTypewriter | 公文打字 |
+| RedHeadFileQuote | 红头引文 |
 | DrawSvgTrace | 墨线描边 |
 | LetterspaceMaterialize | 字距显形 |
 | LineBoil | 墨线沸腾 |
@@ -80,7 +80,6 @@
 | InvisibleCut | 隐形切 |
 | LightLeakBurn | 漏光烧灼 |
 | VersusSlam | 对决砸幕 |
-| SharedElementMorph | 共享形变 |
 | BlindsSlice | 百叶横切 |
 | ClockWipe | 时钟扫过 |
 
