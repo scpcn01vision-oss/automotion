@@ -1,5 +1,5 @@
 import { Composition, registerRoot } from "remotion";
-import { BrandInkOpen, SpotlightHeroCard, DeckDealFlyin, RowEmbed, ListStackPress, DocumentTypewriterReveal, OutroGroupPhotoLaunch } from "./tplshots/wrappers";
+import { BrandInkOpen, SpotlightHeroCard, RowEmbed, ListStackPress, DocumentTypewriterReveal, OutroGroupPhotoLaunch } from "./tplshots/wrappers";
 
 // ============ 纸墨原生（native）============
 import { BrandFrameSnap } from "./native/brand-frame-snap/BrandFrameSnap.tsx";
@@ -76,7 +76,6 @@ import { DutchRollToLevel } from "./minimal/tension-camera-moves/DutchRollToLeve
 
 import { PullBackIsolation } from "./minimal/tension-camera-moves/PullBackIsolation.tsx";
 
-import { SlowPushIn } from "./minimal/tension-camera-moves/SlowPushIn.tsx";
 
 import { InvisibleCut } from "./minimal/transition-hidden-cut/InvisibleCut.tsx";
 
@@ -295,7 +294,6 @@ export const RemotionRoot: React.FC = () => {
       <Composition id="BulletTimeFreezeOrbit" component={BulletTimeFreezeOrbit} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="DutchRollToLevel" component={DutchRollToLevel} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="PullBackIsolation" component={PullBackIsolation} width={1920} height={1080} fps={30} durationInFrames={180} />
-      <Composition id="SlowPushIn" component={SlowPushIn} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="InvisibleCut" component={InvisibleCut} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="LightLeakBurn" component={LightLeakBurn} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="VersusSlam" component={VersusSlam} width={1920} height={1080} fps={30} durationInFrames={180} />
@@ -382,7 +380,6 @@ export const RemotionRoot: React.FC = () => {
       {/* === 模板场景镜头（tplshots）=== */}
       <Composition id="BrandInkOpen" component={BrandInkOpen} width={1920} height={1080} fps={30} durationInFrames={83} />
       <Composition id="SpotlightHeroCard" component={SpotlightHeroCard} width={1920} height={1080} fps={30} durationInFrames={138} />
-      <Composition id="DeckDealFlyin" component={DeckDealFlyin} width={1920} height={1080} fps={30} durationInFrames={128} />
       <Composition id="RowEmbed" component={RowEmbed} width={1920} height={1080} fps={30} durationInFrames={100} />
       <Composition id="ListStackPress" component={ListStackPress} width={1920} height={1080} fps={30} durationInFrames={105} />
       <Composition id="DocumentTypewriterReveal" component={DocumentTypewriterReveal} width={1920} height={1080} fps={30} durationInFrames={110} />

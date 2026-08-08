@@ -1,7 +1,7 @@
 {
   "meta": {
-    "generatedAt": "2026-08-07T09:09:50.394Z",
-    "count": 124,
+    "generatedAt": "2026-08-08T07:37:58.689Z",
+    "count": 122,
     "source": "Root.preview.tsx + docs/lens-names.md + 组件 XxxProps 接口"
   },
   "entries": [
@@ -49,6 +49,11 @@
         {
           "name": "cardWidthB",
           "type": "number",
+          "optional": true
+        },
+        {
+          "name": "windowTitle",
+          "type": "string",
           "optional": true
         }
       ]
@@ -733,29 +738,6 @@
         {
           "name": "cards",
           "type": "{ label: string; value: string }[]",
-          "optional": true
-        }
-      ]
-    },
-    {
-      "id": "SlowPushIn",
-      "name": "缓推压近",
-      "file": "lenses/minimal/tension-camera-moves/SlowPushIn.tsx",
-      "group": "minimal",
-      "props": [
-        {
-          "name": "value",
-          "type": "string",
-          "optional": true
-        },
-        {
-          "name": "caption",
-          "type": "string",
-          "optional": true
-        },
-        {
-          "name": "scene",
-          "type": "SceneContentData",
           "optional": true
         }
       ]
@@ -2457,13 +2439,6 @@
     {
       "id": "SpotlightHeroCard",
       "name": "追光主卡",
-      "file": "lenses/tplshots/wrappers.tsx",
-      "group": "tplshots",
-      "props": []
-    },
-    {
-      "id": "DeckDealFlyin",
-      "name": "发牌飞入",
       "file": "lenses/tplshots/wrappers.tsx",
       "group": "tplshots",
       "props": []

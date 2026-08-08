@@ -77,7 +77,6 @@
 | BulletTimeFreezeOrbit | 子弹时间 |
 | DutchRollToLevel | 荷兰角回正 |
 | PullBackIsolation | 拉远孤立 |
-| SlowPushIn | 缓推压近 |
 | InvisibleCut | 隐形切 |
 | LightLeakBurn | 漏光烧灼 |
 | VersusSlam | 对决砸幕 |
@@ -132,7 +131,6 @@
 |---|---|
 | BrandInkOpen | 墨印开场 |
 | SpotlightHeroCard | 追光主卡 |
-| DeckDealFlyin | 发牌飞入 |
 | RowEmbed | 行嵌入 |
 | ListStackPress | 列表压叠 |
 | DocumentTypewriterReveal | 文档打字 |

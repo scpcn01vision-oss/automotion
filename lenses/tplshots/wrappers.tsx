@@ -1,5 +1,5 @@
 // === 可调参数 ===
-// DURATION: 见各 Composition（BrandInkOpen 83 / SpotlightHeroCard 138 / DeckDealFlyin 128 /
+// DURATION: 见各 Composition（BrandInkOpen 83 / SpotlightHeroCard 138 /
 //   RowEmbed 100 / ListStackPress 105 / DocumentTypewriterReveal 110 / OutroGroupPhotoLaunch 145）
 // 色彩: 模板片原生纸墨风（INK oklch(18%) / AMBER oklch(52%) / PAPER 暖白），走自身常量
 // 依赖: PageCam（2.5D 相机，需 three）+ live-layout.json（template 版）+ textures/live 纹理
@@ -12,7 +12,6 @@
 // 字标/文档内容为项目真实内容；start prop 控制镜头帧段起点。
 // 8 个 template 场景镜头 wrapper（按配方卡参考实现帧段裁剪）
 import { SceneOpen } from "./SceneOpen";
-import { SceneFlyIn } from "./SceneFlyIn";
 import { SceneDetail } from "./SceneDetail";
 import { ScenePapers } from "./ScenePapers";
 import { SceneWbr } from "./SceneWbr";
@@ -25,7 +24,6 @@ export const BrandInkOpen: React.FC = () => <SceneOpen start={0} />;
 export const SpotlightHeroCard: React.FC = () => <SceneOpen start={82} />;
 
 // deck-deal-flyin：实体牌堆加速甩进网格（0–127）
-export const DeckDealFlyin: React.FC = () => <SceneFlyIn start={0} />;
 
 
 // row-embed：内容行逐条飞入嵌入 + 强调色缝（0–100）
