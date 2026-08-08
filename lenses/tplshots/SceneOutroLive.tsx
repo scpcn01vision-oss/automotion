@@ -5,7 +5,6 @@ import layout from './live-layout.json';
 
 const SERIF = 'ui-serif, Georgia, "Times New Roman", serif';
 const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
-const LETTERS = 'AI Foundation Lab'.split('');
 const PAGE_H = layout.projects.pageH;
 const WBR_PAGE_H = layout.wbr.pageH;
 
@@ -63,8 +62,12 @@ const DUST = Array.from({ length: 20 }, (_, i) => ({
  * Launch-event treatment: a crane-in camera on the whole photo layer, ghost
  * trails + landing glows on the fly-ins, a stage light behind the wordmark,
  * gold dust and a single opening light sweep for atmosphere. */
-export const SceneOutroLive: React.FC<{ start?: number }> = ({ start = 0 }) => {
+export const SceneOutroLive: React.FC<{ start?: number; wordmark?: string }> = ({
+  start = 0,
+  wordmark = 'AUTOMOTION',
+}) => {
   const frame = useCurrentFrame() + start;
+  const LETTERS = wordmark.split('');
   const duration = AIFL_SHOTS.outro.duration; // 115
 
   const blur = interpolate(frame, [0, 24], [0, 14], {

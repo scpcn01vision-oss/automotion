@@ -34,7 +34,7 @@
 
 | id | 中文名 | 场景标签 | 使用场景描述 |
 |---|---|---|---|
-| CardFlipReveal | 翻牌揭结 | 展开,对比 | 展示或对比多个参数，有悬疑的揭示 |
+| CardFlipReveal | 翻牌揭结 | 展开 | 展示或对比多个参数，有悬疑的揭示 |
 | CardFlockTumble | 卡群翻飞 | 钩子,宣告 | 展示多个事情或参数或事情，绚丽背景 |
 | AxialStretch | 轴向拉伸 | 展开 | 展示或对比多个参数或事情 |
 | ContactShadowLift | 阴影抬升 | 展开 | 展示或对比多个参数或事情 |
@@ -43,7 +43,7 @@
 | KanadaPerspectiveSnap | 透视瞬折 | 钩子,宣告 | 展示单个参数或事情 |
 | ScoreSlam | 得分砸落 | 钩子,宣告 | 展示单个参数或事情 |
 | TextAsMask | 字底藏印 | 钩子,宣告 | 展示或演示一个事物的详情或原理 |
-| TextColumnConverge | 双词咬合 | 宣告,对比 | 标题或主旨的展示，宣告 |
+| TextColumnConverge | 双词咬合 | 宣告 | 标题或主旨的展示，宣告 |
 | TitleDemoteToLabel | 题降为签 | 宣告,承接 | 对一个或多个事情的详情进行陈列展示 |
 | LetterformDriftAssembly | 字母漂移 | 宣告,展开 | 标题展示 |
 | SplitTextStagger | 分段错开 | 宣告,展开 | 标题展示 |
@@ -62,12 +62,12 @@
 |---|---|---|---|
 | StreamResponse | 流式应答 | 展开,举证 | 一个主题的多个分点的展示 |
 | AutolayoutGapDial | 间距旋钮 | 展开 | ui间隙调整 |
-| BeforeAfterSliderScrub | 前后推杆 | 对比,举证 | 两事物对比，动态分栏 |
-| BubbleSwarmTakeover | 气泡吞幕 | 承接,转折 | 两事物对比，气泡分栏 |
+| BeforeAfterSliderScrub | 前后推杆 | 对比,举证 | 视觉上的前后对比专用（如修图前后、界面改造前后），动态分栏拉杆 |
+| BubbleSwarmTakeover | 气泡吞幕 | 承接,转折, 对比 | 两事物对比，气泡分栏 |
 | DiagramCascadeBuild | 图表级建 | 展开 | 一个主题的分支展示 |
 | PanelToCanvasMaterialize | 面板化板 | 展开 | 多任务展示 |
-| CursorCastEnsemble | 光标合奏 | 展开,对比 | 协同合作 |
-| CursorDialogueDuet | 光标对谈 | 展开,对比 | 两方协同合作 |
+| CursorCastEnsemble | 光标合奏 | 展开 | 协同合作 |
+| CursorDialogueDuet | 光标对谈 | 展开 | 两方协同合作 |
 | CommandPaletteSummon | 命令唤出 | 展开 | 精确搜索 |
 | NeedleSweepSelftest | 指针自检 | 举证 | 多指标展示，仪表 |
 | TapeScrollFixedPointer | 刻度奔袭 | 举证 | 单指标刻度展示 |
@@ -112,20 +112,20 @@
 | DominoCascade | 多米诺 | 展开,举证 | UI展示 |
 | TiltReveal | 倾斜揭面 | 钩子,展开 | 单一事物的展示或强调 |
 | RunwayGroundSkim | 低空掠卡 | 展开 | UI展示 |
-| SmearMultiples | 残影多联 | 展开 | 单一事物在两个阶段的变化对比 |
-| DroneDiveLanding | 俯冲降落 | 展开 | 单一事物在两个阶段的变化对比 |
+| SmearMultiples | 残影多联 | 展开, 对比 | 单一事物在两个阶段的变化对比 |
+| DroneDiveLanding | 俯冲降落 | 展开, 对比 | 单一事物在两个阶段的变化对比 |
 | ExplodedView | 爆炸分解 | 展开 | UI展示 |
 | FreezeAnnotateReal | 冻结标注 | 举证,宣告 | 多个事物中对其中一个事物的具体展示 |
 | SpeedRampReal | 变速急停 | 举证,宣告 | 多个事物中对其中一个事物的具体展示 |
 | BulletTimeFreezeOrbit | 子弹时间 | 宣告,举证 | 柱状图及说明 |
-| DutchRollToLevel | 荷兰角回正 | 宣告,举证 | 单一事物在两个阶段的变化对比，问题的解决，事态的推进 |
+| DutchRollToLevel | 荷兰角回正 | 宣告,举证, 对比 | 单一事物在两个阶段的变化对比，问题的解决，事态的推进 |
 | PullBackIsolation | 拉远孤立 | 宣告,举证 | 对事物系统性的进度说明 |
-| InvisibleCut | 隐形切 | 转折 | 单一事物在两个阶段的变化对比 |
-| LightLeakBurn | 漏光烧灼 | 转折 | 单一事物在两个阶段的变化对比 |
-| VersusSlam | 对决砸幕 | 转折 | 两个事物的对比 |
+| InvisibleCut | 隐形切 | 转折, 对比 | 单一事物在两个阶段的变化对比 |
+| LightLeakBurn | 漏光烧灼 | 转折, 对比 | 单一事物在两个阶段的变化对比 |
+| VersusSlam | 对决砸幕 | 转折, 对比 | 两个事物的对比 |
 | SharedElementMorph | 共享形变 | 承接 | 一个事物的特点或指标 |
-| BlindsSlice | 百叶横切 | 转折,承接 | 单一事物在两个阶段的变化对比 |
-| ClockWipe | 时钟扫过 | 转折,承接 | 单一事物在两个阶段的变化对比 |
+| BlindsSlice | 百叶横切 | 转折,承接, 对比 | 单一事物在两个阶段的变化对比 |
+| ClockWipe | 时钟扫过 | 转折,承接, 对比 | 单一事物在两个阶段的变化对比 |
 
 ## native（17）
 
@@ -136,7 +136,7 @@
 | LetterspaceMaterialize | 字距显形 | 钩子,宣告 | 品牌展示 |
 | LineBoil | 墨线沸腾 | 展开 | 单一事物的展示或强调 |
 | MarkerUnderlineTitle | 笔锋划题 | 宣告 | 对一句话中关键词的强调或对一句包含关键词的话的强调 |
-| BarnDoorSplit | 谷仓门裂 | 转折,承接 | 单一事物在两个阶段的变化对比 |
+| BarnDoorSplit | 谷仓门裂 | 转折,承接, 对比 | 单一事物在两个阶段的变化对比 |
 | PageWaterfallWall | 页墙瀑布 | 全景 | 多个事物的展示 |
 | VerticalTickerWrapper | 滚动字幕 | 全景 | 多个事物的展示 |
 | MaskingTapeSlap | 胶带落纸 | 展开,宣告 | 单一事物的展示或强调 |

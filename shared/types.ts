@@ -52,6 +52,8 @@ export interface StoryboardSegment {
   durationSec: number; // 段真实时长（转录确定）
   lensId: string; // 选定镜头
   params: Record<string, unknown>; // 镜头参数（项目侧）
+  role?: string; // 角色牌：段在视频中的叙事作用（钩子/承接/转折/展开/宣告/举证/收束；与镜头场景标签同套）
+  features?: string[]; // 内容牌：段的文本特征（数字/列举/对比/标题/提问/引用/举例/情绪/结论/因果）
 }
 
 export interface Storyboard {

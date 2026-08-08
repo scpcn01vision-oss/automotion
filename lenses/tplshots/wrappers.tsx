@@ -36,4 +36,9 @@ export const ListStackPress: React.FC = () => <ScenePapers start={0} />;
 export const DocumentTypewriterReveal: React.FC = () => <SceneWbr start={0} />;
 
 // outro-group-photo-launch：元素聚拢 + 字标 + 金粉收尾（0–145）
-export const OutroGroupPhotoLaunch: React.FC = () => <SceneOutroLive start={0} />;
+export interface OutroGroupPhotoLaunchProps {
+  wordmark?: string;
+}
+export const OutroGroupPhotoLaunch: React.FC<OutroGroupPhotoLaunchProps> = ({ wordmark }) => (
+  <SceneOutroLive start={0} wordmark={wordmark} />
+);

@@ -33,7 +33,12 @@ const serveUrl = await bundle({
 });
 
 console.log("getCompositions...");
-let comps = await getCompositions(serveUrl, { browserExecutable: CHROME });
+// Remotion 4.x：inputProps 必须在 getCompositions 阶段传入才生效
+// （renderStill 的 inputProps 参数无效——2026-08-08 实测确认）
+let comps = await getCompositions(serveUrl, {
+  browserExecutable: CHROME,
+  ...(inputProps ? { inputProps } : {}),
+});
 if (only) {
   comps = comps.filter((c) => c.id === only);
 }

@@ -13,12 +13,11 @@ import { G } from '../../_fixtures/Fixtures';
 import { NeutralCard } from '../../_system/neutral-card';
 import type { SceneContentData } from '../../_system/scene-content';
 
-// grid-wave-flip〔入场退场〕：3×3 灰背卡片墙沿对角线波前依次 rotateX 翻转 180°，
+// grid-wave-flip〔入场退场〕：灰背卡片墙沿对角线波前依次 rotateX 翻转 180°，
 // 灰背翻成正面内容卡；波浪约一秒扫完全屏，最后一张落定带轻微过冲。
+// 排版由 cards.length 驱动：n≤3 一排，n=4 两行两列，5-6 三列两行，>6 三列多行。
 // 结构：hold 20f → delay=(row+col)*6f、每张 14f bezier(0.35,0,0.25,1) → 尾张过冲回弹 → 静止收尾。
 
-const COLS = 3;
-const ROWS = 3;
 const CELL_W = 520;
 const CELL_H = 280;
 const GAP = 36;
@@ -29,9 +28,9 @@ const FLIP = 14; // 单张翻转时长
 const flipEase = Easing.bezier(0.35, 0, 0.25, 1);
 
 // 单张卡的翻转角度：普通卡 0→180；最后一张（波前最末）过冲到 ~190 再回落 180
-const angleAt = (frame: number, row: number, col: number): number => {
+const angleAt = (frame: number, row: number, col: number, rows: number, cols: number): number => {
   const delay = HOLD + (row + col) * STAGGER;
-  const isLast = row === ROWS - 1 && col === COLS - 1;
+  const isLast = row === rows - 1 && col === cols - 1;
   if (!isLast) {
     return interpolate(frame, [delay, delay + FLIP], [0, 180], {
       extrapolateLeft: 'clamp',
@@ -65,8 +64,11 @@ export const GridWaveFlip: React.FC<GridWaveFlipProps> = ({
   ],
 }) => {
   const frame = useCurrentFrame();
-  const wallW = COLS * CELL_W + (COLS - 1) * GAP;
-  const wallH = ROWS * CELL_H + (ROWS - 1) * GAP;
+  const n = cards.length;
+  const cols = n <= 3 ? n : n === 4 ? 2 : 3;
+  const rows = Math.ceil(n / cols);
+  const wallW = cols * CELL_W + (cols - 1) * GAP;
+  const wallH = rows * CELL_H + (rows - 1) * GAP;
 
   return (
     <AbsoluteFill
@@ -84,15 +86,15 @@ export const GridWaveFlip: React.FC<GridWaveFlipProps> = ({
           perspective: 1200,
           perspectiveOrigin: '50% 50%',
           display: 'grid',
-          gridTemplateColumns: `repeat(${COLS}, ${CELL_W}px)`,
-          gridTemplateRows: `repeat(${ROWS}, ${CELL_H}px)`,
+          gridTemplateColumns: `repeat(${cols}, ${CELL_W}px)`,
+          gridTemplateRows: `repeat(${rows}, ${CELL_H}px)`,
           gap: GAP,
         }}
       >
-        {Array.from({ length: ROWS * COLS }).map((_, i) => {
-          const row = Math.floor(i / COLS);
-          const col = i % COLS;
-          const angle = angleAt(frame, row, col);
+        {Array.from({ length: n }).map((_, i) => {
+          const row = Math.floor(i / cols);
+          const col = i % cols;
+          const angle = angleAt(frame, row, col, rows, cols);
           // 高光线：翻到 90°（最薄处）时最亮，位置随角度从上缘扫向下缘
           const glow = Math.max(0, 1 - Math.abs(angle - 90) / 45);
           const glowTop = interpolate(angle, [45, 135], [8, 92], {
@@ -151,7 +153,7 @@ export const GridWaveFlip: React.FC<GridWaveFlipProps> = ({
                     borderRadius: 14,
                   }}
                 >
-                  <NeutralCard w={CELL_W} h={CELL_H} content={cards[i % cards.length]} split style={{ width: '100%', height: '100%' }} />
+                  <NeutralCard w={CELL_W} h={CELL_H} content={cards[i]} split style={{ width: '100%', height: '100%' }} />
                 </div>
               </div>
               {/* 最薄处高光线：不随卡旋转，贴在格位上随角度纵向移动 */}
