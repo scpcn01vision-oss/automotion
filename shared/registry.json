@@ -1,8 +1,8 @@
 {
   "meta": {
-    "generatedAt": "2026-08-08T07:37:58.689Z",
+    "generatedAt": "2026-08-08T08:07:10.330Z",
     "count": 122,
-    "source": "Root.preview.tsx + docs/lens-names.md + 组件 XxxProps 接口"
+    "source": "Root.preview.tsx + docs/lens-names.md + 组件 XxxProps 接口 + docs/lens-scenes-draft.md"
   },
   "entries": [
     {
@@ -56,7 +56,12 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "宣告",
+        "承接"
+      ],
+      "usage": "模式切换"
     },
     {
       "id": "DrawSvgTrace",
@@ -69,7 +74,12 @@
           "type": "DrawSvgTraceContent",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "钩子",
+        "宣告"
+      ],
+      "usage": "单一事物的展示或强调"
     },
     {
       "id": "LetterspaceMaterialize",
@@ -82,7 +92,12 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "钩子",
+        "宣告"
+      ],
+      "usage": "品牌展示"
     },
     {
       "id": "LineBoil",
@@ -105,7 +120,11 @@
           "type": "{ label: string; value: string }[]",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开"
+      ],
+      "usage": "单一事物的展示或强调"
     },
     {
       "id": "MarkerUnderlineTitle",
@@ -128,7 +147,11 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "宣告"
+      ],
+      "usage": "对一句话中关键词的强调或对一句包含关键词的话的强调"
     },
     {
       "id": "BarnDoorSplit",
@@ -146,7 +169,12 @@
           "type": "SceneContentData",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "转折",
+        "承接"
+      ],
+      "usage": "单一事物在两个阶段的变化对比"
     },
     {
       "id": "PageWaterfallWall",
@@ -174,14 +202,22 @@
           "type": "number",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "全景"
+      ],
+      "usage": "多个事物的展示"
     },
     {
       "id": "VerticalTickerWrapper",
       "name": "滚动字幕",
       "file": "lenses/native/page-waterfall-wall/VerticalTickerWrapper.tsx",
       "group": "native",
-      "props": []
+      "props": [],
+      "scenes": [
+        "全景"
+      ],
+      "usage": "多个事物的展示"
     },
     {
       "id": "MaskingTapeSlap",
@@ -194,7 +230,12 @@
           "type": "MaskingTapeCard",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开",
+        "宣告"
+      ],
+      "usage": "单一事物的展示或强调"
     },
     {
       "id": "PopupBookRise",
@@ -227,7 +268,12 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开",
+        "宣告"
+      ],
+      "usage": "多个事物的展示"
     },
     {
       "id": "PaperPlaneMessenger",
@@ -250,7 +296,12 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "承接",
+        "转折"
+      ],
+      "usage": "一个进度推进到下一个进度"
     },
     {
       "id": "InkBleedReveal",
@@ -268,7 +319,12 @@
           "type": "InkBleedRevealNewScene",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "转折",
+        "承接"
+      ],
+      "usage": "单一事物的展示或强调"
     },
     {
       "id": "RisoMisregistrationHit",
@@ -281,7 +337,12 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "宣告",
+        "举证"
+      ],
+      "usage": "用于强调单个字词"
     },
     {
       "id": "SplitFlapFlip",
@@ -299,7 +360,12 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "钩子",
+        "宣告"
+      ],
+      "usage": "一串数字或字母的展示"
     },
     {
       "id": "StrokeSegmentBuild",
@@ -312,7 +378,12 @@
           "type": "Seg[]",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "钩子",
+        "宣告"
+      ],
+      "usage": "用于强调单个字词"
     },
     {
       "id": "TerminalTypewriter",
@@ -340,7 +411,11 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开"
+      ],
+      "usage": "用代码去执行某个事物"
     },
     {
       "id": "TypewriterErrorRetype",
@@ -363,7 +438,11 @@
           "type": "number",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开"
+      ],
+      "usage": "对于观点的修改"
     },
     {
       "id": "BeatCutAccelerando",
@@ -381,7 +460,12 @@
           "type": "SceneContentData",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "钩子",
+        "宣告"
+      ],
+      "usage": "单一事物局部的展示或强调"
     },
     {
       "id": "BottomPushStackWipe",
@@ -399,7 +483,11 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "转折"
+      ],
+      "usage": "多个事物先后提及或展示"
     },
     {
       "id": "CircleMatchIris",
@@ -417,7 +505,11 @@
           "type": "SceneContentData",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "举证"
+      ],
+      "usage": "多个事物中对其中一个事物的具体展示"
     },
     {
       "id": "CraneRiseReveal",
@@ -430,7 +522,11 @@
           "type": "{ label: string; value: string }[]",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开"
+      ],
+      "usage": "多个事物先后提及或展示"
     },
     {
       "id": "DollyZoomReal",
@@ -448,7 +544,11 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "举证"
+      ],
+      "usage": "多个事物中对其中一个事物的具体展示"
     },
     {
       "id": "MultiplaneReal",
@@ -471,7 +571,12 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开",
+        "举证"
+      ],
+      "usage": "多个事物先后提及或展示"
     },
     {
       "id": "GrazeFaceTour",
@@ -499,7 +604,11 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开"
+      ],
+      "usage": "UI展示"
     },
     {
       "id": "LineCarryTransition",
@@ -517,7 +626,11 @@
           "type": "SceneContentData",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "承接"
+      ],
+      "usage": "多个事物的阶段性演进"
     },
     {
       "id": "DominoCascade",
@@ -540,7 +653,12 @@
           "type": "{ icon: string; label: string }[]",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开",
+        "举证"
+      ],
+      "usage": "UI展示"
     },
     {
       "id": "TiltReveal",
@@ -553,7 +671,12 @@
           "type": "SceneContentData",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "钩子",
+        "展开"
+      ],
+      "usage": "单一事物的展示或强调"
     },
     {
       "id": "RunwayGroundSkim",
@@ -576,7 +699,11 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开"
+      ],
+      "usage": "UI展示"
     },
     {
       "id": "SmearMultiples",
@@ -594,7 +721,11 @@
           "type": "{ label: string; value: string }",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开"
+      ],
+      "usage": "单一事物在两个阶段的变化对比"
     },
     {
       "id": "DroneDiveLanding",
@@ -607,7 +738,11 @@
           "type": "SceneContentData",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开"
+      ],
+      "usage": "单一事物在两个阶段的变化对比"
     },
     {
       "id": "ExplodedView",
@@ -640,7 +775,11 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开"
+      ],
+      "usage": "UI展示"
     },
     {
       "id": "FreezeAnnotateReal",
@@ -653,7 +792,12 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "举证",
+        "宣告"
+      ],
+      "usage": "多个事物中对其中一个事物的具体展示"
     },
     {
       "id": "SpeedRampReal",
@@ -666,7 +810,12 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "举证",
+        "宣告"
+      ],
+      "usage": "多个事物中对其中一个事物的具体展示"
     },
     {
       "id": "BulletTimeFreezeOrbit",
@@ -699,7 +848,12 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "宣告",
+        "举证"
+      ],
+      "usage": "柱状图及说明"
     },
     {
       "id": "DutchRollToLevel",
@@ -722,7 +876,12 @@
           "type": "{ title: string; value: string }",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "宣告",
+        "举证"
+      ],
+      "usage": "单一事物在两个阶段的变化对比，问题的解决，事态的推进"
     },
     {
       "id": "PullBackIsolation",
@@ -740,7 +899,12 @@
           "type": "{ label: string; value: string }[]",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "宣告",
+        "举证"
+      ],
+      "usage": "对事物系统性的进度说明"
     },
     {
       "id": "InvisibleCut",
@@ -763,7 +927,11 @@
           "type": "{ label: string; value: string }",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "转折"
+      ],
+      "usage": "单一事物在两个阶段的变化对比"
     },
     {
       "id": "LightLeakBurn",
@@ -786,7 +954,11 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "转折"
+      ],
+      "usage": "单一事物在两个阶段的变化对比"
     },
     {
       "id": "VersusSlam",
@@ -809,7 +981,11 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "转折"
+      ],
+      "usage": "两个事物的对比"
     },
     {
       "id": "SharedElementMorph",
@@ -827,7 +1003,11 @@
           "type": "{ label: string; value: string }",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "承接"
+      ],
+      "usage": "一个事物的特点或指标"
     },
     {
       "id": "BlindsSlice",
@@ -845,7 +1025,12 @@
           "type": "SceneContentData",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "转折",
+        "承接"
+      ],
+      "usage": "单一事物在两个阶段的变化对比"
     },
     {
       "id": "ClockWipe",
@@ -863,7 +1048,12 @@
           "type": "SceneContentData",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "转折",
+        "承接"
+      ],
+      "usage": "单一事物在两个阶段的变化对比"
     },
     {
       "id": "CardFlipReveal",
@@ -876,7 +1066,12 @@
           "type": "CardFlipRevealCard[]",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开",
+        "对比"
+      ],
+      "usage": "展示或对比多个参数，有悬疑的揭示"
     },
     {
       "id": "CardFlockTumble",
@@ -914,7 +1109,12 @@
           "type": "string[][]",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "钩子",
+        "宣告"
+      ],
+      "usage": "展示多个事情或参数或事情，绚丽背景"
     },
     {
       "id": "AxialStretch",
@@ -927,7 +1127,11 @@
           "type": "{ label: string; value: string }[]",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开"
+      ],
+      "usage": "展示或对比多个参数或事情"
     },
     {
       "id": "ContactShadowLift",
@@ -950,7 +1154,11 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开"
+      ],
+      "usage": "展示或对比多个参数或事情"
     },
     {
       "id": "MorphFromPrimitive",
@@ -963,7 +1171,12 @@
           "type": "{ label: string; value: string }",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "钩子",
+        "展开"
+      ],
+      "usage": "展示单个参数或事情"
     },
     {
       "id": "ImpactBurstKit",
@@ -976,7 +1189,12 @@
           "type": "{ label: string; value: string }[]",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "钩子",
+        "宣告"
+      ],
+      "usage": "着重展示多个参数中的其中一个"
     },
     {
       "id": "KanadaPerspectiveSnap",
@@ -989,7 +1207,12 @@
           "type": "{ label: string; value: string }",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "钩子",
+        "宣告"
+      ],
+      "usage": "展示单个参数或事情"
     },
     {
       "id": "ScoreSlam",
@@ -1007,7 +1230,12 @@
           "type": "SceneContentData",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "钩子",
+        "宣告"
+      ],
+      "usage": "展示单个参数或事情"
     },
     {
       "id": "TextAsMask",
@@ -1045,7 +1273,12 @@
           "type": "SceneContentData[]",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "钩子",
+        "宣告"
+      ],
+      "usage": "展示或演示一个事物的详情或原理"
     },
     {
       "id": "TextColumnConverge",
@@ -1068,7 +1301,12 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "宣告",
+        "对比"
+      ],
+      "usage": "标题或主旨的展示，宣告"
     },
     {
       "id": "TitleDemoteToLabel",
@@ -1091,7 +1329,12 @@
           "type": "{ label: string; value: string }[]",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "宣告",
+        "承接"
+      ],
+      "usage": "对一个或多个事情的详情进行陈列展示"
     },
     {
       "id": "LetterformDriftAssembly",
@@ -1104,7 +1347,12 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "宣告",
+        "展开"
+      ],
+      "usage": "标题展示"
     },
     {
       "id": "SplitTextStagger",
@@ -1117,7 +1365,12 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "宣告",
+        "展开"
+      ],
+      "usage": "标题展示"
     },
     {
       "id": "TextOnPath",
@@ -1130,7 +1383,12 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "宣告",
+        "展开"
+      ],
+      "usage": "标题展示"
     },
     {
       "id": "TrackingExpandReveal",
@@ -1148,7 +1406,12 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "宣告",
+        "展开"
+      ],
+      "usage": "标题展示"
     },
     {
       "id": "LetterDropPhysics",
@@ -1161,7 +1424,12 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "钩子",
+        "宣告"
+      ],
+      "usage": "标题展示"
     },
     {
       "id": "ScrambleDecode",
@@ -1174,7 +1442,12 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "钩子",
+        "宣告"
+      ],
+      "usage": "标题展示或揭示"
     },
     {
       "id": "UiStripAwayOutro",
@@ -1227,7 +1500,11 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "收束"
+      ],
+      "usage": "对于事情或工作的最后总结处理"
     },
     {
       "id": "IconFlipBloomLogo",
@@ -1240,7 +1517,11 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "收束"
+      ],
+      "usage": "标题展示"
     },
     {
       "id": "InputMorphsIntoLogo",
@@ -1253,7 +1534,11 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "收束"
+      ],
+      "usage": "标题展示"
     },
     {
       "id": "WordRelayFilmstrip",
@@ -1271,7 +1556,12 @@
           "type": "string[]",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开",
+        "序列"
+      ],
+      "usage": "多功能或事情展示"
     },
     {
       "id": "StreamResponse",
@@ -1314,7 +1604,12 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开",
+        "举证"
+      ],
+      "usage": "一个主题的多个分点的展示"
     },
     {
       "id": "AutolayoutGapDial",
@@ -1332,7 +1627,11 @@
           "type": "string[]",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开"
+      ],
+      "usage": "ui间隙调整"
     },
     {
       "id": "BeforeAfterSliderScrub",
@@ -1350,7 +1649,12 @@
           "type": "SceneContentData",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "对比",
+        "举证"
+      ],
+      "usage": "两事物对比，动态分栏"
     },
     {
       "id": "BubbleSwarmTakeover",
@@ -1368,7 +1672,12 @@
           "type": "SceneContentData",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "承接",
+        "转折"
+      ],
+      "usage": "两事物对比，气泡分栏"
     },
     {
       "id": "DiagramCascadeBuild",
@@ -1386,7 +1695,11 @@
           "type": "{ title: string; sub: string }[]",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开"
+      ],
+      "usage": "一个主题的分支展示"
     },
     {
       "id": "PanelToCanvasMaterialize",
@@ -1419,7 +1732,11 @@
           "type": "{ title: string; rows: { label: string; value: string }[]; name: string }[]",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开"
+      ],
+      "usage": "多任务展示"
     },
     {
       "id": "CursorCastEnsemble",
@@ -1447,7 +1764,12 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开",
+        "对比"
+      ],
+      "usage": "协同合作"
     },
     {
       "id": "CursorDialogueDuet",
@@ -1465,7 +1787,12 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开",
+        "对比"
+      ],
+      "usage": "两方协同合作"
     },
     {
       "id": "CommandPaletteSummon",
@@ -1493,7 +1820,11 @@
           "type": "{ icon: string; label: string; kbd: string; exitAt: number }[]",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开"
+      ],
+      "usage": "精确搜索"
     },
     {
       "id": "NeedleSweepSelftest",
@@ -1511,7 +1842,11 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "举证"
+      ],
+      "usage": "多指标展示，仪表"
     },
     {
       "id": "TapeScrollFixedPointer",
@@ -1524,7 +1859,11 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "举证"
+      ],
+      "usage": "单指标刻度展示"
     },
     {
       "id": "GradientWordSweep",
@@ -1537,7 +1876,11 @@
           "type": "[string, string]",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "宣告"
+      ],
+      "usage": "句内单词突出展示"
     },
     {
       "id": "HashtagToPillMaterialize",
@@ -1565,14 +1908,22 @@
           "type": "string[]",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开"
+      ],
+      "usage": "关键词解释"
     },
     {
       "id": "IconFieldColorize",
       "name": "图标点亮",
       "file": "lenses/medium/icon-field-colorize/IconFieldColorize.tsx",
       "group": "medium",
-      "props": []
+      "props": [],
+      "scenes": [
+        "展开"
+      ],
+      "usage": "图标墙"
     },
     {
       "id": "AttentionBounce",
@@ -1585,7 +1936,11 @@
           "type": "SceneContentData",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "宣告"
+      ],
+      "usage": "消息提醒"
     },
     {
       "id": "PopBurstConfirm",
@@ -1598,7 +1953,11 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "宣告"
+      ],
+      "usage": "任务完成"
     },
     {
       "id": "CursorPerformancePunchIn",
@@ -1611,7 +1970,11 @@
           "type": "SceneContentData",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开"
+      ],
+      "usage": "事情或任务确认"
     },
     {
       "id": "HalationBloom",
@@ -1629,7 +1992,12 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "宣告",
+        "举证"
+      ],
+      "usage": "倍数宣告"
     },
     {
       "id": "SheenSweepRetry",
@@ -1647,7 +2015,12 @@
           "type": "string[]",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "宣告",
+        "举证"
+      ],
+      "usage": "单个事物的强调"
     },
     {
       "id": "OdometerDigitRoll",
@@ -1670,14 +2043,23 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "举证",
+        "宣告"
+      ],
+      "usage": "参数滚动"
     },
     {
       "id": "FlipGridReflow",
       "name": "格阵重排",
       "file": "lenses/medium/panel-grid-moves/FlipGridReflow.tsx",
       "group": "medium",
-      "props": []
+      "props": [],
+      "scenes": [
+        "展开"
+      ],
+      "usage": "卡片排列"
     },
     {
       "id": "ConfettiCrossfire",
@@ -1705,7 +2087,12 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "钩子",
+        "收束"
+      ],
+      "usage": "节点完成庆祝"
     },
     {
       "id": "CounterTickSparks",
@@ -1733,7 +2120,12 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "钩子",
+        "收束"
+      ],
+      "usage": "节点达成庆祝"
     },
     {
       "id": "ParticleSandFill",
@@ -1756,7 +2148,11 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "举证"
+      ],
+      "usage": "数据可视化：多个值的柱状图"
     },
     {
       "id": "PillSlotCycle",
@@ -1779,7 +2175,11 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开"
+      ],
+      "usage": "多功能展示"
     },
     {
       "id": "BrakeReticleLock",
@@ -1807,7 +2207,11 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开"
+      ],
+      "usage": "多项目选中一个项目"
     },
     {
       "id": "ChangelogScrollBrake",
@@ -1820,7 +2224,11 @@
           "type": "{ tag: string; title: string; meta: string }[]",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开"
+      ],
+      "usage": "多项目选中一个项目"
     },
     {
       "id": "SegmentedThumbHero",
@@ -1848,7 +2256,11 @@
           "type": "React.ReactNode",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "举证"
+      ],
+      "usage": "双模式切换"
     },
     {
       "id": "SkeletonReveal",
@@ -1861,7 +2273,11 @@
           "type": "{ name: string; text: string }[]",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开"
+      ],
+      "usage": "列表陈列"
     },
     {
       "id": "CornerSpotlightReveal",
@@ -1874,7 +2290,12 @@
           "type": "{ title: string; meta: string; detail: string; note: string }[]",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开",
+        "承接"
+      ],
+      "usage": "一个事物的揭露"
     },
     {
       "id": "GlowWakeSleepPanel",
@@ -1912,7 +2333,12 @@
           "type": "{ title: string; rows: { title: string; sub: string; status?: string }[] }[]",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开",
+        "承接"
+      ],
+      "usage": "一个事物的揭露、展示"
     },
     {
       "id": "SlideSpotlightPan",
@@ -1955,7 +2381,12 @@
           "type": "{ title: string; rows: { title: string; sub: string }[] }[]",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开",
+        "承接"
+      ],
+      "usage": "一个事物的揭露、展示"
     },
     {
       "id": "TimelineTravel",
@@ -1968,7 +2399,12 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开",
+        "举证"
+      ],
+      "usage": "表达事物的发展和演进的时间线"
     },
     {
       "id": "KaraokeFillSync",
@@ -1981,7 +2417,12 @@
           "type": "Word[][]",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "宣告",
+        "举证"
+      ],
+      "usage": "歌词"
     },
     {
       "id": "BentoLightUp",
@@ -1994,7 +2435,12 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "钩子",
+        "展开"
+      ],
+      "usage": "多个事物先后提及或展示"
     },
     {
       "id": "GridWaveFlip",
@@ -2007,7 +2453,12 @@
           "type": "SceneContentData[]",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "钩子",
+        "展开"
+      ],
+      "usage": "多个事物先后提及或展示"
     },
     {
       "id": "MagicianCardFlourish",
@@ -2020,7 +2471,12 @@
           "type": "SceneContentData",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "钩子",
+        "宣告"
+      ],
+      "usage": "单一事物的展示或强调"
     },
     {
       "id": "PaperTitleCard",
@@ -2048,14 +2504,22 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "宣告"
+      ],
+      "usage": "品牌或文字展示、强调"
     },
     {
       "id": "DatavizLandscapeOpen",
       "name": "数据景观",
       "file": "lenses/opening/dataviz-landscape-open/DatavizLandscapeOpen.tsx",
       "group": "opening",
-      "props": []
+      "props": [],
+      "scenes": [
+        "举证"
+      ],
+      "usage": "时间线收束或进程的推进"
     },
     {
       "id": "NeonFrameForerun",
@@ -2108,7 +2572,11 @@
           "type": "{ title: string; avatars: string[] }[]",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开"
+      ],
+      "usage": "UI展示"
     },
     {
       "id": "NeonFrameForerunOrbit",
@@ -2161,7 +2629,11 @@
           "type": "{ title: string; avatars: string[] }[]",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开"
+      ],
+      "usage": "UI展示"
     },
     {
       "id": "IntegrationHubMap",
@@ -2199,7 +2671,12 @@
           "type": "string[]",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "举证",
+        "展开"
+      ],
+      "usage": "表现多协同的系统或事物"
     },
     {
       "id": "SakugaTimingShift",
@@ -2217,7 +2694,11 @@
           "type": "{ label: string; value: string }[]",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "节奏"
+      ],
+      "usage": "BGM节奏适配"
     },
     {
       "id": "SpectrumMorphUi",
@@ -2230,7 +2711,11 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "宣告"
+      ],
+      "usage": "和音频相关的展示"
     },
     {
       "id": "CelFlashStomp",
@@ -2248,7 +2733,11 @@
           "type": "CelFlashStompFooter",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "宣告"
+      ],
+      "usage": "有节拍的主旨宣告"
     },
     {
       "id": "GlowOrbAmbient",
@@ -2271,7 +2760,11 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "强调"
+      ],
+      "usage": "强调一件事情，辉光背景"
     },
     {
       "id": "LineUnfoldPanel",
@@ -2284,7 +2777,11 @@
           "type": "SceneContentData",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "强调"
+      ],
+      "usage": "强调一件事情，纸墨背景"
     },
     {
       "id": "ReticleLockOn",
@@ -2302,7 +2799,11 @@
           "type": "{ x: number; y: number; w: number; h: number }",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "强调"
+      ],
+      "usage": "强调一件事情的部分内容"
     },
     {
       "id": "GlitchDisplace",
@@ -2320,7 +2821,11 @@
           "type": "SceneContentData",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "转折"
+      ],
+      "usage": "一个进度推进到下一个进度"
     },
     {
       "id": "OscilloscopeStream",
@@ -2348,7 +2853,11 @@
           "type": "number",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "举证"
+      ],
+      "usage": "描述量持续波动变化的，有数字进行匹配更好"
     },
     {
       "id": "UnitDotSwarmRegroup",
@@ -2371,7 +2880,11 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "举证"
+      ],
+      "usage": "描述几个量的对比关系的，有数字进行匹配更好"
     },
     {
       "id": "AxisRescaleShock",
@@ -2414,7 +2927,11 @@
           "type": "string[]",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "举证"
+      ],
+      "usage": "描述一个量的持续变化的，有数字进行匹配更好"
     },
     {
       "id": "VoiceWaveformLive",
@@ -2427,49 +2944,77 @@
           "type": "string",
           "optional": true
         }
-      ]
+      ],
+      "scenes": [
+        "展开"
+      ],
+      "usage": "表达语音输入的内容"
     },
     {
       "id": "BrandInkOpen",
       "name": "墨印开场",
       "file": "lenses/tplshots/wrappers.tsx",
       "group": "tplshots",
-      "props": []
+      "props": [],
+      "scenes": [
+        "钩子"
+      ],
+      "usage": "品牌或IP展示"
     },
     {
       "id": "SpotlightHeroCard",
       "name": "追光主卡",
       "file": "lenses/tplshots/wrappers.tsx",
       "group": "tplshots",
-      "props": []
+      "props": [],
+      "scenes": [
+        "举证"
+      ],
+      "usage": "多个事物中对其中一个事物的具体展示"
     },
     {
       "id": "RowEmbed",
       "name": "行嵌入",
       "file": "lenses/tplshots/wrappers.tsx",
       "group": "tplshots",
-      "props": []
+      "props": [],
+      "scenes": [
+        "展开"
+      ],
+      "usage": "对于一个事物中包含内容的展示"
     },
     {
       "id": "ListStackPress",
       "name": "列表压叠",
       "file": "lenses/tplshots/wrappers.tsx",
       "group": "tplshots",
-      "props": []
+      "props": [],
+      "scenes": [
+        "展开"
+      ],
+      "usage": "对于一个事物中包含内容的展示"
     },
     {
       "id": "DocumentTypewriterReveal",
       "name": "文档打字",
       "file": "lenses/tplshots/wrappers.tsx",
       "group": "tplshots",
-      "props": []
+      "props": [],
+      "scenes": [
+        "展开"
+      ],
+      "usage": "对于一个事物中包含内容的展示"
     },
     {
       "id": "OutroGroupPhotoLaunch",
       "name": "群像收尾",
       "file": "lenses/tplshots/wrappers.tsx",
       "group": "tplshots",
-      "props": []
+      "props": [],
+      "scenes": [
+        "收束"
+      ],
+      "usage": "品牌或IP展示，带分支内容的"
     }
   ]
 }

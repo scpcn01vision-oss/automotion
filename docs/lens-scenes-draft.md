@@ -1,7 +1,8 @@
 # 镜头场景总表（草稿 v1）
 
-> 用途：人对每个镜头的「场景定位」定义。你根据画面效果修改/补充后，本表作为 registry scenes/description 的权威来源。
-> 生成：2026-08-07，从文件头「功能/描述」注释自动提取；空白处 = 待你补。
+> 用途：镜头场景定位的权威来源，解析进 registry 的 scenes/usage 字段。
+> 职责：场景标签 = 系统侧维护（文件头「功能」注释自动提取 + 缺漏由系统补）；使用场景描述 = 你填写。
+> 生成：2026-08-07；标签自动提取，使用场景描述人工填写。
 > 规则：场景标签是排序信号（不做排除）；每个镜头可标 1-3 个标签。
 > 「使用场景描述」：这个镜头适合用在什么内容的段落上（匹配段的参考），如「适合宣布重要结论」「适合展示增长数据」；画面描述只讲画面在做什么。
 
@@ -102,9 +103,9 @@
 |---|---|---|---|
 | BeatCutAccelerando | 节拍加速切 | 钩子,宣告 | 单一事物局部的展示或强调 |
 | BottomPushStackWipe | 底推换景 | 转折 | 多个事物先后提及或展示 |
-| CircleMatchIris | 圆心虹膜 |  | 多个事物中对其中一个事物的具体展示 |
+| CircleMatchIris | 圆心虹膜 | 举证 | 多个事物中对其中一个事物的具体展示 |
 | CraneRiseReveal | 吊臂升起 | 展开 | 多个事物先后提及或展示 |
-| DollyZoomReal | 滑动变焦 |  | 多个事物中对其中一个事物的具体展示 |
+| DollyZoomReal | 滑动变焦 | 举证 | 多个事物中对其中一个事物的具体展示 |
 | MultiplaneReal | 多层视差 | 展开,举证 | 多个事物先后提及或展示 |
 | GrazeFaceTour | 掠面巡览 | 展开 | UI展示 |
 | LineCarryTransition | 线引换场 | 承接 | 多个事物的阶段性演进 |
@@ -167,12 +168,12 @@
 
 | id | 中文名 | 场景标签 | 使用场景描述 |
 |---|---|---|---|
-| BrandInkOpen | 墨印开场 |  | 品牌或IP展示 |
-| SpotlightHeroCard | 追光主卡 |  | 多个事物中对其中一个事物的具体展示 |
-| RowEmbed | 行嵌入 |  | 对于一个事物中包含内容的展示 |
-| ListStackPress | 列表压叠 |  | 对于一个事物中包含内容的展示 |
-| DocumentTypewriterReveal | 文档打字 |  | 对于一个事物中包含内容的展示 |
-| OutroGroupPhotoLaunch | 群像收尾 |  | 品牌或IP展示，带分支内容的 |
+| BrandInkOpen | 墨印开场 | 钩子 | 品牌或IP展示 |
+| SpotlightHeroCard | 追光主卡 | 举证 | 多个事物中对其中一个事物的具体展示 |
+| RowEmbed | 行嵌入 | 展开 | 对于一个事物中包含内容的展示 |
+| ListStackPress | 列表压叠 | 展开 | 对于一个事物中包含内容的展示 |
+| DocumentTypewriterReveal | 文档打字 | 展开 | 对于一个事物中包含内容的展示 |
+| OutroGroupPhotoLaunch | 群像收尾 | 收束 | 品牌或IP展示，带分支内容的 |
 
 ## transition（1）
 

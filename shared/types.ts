@@ -17,6 +17,8 @@ export interface LensRegistryEntry {
   file: string; // 组件相对路径（无单文件的共享导出记 wrappers.tsx）
   group: string; // 分组（light / native / ...）
   props: PropField[]; // 参数 schema（从 XxxProps 接口自动提取）
+  scenes: string[]; // 场景标签（排序信号，不做排除；来自镜头场景总表）
+  usage?: string; // 使用场景描述（匹配段的参考；总表人写定义）
 }
 
 export interface LensRegistry {

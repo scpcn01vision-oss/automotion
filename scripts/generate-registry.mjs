@@ -1,6 +1,6 @@
-// M2 注册表生成：从 Root.preview + lens-names + 组件 XxxProps 接口自动生成 shared/registry.json
+// M2 注册表生成：从 Root.preview + lens-names + 组件 XxxProps 接口 + 镜头场景总表自动生成 shared/registry.json
 // 用法：node scripts/generate-registry.mjs
-// 输出：shared/registry.json（124 全量；语义画像字段留给 M3）
+// 输出：shared/registry.json（全量；scenes/usage 来自 docs/lens-scenes-draft.md 人写定义）
 import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -75,9 +75,24 @@ function extractProps(src, id) {
   return fields;
 }
 
+// ---------- 5. 镜头场景总表：id → { scenes, usage }（人写的场景定位） ----------
+const scenesSrc = readFileSync(path.join(ROOT, 'docs', 'lens-scenes-draft.md'), 'utf8');
+const sceneMap = new Map();
+for (const line of scenesSrc.split('\n')) {
+  const m = line.match(/^\| ([A-Z][A-Za-z0-9]+) \| ([^|]+) \| ([^|]*) \| ([^|]*) \|/);
+  if (m && m[1] !== 'id') {
+    const tags = m[3].trim();
+    sceneMap.set(m[1], {
+      scenes: tags ? tags.split(/[,，、\s]+/).filter(Boolean) : [],
+      usage: m[4].trim(),
+    });
+  }
+}
+
 // ---------- 生成 ----------
 const entries = ids.map((id) => {
   const meta = nameMap.get(id);
+  const sc = sceneMap.get(id);
   const files = findLensFile(id);
   const file = files.length > 0 ? files[0] : 'lenses/tplshots/wrappers.tsx';
   const src = readFileSync(path.join(ROOT, file), 'utf8');
@@ -88,6 +103,8 @@ const entries = ids.map((id) => {
     file,
     group: meta?.group ?? '',
     props,
+    scenes: sc?.scenes ?? [],
+    usage: sc?.usage ?? '',
   };
 });
 
@@ -95,7 +112,7 @@ const registry = {
   meta: {
     generatedAt: new Date().toISOString(),
     count: entries.length,
-    source: 'Root.preview.tsx + docs/lens-names.md + 组件 XxxProps 接口',
+    source: 'Root.preview.tsx + docs/lens-names.md + 组件 XxxProps 接口 + docs/lens-scenes-draft.md',
   },
   entries,
 };
@@ -105,6 +122,9 @@ writeFileSync(OUT, JSON.stringify(registry, null, 2));
 const missingName = entries.filter((e) => !e.name).length;
 const missingGroup = entries.filter((e) => !e.group).length;
 const noPropsFile = entries.filter((e) => e.props.length === 0).map((e) => e.id);
+const noScenes = entries.filter((e) => e.scenes.length === 0).map((e) => e.id);
+const noUsage = entries.filter((e) => !e.usage).map((e) => e.id);
 console.log(`registry.json 已生成：${entries.length} 条`);
 console.log(`缺中文名: ${missingName} | 缺分组: ${missingGroup}`);
 console.log(`props 为空的镜头: ${noPropsFile.length}（${noPropsFile.join(', ') || '无'}）`);
+console.log(`无场景标签: ${noScenes.length}（${noScenes.join(', ') || '无'}）| 无使用场景描述: ${noUsage.length}（${noUsage.join(', ') || '无'}）`);
