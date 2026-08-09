@@ -3,12 +3,18 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "preview": "remotion studio lenses/Root.preview.tsx --port=3003"
+    "preview": "remotion studio lenses/Root.preview.tsx --port=3003",
+    "dev": "concurrently -n client,server -c cyan,magenta \"npm run dev:client\" \"npm run dev:server\"",
+    "dev:client": "npm run dev --workspace client",
+    "dev:server": "npm run dev --workspace server"
   },
   "workspaces": [
     "client",
     "server",
     "lenses",
     "match"
-  ]
+  ],
+  "devDependencies": {
+    "concurrently": "^10.0.4"
+  }
 }

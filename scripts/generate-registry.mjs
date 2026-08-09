@@ -12,6 +12,16 @@ const OUT = path.join(ROOT, 'shared', 'registry.json');
 // ---------- 1. Root.preview 注册 id ----------
 const rootSrc = readFileSync(path.join(ROOT, 'lenses', 'Root.preview.tsx'), 'utf8');
 const ids = [...rootSrc.matchAll(/<Composition\s+id="([A-Za-z0-9]+)"/g)].map((m) => m[1]);
+// 1b. 每个 Composition 的时长（工作台播放器需要）
+const comps = [...rootSrc.matchAll(/<Composition\b([^>]*?)\/>/g)]
+  .map((m) => {
+    const tag = m[1];
+    const id = tag.match(/id="([A-Za-z0-9]+)"/)?.[1];
+    const dur = tag.match(/durationInFrames=\{(\d+)\}/)?.[1];
+    return id && dur ? { id, durationInFrames: Number(dur) } : null;
+  })
+  .filter(Boolean);
+const durMap = new Map(comps.map((c) => [c.id, c.durationInFrames]));
 
 // ---------- 2. lens-names：id → { name, group } ----------
 const namesSrc = readFileSync(path.join(ROOT, 'docs', 'lens-names.md'), 'utf8');
@@ -45,9 +55,9 @@ function findLensFile(id) {
   return found;
 }
 
-// ---------- 4. Props 接口字段提取 ----------
-function extractProps(src, id) {
-  const re = new RegExp(`export interface ${id}Props\\s*\\{`);
+// ---------- 4. Props 接口字段提取（递归：自定义对象/数组类型 → fields 树） ----------
+function parseInterfaceFields(src, interfaceName) {
+  const re = new RegExp(`export interface ${interfaceName}\\s*\\{`);
   const m = src.match(re);
   if (!m) return null;
   const start = src.indexOf('{', m.index);
@@ -73,6 +83,48 @@ function extractProps(src, id) {
     fields.push({ name: fm[1], type, optional: fm[2] === '?' });
   }
   return fields;
+}
+
+// 解析嵌套：type 为自定义类型（大写开头，可带 []）时，从同文件接口递归提取字段
+function resolveNested(src, type) {
+  const base = type.replace(/\[\]$/, '').trim();
+  if (!/^[A-Z]/.test(base)) return undefined; // 基础类型/字面量不递归
+  const fields = parseInterfaceFields(src, base);
+  if (!fields || fields.length === 0) return undefined;
+  return fields.map((f) => ({ ...f, fields: resolveNested(src, f.type) }));
+}
+
+function extractProps(src, id) {
+  const fields = parseInterfaceFields(src, `${id}Props`);
+  if (!fields) return null;
+  const defaults = parseComponentDefaults(src, id);
+  return fields.map((f) => ({
+    ...f,
+    default: defaults[f.name],
+    fields: resolveNested(src, f.type),
+  }));
+}
+
+// 从组件签名解构提取默认值：export const X = ({ a = 'x', b = 1, c = true, ... }) => ...
+function parseComponentDefaults(src, id) {
+  const re = new RegExp(
+    `export const ${id}(?:\\s*:\\s*React\\.FC<[^>]*>)?\\s*=\\s*\\(\\{([\\s\\S]*?)\\}\\)`,
+  );
+  const m = src.match(re);
+  if (!m) return {};
+  const out = {};
+  const fieldRe =
+    /(\w+)\s*=\s*('(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*"|-?\d+(?:\.\d+)?|true|false)/g;
+  let fm;
+  while ((fm = fieldRe.exec(m[1]))) {
+    const raw = fm[2];
+    let val;
+    if (raw.startsWith("'") || raw.startsWith('"')) val = raw.slice(1, -1);
+    else if (raw === 'true' || raw === 'false') val = raw === 'true';
+    else val = Number(raw);
+    out[fm[1]] = val;
+  }
+  return out;
 }
 
 // ---------- 5. 镜头场景总表：id → { scenes, usage }（人写的场景定位） ----------
@@ -102,6 +154,7 @@ const entries = ids.map((id) => {
     name: meta?.name ?? '',
     file,
     group: meta?.group ?? '',
+    durationInFrames: durMap.get(id) ?? 0,
     props,
     scenes: sc?.scenes ?? [],
     usage: sc?.usage ?? '',

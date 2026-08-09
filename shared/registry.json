@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generatedAt": "2026-08-08T23:38:32.728Z",
+    "generatedAt": "2026-08-09T19:32:03.668Z",
     "count": 122,
     "source": "Root.preview.tsx + docs/lens-names.md + 组件 XxxProps 接口 + docs/lens-scenes-draft.md"
   },
@@ -10,6 +10,7 @@
       "name": "品牌框定",
       "file": "lenses/native/brand-frame-snap/BrandFrameSnap.tsx",
       "group": "native",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "colorA",
@@ -24,37 +25,86 @@
         {
           "name": "labelA",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "DESIGN"
         },
         {
           "name": "labelB",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "DEV MODE"
         },
         {
           "name": "contentA",
           "type": "BrandFrameSnapContent",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         },
         {
           "name": "contentB",
           "type": "BrandFrameSnapContent",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         },
         {
           "name": "cardWidthA",
           "type": "number",
-          "optional": true
+          "optional": true,
+          "default": 980
         },
         {
           "name": "cardWidthB",
           "type": "number",
-          "optional": true
+          "optional": true,
+          "default": 980
         },
         {
           "name": "windowTitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "概览"
         }
       ],
       "scenes": [
@@ -68,21 +118,25 @@
       "name": "红头引文",
       "file": "lenses/native/redhead-file-quote/RedHeadFileQuote.tsx",
       "group": "native",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "organ",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "北京市发展和改革委员会"
         },
         {
           "name": "docTitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "《北京市加快智能体引领发展的若干措施》"
         },
         {
           "name": "docNo",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "第 37 句"
         },
         {
           "name": "body",
@@ -92,7 +146,8 @@
         {
           "name": "tag",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "原文引用"
         }
       ],
       "scenes": [
@@ -105,11 +160,34 @@
       "name": "墨线描边",
       "file": "lenses/native/draw-svg-trace/DrawSvgTrace.tsx",
       "group": "native",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "content",
           "type": "DrawSvgTraceContent",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         }
       ],
       "scenes": [
@@ -123,11 +201,13 @@
       "name": "字距显形",
       "file": "lenses/native/letterspace-materialize/LetterspaceMaterialize.tsx",
       "group": "native",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "word",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "SUPREME"
         }
       ],
       "scenes": [
@@ -141,16 +221,19 @@
       "name": "墨线沸腾",
       "file": "lenses/native/line-boil/LineBoil.tsx",
       "group": "native",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "text",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "ALIVE"
         },
         {
           "name": "cardTitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "PROJECT BRIEF"
         },
         {
           "name": "cardRows",
@@ -168,21 +251,25 @@
       "name": "笔锋划题",
       "file": "lenses/native/marker-underline-title/MarkerUnderlineTitle.tsx",
       "group": "native",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "prefix",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "Meet the "
         },
         {
           "name": "highlight",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "new"
         },
         {
           "name": "title",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "Paper Notes"
         }
       ],
       "scenes": [
@@ -195,6 +282,7 @@
       "name": "谷仓门裂",
       "file": "lenses/native/page-turn-transitions/BarnDoorSplit.tsx",
       "group": "native",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "sceneA",
@@ -219,26 +307,47 @@
       "name": "页墙瀑布",
       "file": "lenses/native/page-waterfall-wall/PageWaterfallWall.tsx",
       "group": "native",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "columns",
           "type": "WaterfallColumn[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "images",
+              "type": "string[]",
+              "optional": false
+            },
+            {
+              "name": "loopSeconds",
+              "type": "number",
+              "optional": false
+            },
+            {
+              "name": "direction",
+              "type": "1 | -1",
+              "optional": false
+            }
+          ]
         },
         {
           "name": "columnWidth",
           "type": "number",
-          "optional": true
+          "optional": true,
+          "default": 560
         },
         {
           "name": "gap",
           "type": "number",
-          "optional": true
+          "optional": true,
+          "default": 30
         },
         {
           "name": "pushTo",
           "type": "number",
-          "optional": true
+          "optional": true,
+          "default": 1.06
         }
       ],
       "scenes": [
@@ -251,6 +360,7 @@
       "name": "滚动字幕",
       "file": "lenses/native/page-waterfall-wall/VerticalTickerWrapper.tsx",
       "group": "native",
+      "durationInFrames": 180,
       "props": [],
       "scenes": [
         "全景"
@@ -262,11 +372,34 @@
       "name": "胶带落纸",
       "file": "lenses/native/paper-craft-moves/MaskingTapeSlap.tsx",
       "group": "native",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "card",
           "type": "MaskingTapeCard",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         }
       ],
       "scenes": [
@@ -280,6 +413,7 @@
       "name": "立体书起",
       "file": "lenses/native/paper-craft-moves/PopupBookRise.tsx",
       "group": "native",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "cards",
@@ -289,7 +423,8 @@
         {
           "name": "pageTitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "概览"
         },
         {
           "name": "menuItems",
@@ -299,12 +434,14 @@
         {
           "name": "searchText",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "搜索"
         },
         {
           "name": "avatarText",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "我"
         }
       ],
       "scenes": [
@@ -318,21 +455,47 @@
       "name": "纸鸢传信",
       "file": "lenses/native/paper-plane-messenger/PaperPlaneMessenger.tsx",
       "group": "native",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "windowA",
           "type": "MessengerWindowContent",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true
+            }
+          ]
         },
         {
           "name": "windowB",
           "type": "MessengerWindowContent",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true
+            }
+          ]
         },
         {
           "name": "sendLabel",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "发送"
         }
       ],
       "scenes": [
@@ -346,16 +509,40 @@
       "name": "墨渗揭幕",
       "file": "lenses/native/print-texture-transitions/InkBleedReveal.tsx",
       "group": "native",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "oldTitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "BEFORE"
         },
         {
           "name": "newScene",
           "type": "InkBleedRevealNewScene",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         }
       ],
       "scenes": [
@@ -369,11 +556,13 @@
       "name": "套印错击",
       "file": "lenses/native/riso-print-hits/RisoMisregistrationHit.tsx",
       "group": "native",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "text",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "IMPACT"
         }
       ],
       "scenes": [
@@ -387,16 +576,19 @@
       "name": "翻牌显字",
       "file": "lenses/native/split-flap-title/SplitFlapFlip.tsx",
       "group": "native",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "text",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "READY GO"
         },
         {
           "name": "previewLabel",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "预览"
         }
       ],
       "scenes": [
@@ -410,6 +602,7 @@
       "name": "断笔成字",
       "file": "lenses/native/stroke-segment-build/StrokeSegmentBuild.tsx",
       "group": "native",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "segments",
@@ -428,16 +621,19 @@
       "name": "终端打字",
       "file": "lenses/native/typewriter-moves/TerminalTypewriter.tsx",
       "group": "native",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "command",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "deploy --prod"
         },
         {
           "name": "history",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "~ (main)"
         },
         {
           "name": "result",
@@ -447,7 +643,8 @@
         {
           "name": "windowTitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "未命名终端"
         }
       ],
       "scenes": [
@@ -460,36 +657,43 @@
       "name": "错误重打",
       "file": "lenses/native/typewriter-moves/TypewriterErrorRetype.tsx",
       "group": "native",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "first",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "just a prototype"
         },
         {
           "name": "second",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "the real thing"
         },
         {
           "name": "keepChars",
           "type": "number",
-          "optional": true
+          "optional": true,
+          "default": 5
         },
         {
           "name": "typeFrames",
           "type": "number",
-          "optional": true
+          "optional": true,
+          "default": 2
         },
         {
           "name": "deleteFrames",
           "type": "number",
-          "optional": true
+          "optional": true,
+          "default": 1.5
         },
         {
           "name": "pauseFrames",
           "type": "number",
-          "optional": true
+          "optional": true,
+          "default": 16
         }
       ],
       "scenes": [
@@ -502,6 +706,7 @@
       "name": "节拍加速切",
       "file": "lenses/minimal/beat-cut-moves/BeatCutAccelerando.tsx",
       "group": "minimal",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "sceneA",
@@ -525,6 +730,7 @@
       "name": "拍点列词",
       "file": "lenses/minimal/beat-step-list-theme-cycle/BeatStepListThemeCycle.tsx",
       "group": "minimal",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "words",
@@ -534,22 +740,26 @@
         {
           "name": "beats",
           "type": "number",
-          "optional": true
+          "optional": true,
+          "default": 4
         },
         {
           "name": "beatFrames",
           "type": "number",
-          "optional": true
+          "optional": true,
+          "default": 18
         },
         {
           "name": "firstBeat",
           "type": "number",
-          "optional": true
+          "optional": true,
+          "default": 30
         },
         {
           "name": "fontSize",
           "type": "number",
-          "optional": true
+          "optional": true,
+          "default": 92
         }
       ],
       "scenes": [
@@ -563,16 +773,35 @@
       "name": "底推换景",
       "file": "lenses/minimal/bottom-push-stack-wipe/BottomPushStackWipe.tsx",
       "group": "minimal",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "chapters",
           "type": "PushChapter[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "color",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "value",
+              "type": "string",
+              "optional": false
+            }
+          ]
         },
         {
           "name": "windowTitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "概览"
         }
       ],
       "scenes": [
@@ -585,11 +814,29 @@
       "name": "圆心虹膜",
       "file": "lenses/minimal/circle-match-iris/CircleMatchIris.tsx",
       "group": "minimal",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "rows",
           "type": "CircleRow[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "icon",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "value",
+              "type": "string",
+              "optional": true
+            }
+          ]
         },
         {
           "name": "detail",
@@ -607,6 +854,7 @@
       "name": "吊臂升起",
       "file": "lenses/minimal/crane-rise-reveal/CraneRiseReveal.tsx",
       "group": "minimal",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "rows",
@@ -624,16 +872,19 @@
       "name": "滑动变焦",
       "file": "lenses/minimal/depth-layer-moves/DollyZoomReal.tsx",
       "group": "minimal",
+      "durationInFrames": 135,
       "props": [
         {
           "name": "pageImage",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "textures/live/projects-full.png"
         },
         {
           "name": "subjectImage",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "textures/live/card4-hires.png"
         }
       ],
       "scenes": [
@@ -646,21 +897,25 @@
       "name": "多层视差",
       "file": "lenses/minimal/depth-layer-moves/MultiplaneReal.tsx",
       "group": "minimal",
+      "durationInFrames": 135,
       "props": [
         {
           "name": "pageImage",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "textures/live/projects-full.png"
         },
         {
           "name": "foregroundImage",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "textures/live/float-search.png"
         },
         {
           "name": "subjectImage",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "textures/live/card4-hires.png"
         }
       ],
       "scenes": [
@@ -674,11 +929,13 @@
       "name": "掠面巡览",
       "file": "lenses/minimal/graze-face-tour/GrazeFaceTour.tsx",
       "group": "minimal",
+      "durationInFrames": 150,
       "props": [
         {
           "name": "workspaceName",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "Workspace"
         },
         {
           "name": "recentCards",
@@ -693,7 +950,8 @@
         {
           "name": "rowMeta",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "刚刚"
         }
       ],
       "scenes": [
@@ -706,6 +964,7 @@
       "name": "线引换场",
       "file": "lenses/minimal/line-carry-transition/LineCarryTransition.tsx",
       "group": "minimal",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "sceneA",
@@ -728,11 +987,13 @@
       "name": "多米诺",
       "file": "lenses/minimal/montage-rhythm-moves/DominoCascade.tsx",
       "group": "minimal",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "title",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "START"
         },
         {
           "name": "cards",
@@ -756,6 +1017,7 @@
       "name": "倾斜揭面",
       "file": "lenses/minimal/overhead-camera-moves/TiltReveal.tsx",
       "group": "minimal",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "scene",
@@ -774,11 +1036,13 @@
       "name": "低空掠卡",
       "file": "lenses/minimal/runway-ground-skim/RunwayGroundSkim.tsx",
       "group": "minimal",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "workspaceName",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "Workspace"
         },
         {
           "name": "cards",
@@ -788,7 +1052,8 @@
         {
           "name": "rowMeta",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "刚刚"
         }
       ],
       "scenes": [
@@ -801,6 +1066,7 @@
       "name": "残影多联",
       "file": "lenses/minimal/smear-multiples/SmearMultiples.tsx",
       "group": "minimal",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "cardA",
@@ -824,6 +1090,7 @@
       "name": "俯冲降落",
       "file": "lenses/minimal/space-camera-moves/DroneDiveLanding.tsx",
       "group": "minimal",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "scene",
@@ -841,6 +1108,7 @@
       "name": "爆炸分解",
       "file": "lenses/minimal/space-camera-moves/ExplodedView.tsx",
       "group": "minimal",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "cards",
@@ -855,17 +1123,20 @@
         {
           "name": "dashTitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "项目工作区"
         },
         {
           "name": "searchText",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "搜索"
         },
         {
           "name": "avatarText",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "我"
         }
       ],
       "scenes": [
@@ -878,11 +1149,13 @@
       "name": "冻结标注",
       "file": "lenses/minimal/speed-ramp-freeze/FreezeAnnotateReal.tsx",
       "group": "minimal",
+      "durationInFrames": 135,
       "props": [
         {
           "name": "subjectImage",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "card4-hires.png"
         }
       ],
       "scenes": [
@@ -896,11 +1169,13 @@
       "name": "变速急停",
       "file": "lenses/minimal/speed-ramp-freeze/SpeedRampReal.tsx",
       "group": "minimal",
+      "durationInFrames": 135,
       "props": [
         {
           "name": "subjectImage",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "card4-hires.png"
         }
       ],
       "scenes": [
@@ -914,31 +1189,48 @@
       "name": "子弹时间",
       "file": "lenses/minimal/tension-camera-moves/BulletTimeFreezeOrbit.tsx",
       "group": "minimal",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "panelTitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "指标"
         },
         {
           "name": "panelSubtitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "季度概览"
         },
         {
           "name": "bars",
           "type": "BulletTimeBar[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "value",
+              "type": "number",
+              "optional": false
+            },
+            {
+              "name": "label",
+              "type": "string",
+              "optional": true
+            }
+          ]
         },
         {
           "name": "sideTitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "增长势头"
         },
         {
           "name": "sideSubtitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "季度增长趋势"
         }
       ],
       "scenes": [
@@ -952,6 +1244,7 @@
       "name": "荷兰角回正",
       "file": "lenses/minimal/tension-camera-moves/DutchRollToLevel.tsx",
       "group": "minimal",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "scene",
@@ -961,7 +1254,8 @@
         {
           "name": "alertText",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "注意"
         },
         {
           "name": "solution",
@@ -980,11 +1274,13 @@
       "name": "拉远孤立",
       "file": "lenses/minimal/tension-camera-moves/PullBackIsolation.tsx",
       "group": "minimal",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "value",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "99.9%"
         },
         {
           "name": "cards",
@@ -1003,6 +1299,7 @@
       "name": "隐形切",
       "file": "lenses/minimal/transition-hidden-cut/InvisibleCut.tsx",
       "group": "minimal",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "sceneA",
@@ -1031,6 +1328,7 @@
       "name": "漏光烧灼",
       "file": "lenses/minimal/transition-hidden-cut/LightLeakBurn.tsx",
       "group": "minimal",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "sceneA",
@@ -1045,7 +1343,8 @@
         {
           "name": "nextTitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "Next"
         }
       ],
       "scenes": [
@@ -1059,6 +1358,7 @@
       "name": "对决砸幕",
       "file": "lenses/minimal/transition-hidden-cut/VersusSlam.tsx",
       "group": "minimal",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "sceneA",
@@ -1073,7 +1373,8 @@
         {
           "name": "vsText",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "VS"
         }
       ],
       "scenes": [
@@ -1087,6 +1388,7 @@
       "name": "百叶横切",
       "file": "lenses/minimal/wipe-transitions/BlindsSlice.tsx",
       "group": "minimal",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "sceneA",
@@ -1111,6 +1413,7 @@
       "name": "时钟扫过",
       "file": "lenses/minimal/wipe-transitions/ClockWipe.tsx",
       "group": "minimal",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "sceneA",
@@ -1135,11 +1438,24 @@
       "name": "翻牌揭结",
       "file": "lenses/light/card-flip-reveal/CardFlipReveal.tsx",
       "group": "light",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "cards",
           "type": "CardFlipRevealCard[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "label",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "result",
+              "type": "string",
+              "optional": true
+            }
+          ]
         }
       ],
       "scenes": [
@@ -1152,11 +1468,13 @@
       "name": "卡群翻飞",
       "file": "lenses/light/card-flock-tumble/CardFlockTumble.tsx",
       "group": "light",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "word",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "STRONGER"
         },
         {
           "name": "cards",
@@ -1195,6 +1513,7 @@
       "name": "轴向拉伸",
       "file": "lenses/light/element-body-moves/AxialStretch.tsx",
       "group": "light",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "cards",
@@ -1212,6 +1531,7 @@
       "name": "阴影抬升",
       "file": "lenses/light/element-body-moves/ContactShadowLift.tsx",
       "group": "light",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "cards",
@@ -1221,12 +1541,14 @@
         {
           "name": "dashTitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "项目工作区"
         },
         {
           "name": "avatarText",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "我"
         }
       ],
       "scenes": [
@@ -1239,6 +1561,7 @@
       "name": "原形化卡",
       "file": "lenses/light/morph-from-primitive/MorphFromPrimitive.tsx",
       "group": "light",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "card",
@@ -1257,6 +1580,7 @@
       "name": "冲击迸发",
       "file": "lenses/light/slam-entrance-moves/ImpactBurstKit.tsx",
       "group": "light",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "cards",
@@ -1275,6 +1599,7 @@
       "name": "透视瞬折",
       "file": "lenses/light/slam-entrance-moves/KanadaPerspectiveSnap.tsx",
       "group": "light",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "card",
@@ -1293,11 +1618,13 @@
       "name": "字底藏印",
       "file": "lenses/light/text-as-mask/TextAsMask.tsx",
       "group": "light",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "text",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "SCALE"
         },
         {
           "name": "sidebarItems",
@@ -1307,17 +1634,20 @@
         {
           "name": "dashTitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "项目工作区"
         },
         {
           "name": "searchText",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "搜索"
         },
         {
           "name": "avatarText",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "我"
         },
         {
           "name": "cards",
@@ -1336,11 +1666,13 @@
       "name": "双词咬合",
       "file": "lenses/light/text-column-converge/TextColumnConverge.tsx",
       "group": "light",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "leftWord",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "NEW"
         },
         {
           "name": "rightWords",
@@ -1350,7 +1682,8 @@
         {
           "name": "subtitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "COMING 2026"
         }
       ],
       "scenes": [
@@ -1363,16 +1696,19 @@
       "name": "题降为签",
       "file": "lenses/light/title-demote-to-label/TitleDemoteToLabel.tsx",
       "group": "light",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "titleA",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "Overview"
         },
         {
           "name": "titleB",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "Details"
         },
         {
           "name": "contentRows",
@@ -1391,11 +1727,13 @@
       "name": "字母漂移",
       "file": "lenses/light/type-assembly-moves/LetterformDriftAssembly.tsx",
       "group": "light",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "word",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "ASSEMBLE"
         }
       ],
       "scenes": [
@@ -1409,11 +1747,13 @@
       "name": "分段错开",
       "file": "lenses/light/type-assembly-moves/SplitTextStagger.tsx",
       "group": "light",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "text",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "MOTION SYSTEM"
         }
       ],
       "scenes": [
@@ -1427,11 +1767,13 @@
       "name": "沿径排字",
       "file": "lenses/light/type-assembly-moves/TextOnPath.tsx",
       "group": "light",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "text",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "GROWTH ALL THE WAY"
         }
       ],
       "scenes": [
@@ -1445,16 +1787,19 @@
       "name": "字距舒展",
       "file": "lenses/light/type-assembly-moves/TrackingExpandReveal.tsx",
       "group": "light",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "word",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "BREATHE"
         },
         {
           "name": "subtitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "SYSTEM"
         }
       ],
       "scenes": [
@@ -1468,11 +1813,13 @@
       "name": "字母坠落",
       "file": "lenses/light/type-entrance-moves/LetterDropPhysics.tsx",
       "group": "light",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "word",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "GRAVITY"
         }
       ],
       "scenes": [
@@ -1486,11 +1833,13 @@
       "name": "乱码归位",
       "file": "lenses/light/type-entrance-moves/ScrambleDecode.tsx",
       "group": "light",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "text",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "DECODE SPEED"
         }
       ],
       "scenes": [
@@ -1504,16 +1853,19 @@
       "name": "逐层剥离",
       "file": "lenses/light/ui-strip-away-outro/UiStripAwayOutro.tsx",
       "group": "light",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "buttonText",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "Publish"
         },
         {
           "name": "wordmark",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "WORDMARK"
         },
         {
           "name": "cards",
@@ -1538,17 +1890,20 @@
         {
           "name": "canvasTitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "未命名项目"
         },
         {
           "name": "canvasAddress",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "https://workspace.example/design"
         },
         {
           "name": "inviteLabel",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "邀请"
         }
       ],
       "scenes": [
@@ -1561,11 +1916,13 @@
       "name": "图标绽放",
       "file": "lenses/light/ui-to-brand-morph/IconFlipBloomLogo.tsx",
       "group": "light",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "wordmark",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "inkmark"
         }
       ],
       "scenes": [
@@ -1578,11 +1935,13 @@
       "name": "输入化标",
       "file": "lenses/light/ui-to-brand-morph/InputMorphsIntoLogo.tsx",
       "group": "light",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "inputText",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "Ready, set, go!"
         }
       ],
       "scenes": [
@@ -1595,11 +1954,13 @@
       "name": "胶片传词",
       "file": "lenses/light/word-relay-filmstrip/WordRelayFilmstrip.tsx",
       "group": "light",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "subject",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "Computer"
         },
         {
           "name": "words",
@@ -1618,41 +1979,60 @@
       "name": "流式应答",
       "file": "lenses/medium/ai-stream-response/StreamResponse.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "agentName",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "工作区代理"
         },
         {
           "name": "query",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "检查代码库并找出最稳妥的实现路径"
         },
         {
           "name": "summaryLabel",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "结果摘要"
         },
         {
           "name": "summary",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "代码库已准备就绪，可采用聚焦、低风险的实现方案。"
         },
         {
           "name": "rows",
           "type": "StreamResponseRow[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "meta",
+              "type": "string",
+              "optional": false
+            }
+          ]
         },
         {
           "name": "completeText",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "分析完成"
         },
         {
           "name": "completeMeta",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "7 项检查完成 · 可开始构建"
         }
       ],
       "scenes": [
@@ -1666,6 +2046,7 @@
       "name": "间距旋钮",
       "file": "lenses/medium/autolayout-gap-dial/AutolayoutGapDial.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "blocks",
@@ -1688,6 +2069,7 @@
       "name": "前后推杆",
       "file": "lenses/medium/before-after-slider-scrub/BeforeAfterSliderScrub.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "before",
@@ -1711,6 +2093,7 @@
       "name": "气泡吞幕",
       "file": "lenses/medium/bubble-swarm-takeover/BubbleSwarmTakeover.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "sceneA",
@@ -1735,6 +2118,7 @@
       "name": "图表级建",
       "file": "lenses/medium/canvas-materialize-moves/DiagramCascadeBuild.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "prompt",
@@ -1757,21 +2141,25 @@
       "name": "面板化板",
       "file": "lenses/medium/canvas-materialize-moves/PanelToCanvasMaterialize.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "panelTitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "待办面板"
         },
         {
           "name": "panelSubtitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "3 项待添加"
         },
         {
           "name": "buttonText",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "全部添加到画布"
         },
         {
           "name": "rows",
@@ -1794,6 +2182,7 @@
       "name": "光标合奏",
       "file": "lenses/medium/collab-cursor-moves/CursorCastEnsemble.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "names",
@@ -1803,7 +2192,8 @@
         {
           "name": "typed",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "Our customers love it"
         },
         {
           "name": "notes",
@@ -1813,7 +2203,8 @@
         {
           "name": "noteTitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "协作便签"
         }
       ],
       "scenes": [
@@ -1826,16 +2217,19 @@
       "name": "光标对谈",
       "file": "lenses/medium/collab-cursor-moves/CursorDialogueDuet.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "designer",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "Designer"
         },
         {
           "name": "developer",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "Developer"
         }
       ],
       "scenes": [
@@ -1848,6 +2242,7 @@
       "name": "命令唤出",
       "file": "lenses/medium/command-palette-summon/CommandPaletteSummon.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "scene",
@@ -1857,12 +2252,14 @@
         {
           "name": "query",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "AB"
         },
         {
           "name": "placeholder",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "输入命令…"
         },
         {
           "name": "commands",
@@ -1880,16 +2277,19 @@
       "name": "指针自检",
       "file": "lenses/medium/gauge-readout-moves/NeedleSweepSelftest.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "title",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "核心指标"
         },
         {
           "name": "cardTitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "指标总览"
         }
       ],
       "scenes": [
@@ -1902,11 +2302,13 @@
       "name": "刻度奔袭",
       "file": "lenses/medium/gauge-readout-moves/TapeScrollFixedPointer.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "readoutLabel",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "当前读数"
         }
       ],
       "scenes": [
@@ -1919,6 +2321,7 @@
       "name": "光扫词面",
       "file": "lenses/medium/gradient-word-sweep/GradientWordSweep.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "lines",
@@ -1936,26 +2339,31 @@
       "name": "标签化签",
       "file": "lenses/medium/hashtag-to-pill-materialize/HashtagToPillMaterialize.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "hashtag",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "#music"
         },
         {
           "name": "pillText",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "music"
         },
         {
           "name": "icon",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "♪"
         },
         {
           "name": "title",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "My favorite bands"
         },
         {
           "name": "body",
@@ -1973,6 +2381,7 @@
       "name": "图标点亮",
       "file": "lenses/medium/icon-field-colorize/IconFieldColorize.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [],
       "scenes": [
         "展开"
@@ -1984,6 +2393,7 @@
       "name": "注目弹跳",
       "file": "lenses/medium/icon-performance-moves/AttentionBounce.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "panel",
@@ -2001,11 +2411,13 @@
       "name": "爆点确认",
       "file": "lenses/medium/icon-performance-moves/PopBurstConfirm.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "label",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "Deployed"
         }
       ],
       "scenes": [
@@ -2018,6 +2430,7 @@
       "name": "光标冲入",
       "file": "lenses/medium/input-trigger-moves/CursorPerformancePunchIn.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "scene",
@@ -2035,16 +2448,19 @@
       "name": "光晕弥散",
       "file": "lenses/medium/light-play-moves/HalationBloom.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "value",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "10x"
         },
         {
           "name": "label",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "GLOW"
         }
       ],
       "scenes": [
@@ -2058,11 +2474,13 @@
       "name": "光泽扫过",
       "file": "lenses/medium/light-play-moves/SheenSweepRetry.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "title",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "指标"
         },
         {
           "name": "rows",
@@ -2081,21 +2499,25 @@
       "name": "里程滚数",
       "file": "lenses/medium/odometer-digit-roll/OdometerDigitRoll.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "value",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "99.98%"
         },
         {
           "name": "label",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "TARGET METRIC"
         },
         {
           "name": "sublabel",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "ACHIEVED"
         }
       ],
       "scenes": [
@@ -2109,6 +2531,7 @@
       "name": "格阵重排",
       "file": "lenses/medium/panel-grid-moves/FlipGridReflow.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [],
       "scenes": [
         "展开"
@@ -2120,26 +2543,31 @@
       "name": "彩纸交叉",
       "file": "lenses/medium/particle-celebrate-hits/ConfettiCrossfire.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "label",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": ""
         },
         {
           "name": "title",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "达成率"
         },
         {
           "name": "value",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "98.5%"
         },
         {
           "name": "subtitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "同比增长"
         }
       ],
       "scenes": [
@@ -2153,26 +2581,31 @@
       "name": "计数星火",
       "file": "lenses/medium/particle-celebrate-hits/CounterTickSparks.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "target",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "42"
         },
         {
           "name": "label",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": ""
         },
         {
           "name": "title",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "累计值"
         },
         {
           "name": "subtitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "实时统计"
         }
       ],
       "scenes": [
@@ -2186,21 +2619,25 @@
       "name": "沙粒填形",
       "file": "lenses/medium/particle-sand-fill/ParticleSandFill.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "label",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "FILL"
         },
         {
           "name": "cardTitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "指标概览"
         },
         {
           "name": "cardSubtitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "实时更新"
         }
       ],
       "scenes": [
@@ -2213,11 +2650,13 @@
       "name": "胶囊旋转",
       "file": "lenses/medium/pill-slot-cycle/PillSlotCycle.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "stem",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "One AI tool to"
         },
         {
           "name": "pills",
@@ -2227,7 +2666,8 @@
         {
           "name": "finale",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "do it all."
         }
       ],
       "scenes": [
@@ -2240,16 +2680,19 @@
       "name": "急停准星",
       "file": "lenses/medium/scroll-brake-moves/BrakeReticleLock.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "dashTitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "项目工作区"
         },
         {
           "name": "avatarText",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "我"
         },
         {
           "name": "rows",
@@ -2259,7 +2702,8 @@
         {
           "name": "tagText",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "v2.41"
         }
       ],
       "scenes": [
@@ -2272,6 +2716,7 @@
       "name": "长页急停",
       "file": "lenses/medium/scroll-brake-moves/ChangelogScrollBrake.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "items",
@@ -2289,16 +2734,19 @@
       "name": "分段切换",
       "file": "lenses/medium/segmented-thumb-hero/SegmentedThumbHero.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "askLabel",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "Ask"
         },
         {
           "name": "computerLabel",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "Computer"
         },
         {
           "name": "askIcon",
@@ -2321,6 +2769,7 @@
       "name": "骨架填充",
       "file": "lenses/medium/skeleton-reveal/SkeletonReveal.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "messages",
@@ -2338,11 +2787,13 @@
       "name": "角落追光",
       "file": "lenses/medium/spotlight-sweep-moves/CornerSpotlightReveal.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "panelTitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "工作台"
         },
         {
           "name": "tabs",
@@ -2352,7 +2803,8 @@
         {
           "name": "activeTab",
           "type": "number",
-          "optional": true
+          "optional": true,
+          "default": 0
         },
         {
           "name": "rows",
@@ -2371,11 +2823,13 @@
       "name": "光眠醒板",
       "file": "lenses/medium/spotlight-sweep-moves/GlowWakeSleepPanel.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "panelTitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "项目工作区"
         },
         {
           "name": "sidebarItems",
@@ -2385,7 +2839,8 @@
         {
           "name": "sectionLabel",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "常用"
         },
         {
           "name": "subItems",
@@ -2395,7 +2850,8 @@
         {
           "name": "searchText",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "搜索"
         },
         {
           "name": "columns",
@@ -2414,11 +2870,13 @@
       "name": "滑光扫视",
       "file": "lenses/medium/spotlight-sweep-moves/SlideSpotlightPan.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "panelTitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "项目工作区"
         },
         {
           "name": "sidebarItems",
@@ -2428,7 +2886,8 @@
         {
           "name": "sectionLabel",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "常用"
         },
         {
           "name": "subItems",
@@ -2438,7 +2897,8 @@
         {
           "name": "searchText",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "搜索"
         },
         {
           "name": "actions",
@@ -2462,11 +2922,13 @@
       "name": "时间轴行",
       "file": "lenses/medium/timeline-travel/TimelineTravel.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "title",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "TIMELINE"
         }
       ],
       "scenes": [
@@ -2480,6 +2942,7 @@
       "name": "歌词填充",
       "file": "lenses/medium/type-rhythm-sync/KaraokeFillSync.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "lines",
@@ -2498,11 +2961,13 @@
       "name": "方块点亮",
       "file": "lenses/medium/wall-reveal-moves/BentoLightUp.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "title",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "Features"
         }
       ],
       "scenes": [
@@ -2516,6 +2981,7 @@
       "name": "格浪翻涌",
       "file": "lenses/medium/wall-reveal-moves/GridWaveFlip.tsx",
       "group": "medium",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "cards",
@@ -2534,6 +3000,7 @@
       "name": "魔术卡弹",
       "file": "lenses/opening/magician-card-flourish/MagicianCardFlourish.tsx",
       "group": "opening",
+      "durationInFrames": 141,
       "props": [
         {
           "name": "card",
@@ -2552,11 +3019,13 @@
       "name": "纸墨字卡",
       "file": "lenses/opening/paper-title-card/PaperTitleCard.tsx",
       "group": "opening",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "duration",
           "type": "number",
-          "optional": true
+          "optional": true,
+          "default": 180
         },
         {
           "name": "words",
@@ -2566,12 +3035,14 @@
         {
           "name": "sub",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": ""
         },
         {
           "name": "subDigits",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": ""
         }
       ],
       "scenes": [
@@ -2584,6 +3055,7 @@
       "name": "数据景观",
       "file": "lenses/opening/dataviz-landscape-open/DatavizLandscapeOpen.tsx",
       "group": "opening",
+      "durationInFrames": 180,
       "props": [],
       "scenes": [
         "举证"
@@ -2595,11 +3067,13 @@
       "name": "霓虹框跑",
       "file": "lenses/ui-entrance/neon-frame-forerun/NeonFrameForerun.tsx",
       "group": "ui-entrance",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "appName",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "工作台"
         },
         {
           "name": "menuItems",
@@ -2614,17 +3088,20 @@
         {
           "name": "sectionLabel",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "常用"
         },
         {
           "name": "mainTitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "项目工作区"
         },
         {
           "name": "searchText",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "搜索"
         },
         {
           "name": "chips",
@@ -2652,11 +3129,13 @@
       "name": "霓虹环绕",
       "file": "lenses/ui-entrance/neon-frame-orbit-drop/NeonFrameForerunOrbit.tsx",
       "group": "ui-entrance",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "appName",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "工作台"
         },
         {
           "name": "menuItems",
@@ -2671,17 +3150,20 @@
         {
           "name": "sectionLabel",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "常用"
         },
         {
           "name": "mainTitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "项目工作区"
         },
         {
           "name": "searchText",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "搜索"
         },
         {
           "name": "chips",
@@ -2709,21 +3191,41 @@
       "name": "集成枢纽",
       "file": "lenses/ui-entrance/integration-hub-map/IntegrationHubMap.tsx",
       "group": "ui-entrance",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "frontTitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "Project Overview"
         },
         {
           "name": "hubTitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "Workspace Hub"
         },
         {
           "name": "rows",
           "type": "IntegrationHubRow[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "color",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "title",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "sub",
+              "type": "string",
+              "optional": true
+            }
+          ]
         },
         {
           "name": "icons",
@@ -2733,7 +3235,24 @@
         {
           "name": "hubStyle",
           "type": "IntegrationHubStyle",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "panelColor",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "accent",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "radius",
+              "type": "number",
+              "optional": true
+            }
+          ]
         },
         {
           "name": "docLines",
@@ -2752,11 +3271,13 @@
       "name": "作画变速",
       "file": "lenses/rhythm/sakuga-timing-shift/SakugaTimingShift.tsx",
       "group": "rhythm",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "cardTitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "PROJECT BRIEF"
         },
         {
           "name": "cardRows",
@@ -2774,11 +3295,13 @@
       "name": "频谱标线",
       "file": "lenses/rhythm/spectrum-morph-ui/SpectrumMorphUi.tsx",
       "group": "rhythm",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "title",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "LAUNCH WEEK"
         }
       ],
       "scenes": [
@@ -2791,6 +3314,7 @@
       "name": "大字跺拍",
       "file": "lenses/typography/cel-flash-stomp/CelFlashStomp.tsx",
       "group": "typography",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "words",
@@ -2800,7 +3324,24 @@
         {
           "name": "footer",
           "type": "CelFlashStompFooter",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "icon",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "label",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "tag",
+              "type": "string",
+              "optional": true
+            }
+          ]
         }
       ],
       "scenes": [
@@ -2813,11 +3354,13 @@
       "name": "辉光漫游",
       "file": "lenses/effects/glow-orb-ambient/GlowOrbAmbient.tsx",
       "group": "effects",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "cardTitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "指标概览"
         },
         {
           "name": "rows",
@@ -2827,7 +3370,8 @@
         {
           "name": "avatarText",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "我"
         }
       ],
       "scenes": [
@@ -2840,6 +3384,7 @@
       "name": "线展成板",
       "file": "lenses/effects/line-unfold-panel/LineUnfoldPanel.tsx",
       "group": "effects",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "panel",
@@ -2857,6 +3402,7 @@
       "name": "准星锁定",
       "file": "lenses/effects/reticle-lock-on/ReticleLockOn.tsx",
       "group": "effects",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "scene",
@@ -2879,6 +3425,7 @@
       "name": "撕裂位移",
       "file": "lenses/transition/glitch-displace/GlitchDisplace.tsx",
       "group": "transition",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "sceneA",
@@ -2901,26 +3448,31 @@
       "name": "示波流",
       "file": "lenses/data/oscilloscope-stream/OscilloscopeStream.tsx",
       "group": "data",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "title",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "Requests per second"
         },
         {
           "name": "subtitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "api-gateway · production · last 60 s"
         },
         {
           "name": "unit",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "req/s"
         },
         {
           "name": "baseValue",
           "type": "number",
-          "optional": true
+          "optional": true,
+          "default": 1000
         },
         {
           "name": "zeroFrom",
@@ -2938,11 +3490,13 @@
       "name": "点阵重组",
       "file": "lenses/data/unit-dot-swarm-regroup/UnitDotSwarmRegroup.tsx",
       "group": "data",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "label",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": ""
         },
         {
           "name": "groups",
@@ -2952,7 +3506,8 @@
         {
           "name": "caption",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "每点 ≈ 40 用户"
         }
       ],
       "scenes": [
@@ -2965,11 +3520,13 @@
       "name": "轴缩冲击",
       "file": "lenses/data/axis-rescale-shock/AxisRescaleShock.tsx",
       "group": "data",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "label",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": ""
         },
         {
           "name": "data",
@@ -2984,12 +3541,14 @@
         {
           "name": "title",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "月度指标"
         },
         {
           "name": "subtitle",
           "type": "string",
-          "optional": true
+          "optional": true,
+          "default": "本财年 · 全产品线"
         },
         {
           "name": "oldTicks",
@@ -3012,6 +3571,7 @@
       "name": "声纹起伏",
       "file": "lenses/interaction/voice-waveform-live/VoiceWaveformLive.tsx",
       "group": "interaction",
+      "durationInFrames": 180,
       "props": [
         {
           "name": "statusText",
@@ -3029,6 +3589,7 @@
       "name": "墨印开场",
       "file": "lenses/tplshots/wrappers.tsx",
       "group": "tplshots",
+      "durationInFrames": 83,
       "props": [],
       "scenes": [
         "钩子"
@@ -3040,6 +3601,7 @@
       "name": "追光主卡",
       "file": "lenses/tplshots/wrappers.tsx",
       "group": "tplshots",
+      "durationInFrames": 138,
       "props": [],
       "scenes": [
         "举证"
@@ -3051,6 +3613,7 @@
       "name": "行嵌入",
       "file": "lenses/tplshots/wrappers.tsx",
       "group": "tplshots",
+      "durationInFrames": 100,
       "props": [],
       "scenes": [
         "展开"
@@ -3062,6 +3625,7 @@
       "name": "列表压叠",
       "file": "lenses/tplshots/wrappers.tsx",
       "group": "tplshots",
+      "durationInFrames": 105,
       "props": [],
       "scenes": [
         "展开"
@@ -3073,6 +3637,7 @@
       "name": "文档打字",
       "file": "lenses/tplshots/wrappers.tsx",
       "group": "tplshots",
+      "durationInFrames": 110,
       "props": [],
       "scenes": [
         "展开"
@@ -3084,6 +3649,7 @@
       "name": "群像收尾",
       "file": "lenses/tplshots/wrappers.tsx",
       "group": "tplshots",
+      "durationInFrames": 145,
       "props": [
         {
           "name": "wordmark",

@@ -9,6 +9,8 @@ export interface PropField {
   name: string; // 参数名
   type: string; // 类型标注（原始文本）
   optional: boolean; // 是否可选（接口里带 ?）
+  default?: unknown; // 组件签名中的默认值（generate-registry 从组件解构提取）
+  fields?: PropField[]; // 嵌套对象/数组元素字段（递归提取，供列表行编辑）
 }
 
 export interface LensRegistryEntry {
@@ -16,6 +18,7 @@ export interface LensRegistryEntry {
   name: string; // 中文名（来自 docs/lens-names.md）
   file: string; // 组件相对路径（无单文件的共享导出记 wrappers.tsx）
   group: string; // 分组（light / native / ...）
+  durationInFrames: number; // 镜头时长（帧，来自 Root.preview 注册）
   props: PropField[]; // 参数 schema（从 XxxProps 接口自动提取）
   scenes: string[]; // 场景标签（排序信号，不做排除；来自镜头场景总表）
   usage?: string; // 使用场景描述（匹配段的参考；总表人写定义）

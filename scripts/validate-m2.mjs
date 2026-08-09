@@ -36,11 +36,21 @@ else ok('id 集合一致');
 const badEntry = registry.entries.filter((e) => !e.name || !e.file || !e.group || !Array.isArray(e.props));
 if (badEntry.length) fail(`缺字段条目：${badEntry.map((e) => e.id).join(',')}`);
 else ok('每条目含 name/file/group/props');
+const badDur = registry.entries.filter((e) => !Number.isFinite(e.durationInFrames) || e.durationInFrames <= 0);
+if (badDur.length) fail(`时长缺失/非法：${badDur.map((e) => `${e.id}=${e.durationInFrames}`).join(',')}`);
+else ok('每条目 durationInFrames 为正数');
 const badProp = registry.entries.flatMap((e) =>
   e.props.filter((p) => !p.name || typeof p.type !== 'string' || typeof p.optional !== 'boolean').map((p) => `${e.id}.${p.name}`),
 );
 if (badProp.length) fail(`props 结构异常：${badProp.join(',')}`);
 else ok('props 字段结构正确');
+const badNested = registry.entries.flatMap((e) =>
+  e.props
+    .filter((p) => p.fields !== undefined && !Array.isArray(p.fields))
+    .map((p) => `${e.id}.${p.name}`),
+);
+if (badNested.length) fail(`嵌套 fields 结构异常：${badNested.join(',')}`);
+else ok('嵌套 fields 结构正确');
 
 // ---------- 2. storyboard：013B 真实文案 ----------
 console.log('[2] storyboard schema 校验（013B 真实文案）');
