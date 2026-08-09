@@ -65,6 +65,29 @@ export interface Storyboard {
   segments: StoryboardSegment[];
 }
 
+// ---------- 匹配候选（M3，机制见 docs/匹配机制-M3.md） ----------
+
+export interface MatchCandidate {
+  lensId: string; // 候选镜头 id
+  reason: string; // 匹配理由（一句话：段的实质 → 镜头定位）
+}
+
+export interface MatchSegment {
+  id: string; // 段 id（对应 StoryboardSegment.id）
+  core: string; // AI 写出的段实质（一句话核心含义）
+  top5: MatchCandidate[]; // 候选镜头（≤5，全部展示不折叠）
+  chosen?: string; // 人工定稿镜头 id（工作台保存后写入）
+}
+
+export interface MatchResult {
+  meta: {
+    title: string;
+    created: string;
+    standard?: string; // 校准测试集参考答案文件（可选）
+  };
+  segments: MatchSegment[];
+}
+
 // ---------- 转录（第一步产物，时间基准） ----------
 
 export interface TranscriptWord {
@@ -146,6 +169,29 @@ export function isStoryboard(x: unknown): x is Storyboard {
   if (!isObj(meta) || !isStr(meta.title) || !isStr(meta.created)) return false;
   if (!isSubtitleStyle(meta.subtitleStyle)) return false;
   return Array.isArray(x.segments) && x.segments.every(isStoryboardSegment);
+}
+
+export function isMatchCandidate(x: unknown): x is MatchCandidate {
+  return isObj(x) && isStr(x.lensId) && isStr(x.reason);
+}
+
+export function isMatchSegment(x: unknown): x is MatchSegment {
+  if (!isObj(x)) return false;
+  return (
+    isStr(x.id) &&
+    isStr(x.core) &&
+    Array.isArray(x.top5) &&
+    x.top5.every(isMatchCandidate) &&
+    (x.chosen === undefined || isStr(x.chosen))
+  );
+}
+
+export function isMatchResult(x: unknown): x is MatchResult {
+  if (!isObj(x)) return false;
+  const meta = x.meta;
+  if (!isObj(meta) || !isStr(meta.title) || !isStr(meta.created)) return false;
+  if (meta.standard !== undefined && !isStr(meta.standard)) return false;
+  return Array.isArray(x.segments) && x.segments.every(isMatchSegment);
 }
 
 export function isTranscript(x: unknown): x is Transcript {

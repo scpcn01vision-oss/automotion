@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generatedAt": "2026-08-08T23:19:23.064Z",
+    "generatedAt": "2026-08-08T23:38:32.728Z",
     "count": 122,
     "source": "Root.preview.tsx + docs/lens-names.md + 组件 XxxProps 接口 + docs/lens-scenes-draft.md"
   },
@@ -1966,7 +1966,7 @@
       "scenes": [
         "展开"
       ],
-      "usage": "关键词解释"
+      "usage": "把一个词/标签实体化成结论的揭穿（如「按Token计费」→「只算消耗，不看结果」）；适合揭示类内容，不适合纯展示"
     },
     {
       "id": "IconFieldColorize",

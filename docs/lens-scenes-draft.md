@@ -71,7 +71,7 @@
 | NeedleSweepSelftest | 指针自检 | 举证 | 多指标展示，仪表 |
 | TapeScrollFixedPointer | 刻度奔袭 | 举证 | 仅适合有统计意义的单指标刻度展示（如价格、数量、比例）；不适合文字含义或抽象概念 |
 | GradientWordSweep | 光扫词面 | 宣告 | 仅适合单个短词的扫光强调（如单句口号）；不适合长句、结论或段落级内容 |
-| HashtagToPillMaterialize | 标签化签 | 展开 | 关键词解释 |
+| HashtagToPillMaterialize | 标签化签 | 展开 | 把一个词/标签实体化成结论的揭穿（如「按Token计费」→「只算消耗，不看结果」）；适合揭示类内容，不适合纯展示 |
 | IconFieldColorize | 图标点亮 | 展开 | 图标墙 |
 | AttentionBounce | 注目弹跳 | 宣告 | 消息提醒 |
 | PopBurstConfirm | 爆点确认 | 宣告 | 任务完成 |
