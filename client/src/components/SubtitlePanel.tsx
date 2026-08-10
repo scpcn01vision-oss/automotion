@@ -17,7 +17,29 @@ const DEFAULT_STYLE: SubtitleStyle = {
   position: 'bottom',
   align: 'center',
   letterSpacing: 0,
+  enabled: true,
+  fontWeight: 400,
+  fontStyle: 'normal',
+  lineHeight: 1.35,
+  opacity: 100,
+  strokeEnabled: true,
+  backgroundOpacity: 100,
+  backgroundRadius: 0,
+  backgroundPadding: 0,
+  shadowColor: '#000000',
+  shadowBlur: 0,
+  shadowOpacity: 0,
+  shadowOffsetX: 0,
+  shadowOffsetY: 0,
 };
+
+// '#rrggbb'（或 3 位简写）→ rgba 字符串（阴影透明度用）
+function hexToRgba(hex: string, alpha: number): string {
+  let h = hex.replace('#', '');
+  if (h.length === 3) h = h.split('').map((c) => c + c).join('');
+  const n = parseInt(h, 16);
+  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${alpha})`;
+}
 
 // 不支持/拒绝 Local Font Access 时的候选字体
 const FALLBACK_FONTS: { label: string; family: string }[] = [
@@ -172,22 +194,38 @@ export const SubtitlePanel: React.FC<{
       effective.fontFamily ||
       '-apple-system, "Segoe UI", "Microsoft YaHei", sans-serif',
     fontSize: (effective.fontSize ?? 48) * scale,
-    lineHeight: 1.35,
+    lineHeight: effective.lineHeight ?? 1.35,
     color: effective.color ?? '#2c2416',
-    WebkitTextStroke: `${(effective.strokeWidth ?? 0) * scale}px ${
-      effective.strokeColor ?? 'transparent'
-    }`,
+    fontWeight: effective.fontWeight ?? 400,
+    fontStyle: effective.fontStyle ?? 'normal',
+    opacity: (effective.opacity ?? 100) / 100,
+    WebkitTextStroke:
+      (effective.strokeEnabled === false ? 0 : (effective.strokeWidth ?? 0) * scale) +
+      'px ' +
+      (effective.strokeColor ?? 'transparent'),
     letterSpacing: (effective.letterSpacing ?? 0) * scale,
     textAlign: effective.align ?? 'center',
+    textShadow:
+      (effective.shadowBlur ?? 0) > 0
+        ? `${(effective.shadowOffsetX ?? 0) * scale}px ${
+            (effective.shadowOffsetY ?? 0) * scale
+          }px ${(effective.shadowBlur ?? 0) * scale}px ${hexToRgba(
+            effective.shadowColor ?? '#000000',
+            (effective.shadowOpacity ?? 0) / 100,
+          )}`
+        : undefined,
     background:
       effective.backgroundColor && effective.backgroundColor !== 'transparent'
-        ? effective.backgroundColor
+        ? effective.backgroundColor +
+          Math.round((effective.backgroundOpacity ?? 100) * 2.55)
+            .toString(16)
+            .padStart(2, '0')
         : 'transparent',
     padding:
-      effective.backgroundColor && effective.backgroundColor !== 'transparent'
-        ? `${6 * scale}px ${16 * scale}px`
+      effective.backgroundColor && effective.backgroundColor !== 'transparent' && effective.backgroundPadding
+        ? `${(effective.backgroundPadding ?? 0) * scale}px`
         : '0',
-    borderRadius: 4,
+    borderRadius: (effective.backgroundRadius ?? 0) * scale,
     bottom: effective.position === 'top' ? undefined : effective.position === 'center' ? undefined : '8%',
     top: effective.position === 'top' ? '8%' : effective.position === 'center' ? '50%' : undefined,
     transform: effective.position === 'center' ? 'translateY(-50%)' : undefined,
@@ -321,6 +359,142 @@ export const SubtitlePanel: React.FC<{
             <option value="center">中</option>
             <option value="right">右</option>
           </select>
+        </label>
+        <label style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8, fontSize: 12 }}>
+          <input
+            type="checkbox"
+            checked={style.enabled !== false}
+            onChange={(e) => onChange({ enabled: e.target.checked })}
+          />
+          启用字幕（总开关）
+        </label>
+        <label style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8, fontSize: 12 }}>
+          <input
+            type="checkbox"
+            checked={effective.strokeEnabled !== false}
+            onChange={(e) => onChange({ strokeEnabled: e.target.checked })}
+          />
+          描边
+        </label>
+        <label style={{ display: 'block', marginBottom: 8, fontSize: 12 }}>
+          字重
+          <select
+            style={{ width: '100%', padding: '4px 6px' }}
+            value={String(effective.fontWeight)}
+            onChange={(e) => onChange({ fontWeight: Number(e.target.value) })}
+          >
+            <option value="400">常规</option>
+            <option value="500">中等</option>
+            <option value="700">加粗</option>
+          </select>
+        </label>
+        <label style={{ display: 'block', marginBottom: 8, fontSize: 12 }}>
+          斜体
+          <select
+            style={{ width: '100%', padding: '4px 6px' }}
+            value={effective.fontStyle}
+            onChange={(e) => onChange({ fontStyle: e.target.value as SubtitleStyle['fontStyle'] })}
+          >
+            <option value="normal">正常</option>
+            <option value="italic">斜体</option>
+          </select>
+        </label>
+        <label style={{ display: 'block', marginBottom: 8, fontSize: 12 }}>
+          行距
+          <input
+            style={{ width: '100%', padding: '4px 8px', boxSizing: 'border-box' }}
+            type="number"
+            step="0.05"
+            value={String(effective.lineHeight)}
+            onChange={(e) => onChange({ lineHeight: Number(e.target.value) })}
+          />
+        </label>
+        <label style={{ display: 'block', marginBottom: 8, fontSize: 12 }}>
+          整体不透明度 {effective.opacity}%
+          <input
+            style={{ width: '100%' }}
+            type="range"
+            min="0"
+            max="100"
+            value={String(effective.opacity)}
+            onChange={(e) => onChange({ opacity: Number(e.target.value) })}
+          />
+        </label>
+        <label style={{ display: 'block', marginBottom: 8, fontSize: 12 }}>
+          背景透明度 {effective.backgroundOpacity}%
+          <input
+            style={{ width: '100%' }}
+            type="range"
+            min="0"
+            max="100"
+            value={String(effective.backgroundOpacity)}
+            onChange={(e) => onChange({ backgroundOpacity: Number(e.target.value) })}
+          />
+        </label>
+        <label style={{ display: 'block', marginBottom: 8, fontSize: 12 }}>
+          背景圆角
+          <input
+            style={{ width: '100%', padding: '4px 8px', boxSizing: 'border-box' }}
+            type="number"
+            value={String(effective.backgroundRadius)}
+            onChange={(e) => onChange({ backgroundRadius: Number(e.target.value) })}
+          />
+        </label>
+        <label style={{ display: 'block', marginBottom: 8, fontSize: 12 }}>
+          背景内边距
+          <input
+            style={{ width: '100%', padding: '4px 8px', boxSizing: 'border-box' }}
+            type="number"
+            value={String(effective.backgroundPadding)}
+            onChange={(e) => onChange({ backgroundPadding: Number(e.target.value) })}
+          />
+        </label>
+        <label style={{ display: 'block', marginBottom: 8, fontSize: 12 }}>
+          阴影颜色
+          <input
+            style={{ width: '100%', padding: '4px 8px', boxSizing: 'border-box' }}
+            type="text"
+            value={effective.shadowColor ?? ''}
+            onChange={(e) => onChange({ shadowColor: e.target.value })}
+          />
+        </label>
+        <label style={{ display: 'block', marginBottom: 8, fontSize: 12 }}>
+          阴影模糊
+          <input
+            style={{ width: '100%', padding: '4px 8px', boxSizing: 'border-box' }}
+            type="number"
+            value={String(effective.shadowBlur)}
+            onChange={(e) => onChange({ shadowBlur: Number(e.target.value) })}
+          />
+        </label>
+        <label style={{ display: 'block', marginBottom: 8, fontSize: 12 }}>
+          阴影透明度 {effective.shadowOpacity}%
+          <input
+            style={{ width: '100%' }}
+            type="range"
+            min="0"
+            max="100"
+            value={String(effective.shadowOpacity)}
+            onChange={(e) => onChange({ shadowOpacity: Number(e.target.value) })}
+          />
+        </label>
+        <label style={{ display: 'block', marginBottom: 8, fontSize: 12 }}>
+          阴影 X 偏移
+          <input
+            style={{ width: '100%', padding: '4px 8px', boxSizing: 'border-box' }}
+            type="number"
+            value={String(effective.shadowOffsetX)}
+            onChange={(e) => onChange({ shadowOffsetX: Number(e.target.value) })}
+          />
+        </label>
+        <label style={{ display: 'block', marginBottom: 8, fontSize: 12 }}>
+          阴影 Y 偏移
+          <input
+            style={{ width: '100%', padding: '4px 8px', boxSizing: 'border-box' }}
+            type="number"
+            value={String(effective.shadowOffsetY)}
+            onChange={(e) => onChange({ shadowOffsetY: Number(e.target.value) })}
+          />
         </label>
         <div style={{ display: 'flex', gap: 6, marginTop: 14 }}>
           <button onClick={onBack} style={{ flex: 1, padding: '6px 0', cursor: 'pointer' }}>
