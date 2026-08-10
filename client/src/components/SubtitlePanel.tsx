@@ -261,6 +261,12 @@ export const SubtitlePanel: React.FC<{
               暂无第一段镜头数据，无法显示画框（字幕仍可预览）
             </div>
           )}
+          <div
+            style={{
+              position: 'absolute', left: '5%', right: '5%', top: '5%', bottom: '5%',
+              border: '1px dashed rgba(255,255,255,0.55)', pointerEvents: 'none',
+            }}
+          />
           <div style={{ ...subtitleBox, ...(style.enabled === false ? { display: 'none' } : {}) }}>
             四字效果
           </div>
@@ -289,6 +295,12 @@ export const SubtitlePanel: React.FC<{
               暂无第一段镜头数据，无法显示画框（字幕仍可预览）
             </div>
           )}
+          <div
+            style={{
+              position: 'absolute', left: '5%', right: '5%', top: '5%', bottom: '5%',
+              border: '1px dashed rgba(255,255,255,0.55)', pointerEvents: 'none',
+            }}
+          />
           <div style={{ ...subtitleBox, ...(style.enabled === false ? { display: 'none' } : {}) }}>
             用于展示十六字超长字幕的视觉效果
           </div>
