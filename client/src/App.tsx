@@ -58,6 +58,18 @@ export const App = () => {
     [registry, lensId],
   );
   const currentSegment = match?.segments.find((s) => s.id === currentSegmentId);
+  // 字幕环节画框背景：storyboard 第一段（seg-01）的镜头；未定稿用匹配 Top1 + 组件默认参数
+  const firstSegment = storyboard?.segments[0];
+  const firstLensId =
+    firstSegment?.lensId ||
+    match?.segments.find((s) => s.id === firstSegment?.id)?.top5?.[0]?.lensId ||
+    '';
+  const firstLensEntry = registry?.entries.find((e) => e.id === firstLensId) ?? null;
+  const firstLensParams = firstSegment?.lensId
+    ? (firstSegment.params as AnyLensProps)
+    : firstLensEntry
+      ? defaultParams(firstLensEntry.props)
+      : {};
 
   const lensNameOf = (id: string) => registry?.entries.find((e) => e.id === id)?.name ?? '';
 
@@ -169,6 +181,8 @@ export const App = () => {
           onChange={(patch) => setSubtitleStyle((prev) => ({ ...prev, ...patch }))}
           onSave={saveSubtitle}
           onBack={() => setStage('storyboard')}
+          firstLensEntry={firstLensEntry}
+          firstLensParams={firstLensParams}
         />
       </div>
     );
