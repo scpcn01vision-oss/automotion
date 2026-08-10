@@ -8,6 +8,7 @@ import {
   isStoryboard,
   isTranscript,
   isSubtitles,
+  isSubtitleStyle,
 } from '../shared/types.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -117,6 +118,36 @@ if (!isTranscript(transcript)) fail('转录最小示例未通过');
 else ok('转录 schema 校验通过');
 if (!isSubtitles(subtitles)) fail('字幕最小示例未通过');
 else ok('字幕 schema 校验通过');
+const styleOk = {
+  fontSize: 48,
+  enabled: true,
+  fontWeight: 700,
+  fontStyle: 'italic',
+  lineHeight: 1.5,
+  opacity: 80,
+  strokeEnabled: true,
+  backgroundOpacity: 50,
+  backgroundRadius: 8,
+  backgroundPadding: 10,
+  shadowColor: '#000000',
+  shadowBlur: 12,
+  shadowOpacity: 40,
+  shadowOffsetX: 2,
+  shadowOffsetY: 4,
+};
+if (!isSubtitleStyle(styleOk)) fail('带新字段的字幕样式未通过校验');
+else ok('带新字段的字幕样式校验通过');
+const badStyles = [
+  { opacity: 101 },
+  { opacity: -1 },
+  { fontStyle: 'bold' },
+  { lineHeight: '1.5' },
+  { strokeEnabled: 'yes' },
+  { shadowBlur: '12' },
+];
+const badAccepted = badStyles.filter((s) => isSubtitleStyle(s));
+if (badAccepted.length) fail(`非法字幕样式被接受：${JSON.stringify(badAccepted)}`);
+else ok('非法字幕样式被拒绝');
 
 // ---------- 4. 负面测试（校验函数必须能拒绝坏数据） ----------
 console.log('[4] 负面测试：校验函数拒绝坏数据');

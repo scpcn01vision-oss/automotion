@@ -45,6 +45,20 @@ export interface SubtitleStyle {
   position?: 'bottom' | 'top' | 'center';
   align?: 'left' | 'center' | 'right';
   letterSpacing?: number;
+  enabled?: boolean; // 字幕总开关（默认 true）
+  fontWeight?: number; // 字重 400/500/700
+  fontStyle?: 'normal' | 'italic'; // 斜体
+  lineHeight?: number; // 行距倍数
+  opacity?: number; // 整体不透明度 0-100
+  strokeEnabled?: boolean; // 描边开关（默认 true）
+  backgroundOpacity?: number; // 背景透明度 0-100
+  backgroundRadius?: number; // 背景圆角 px
+  backgroundPadding?: number; // 背景内边距 px
+  shadowColor?: string; // 阴影颜色
+  shadowBlur?: number; // 阴影模糊 px
+  shadowOpacity?: number; // 阴影透明度 0-100
+  shadowOffsetX?: number; // 阴影 X 偏移 px
+  shadowOffsetY?: number; // 阴影 Y 偏移 px
 }
 
 export interface StoryboardSegment {
@@ -141,11 +155,24 @@ export function isSubtitleStyle(x: unknown): x is SubtitleStyle {
   if (pos !== undefined && !['bottom', 'top', 'center'].includes(pos as string)) return false;
   const al = x.align;
   if (al !== undefined && !['left', 'center', 'right'].includes(al as string)) return false;
-  for (const k of ['fontSize', 'strokeWidth', 'letterSpacing'] as const) {
+  const fs = x.fontStyle;
+  if (fs !== undefined && !['normal', 'italic'].includes(fs as string)) return false;
+  for (const k of [
+    'fontSize', 'strokeWidth', 'letterSpacing', 'fontWeight', 'lineHeight',
+    'opacity', 'backgroundOpacity', 'backgroundRadius', 'backgroundPadding',
+    'shadowBlur', 'shadowOpacity', 'shadowOffsetX', 'shadowOffsetY',
+  ] as const) {
     if (x[k] !== undefined && !isNum(x[k])) return false;
   }
-  for (const k of ['fontFamily', 'color', 'strokeColor', 'backgroundColor'] as const) {
+  for (const k of ['opacity', 'backgroundOpacity', 'shadowOpacity'] as const) {
+    const v: unknown = x[k];
+    if (v !== undefined && (typeof v !== 'number' || v < 0 || v > 100)) return false;
+  }
+  for (const k of ['fontFamily', 'color', 'strokeColor', 'backgroundColor', 'shadowColor'] as const) {
     if (x[k] !== undefined && !isStr(x[k])) return false;
+  }
+  for (const k of ['enabled', 'strokeEnabled'] as const) {
+    if (x[k] !== undefined && typeof x[k] !== 'boolean') return false;
   }
   return true;
 }
