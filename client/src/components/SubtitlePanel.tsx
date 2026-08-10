@@ -160,7 +160,7 @@ export const SubtitlePanel: React.FC<{
     setFrameW(el.clientWidth);
     return () => ro.disconnect();
   }, []);
-  const scale = frameW / 1920;
+  const scale = Math.min(frameW, 1260) / 1920;
 
   const subtitleBox: CSSProperties = {
     position: 'absolute',
@@ -195,14 +195,42 @@ export const SubtitlePanel: React.FC<{
 
   return (
     <div style={{ display: 'flex', gap: 16, height: '100%' }}>
-      {/* 左：真实画框预览（第一段镜头第一帧 + 字幕叠加） */}
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 0 }}>
+      {/* 左：真实画框预览（双画框纵向排列，第一段镜头第一帧 + 字幕叠加，可滚动） */}
+      <div ref={frameRef} style={{ flex: 1, overflowY: 'auto', paddingRight: 8, minWidth: 0 }}>
         <div
-          ref={frameRef}
           style={{
             position: 'relative',
             width: '100%',
-            maxWidth: 1800,
+            maxWidth: 1260,
+            aspectRatio: '16 / 9',
+            borderRadius: 8,
+            overflow: 'hidden',
+            background: '#111',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
+            marginBottom: 16,
+          }}
+        >
+          {firstLensEntry ? (
+            <FrameBackground entry={firstLensEntry} params={firstLensParams} />
+          ) : (
+            <div
+              style={{
+                width: '100%', height: '100%', background: '#faf7f2', color: '#999',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13,
+              }}
+            >
+              暂无第一段镜头数据，无法显示画框（字幕仍可预览）
+            </div>
+          )}
+          <div style={{ ...subtitleBox, ...(style.enabled === false ? { display: 'none' } : {}) }}>
+            四字效果
+          </div>
+        </div>
+        <div
+          style={{
+            position: 'relative',
+            width: '100%',
+            maxWidth: 1260,
             aspectRatio: '16 / 9',
             borderRadius: 8,
             overflow: 'hidden',
@@ -222,7 +250,9 @@ export const SubtitlePanel: React.FC<{
               暂无第一段镜头数据，无法显示画框（字幕仍可预览）
             </div>
           )}
-          <div style={subtitleBox}>示例字幕：时势造英雄</div>
+          <div style={{ ...subtitleBox, ...(style.enabled === false ? { display: 'none' } : {}) }}>
+            用于展示十六字超长字幕的视觉效果
+          </div>
         </div>
       </div>
 
