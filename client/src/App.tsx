@@ -131,6 +131,7 @@ export const App = () => {
       .then((d) => {
         setStoryboard(d.storyboard);
         setSubtitleStyle(d.storyboard?.meta?.subtitleStyle ?? {});
+        applySegmentLens(currentSegmentId, d.storyboard);
         setSavedTip('已重新加载');
         setTimeout(() => setSavedTip(''), 2000);
       })
@@ -138,8 +139,8 @@ export const App = () => {
   };
 
   // 选中某段时：已定稿 → 加载保存的镜头+参数；未定稿 → 自动预选该段 Top 1
-  const applySegmentLens = (segId: string) => {
-    const saved = storyboard?.segments.find((s) => s.id === segId);
+  const applySegmentLens = (segId: string, board?: Storyboard | null) => {
+    const saved = (board !== undefined ? board : storyboard)?.segments.find((s) => s.id === segId);
     if (saved?.lensId) {
       selectLens(saved.lensId, saved.params as AnyLensProps | undefined);
       return;
@@ -228,6 +229,7 @@ export const App = () => {
                 loop
                 autoPlay
                 initiallyMuted // 工作台无声：静音绕过 AudioContext 时钟限制，实现零点击自动播放
+                acknowledgeRemotionLicense
                 errorFallback={() => (
                   <p style={{ color: '#c00', textAlign: 'center', padding: 40 }}>
                     镜头预览失败

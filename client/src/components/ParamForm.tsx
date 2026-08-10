@@ -1,15 +1,72 @@
 // 参数表单：递归渲染（基础类型 / 数组行编辑 / 嵌套对象 / JSON 兜底）
+import { useState } from 'react';
 import type { PropField } from '../../../shared/types';
 import type { AnyLensProps } from '../playback';
 
 const isArray = (t: string) => t.includes('[]');
-const isNumber = (t: string) => t === 'number';
+const isNumber = (t: string) => t === 'number' || /^-?\d+(?:\s*\|\s*-?\d+)+$/.test(t);
 const isBoolean = (t: string) => t === 'boolean';
+// 非标量结构：内联对象字面量 / 元组 / 值已是数组或对象（ReactNode、命名类型、tuple 等兜底）
+const looksStructured = (t: string, v: unknown) =>
+  t.includes('{') ||
+  t.trim().startsWith('[') ||
+  Array.isArray(v) ||
+  (v !== null && typeof v === 'object');
 
 function defaultFieldValue(f: PropField): unknown {
   if (isNumber(f.type)) return 0;
   if (isBoolean(f.type)) return false;
   return '';
+}
+
+// 深层未定类型 JSON 兜底：格式化 textarea，实时解析（非法 JSON 不更新，红框提示）
+function JsonFieldEditor({
+  value,
+  onChange,
+}: {
+  value: unknown;
+  onChange: (v: unknown) => void;
+}) {
+  const [draft, setDraft] = useState<string | null>(null);
+  const [invalid, setInvalid] = useState(false);
+  const text = draft ?? (value === undefined ? '' : JSON.stringify(value, null, 2));
+
+  return (
+    <div>
+      <textarea
+        style={{
+          width: '100%', padding: '4px 8px', boxSizing: 'border-box', fontSize: 12,
+          minHeight: 72, fontFamily: 'monospace',
+          border: invalid ? '1px solid #c00' : '1px solid #ccc',
+          borderRadius: 4,
+        }}
+        placeholder='未设置（用镜头默认值）——输入 JSON，如 {"title":"示例"}'
+        value={text}
+        onChange={(e) => {
+          setDraft(e.target.value);
+          const t = e.target.value.trim();
+          if (t === '') {
+            setInvalid(false);
+            onChange(undefined);
+            return;
+          }
+          try {
+            onChange(JSON.parse(t));
+            setInvalid(false);
+          } catch {
+            setInvalid(true);
+          }
+        }}
+        onBlur={() => {
+          setDraft(null);
+          setInvalid(false);
+        }}
+      />
+      {invalid && (
+        <div style={{ color: '#c00', fontSize: 11, marginTop: 2 }}>JSON 无效，未更新（修正后自动生效）</div>
+      )}
+    </div>
+  );
 }
 
 function FieldEditor({
@@ -81,23 +138,12 @@ function FieldEditor({
         </div>
       );
     }
-    // 简单数组（string[] 等）→ JSON 文本
-    return (
-      <div style={{ ...pad, marginBottom: 8 }}>
-        <input
-          style={{ width: '100%', padding: '4px 8px', boxSizing: 'border-box', fontSize: 12 }}
-          placeholder='JSON 数组，如 ["a","b"]'
-          value={value === undefined ? '' : JSON.stringify(value)}
-          onChange={(e) => {
-            try {
-              onChange(JSON.parse(e.target.value || '[]'));
-            } catch {
-              /* 输入中，暂不更新 */
-            }
-          }}
-        />
-      </div>
-    );
+  // 简单数组（string[] 等）→ JSON 兜底
+  return (
+    <div style={{ ...pad, marginBottom: 8 }}>
+      <JsonFieldEditor value={value} onChange={onChange} />
+    </div>
+  );
   }
 
   // 嵌套对象（有 fields）→ 递归子表单
@@ -142,6 +188,14 @@ function FieldEditor({
         value={String(value ?? '')}
         onChange={(e) => onChange(e.target.value)}
       />
+    );
+  }
+  // 深层未定类型（对象/元组/ReactNode 等）→ JSON 兜底
+  if (looksStructured(field.type, value)) {
+    return (
+      <div style={{ ...pad, marginBottom: 8 }}>
+        <JsonFieldEditor value={value} onChange={onChange} />
+      </div>
     );
   }
   return (

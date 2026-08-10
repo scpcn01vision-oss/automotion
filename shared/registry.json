@@ -1,8 +1,8 @@
 {
   "meta": {
-    "generatedAt": "2026-08-09T19:32:03.668Z",
+    "generatedAt": "2026-08-10T03:57:19.159Z",
     "count": 122,
-    "source": "Root.preview.tsx + docs/lens-names.md + 组件 XxxProps 接口 + docs/lens-scenes-draft.md"
+    "source": "Root.preview.tsx + docs/lens-names.md + 组件 XxxProps 接口（同文件/跨文件/内联对象字段）+ docs/lens-scenes-draft.md"
   },
   "entries": [
     {
@@ -52,7 +52,19 @@
             {
               "name": "rows",
               "type": "{ label: string; value: string }[]",
-              "optional": true
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
             },
             {
               "name": "image",
@@ -79,7 +91,19 @@
             {
               "name": "rows",
               "type": "{ label: string; value: string }[]",
-              "optional": true
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
             },
             {
               "name": "image",
@@ -180,7 +204,19 @@
             {
               "name": "rows",
               "type": "{ label: string; value: string }[]",
-              "optional": true
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
             },
             {
               "name": "image",
@@ -238,7 +274,19 @@
         {
           "name": "cardRows",
           "type": "{ label: string; value: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "value",
+              "type": "string",
+              "optional": false
+            }
+          ]
         }
       ],
       "scenes": [
@@ -287,12 +335,80 @@
         {
           "name": "sceneA",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         },
         {
           "name": "sceneB",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         }
       ],
       "scenes": [
@@ -392,7 +508,19 @@
             {
               "name": "rows",
               "type": "{ label: string; value: string }[]",
-              "optional": true
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
             },
             {
               "name": "image",
@@ -418,7 +546,19 @@
         {
           "name": "cards",
           "type": "{ label: string; value: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "value",
+              "type": "string",
+              "optional": false
+            }
+          ]
         },
         {
           "name": "pageTitle",
@@ -429,7 +569,19 @@
         {
           "name": "menuItems",
           "type": "{ icon: string; label: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "icon",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            }
+          ]
         },
         {
           "name": "searchText",
@@ -470,7 +622,19 @@
             {
               "name": "rows",
               "type": "{ label: string; value: string }[]",
-              "optional": true
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
             }
           ]
         },
@@ -487,7 +651,19 @@
             {
               "name": "rows",
               "type": "{ label: string; value: string }[]",
-              "optional": true
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
             }
           ]
         },
@@ -535,7 +711,19 @@
             {
               "name": "rows",
               "type": "{ label: string; value: string }[]",
-              "optional": true
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
             },
             {
               "name": "image",
@@ -607,7 +795,29 @@
         {
           "name": "segments",
           "type": "Seg[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "x1",
+              "type": "number",
+              "optional": false
+            },
+            {
+              "name": "y1",
+              "type": "number",
+              "optional": false
+            },
+            {
+              "name": "x2",
+              "type": "number",
+              "optional": false
+            },
+            {
+              "name": "y2",
+              "type": "number",
+              "optional": false
+            }
+          ]
         }
       ],
       "scenes": [
@@ -638,7 +848,41 @@
         {
           "name": "result",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         },
         {
           "name": "windowTitle",
@@ -711,12 +955,80 @@
         {
           "name": "sceneA",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         },
         {
           "name": "sceneB",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         }
       ],
       "scenes": [
@@ -841,7 +1153,41 @@
         {
           "name": "detail",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         }
       ],
       "scenes": [
@@ -859,7 +1205,19 @@
         {
           "name": "rows",
           "type": "{ label: string; value: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "value",
+              "type": "string",
+              "optional": false
+            }
+          ]
         }
       ],
       "scenes": [
@@ -940,7 +1298,19 @@
         {
           "name": "recentCards",
           "type": "{ title: string; sub: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "sub",
+              "type": "string",
+              "optional": false
+            }
+          ]
         },
         {
           "name": "tasks",
@@ -969,12 +1339,80 @@
         {
           "name": "sceneA",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         },
         {
           "name": "sceneB",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         }
       ],
       "scenes": [
@@ -998,12 +1436,36 @@
         {
           "name": "cards",
           "type": "{ label: string; value: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "value",
+              "type": "string",
+              "optional": false
+            }
+          ]
         },
         {
           "name": "menuItems",
           "type": "{ icon: string; label: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "icon",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            }
+          ]
         }
       ],
       "scenes": [
@@ -1022,7 +1484,41 @@
         {
           "name": "scene",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         }
       ],
       "scenes": [
@@ -1047,7 +1543,19 @@
         {
           "name": "cards",
           "type": "{ title: string; sub: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "sub",
+              "type": "string",
+              "optional": false
+            }
+          ]
         },
         {
           "name": "rowMeta",
@@ -1071,12 +1579,36 @@
         {
           "name": "cardA",
           "type": "{ label: string; value: string }",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "value",
+              "type": "string",
+              "optional": false
+            }
+          ]
         },
         {
           "name": "cardB",
           "type": "{ label: string; value: string }",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "value",
+              "type": "string",
+              "optional": false
+            }
+          ]
         }
       ],
       "scenes": [
@@ -1095,7 +1627,41 @@
         {
           "name": "scene",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         }
       ],
       "scenes": [
@@ -1113,12 +1679,36 @@
         {
           "name": "cards",
           "type": "{ label: string; value: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "value",
+              "type": "string",
+              "optional": false
+            }
+          ]
         },
         {
           "name": "sidebarItems",
           "type": "{ icon: string; label: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "icon",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            }
+          ]
         },
         {
           "name": "dashTitle",
@@ -1249,7 +1839,41 @@
         {
           "name": "scene",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         },
         {
           "name": "alertText",
@@ -1260,7 +1884,19 @@
         {
           "name": "solution",
           "type": "{ title: string; value: string }",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "value",
+              "type": "string",
+              "optional": false
+            }
+          ]
         }
       ],
       "scenes": [
@@ -1285,7 +1921,19 @@
         {
           "name": "cards",
           "type": "{ label: string; value: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "value",
+              "type": "string",
+              "optional": false
+            }
+          ]
         }
       ],
       "scenes": [
@@ -1304,17 +1952,97 @@
         {
           "name": "sceneA",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         },
         {
           "name": "sceneB",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         },
         {
           "name": "card",
           "type": "{ label: string; value: string }",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "value",
+              "type": "string",
+              "optional": false
+            }
+          ]
         }
       ],
       "scenes": [
@@ -1333,12 +2061,80 @@
         {
           "name": "sceneA",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         },
         {
           "name": "sceneB",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         },
         {
           "name": "nextTitle",
@@ -1363,12 +2159,80 @@
         {
           "name": "sceneA",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         },
         {
           "name": "sceneB",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         },
         {
           "name": "vsText",
@@ -1393,12 +2257,80 @@
         {
           "name": "sceneA",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         },
         {
           "name": "sceneB",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         }
       ],
       "scenes": [
@@ -1418,12 +2350,80 @@
         {
           "name": "sceneA",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         },
         {
           "name": "sceneB",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         }
       ],
       "scenes": [
@@ -1518,7 +2518,19 @@
         {
           "name": "cards",
           "type": "{ label: string; value: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "value",
+              "type": "string",
+              "optional": false
+            }
+          ]
         }
       ],
       "scenes": [
@@ -1536,7 +2548,19 @@
         {
           "name": "cards",
           "type": "{ label: string; value: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "value",
+              "type": "string",
+              "optional": false
+            }
+          ]
         },
         {
           "name": "dashTitle",
@@ -1566,7 +2590,19 @@
         {
           "name": "card",
           "type": "{ label: string; value: string }",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "value",
+              "type": "string",
+              "optional": false
+            }
+          ]
         }
       ],
       "scenes": [
@@ -1585,7 +2621,19 @@
         {
           "name": "cards",
           "type": "{ label: string; value: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "value",
+              "type": "string",
+              "optional": false
+            }
+          ]
         }
       ],
       "scenes": [
@@ -1604,7 +2652,19 @@
         {
           "name": "card",
           "type": "{ label: string; value: string }",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "value",
+              "type": "string",
+              "optional": false
+            }
+          ]
         }
       ],
       "scenes": [
@@ -1629,7 +2689,19 @@
         {
           "name": "sidebarItems",
           "type": "{ icon: string; label: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "icon",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            }
+          ]
         },
         {
           "name": "dashTitle",
@@ -1652,7 +2724,41 @@
         {
           "name": "cards",
           "type": "SceneContentData[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         }
       ],
       "scenes": [
@@ -1677,7 +2783,19 @@
         {
           "name": "rightWords",
           "type": "{ word: string; dur: number }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "word",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "dur",
+              "type": "number",
+              "optional": false
+            }
+          ]
         },
         {
           "name": "subtitle",
@@ -1713,7 +2831,19 @@
         {
           "name": "contentRows",
           "type": "{ label: string; value: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "value",
+              "type": "string",
+              "optional": false
+            }
+          ]
         }
       ],
       "scenes": [
@@ -1870,12 +3000,58 @@
         {
           "name": "cards",
           "type": "SceneContentData[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         },
         {
           "name": "sidebarItems",
           "type": "{ icon: string; label: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "icon",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            }
+          ]
         },
         {
           "name": "toolbarChips",
@@ -1885,7 +3061,19 @@
         {
           "name": "panelFields",
           "type": "{ label: string; value: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "value",
+              "type": "string",
+              "optional": false
+            }
+          ]
         },
         {
           "name": "canvasTitle",
@@ -2074,12 +3262,80 @@
         {
           "name": "before",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         },
         {
           "name": "after",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         }
       ],
       "scenes": [
@@ -2098,12 +3354,80 @@
         {
           "name": "sceneA",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         },
         {
           "name": "sceneB",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         }
       ],
       "scenes": [
@@ -2128,7 +3452,19 @@
         {
           "name": "nodes",
           "type": "{ title: string; sub: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "sub",
+              "type": "string",
+              "optional": false
+            }
+          ]
         }
       ],
       "scenes": [
@@ -2164,12 +3500,58 @@
         {
           "name": "rows",
           "type": "{ icon: string; title: string; value: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "icon",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "title",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "value",
+              "type": "string",
+              "optional": false
+            }
+          ]
         },
         {
           "name": "cards",
           "type": "{ title: string; rows: { label: string; value: string }[]; name: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": false,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "optional": false
+            }
+          ]
         }
       ],
       "scenes": [
@@ -2198,7 +3580,19 @@
         {
           "name": "notes",
           "type": "{ title: string; lines: string[] }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "lines",
+              "type": "string[]",
+              "optional": false
+            }
+          ]
         },
         {
           "name": "noteTitle",
@@ -2247,7 +3641,41 @@
         {
           "name": "scene",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         },
         {
           "name": "query",
@@ -2264,7 +3692,29 @@
         {
           "name": "commands",
           "type": "{ icon: string; label: string; kbd: string; exitAt: number }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "icon",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "kbd",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "exitAt",
+              "type": "number",
+              "optional": false
+            }
+          ]
         }
       ],
       "scenes": [
@@ -2325,7 +3775,7 @@
       "props": [
         {
           "name": "lines",
-          "type": "[string, string]",
+          "type": "[string",
           "optional": true
         }
       ],
@@ -2398,7 +3848,41 @@
         {
           "name": "panel",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         }
       ],
       "scenes": [
@@ -2435,7 +3919,41 @@
         {
           "name": "scene",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         }
       ],
       "scenes": [
@@ -2661,7 +4179,19 @@
         {
           "name": "pills",
           "type": "{ label: string; icon: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "icon",
+              "type": "string",
+              "optional": false
+            }
+          ]
         },
         {
           "name": "finale",
@@ -2697,7 +4227,29 @@
         {
           "name": "rows",
           "type": "{ icon: string; title: string; sub: string; value: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "icon",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "title",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "sub",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "value",
+              "type": "string",
+              "optional": false
+            }
+          ]
         },
         {
           "name": "tagText",
@@ -2721,7 +4273,24 @@
         {
           "name": "items",
           "type": "{ tag: string; title: string; meta: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "tag",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "title",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "meta",
+              "type": "string",
+              "optional": false
+            }
+          ]
         }
       ],
       "scenes": [
@@ -2774,7 +4343,19 @@
         {
           "name": "messages",
           "type": "{ name: string; text: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "name",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "text",
+              "type": "string",
+              "optional": false
+            }
+          ]
         }
       ],
       "scenes": [
@@ -2809,7 +4390,29 @@
         {
           "name": "rows",
           "type": "{ title: string; meta: string; detail: string; note: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "meta",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "detail",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "note",
+              "type": "string",
+              "optional": false
+            }
+          ]
         }
       ],
       "scenes": [
@@ -2834,7 +4437,19 @@
         {
           "name": "sidebarItems",
           "type": "{ icon: string; label: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "icon",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            }
+          ]
         },
         {
           "name": "sectionLabel",
@@ -2845,7 +4460,19 @@
         {
           "name": "subItems",
           "type": "{ icon: string; label: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "icon",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            }
+          ]
         },
         {
           "name": "searchText",
@@ -2856,7 +4483,36 @@
         {
           "name": "columns",
           "type": "{ title: string; rows: { title: string; sub: string; status?: string }[] }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "rows",
+              "type": "{ title: string; sub: string; status?: string }[]",
+              "optional": false,
+              "fields": [
+                {
+                  "name": "title",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "sub",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "status",
+                  "type": "string",
+                  "optional": true
+                }
+              ]
+            }
+          ]
         }
       ],
       "scenes": [
@@ -2881,7 +4537,19 @@
         {
           "name": "sidebarItems",
           "type": "{ icon: string; label: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "icon",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            }
+          ]
         },
         {
           "name": "sectionLabel",
@@ -2892,7 +4560,19 @@
         {
           "name": "subItems",
           "type": "{ icon: string; label: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "icon",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            }
+          ]
         },
         {
           "name": "searchText",
@@ -2908,7 +4588,31 @@
         {
           "name": "columns",
           "type": "{ title: string; rows: { title: string; sub: string }[] }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "rows",
+              "type": "{ title: string; sub: string }[]",
+              "optional": false,
+              "fields": [
+                {
+                  "name": "title",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "sub",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            }
+          ]
         }
       ],
       "scenes": [
@@ -2947,7 +4651,24 @@
         {
           "name": "lines",
           "type": "Word[][]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "text",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "start",
+              "type": "number",
+              "optional": false
+            },
+            {
+              "name": "end",
+              "type": "number",
+              "optional": false
+            }
+          ]
         }
       ],
       "scenes": [
@@ -2986,7 +4707,41 @@
         {
           "name": "cards",
           "type": "SceneContentData[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         }
       ],
       "scenes": [
@@ -3005,7 +4760,41 @@
         {
           "name": "card",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         }
       ],
       "scenes": [
@@ -3030,7 +4819,19 @@
         {
           "name": "words",
           "type": "{ text: string; accent?: boolean }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "text",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "accent",
+              "type": "boolean",
+              "optional": true
+            }
+          ]
         },
         {
           "name": "sub",
@@ -3078,12 +4879,36 @@
         {
           "name": "menuItems",
           "type": "{ icon: string; label: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "icon",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            }
+          ]
         },
         {
           "name": "subMenuItems",
           "type": "{ icon: string; label: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "icon",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            }
+          ]
         },
         {
           "name": "sectionLabel",
@@ -3106,7 +4931,19 @@
         {
           "name": "chips",
           "type": "{ title: string; sub: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "sub",
+              "type": "string",
+              "optional": false
+            }
+          ]
         },
         {
           "name": "statLabels",
@@ -3116,7 +4953,19 @@
         {
           "name": "rows",
           "type": "{ title: string; avatars: string[] }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "avatars",
+              "type": "string[]",
+              "optional": false
+            }
+          ]
         }
       ],
       "scenes": [
@@ -3140,12 +4989,36 @@
         {
           "name": "menuItems",
           "type": "{ icon: string; label: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "icon",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            }
+          ]
         },
         {
           "name": "subMenuItems",
           "type": "{ icon: string; label: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "icon",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            }
+          ]
         },
         {
           "name": "sectionLabel",
@@ -3168,7 +5041,19 @@
         {
           "name": "chips",
           "type": "{ title: string; sub: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "sub",
+              "type": "string",
+              "optional": false
+            }
+          ]
         },
         {
           "name": "statLabels",
@@ -3178,7 +5063,19 @@
         {
           "name": "rows",
           "type": "{ title: string; avatars: string[] }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "avatars",
+              "type": "string[]",
+              "optional": false
+            }
+          ]
         }
       ],
       "scenes": [
@@ -3282,7 +5179,19 @@
         {
           "name": "cardRows",
           "type": "{ label: string; value: string }[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "value",
+              "type": "string",
+              "optional": false
+            }
+          ]
         }
       ],
       "scenes": [
@@ -3319,7 +5228,39 @@
         {
           "name": "words",
           "type": "Word[]",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "text",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "start",
+              "type": "number",
+              "optional": false
+            },
+            {
+              "name": "end",
+              "type": "number",
+              "optional": false
+            },
+            {
+              "name": "rot",
+              "type": "number",
+              "optional": false
+            },
+            {
+              "name": "flashLen",
+              "type": "number",
+              "optional": false
+            },
+            {
+              "name": "flashDark",
+              "type": "string",
+              "optional": false
+            }
+          ]
         },
         {
           "name": "footer",
@@ -3389,7 +5330,41 @@
         {
           "name": "panel",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         }
       ],
       "scenes": [
@@ -3407,12 +5382,68 @@
         {
           "name": "scene",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         },
         {
           "name": "focus",
           "type": "{ x: number; y: number; w: number; h: number }",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "x",
+              "type": "number",
+              "optional": false
+            },
+            {
+              "name": "y",
+              "type": "number",
+              "optional": false
+            },
+            {
+              "name": "w",
+              "type": "number",
+              "optional": false
+            },
+            {
+              "name": "h",
+              "type": "number",
+              "optional": false
+            }
+          ]
         }
       ],
       "scenes": [
@@ -3430,12 +5461,80 @@
         {
           "name": "sceneA",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         },
         {
           "name": "sceneB",
           "type": "SceneContentData",
-          "optional": true
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         }
       ],
       "scenes": [

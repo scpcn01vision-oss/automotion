@@ -47,7 +47,7 @@ export function normalizeParams(params: AnyLensProps, fields: PropField[]): AnyL
         : v;
     } else if (f.fields && typeof v === 'object' && v !== null) {
       out[f.name] = normalizeParams(v as AnyLensProps, f.fields);
-    } else if (f.type === 'number') {
+    } else if (f.type === 'number' || /^-?\d+(?:\s*\|\s*-?\d+)+$/.test(f.type)) {
       out[f.name] = v === '' ? 0 : Number(v);
     } else if (f.type === 'boolean') {
       out[f.name] = v === 'true' || v === true;

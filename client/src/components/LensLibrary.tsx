@@ -46,6 +46,7 @@ function HoverPlayer({ entry }: { entry: LensRegistryEntry }) {
         loop
         autoPlay
         initiallyMuted // 工作台无声：静音绕过 AudioContext 时钟限制，实现零点击自动播放
+        acknowledgeRemotionLicense
         errorFallback={() => (
           <div style={{ width: 360, height: 202, background: '#222', color: '#aaa', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12 }}>
             预览失败

@@ -56,8 +56,43 @@ function findLensFile(id) {
 }
 
 // ---------- 4. Props 接口字段提取（递归：自定义对象/数组类型 → fields 树） ----------
-function parseInterfaceFields(src, interfaceName) {
-  const re = new RegExp(`export interface ${interfaceName}\\s*\\{`);
+// 支持：同文件 interface / type 别名、跨文件导出类型（globalTypes）、内联对象字面量 { ... }
+function stripComments(s) {
+  return s.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/\/\/[^\n]*/g, ' ');
+}
+
+// 顶层字段片段拆分（深度感知，嵌套 {} 内的 ; / , 不拆分；支持多行 interface）
+function splitTopLevel(body) {
+  const parts = [];
+  let depth = 0;
+  let cur = '';
+  for (const ch of body) {
+    if (ch === '{') depth++;
+    else if (ch === '}') depth--;
+    if ((ch === ';' || ch === ',') && depth === 0) {
+      parts.push(cur);
+      cur = '';
+    } else {
+      cur += ch;
+    }
+  }
+  if (cur.trim()) parts.push(cur);
+  return parts;
+}
+
+function parseFieldsBody(body) {
+  const fields = [];
+  for (const raw of splitTopLevel(stripComments(body))) {
+    const fm = raw.match(/^\s*(\w+)(\??)\s*:\s*(.+?)\s*$/);
+    if (!fm || fm[1] === 'id') continue;
+    fields.push({ name: fm[1], type: fm[3].trim(), optional: fm[2] === '?' });
+  }
+  return fields;
+}
+
+// 解析「(export) interface X { ... }」或「(export) type X = { ... }」的对象体字段
+function parseObjectTypeFields(src, name) {
+  const re = new RegExp(`(?:export\\s+)?(?:interface\\s+${name}\\s*|type\\s+${name}\\s*=\\s*)\\{`);
   const m = src.match(re);
   if (!m) return null;
   const start = src.indexOf('{', m.index);
@@ -70,32 +105,71 @@ function parseInterfaceFields(src, interfaceName) {
       if (depth === 0) break;
     }
   }
-  const body = src.slice(start + 1, j);
-  const fields = [];
-  for (const line of body.split('\n')) {
-    const fm = line.match(/^\s*(\w+)(\??)\s*:\s*(.+?)\s*[;,]?\s*$/);
-    if (!fm || fm[1] === 'id') continue;
-    // 剥离行内注释与结尾分号（类型内可能含 { a; b } 分号，先剥 // 再取尾分号）
-    let type = fm[3];
-    const ci = type.indexOf('//');
-    if (ci > -1) type = type.slice(0, ci);
-    type = type.replace(/[;,]+\s*$/, '').trim();
-    fields.push({ name: fm[1], type, optional: fm[2] === '?' });
-  }
-  return fields;
+  const fields = parseFieldsBody(src.slice(start + 1, j));
+  return fields.length > 0 ? fields : null;
 }
 
-// 解析嵌套：type 为自定义类型（大写开头，可带 []）时，从同文件接口递归提取字段
-function resolveNested(src, type) {
-  const base = type.replace(/\[\]$/, '').trim();
-  if (!/^[A-Z]/.test(base)) return undefined; // 基础类型/字面量不递归
-  const fields = parseInterfaceFields(src, base);
+// 内联对象字面量 { ... }（可带数组后缀）：返回对象体
+function splitInlineObject(type) {
+  const t = type.trim();
+  if (t[0] !== '{') return null;
+  let depth = 0;
+  for (let i = 0; i < t.length; i++) {
+    if (t[i] === '{') depth++;
+    else if (t[i] === '}') {
+      depth--;
+      if (depth === 0) return { body: t.slice(1, i), rest: t.slice(i + 1).trim() };
+    }
+  }
+  return null;
+}
+
+// 跨文件导出类型索引（export interface / export type X = {...}；供不同文件间引用）
+const globalTypes = new Map();
+function buildGlobalTypeIndex() {
+  const lensRoot = path.join(ROOT, 'lenses');
+  const walk = (dir) => {
+    for (const e of readdirSync(dir, { withFileTypes: true })) {
+      if (e.name === 'node_modules') continue;
+      const p = path.join(dir, e.name);
+      if (e.isDirectory()) walk(p);
+      else if (e.name.endsWith('.tsx')) {
+        const src = readFileSync(p, 'utf8');
+        for (const m of src.matchAll(/export\s+(?:interface|type)\s+(\w+)\s*(?:=\s*)?\{/g)) {
+          if (globalTypes.has(m[1])) continue;
+          const fields = parseObjectTypeFields(src, m[1]);
+          if (fields) globalTypes.set(m[1], fields);
+        }
+      }
+    }
+  };
+  walk(lensRoot);
+}
+
+// 解析嵌套：类型为自定义类型（大写开头，可带 []）或内联对象字面量时，递归提取字段
+// 解析顺序：同文件 interface/type → 跨文件导出类型 → 内联对象字面量
+function resolveNested(src, type, seen = new Set()) {
+  let base = type.trim();
+  while (base.endsWith('[]')) base = base.slice(0, -2).trim();
+  if (!base) return undefined;
+
+  let fields = null;
+  if (base[0] === '{') {
+    const inline = splitInlineObject(base);
+    if (inline) fields = parseFieldsBody(inline.body);
+  } else if (/^[A-Z]/.test(base)) {
+    if (seen.has(base)) return undefined; // 防自引用/循环
+    fields = parseObjectTypeFields(src, base) ?? globalTypes.get(base) ?? null;
+  }
   if (!fields || fields.length === 0) return undefined;
-  return fields.map((f) => ({ ...f, fields: resolveNested(src, f.type) }));
+
+  const next = new Set(seen);
+  next.add(base);
+  return fields.map((f) => ({ ...f, fields: resolveNested(src, f.type, next) }));
 }
 
 function extractProps(src, id) {
-  const fields = parseInterfaceFields(src, `${id}Props`);
+  const fields = parseObjectTypeFields(src, `${id}Props`);
   if (!fields) return null;
   const defaults = parseComponentDefaults(src, id);
   return fields.map((f) => ({
@@ -142,6 +216,7 @@ for (const line of scenesSrc.split('\n')) {
 }
 
 // ---------- 生成 ----------
+buildGlobalTypeIndex();
 const entries = ids.map((id) => {
   const meta = nameMap.get(id);
   const sc = sceneMap.get(id);
@@ -165,7 +240,7 @@ const registry = {
   meta: {
     generatedAt: new Date().toISOString(),
     count: entries.length,
-    source: 'Root.preview.tsx + docs/lens-names.md + 组件 XxxProps 接口 + docs/lens-scenes-draft.md',
+    source: 'Root.preview.tsx + docs/lens-names.md + 组件 XxxProps 接口（同文件/跨文件/内联对象字段）+ docs/lens-scenes-draft.md',
   },
   entries,
 };
