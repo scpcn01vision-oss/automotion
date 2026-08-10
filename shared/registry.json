@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generatedAt": "2026-08-10T03:57:19.159Z",
+    "generatedAt": "2026-08-10T04:28:09.782Z",
     "count": 122,
     "source": "Root.preview.tsx + docs/lens-names.md + 组件 XxxProps 接口（同文件/跨文件/内联对象字段）+ docs/lens-scenes-draft.md"
   },
@@ -3775,7 +3775,7 @@
       "props": [
         {
           "name": "lines",
-          "type": "[string",
+          "type": "[string, string]",
           "optional": true
         }
       ],

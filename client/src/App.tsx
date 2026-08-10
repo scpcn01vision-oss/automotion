@@ -61,7 +61,7 @@ export const App = () => {
 
   const lensNameOf = (id: string) => registry?.entries.find((e) => e.id === id)?.name ?? '';
 
-  const selectLens = (id: string, preset?: AnyLensProps) => {
+  const selectLens = (id: string, preset?: AnyLensProps, board?: Storyboard | null) => {
     const e = registry?.entries.find((x) => x.id === id);
     if (!e) return;
     setLoadError('');
@@ -72,8 +72,9 @@ export const App = () => {
       .catch((err) => setLoadError(String(err.message ?? err)));
     // 防重复提示：与前面 <5 段内已用镜头重复
     const idx = segments.findIndex((s) => s.id === currentSegmentId);
-    if (storyboard && idx > -1) {
-      const prev = storyboard.segments.slice(Math.max(0, idx - 5), idx);
+    const boardRef = board !== undefined ? board : storyboard;
+    if (boardRef && idx > -1) {
+      const prev = boardRef.segments.slice(Math.max(0, idx - 5), idx);
       if (prev.some((s) => s.lensId === id)) {
         setRepeatWarning(`提示：${id} 在前面 5 段内已使用过（间隔 <5 段，可人工决定是否复用）`);
       } else {
@@ -142,7 +143,7 @@ export const App = () => {
   const applySegmentLens = (segId: string, board?: Storyboard | null) => {
     const saved = (board !== undefined ? board : storyboard)?.segments.find((s) => s.id === segId);
     if (saved?.lensId) {
-      selectLens(saved.lensId, saved.params as AnyLensProps | undefined);
+      selectLens(saved.lensId, saved.params as AnyLensProps | undefined, board);
       return;
     }
     const m = match?.segments.find((s) => s.id === segId);

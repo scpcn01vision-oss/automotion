@@ -51,6 +51,19 @@ const badNested = registry.entries.flatMap((e) =>
 );
 if (badNested.length) fail(`嵌套 fields 结构异常：${badNested.join(',')}`);
 else ok('嵌套 fields 结构正确');
+// 类型括号配对（元组/泛型完整性，防生成器截断如 [string）
+const bracketMismatch = registry.entries.flatMap((e) => {
+  const walk = (props, prefix) =>
+    props.flatMap((p) => {
+      const opens = (p.type.match(/\[/g) || []).length;
+      const closes = (p.type.match(/\]/g) || []).length;
+      const bad = opens !== closes ? [`${prefix}${p.name}（${p.type}）`] : [];
+      return bad.concat(p.fields ? walk(p.fields, `${prefix}${p.name}.`) : []);
+    });
+  return walk(e.props, `${e.id}.`);
+});
+if (bracketMismatch.length) fail(`字段类型括号不配对（疑似截断）：${bracketMismatch.slice(0, 8).join('; ')}`);
+else ok('字段类型括号配对（元组/数组完整性）');
 
 // ---------- 2. storyboard：013B 真实文案 ----------
 console.log('[2] storyboard schema 校验（013B 真实文案）');

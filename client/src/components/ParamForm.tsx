@@ -1,5 +1,5 @@
 // 参数表单：递归渲染（基础类型 / 数组行编辑 / 嵌套对象 / JSON 兜底）
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { PropField } from '../../../shared/types';
 import type { AnyLensProps } from '../playback';
 
@@ -23,13 +23,29 @@ function defaultFieldValue(f: PropField): unknown {
 function JsonFieldEditor({
   value,
   onChange,
+  placeholder,
 }: {
   value: unknown;
   onChange: (v: unknown) => void;
+  placeholder: string;
 }) {
   const [draft, setDraft] = useState<string | null>(null);
   const [invalid, setInvalid] = useState(false);
   const text = draft ?? (value === undefined ? '' : JSON.stringify(value, null, 2));
+
+  // 外部 value 变化（reload/换段）时清 draft；本次输入回传的解析结果与 value 一致时保留 draft
+  useEffect(() => {
+    setDraft((d) => {
+      if (d === null) return null;
+      try {
+        if (JSON.stringify(JSON.parse(d)) === JSON.stringify(value)) return d;
+      } catch {
+        return null; // 空/非法草稿且 value 已变化：显示新值
+      }
+      return null;
+    });
+    setInvalid(false);
+  }, [value]);
 
   return (
     <div>
@@ -40,7 +56,7 @@ function JsonFieldEditor({
           border: invalid ? '1px solid #c00' : '1px solid #ccc',
           borderRadius: 4,
         }}
-        placeholder='未设置（用镜头默认值）——输入 JSON，如 {"title":"示例"}'
+        placeholder={placeholder}
         value={text}
         onChange={(e) => {
           setDraft(e.target.value);
@@ -141,7 +157,11 @@ function FieldEditor({
   // 简单数组（string[] 等）→ JSON 兜底
   return (
     <div style={{ ...pad, marginBottom: 8 }}>
-      <JsonFieldEditor value={value} onChange={onChange} />
+      <JsonFieldEditor
+        value={value}
+        onChange={onChange}
+        placeholder='未设置（用镜头默认值）——输入 JSON 数组，如 ["a","b"]'
+      />
     </div>
   );
   }
@@ -194,7 +214,15 @@ function FieldEditor({
   if (looksStructured(field.type, value)) {
     return (
       <div style={{ ...pad, marginBottom: 8 }}>
-        <JsonFieldEditor value={value} onChange={onChange} />
+        <JsonFieldEditor
+          value={value}
+          onChange={onChange}
+          placeholder={
+            Array.isArray(value)
+              ? '未设置（用镜头默认值）——输入 JSON 数组，如 ["a","b"]'
+              : '未设置（用镜头默认值）——输入 JSON 对象，如 {"title":"示例"}'
+          }
+        />
       </div>
     );
   }

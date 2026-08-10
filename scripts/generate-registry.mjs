@@ -61,15 +61,17 @@ function stripComments(s) {
   return s.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/\/\/[^\n]*/g, ' ');
 }
 
-// 顶层字段片段拆分（深度感知，嵌套 {} 内的 ; / , 不拆分；支持多行 interface）
+// 顶层字段片段拆分（深度感知：{} / [] / () 内的 ; , 不拆分；支持多行 interface 与元组）
 function splitTopLevel(body) {
   const parts = [];
-  let depth = 0;
+  const stack = [];
+  const open = { '{': '}', '[': ']', '(': ')' };
+  const close = { '}': '{', ']': '[', ')': '(' };
   let cur = '';
   for (const ch of body) {
-    if (ch === '{') depth++;
-    else if (ch === '}') depth--;
-    if ((ch === ';' || ch === ',') && depth === 0) {
+    if (open[ch]) stack.push(ch);
+    else if (close[ch] && stack[stack.length - 1] === close[ch]) stack.pop();
+    if ((ch === ';' || ch === ',') && stack.length === 0) {
       parts.push(cur);
       cur = '';
     } else {
@@ -90,22 +92,52 @@ function parseFieldsBody(body) {
   return fields;
 }
 
+// 从 src[startIndex]（开括号 '{'）起做深度匹配，跳过注释与字符串字面量，返回闭合 '}' 的下标
+function findObjectBody(src, startIndex) {
+  let depth = 0;
+  let i = startIndex;
+  while (i < src.length) {
+    const ch = src[i];
+    if (ch === '/' && src[i + 1] === '/') {
+      i += 2;
+      while (i < src.length && src[i] !== '\n') i++;
+      continue;
+    }
+    if (ch === '/' && src[i + 1] === '*') {
+      i += 2;
+      while (i < src.length && !(src[i] === '*' && src[i + 1] === '/')) i++;
+      i += 2;
+      continue;
+    }
+    if (ch === "'" || ch === '"' || ch === '`') {
+      const quote = ch;
+      i++;
+      while (i < src.length && src[i] !== quote) {
+        if (src[i] === '\\') i++;
+        i++;
+      }
+      i++;
+      continue;
+    }
+    if (ch === '{') depth++;
+    else if (ch === '}') {
+      depth--;
+      if (depth === 0) return i;
+    }
+    i++;
+  }
+  return -1;
+}
+
 // 解析「(export) interface X { ... }」或「(export) type X = { ... }」的对象体字段
 function parseObjectTypeFields(src, name) {
   const re = new RegExp(`(?:export\\s+)?(?:interface\\s+${name}\\s*|type\\s+${name}\\s*=\\s*)\\{`);
   const m = src.match(re);
   if (!m) return null;
   const start = src.indexOf('{', m.index);
-  let depth = 0;
-  let j = start;
-  for (; j < src.length; j++) {
-    if (src[j] === '{') depth++;
-    else if (src[j] === '}') {
-      depth--;
-      if (depth === 0) break;
-    }
-  }
-  const fields = parseFieldsBody(src.slice(start + 1, j));
+  const end = findObjectBody(src, start);
+  if (end < 0) return null;
+  const fields = parseFieldsBody(src.slice(start + 1, end));
   return fields.length > 0 ? fields : null;
 }
 
@@ -114,12 +146,25 @@ function splitInlineObject(type) {
   const t = type.trim();
   if (t[0] !== '{') return null;
   let depth = 0;
-  for (let i = 0; i < t.length; i++) {
-    if (t[i] === '{') depth++;
-    else if (t[i] === '}') {
+  let i = 0;
+  while (i < t.length) {
+    const ch = t[i];
+    if (ch === "'" || ch === '"') {
+      const quote = ch;
+      i++;
+      while (i < t.length && t[i] !== quote) {
+        if (t[i] === '\\') i++;
+        i++;
+      }
+      i++;
+      continue;
+    }
+    if (ch === '{') depth++;
+    else if (ch === '}') {
       depth--;
       if (depth === 0) return { body: t.slice(1, i), rest: t.slice(i + 1).trim() };
     }
+    i++;
   }
   return null;
 }
