@@ -6,6 +6,7 @@ import { Player } from '@remotion/player';
 import type { LensRegistryEntry, SubtitleStyle } from '../../../shared/types';
 import { loadLensComponent } from '../playback';
 import type { AnyLensProps } from '../playback';
+import { ColorField } from './ColorField';
 
 // 未设置时生效的默认样式（控件回显 + 预览共用，保证面板不为空）
 const DEFAULT_STYLE: SubtitleStyle = {
@@ -315,15 +316,12 @@ export const SubtitlePanel: React.FC<{
           </select>
         </label>
         {TEXT_COLOR_FIELDS.map((f) => (
-          <label key={f.key} style={{ display: 'block', marginBottom: 8, fontSize: 12 }}>
-            {f.label}
-            <input
-              style={{ width: '100%', padding: '4px 8px', boxSizing: 'border-box' }}
-              type="text"
-              value={String(effective[f.key] ?? '')}
-              onChange={(e) => onChange({ [f.key]: e.target.value } as Partial<SubtitleStyle>)}
-            />
-          </label>
+          <ColorField
+            key={f.key}
+            label={f.label}
+            value={String(effective[f.key] ?? '')}
+            onChange={(hex) => onChange({ [f.key]: hex } as Partial<SubtitleStyle>)}
+          />
         ))}
         {NUMBER_FIELDS.map((f) => (
           <label key={f.key} style={{ display: 'block', marginBottom: 8, fontSize: 12 }}>
@@ -449,15 +447,11 @@ export const SubtitlePanel: React.FC<{
             onChange={(e) => onChange({ backgroundPadding: Number(e.target.value) })}
           />
         </label>
-        <label style={{ display: 'block', marginBottom: 8, fontSize: 12 }}>
-          阴影颜色
-          <input
-            style={{ width: '100%', padding: '4px 8px', boxSizing: 'border-box' }}
-            type="text"
-            value={effective.shadowColor ?? ''}
-            onChange={(e) => onChange({ shadowColor: e.target.value })}
-          />
-        </label>
+        <ColorField
+          label="阴影颜色"
+          value={effective.shadowColor ?? ''}
+          onChange={(hex) => onChange({ shadowColor: hex })}
+        />
         <label style={{ display: 'block', marginBottom: 8, fontSize: 12 }}>
           阴影模糊
           <input
