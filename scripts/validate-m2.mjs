@@ -121,6 +121,7 @@ else ok('字幕 schema 校验通过');
 const styleOk = {
   fontSize: 48,
   enabled: true,
+  backgroundEnabled: true,
   fontWeight: 700,
   fontStyle: 'italic',
   lineHeight: 1.5,
@@ -143,6 +144,7 @@ const badStyles = [
   { fontStyle: 'bold' },
   { lineHeight: '1.5' },
   { strokeEnabled: 'yes' },
+  { backgroundEnabled: 'yes' },
   { shadowBlur: '12' },
 ];
 const badAccepted = badStyles.filter((s) => isSubtitleStyle(s));

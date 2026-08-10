@@ -46,6 +46,7 @@ export interface SubtitleStyle {
   align?: 'left' | 'center' | 'right';
   letterSpacing?: number;
   enabled?: boolean; // 字幕总开关（默认 true）
+  backgroundEnabled?: boolean; // 字幕背景开关（默认 true）
   fontWeight?: number; // 字重 400/500/700
   fontStyle?: 'normal' | 'italic'; // 斜体
   lineHeight?: number; // 行距倍数
@@ -171,7 +172,7 @@ export function isSubtitleStyle(x: unknown): x is SubtitleStyle {
   for (const k of ['fontFamily', 'color', 'strokeColor', 'backgroundColor', 'shadowColor'] as const) {
     if (x[k] !== undefined && !isStr(x[k])) return false;
   }
-  for (const k of ['enabled', 'strokeEnabled'] as const) {
+  for (const k of ['enabled', 'strokeEnabled', 'backgroundEnabled'] as const) {
     if (x[k] !== undefined && typeof x[k] !== 'boolean') return false;
   }
   return true;

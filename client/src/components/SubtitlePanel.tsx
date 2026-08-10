@@ -12,13 +12,14 @@ import { ColorField } from './ColorField';
 const DEFAULT_STYLE: SubtitleStyle = {
   fontSize: 48,
   color: '#2c2416',
-  strokeColor: 'transparent',
+  strokeColor: '#000000',
   strokeWidth: 0,
-  backgroundColor: 'transparent',
-  position: 'bottom',
+  backgroundColor: '#000000',
+  position: 'center',
   align: 'center',
   letterSpacing: 0,
   enabled: true,
+  backgroundEnabled: true,
   fontWeight: 400,
   fontStyle: 'normal',
   lineHeight: 1.35,
@@ -153,7 +154,6 @@ function FrameBackground({
 const TEXT_COLOR_FIELDS: { key: keyof SubtitleStyle; label: string }[] = [
   { key: 'color', label: '文字颜色' },
   { key: 'strokeColor', label: '描边色' },
-  { key: 'backgroundColor', label: '字幕背景色' },
 ];
 const NUMBER_FIELDS: { key: keyof SubtitleStyle; label: string }[] = [
   { key: 'fontSize', label: '字号' },
@@ -200,33 +200,59 @@ export const SubtitlePanel: React.FC<{
     fontWeight: effective.fontWeight ?? 400,
     fontStyle: effective.fontStyle ?? 'normal',
     opacity: (effective.opacity ?? 100) / 100,
-    WebkitTextStroke:
-      (effective.strokeEnabled === false ? 0 : (effective.strokeWidth ?? 0) * scale) +
-      'px ' +
-      (effective.strokeColor ?? 'transparent'),
     letterSpacing: (effective.letterSpacing ?? 0) * scale,
     textAlign: effective.align ?? 'center',
-    textShadow:
-      (effective.shadowBlur ?? 0) > 0
-        ? `${(effective.shadowOffsetX ?? 0) * scale}px ${
-            (effective.shadowOffsetY ?? 0) * scale
-          }px ${(effective.shadowBlur ?? 0) * scale}px ${hexToRgba(
-            effective.shadowColor ?? '#000000',
-            (effective.shadowOpacity ?? 0) / 100,
-          )}`
-        : undefined,
+    textShadow: (() => {
+      // 外描边：8 方向零模糊投影（不遮字面；-webkit-text-stroke 是居中描边会淹没小字）
+      const strokeR =
+        effective.strokeEnabled === false ? 0 : (effective.strokeWidth ?? 0) * scale;
+      const strokeColor =
+        effective.strokeColor && effective.strokeColor !== 'transparent'
+          ? effective.strokeColor
+          : null;
+      const strokeShadows =
+        strokeR > 0 && strokeColor
+          ? [
+              `${strokeR}px 0 0 ${strokeColor}`,
+              `-${strokeR}px 0 0 ${strokeColor}`,
+              `0 ${strokeR}px 0 ${strokeColor}`,
+              `0 -${strokeR}px 0 ${strokeColor}`,
+              `${strokeR * 0.71}px ${strokeR * 0.71}px 0 ${strokeColor}`,
+              `-${strokeR * 0.71}px ${strokeR * 0.71}px 0 ${strokeColor}`,
+              `${strokeR * 0.71}px -${strokeR * 0.71}px 0 ${strokeColor}`,
+              `-${strokeR * 0.71}px -${strokeR * 0.71}px 0 ${strokeColor}`,
+            ]
+          : [];
+      const softShadow =
+        (effective.shadowOpacity ?? 0) > 0
+          ? [
+              `${(effective.shadowOffsetX ?? 0) * scale}px ${
+                (effective.shadowOffsetY ?? 0) * scale
+              }px ${(effective.shadowBlur ?? 0) * scale}px ${hexToRgba(
+                effective.shadowColor ?? '#000000',
+                (effective.shadowOpacity ?? 0) / 100,
+              )}`,
+            ]
+          : [];
+      return [...strokeShadows, ...softShadow].join(', ') || undefined;
+    })(),
     background:
-      effective.backgroundColor && effective.backgroundColor !== 'transparent'
+      effective.backgroundEnabled !== false &&
+      effective.backgroundColor &&
+      effective.backgroundColor !== 'transparent'
         ? effective.backgroundColor +
           Math.round((effective.backgroundOpacity ?? 100) * 2.55)
             .toString(16)
             .padStart(2, '0')
         : 'transparent',
     padding:
-      effective.backgroundColor && effective.backgroundColor !== 'transparent' && effective.backgroundPadding
+      effective.backgroundEnabled !== false &&
+      effective.backgroundColor &&
+      effective.backgroundColor !== 'transparent' &&
+      effective.backgroundPadding
         ? `${(effective.backgroundPadding ?? 0) * scale}px`
         : '0',
-    borderRadius: (effective.backgroundRadius ?? 0) * scale,
+    borderRadius: effective.backgroundEnabled === false ? 0 : (effective.backgroundRadius ?? 0) * scale,
     bottom: effective.position === 'top' ? undefined : effective.position === 'center' ? undefined : '8%',
     top: effective.position === 'top' ? '8%' : effective.position === 'center' ? '50%' : undefined,
     transform: effective.position === 'center' ? 'translateY(-50%)' : undefined,
@@ -430,6 +456,19 @@ export const SubtitlePanel: React.FC<{
             onChange={(e) => onChange({ opacity: Number(e.target.value) })}
           />
         </label>
+        <label style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8, fontSize: 12 }}>
+          <input
+            type="checkbox"
+            checked={effective.backgroundEnabled !== false}
+            onChange={(e) => onChange({ backgroundEnabled: e.target.checked })}
+          />
+          字幕背景
+        </label>
+        <ColorField
+          label="字幕背景色"
+          value={effective.backgroundColor ?? ''}
+          onChange={(hex) => onChange({ backgroundColor: hex })}
+        />
         <label style={{ display: 'block', marginBottom: 8, fontSize: 12 }}>
           背景透明度 {effective.backgroundOpacity}%
           <input
