@@ -2,7 +2,7 @@
 // 用法：props 传入 { storyboard, subtitles }（项目侧数据），时长 = 段 durationSec（真实转录）
 // 预览/导出：remotion render 本组件 + --props（项目侧数据不进仓库）
 import React from 'react';
-import { AbsoluteFill, Sequence, useCurrentFrame } from 'remotion';
+import { AbsoluteFill, Audio, Sequence, useCurrentFrame } from 'remotion';
 import type { Storyboard, Subtitles, SubtitleStyle } from '../shared/types';
 
 // ---------- 镜头组件映射（lensId → 组件；新增镜头时补 import + 映射） ----------
@@ -115,14 +115,17 @@ const SubtitleLayer: React.FC<{ subtitles: Subtitles; style: SubtitleStyle }> = 
 };
 
 // ---------- 整片 ----------
-export const WholeVideo: React.FC<{ storyboard: Storyboard; subtitles: Subtitles }> = ({
-  storyboard,
-  subtitles,
-}) => {
+// audioSrc：项目侧录音的 http 地址（由 server 音频路由服务，浏览器才能加载）
+export const WholeVideo: React.FC<{
+  storyboard: Storyboard;
+  subtitles: Subtitles;
+  audioSrc?: string;
+}> = ({ storyboard, subtitles, audioSrc }) => {
   const style = storyboard.meta.subtitleStyle ?? {};
   let cumSec = 0;
   return (
     <AbsoluteFill style={{ background: '#faf7f2' }}>
+      {audioSrc ? <Audio src={audioSrc} /> : null}
       {storyboard.segments.map((seg) => {
         // 精确帧边界：逐段 round，避免累积漂移；帧边界由真实秒数派生
         const startFrame = Math.round(cumSec * 30);

@@ -147,6 +147,24 @@ app.post('/api/storyboard', (req, res) => {
   res.json({ ok: true, path: sbPath });
 });
 
+// 项目侧音频路由：预览/渲染共用一条 http 地址，音频只存项目目录一份（无快照）
+// 浏览器无法加载本地绝对路径（E:\... 会被当未知协议），必须经 server 服务
+app.get('/api/audio/:file', (req, res) => {
+  if (!PROJECT_DIR) {
+    res.status(400).json({ error: '未设置 V7_PROJECT_DIR' });
+    return;
+  }
+  // basename 防目录穿越：只允许项目目录内的文件名
+  const name = path.basename(req.params.file);
+  const p = path.join(PROJECT_DIR, name);
+  if (!existsSync(p)) {
+    res.status(404).json({ error: `音频不存在：${name}` });
+    return;
+  }
+  res.type(name.toLowerCase().endsWith('.wav') ? 'audio/wav' : 'application/octet-stream');
+  res.sendFile(p);
+});
+
 app.listen(PORT, () => {
   console.log(`工作台服务已启动：http://localhost:${PORT}`);
   if (!PROJECT_DIR) console.log('提示：未设置 V7_PROJECT_DIR（项目侧数据目录）');
