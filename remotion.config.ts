@@ -8,8 +8,9 @@ Config.setOverwriteOutput(true);
 // 用 V7_PROJECT_DIR 环境变量指定（与工作台 dev 启动同一变量）；文件变化触发 Studio 热更新
 Config.overrideWebpackConfig((config) => {
   const projectDir = process.env.V7_PROJECT_DIR;
-  if (projectDir && config.resolve?.alias) {
-    config.resolve.alias["project-data"] = projectDir;
+  const alias = config.resolve?.alias as Record<string, string> | undefined;
+  if (projectDir && alias) {
+    alias["project-data"] = projectDir;
   }
   return config;
 });

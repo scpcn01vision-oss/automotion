@@ -13,5 +13,6 @@
     "allowImportingTsExtensions": true,
     "forceConsistentCasingInFileNames": true,
     "noUnusedLocals": true
-  }
+  },
+  "exclude": ["out", "dist", "node_modules"]
 }
