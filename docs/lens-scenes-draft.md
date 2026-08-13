@@ -67,7 +67,7 @@
 | PanelToCanvasMaterialize | 面板化板 | 展开 | 多任务展示 |
 | CursorCastEnsemble | 光标合奏 | 展开 | 协同合作 |
 | CursorDialogueDuet | 光标对谈 | 展开 | 两方协同合作 |
-| CommandPaletteSummon | 命令唤出 | 展开 | 精确搜索 |
+| CommandPaletteSummon | 命令唤出 | 展开 | 适合「按需选择/按需配置」的内容（命令唤出选项，如选服务/选方案）；不适合概念对比或论据阐述 |
 | NeedleSweepSelftest | 指针自检 | 举证 | 多指标展示，仪表 |
 | TapeScrollFixedPointer | 刻度奔袭 | 举证 | 仅适合有统计意义的单指标刻度展示（如价格、数量、比例）；不适合文字含义或抽象概念 |
 | GradientWordSweep | 光扫词面 | 宣告 | 仅适合单个短词的扫光强调（如单句口号）；不适合长句、结论或段落级内容 |
@@ -136,7 +136,7 @@
 | LetterspaceMaterialize | 字距显形 | 钩子,宣告 | 品牌展示 |
 | LineBoil | 墨线沸腾 | 展开 | 单一事物的展示或强调 |
 | MarkerUnderlineTitle | 笔锋划题 | 宣告 | 对一句话中关键词的强调或对一句包含关键词的话的强调 |
-| BarnDoorSplit | 谷仓门裂 | 转折,承接, 对比 | 单一事物在两个阶段的变化对比 |
+| BarnDoorSplit | 谷仓门裂 | 转折,承接, 对比 | 适合二元对立的两侧分裂对比（如能做到 vs 做不到、正面 vs 反面清单）；前后时间对比用 LightLeakBurn/InvisibleCut |
 | PageWaterfallWall | 页墙瀑布 | 全景 | 多个事物的展示 |
 | VerticalTickerWrapper | 滚动字幕 | 全景 | 多个事物的展示 |
 | MaskingTapeSlap | 胶带落纸 | 展开,宣告 | 单一事物的展示或强调 |

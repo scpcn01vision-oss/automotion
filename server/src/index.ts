@@ -12,7 +12,8 @@ const PORT = Number(process.env.PORT ?? 3004);
 const PROJECT_DIR = process.env.V7_PROJECT_DIR; // 如 E:\桌面\打破信息差\视频文件\013B
 const MATCH_FILE = process.env.MATCH_FILE; // 匹配结果文件（默认仓库 out/match-013B.json）
 const DEFAULT_MATCH = path.join(ROOT, 'out', 'match-013B.json');
-const SEGMENT_PROFILE_FILE = '段画像-013B.md'; // 项目侧段画像文件名
+const SEGMENT_PROFILE_FILE =
+  process.env.V7_PROFILE_FILE ?? '段画像-013B.md'; // 项目侧段画像文件名（可用 V7_PROFILE_FILE 覆盖）
 const STORYBOARD_FILE = 'storyboard.json'; // 项目侧 storyboard 文件名
 
 const app = express();

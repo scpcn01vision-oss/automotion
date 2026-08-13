@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generatedAt": "2026-08-10T04:28:09.782Z",
+    "generatedAt": "2026-08-13T13:19:53.226Z",
     "count": 122,
     "source": "Root.preview.tsx + docs/lens-names.md + 组件 XxxProps 接口（同文件/跨文件/内联对象字段）+ docs/lens-scenes-draft.md"
   },
@@ -416,7 +416,7 @@
         "承接",
         "对比"
       ],
-      "usage": "单一事物在两个阶段的变化对比"
+      "usage": "适合二元对立的两侧分裂对比（如能做到 vs 做不到、正面 vs 反面清单）；前后时间对比用 LightLeakBurn/InvisibleCut"
     },
     {
       "id": "PageWaterfallWall",
@@ -3720,7 +3720,7 @@
       "scenes": [
         "展开"
       ],
-      "usage": "精确搜索"
+      "usage": "适合「按需选择/按需配置」的内容（命令唤出选项，如选服务/选方案）；不适合概念对比或论据阐述"
     },
     {
       "id": "NeedleSweepSelftest",
