@@ -4,6 +4,11 @@
 import React from 'react';
 import { AbsoluteFill, Audio, Sequence, useCurrentFrame } from 'remotion';
 import type { Storyboard, Subtitles, SubtitleStyle } from '../shared/types';
+import {
+  DEFAULT_SUBTITLE_STYLE,
+  hexToRgba,
+  type ResolvedSubtitleStyle,
+} from '../shared/subtitleDefaults';
 
 // ---------- 镜头组件映射（lensId → 组件；新增镜头时补 import + 映射） ----------
 import { MarkerUnderlineTitle } from './native/marker-underline-title/MarkerUnderlineTitle';
@@ -73,38 +78,70 @@ const SubtitleLayer: React.FC<{ subtitles: Subtitles; style: SubtitleStyle }> = 
   const active = subtitles.entries.find((e) => sec >= e.startSec && sec <= e.endSec);
   if (!active) return null;
 
+  // 统一默认值：与工作台字幕表单同一份 DEFAULT_SUBTITLE_STYLE（杜绝"表单显示 0、渲染 4px"类漂移）
+  const eff: ResolvedSubtitleStyle = { ...DEFAULT_SUBTITLE_STYLE, ...style };
+
   const css: React.CSSProperties = {
     position: 'absolute',
     left: 0,
     right: 0,
     display: 'flex',
-    justifyContent: style.align === 'left' ? 'flex-start' : style.align === 'right' ? 'flex-end' : 'center',
-    alignItems: style.position === 'top' ? 'flex-start' : style.position === 'center' ? 'center' : 'flex-end',
-    top: style.position === 'top' ? 80 : undefined,
-    bottom: style.position === 'bottom' ? 80 : undefined,
-    height: style.position === 'center' ? '100%' : undefined,
+    justifyContent: eff.align === 'left' ? 'flex-start' : eff.align === 'right' ? 'flex-end' : 'center',
+    alignItems: eff.position === 'top' ? 'flex-start' : eff.position === 'center' ? 'center' : 'flex-end',
+    top: eff.position === 'top' ? '8%' : undefined,
+    bottom: eff.position === 'bottom' ? '8%' : undefined,
+    height: eff.position === 'center' ? '100%' : undefined,
     pointerEvents: 'none',
-    opacity: style.opacity !== undefined ? style.opacity / 100 : 1,
+    opacity: eff.opacity / 100,
   };
 
+  // 外描边：8 方向零模糊投影（不遮字面），与工作台字幕预览同实现；
+  // 宽度 0 / 关开关 / 透明描边色 → 不输出描边
+  const strokeR = eff.strokeEnabled === false ? 0 : eff.strokeWidth;
+  const strokeColor = eff.strokeColor && eff.strokeColor !== 'transparent' ? eff.strokeColor : null;
+  const strokeShadows =
+    strokeR > 0 && strokeColor
+      ? [
+          `${strokeR}px 0 0 ${strokeColor}`,
+          `-${strokeR}px 0 0 ${strokeColor}`,
+          `0 ${strokeR}px 0 ${strokeColor}`,
+          `0 -${strokeR}px 0 ${strokeColor}`,
+          `${strokeR * 0.71}px ${strokeR * 0.71}px 0 ${strokeColor}`,
+          `-${strokeR * 0.71}px ${strokeR * 0.71}px 0 ${strokeColor}`,
+          `${strokeR * 0.71}px -${strokeR * 0.71}px 0 ${strokeColor}`,
+          `-${strokeR * 0.71}px -${strokeR * 0.71}px 0 ${strokeColor}`,
+        ]
+      : [];
+  const softShadow =
+    (eff.shadowBlur ?? 0) > 0 && (eff.shadowOpacity ?? 0) > 0
+      ? [
+          `${eff.shadowOffsetX}px ${eff.shadowOffsetY}px ${eff.shadowBlur}px ${hexToRgba(
+            eff.shadowColor,
+            eff.shadowOpacity / 100,
+          )}`,
+        ]
+      : [];
+
   const textCss: React.CSSProperties = {
-    fontFamily: style.fontFamily ?? 'Helvetica, Arial, sans-serif',
-    fontSize: style.fontSize ?? 48,
-    fontWeight: style.fontWeight ?? 700,
-    fontStyle: style.fontStyle ?? 'normal',
-    lineHeight: style.lineHeight ?? 1.6,
-    color: style.color ?? '#ffffff',
-    letterSpacing: style.letterSpacing ?? 0,
-    textAlign: style.align ?? 'center',
+    fontFamily: eff.fontFamily || '-apple-system, "Segoe UI", "Microsoft YaHei", sans-serif',
+    fontSize: eff.fontSize,
+    fontWeight: eff.fontWeight,
+    fontStyle: eff.fontStyle,
+    lineHeight: eff.lineHeight,
+    color: eff.color,
+    letterSpacing: eff.letterSpacing,
+    textAlign: eff.align,
     maxWidth: 1260,
-    padding: style.backgroundEnabled === false ? undefined : `${style.backgroundPadding ?? 16}px ${(style.backgroundPadding ?? 16) * 1.5}px`,
-    borderRadius: style.backgroundEnabled === false ? undefined : (style.backgroundRadius ?? 12),
-    background: style.backgroundEnabled === false ? undefined : (style.backgroundColor ?? 'rgba(0,0,0,0.55)'),
-    WebkitTextStroke: style.strokeEnabled === false ? undefined : `${style.strokeWidth ?? 4}px ${style.strokeColor ?? '#2c2416'}`,
-    textShadow:
-      style.shadowBlur && style.shadowBlur > 0
-        ? `${style.shadowOffsetX ?? 0}px ${style.shadowOffsetY ?? 4}px ${style.shadowBlur}px rgba(0,0,0,${(style.shadowOpacity ?? 60) / 100})`
+    padding:
+      eff.backgroundEnabled !== false && eff.backgroundColor && eff.backgroundColor !== 'transparent'
+        ? `${eff.backgroundPadding}px`
         : undefined,
+    borderRadius: eff.backgroundEnabled === false ? 0 : eff.backgroundRadius,
+    background:
+      eff.backgroundEnabled !== false && eff.backgroundColor && eff.backgroundColor !== 'transparent'
+        ? hexToRgba(eff.backgroundColor, eff.backgroundOpacity / 100)
+        : undefined,
+    textShadow: [...strokeShadows, ...softShadow].join(', ') || undefined,
   };
 
   return (

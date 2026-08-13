@@ -4,44 +4,14 @@ import { useEffect, useRef, useState } from 'react';
 import type { ComponentType, CSSProperties } from 'react';
 import { Player } from '@remotion/player';
 import type { LensRegistryEntry, SubtitleStyle } from '../../../shared/types';
+import {
+  DEFAULT_SUBTITLE_STYLE,
+  hexToRgba,
+  type ResolvedSubtitleStyle,
+} from '../../../shared/subtitleDefaults';
 import { loadLensComponent } from '../playback';
 import type { AnyLensProps } from '../playback';
 import { ColorField } from './ColorField';
-
-// 未设置时生效的默认样式（控件回显 + 预览共用，保证面板不为空）
-const DEFAULT_STYLE: SubtitleStyle = {
-  fontSize: 48,
-  color: '#2c2416',
-  strokeColor: '#000000',
-  strokeWidth: 0,
-  backgroundColor: '#000000',
-  position: 'center',
-  align: 'center',
-  letterSpacing: 0,
-  enabled: true,
-  backgroundEnabled: true,
-  fontWeight: 400,
-  fontStyle: 'normal',
-  lineHeight: 1.35,
-  opacity: 100,
-  strokeEnabled: true,
-  backgroundOpacity: 100,
-  backgroundRadius: 0,
-  backgroundPadding: 0,
-  shadowColor: '#000000',
-  shadowBlur: 0,
-  shadowOpacity: 0,
-  shadowOffsetX: 0,
-  shadowOffsetY: 0,
-};
-
-// '#rrggbb'（或 3 位简写）→ rgba 字符串（阴影透明度用）
-function hexToRgba(hex: string, alpha: number): string {
-  let h = hex.replace('#', '');
-  if (h.length === 3) h = h.split('').map((c) => c + c).join('');
-  const n = parseInt(h, 16);
-  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${alpha})`;
-}
 
 // 不支持/拒绝 Local Font Access 时的候选字体
 const FALLBACK_FONTS: { label: string; family: string }[] = [
@@ -170,7 +140,7 @@ export const SubtitlePanel: React.FC<{
   firstLensParams: AnyLensProps;
 }> = ({ style, onChange, onSave, onBack, firstLensEntry, firstLensParams }) => {
   const fonts = useFontList();
-  const effective: SubtitleStyle = { ...DEFAULT_STYLE, ...style };
+  const effective: ResolvedSubtitleStyle = { ...DEFAULT_SUBTITLE_STYLE, ...style };
 
   // 画框实际显示宽度 → 字幕按 1920 基准等比缩放，预览即真实效果
   const frameRef = useRef<HTMLDivElement | null>(null);
