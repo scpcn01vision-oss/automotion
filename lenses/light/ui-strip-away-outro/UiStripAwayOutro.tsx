@@ -11,11 +11,23 @@
 // 满屏灰阶"编辑器"里光标点击高亮 Publish 按钮 → UI 层层错峰蒸发退场
 // （每层 fade + 轻微位移，从外围到中心）→ 黑场只剩按钮 → 按钮淡出交棒字标。
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, interpolate, spring, useVideoConfig, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, spring, useVideoConfig, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { NeutralCard } from '../../_system/neutral-card';
 import type { SceneContentData } from '../../_system/scene-content';
 import { FONT_STACK } from '../../_system/typography';
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（迁移自 013 lens-timings.json；蒸发刚性 34-72）
+const SHOT_TIME: ShotTime = {
+  segments: [
+    { from: 0, to: 34, mode: 'elastic', minFrames: 12 },
+    { from: 34, to: 72, mode: 'rigid' },
+    { from: 72, to: 180, mode: 'elastic', minFrames: 20 },
+  ],
+  minFrames: 70,
+};
 
 const CLICK = 34; // 点击时刻
 // 蒸发层级（点击后延迟，外围先走）
@@ -87,7 +99,7 @@ export const UiStripAwayOutro: React.FC<UiStripAwayOutroProps> = ({
   canvasAddress = 'https://workspace.example/design',
   inviteLabel = '邀请',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const { fps } = useVideoConfig();
 
   // 背景：编辑器灰底 → 黑场（随 canvasBg 层蒸发压黑）

@@ -17,9 +17,17 @@
 // 30–50 两半各 translateX ∓980（Easing.in cubic 加速滑出）→
 // 30–55 底层 B scale 1.06→1.0（out cubic）→ 55–130 全静止（75f）。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（迁移自 013 lens-timings.json；全弹性）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 export interface BarnDoorSplitProps {
   sceneA?: SceneContentData;
@@ -46,7 +54,7 @@ export const BarnDoorSplit: React.FC<BarnDoorSplitProps> = ({
     ],
   },
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // 两半外滑位移：30–50f，0 → 980px，加速离场
   const slide = interpolate(frame, [30, 50], [0, 980], {

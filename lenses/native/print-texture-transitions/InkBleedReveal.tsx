@@ -16,9 +16,21 @@
 // 0→1450（Easing.out(quad)）再叠 ±8% 低频正弦扰动（帧 78–98 扰动衰减到 0，
 // 洇满全屏）；帧 100–130 摘掉 mask 直接铺新景，真静止 30f。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing, Img, staticFile } from 'remotion';
+import { interpolate, Easing, Img, staticFile } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（迁移自 013 lens-timings.json；墨渗刚性 20-98）
+const SHOT_TIME: ShotTime = {
+  segments: [
+    { from: 0, to: 20, mode: 'elastic', minFrames: 6 },
+    { from: 20, to: 98, mode: 'rigid' },
+    { from: 98, to: 130, mode: 'elastic', minFrames: 10 },
+  ],
+  minFrames: 94,
+};
 
 export interface InkBleedRevealNewScene {
   title?: string;
@@ -92,7 +104,7 @@ export const InkBleedReveal: React.FC<InkBleedRevealProps> = ({
     ],
   },
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // 墨滴落点：画面中心偏左上
   const cx = 800;

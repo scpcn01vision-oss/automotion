@@ -17,9 +17,17 @@
 // 减速 + 6f 回弹，锁定于 42/49/56/63）→ 63–71 整体加深脉冲（ink→#000→ink，
 // 附 1.035 微缩放加码）→ 66–84 下方标签条淡入 → 84–150 全静止（66f ≥45f）。
 import React from 'react';
-import { useCurrentFrame, interpolate, interpolateColors, Easing } from 'remotion';
+import { interpolate, interpolateColors, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（lens-timings 无此镜头；按文件头「全程弹性」+ 关键帧 ~66 标）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 66 }],
+  minFrames: 66,
+};
 
 const ROW = 210; // 数位行高（overflow 盒高）
 const DW = 126; // 数位盒宽
@@ -136,7 +144,7 @@ export const OdometerDigitRoll: React.FC<OdometerDigitRollProps> = ({
   label = 'TARGET METRIC',
   sublabel = 'ACHIEVED',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   // 目标数字解析：数字位滚动，非数字（./%/空格）驻场
   const chars = value.split('');
   const digits = chars.filter((c) => /\d/.test(c)).map(Number);

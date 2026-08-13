@@ -13,9 +13,17 @@
 // 平移到左上角变小节标签，内容区（灰阶骨架块）在其下方生长。
 // 附加变体（framer text-selection-title）：标题登场带文本选中蓝高亮块、随后撤掉。
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（lens-timings 无此镜头；按文件头「全程弹性」标）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 40 }],
+  minFrames: 40,
+};
 
 const SEL = 'rgba(211,146,60,0.35)';
 
@@ -171,7 +179,7 @@ export const TitleDemoteToLabel: React.FC<TitleDemoteToLabelProps> = ({
     { label: '指标四', value: '42ms' },
   ],
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const SPLIT = 92; // 变体 A 时长
 
   if (frame < SPLIT) {

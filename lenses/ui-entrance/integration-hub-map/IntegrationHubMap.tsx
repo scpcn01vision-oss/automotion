@@ -23,8 +23,16 @@
 // 运动结构对照截图：S1 近景正视可读 → S2 翻转中+拉远+泛光起 →
 // S3/S4 侧棱白热爆发+图标浮现 → S5/S6 新页转正、光管连入 → S7/S8 稳定输送。
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（lens-timings 无此镜头；按文件头「全程弹性」+ 关键帧 ~130 标）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 90 }],
+  minFrames: 90,
+};
 
 const mulberry32 = (a: number) => () => {
   let t = (a += 0x6d2b79f5);
@@ -275,7 +283,7 @@ export const IntegrationHubMap: React.FC<IntegrationHubMapProps> = ({
     '文档内容 07', '文档内容 08', '文档内容 09', '文档内容 10', '文档内容 11', '文档内容 12',
   ],
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const activePipes = PIPES.filter((p) => icons.includes(p.kind));
 
   // --- 相机/面板轨迹：近景正视旧页 → 整体翻转 180°（翻到背面=新页）+ 拉远落定 ---

@@ -14,9 +14,21 @@
 // 根部投影随立起角度收窄变淡。全部立起后整个场景轻微回正（75°→68°）收尾。
 // 收尾 f108 后真静止 ≥52f。帧确定性：全由 frame 派生。
 import React from 'react';
-import { useCurrentFrame, interpolate, spring, Easing } from 'remotion';
+import { interpolate, spring, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（迁移自 013 lens-timings.json；弹起刚性 14-83）
+const SHOT_TIME: ShotTime = {
+  segments: [
+    { from: 0, to: 14, mode: 'elastic', minFrames: 4 },
+    { from: 14, to: 83, mode: 'rigid' },
+    { from: 83, to: 180, mode: 'elastic', minFrames: 20 },
+  ],
+  minFrames: 93,
+};
 
 const FPS = 30;
 const HOLD = 14; // 开头静置
@@ -154,7 +166,7 @@ export const PopupBookRise: React.FC<PopupBookRiseProps> = ({
   searchText = '搜索',
   avatarText = '我',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const cols = 3;
   const rows = Math.max(1, Math.ceil(cards.length / cols));
   const AREA_H = 1080 - 72 - 72;

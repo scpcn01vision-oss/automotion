@@ -16,11 +16,19 @@
 // （sidebarItems / dashTitle / searchText / avatarText / cards），配色走 v7 G 色板；
 // 网站版底部「TEXT AS MASK」手法名标签已去掉。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
 import { NeutralCard } from '../../_system/neutral-card';
 import type { SceneContentData } from '../../_system/scene-content';
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（迁移自 013 lens-timings.json；全弹性）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 80 }],
+  minFrames: 80,
+};
 
 // 中性 dashboard 占位：侧栏（图标+文字菜单）/ 顶栏（标题+搜索+头像首字母）/ 3×2 指标卡（NeutralCard）
 // 替代网站版 FakeDashboard A 的灰条占位，布局与动效坐标保持一致。
@@ -94,7 +102,7 @@ export const TextAsMask: React.FC<TextAsMaskProps> = ({
     { title: '备注', rows: [{ label: '指标十一', value: '✓' }, { label: '指标十二', value: '–' }] },
   ],
 }) => {
-  const f = useCurrentFrame();
+  const f = useShotFrame(SHOT_TIME);
   const clamp = { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' } as const;
 
   // 遮罩 SVG：超粗大字按 text prop 渲染，字号 360（网站版默认）

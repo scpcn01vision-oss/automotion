@@ -16,9 +16,21 @@
 //  4) 再 1 帧硬切揭示成品笔记页：奶油底、墨绿大标题 "My favorite bands"、胶囊换成鼠尾草绿、正文三行——
 //     原片没有"胶囊飞入下方滑入卡片"的段落（批次 8 的飞行段为杜撰，已砍）
 import React from 'react';
-import { AbsoluteFill, interpolate, useCurrentFrame, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（lens-timings 无此镜头；按文件头「刚性:type 8f,move 66→80f」标）
+const SHOT_TIME: ShotTime = {
+  segments: [
+    { from: 0, to: 66, mode: 'elastic', minFrames: 10 },
+    { from: 66, to: 80, mode: 'rigid' },
+    { from: 80, to: 180, mode: 'elastic', minFrames: 16 },
+  ],
+  minFrames: 92,
+};
 
 // ---- mulberry32（仅用于打字节奏的人手抖动，确定性）----
 function mulberry32(seed: number) {
@@ -105,7 +117,7 @@ export const HashtagToPillMaterialize: React.FC<HashtagToPillMaterializeProps> =
     'to home. Welcome. Bring headphones.',
   ],
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const TEXT = hashtag;
   const TYPE_AT = typeAt(TEXT);
 

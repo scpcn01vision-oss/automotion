@@ -12,9 +12,17 @@
 // 沿 Y 轴翻转压扁成竖线（拖影/模糊）→ 翻过最薄处绽放花形 mark（花瓣张开）→
 // wordmark 从 mark 右侧带方向模糊逐段扫出（字符从糊到锐利）。
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, interpolate, Easing, spring, useVideoConfig } from 'remotion';
+import { AbsoluteFill, interpolate, Easing, spring, useVideoConfig } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（迁移自 013 lens-timings.json；全弹性）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 70 }],
+  minFrames: 70,
+};
 
 
 const SmileLaptop: React.FC<{ size: number }> = ({ size }) => (
@@ -61,7 +69,7 @@ export interface IconFlipBloomLogoProps {
 }
 
 export const IconFlipBloomLogo: React.FC<IconFlipBloomLogoProps> = ({ wordmark = 'inkmark' }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const { fps } = useVideoConfig();
 
   // ---- 时间轴 ----

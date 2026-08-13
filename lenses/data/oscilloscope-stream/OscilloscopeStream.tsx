@@ -17,9 +17,17 @@
 // 0 刻度线并贴底，已写出的历史轨迹保持不变（表达"指标最后走向 0"），默认不传保持原版。
 // 帧确定性：波形与尖峰包络都是纯 worldX 函数，无 Math.random / Date.now。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（lens-timings 无此镜头；按文件头「全程弹性」标）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 const CARD_W = 1080;
 const CARD_H = 560;
@@ -90,7 +98,7 @@ export const OscilloscopeStream: React.FC<OscilloscopeStreamProps> = ({
   baseValue = 1000,
   zeroFrom = Number.POSITIVE_INFINITY,
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const T = effTime(frame);
 
   // 走向 0 的轨迹宽度（世界像素）：归零点之后的新轨迹在 span 内跌到 0 线

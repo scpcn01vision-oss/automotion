@@ -17,9 +17,17 @@
 // 14f 升至 -10% 过冲 → 再 6f 回落归 0 → 末字(索引12)于 56f 落定 →
 // 56–130 全静止（74f ≥ 40f，无逐帧噪声层）。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（迁移自 013 lens-timings.json；全弹性）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 70 }],
+  minFrames: 70,
+};
 
 const START = 12; // 首字起跳帧
 const RISE = 14; // 升起时长
@@ -51,7 +59,7 @@ export interface SplitTextStaggerProps {
 export const SplitTextStagger: React.FC<SplitTextStaggerProps> = ({
   text = 'MOTION SYSTEM',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const chars = text.split('');
   // 基线：首字起跳同帧开始，从左向右生长到 100%
   const lineW = interpolate(frame, [START, START + 26], [0, 100], {

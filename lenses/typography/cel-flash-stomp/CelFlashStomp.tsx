@@ -18,9 +18,17 @@
 // → 60 "TODAY" 硬切(rot 0°) → 60–66 弹落 → 66–73 背景闪加倍(8f, #c4c4c0)
 // + 66–80 底部标签条淡入 → 80–144 全静止(≥45f, 无逐帧噪声层)。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（lens-timings 无此镜头，按文件头注释「刚性:无，全程弹性」+ 源码关键帧 0-80 标）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 type Word = {
   text: string;
@@ -50,7 +58,7 @@ export const CelFlashStomp: React.FC<CelFlashStompProps> = ({
   ],
   footer = { icon: '✦', label: 'GOAL', tag: 'READY' },
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const word = words.find((w) => frame >= w.start && frame < w.end)!;
   const t = frame - word.start;
 

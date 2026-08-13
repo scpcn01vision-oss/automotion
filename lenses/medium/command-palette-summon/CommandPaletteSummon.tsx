@@ -13,10 +13,18 @@
 // → 5 条候选行错峰浮现 → 模拟输入 2 字母（灰块当字符）候选 5→3→2 收窄
 // → 高亮首条。f=110 后全静止（40f）。光标 f<104 闪烁、之后常亮。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
 import { FONT_STACK } from '../../_system/typography';
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（lens-timings 无此镜头；按文件头「全程弹性」标）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 50 }],
+  minFrames: 50,
+};
 
 const CL = { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' } as const;
 
@@ -123,7 +131,7 @@ export const CommandPaletteSummon: React.FC<CommandPaletteSummonProps> = ({
     { icon: '◆', label: '运行命令', kbd: '⌘S', exitAt: 1 },
   ],
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // 背景压暗 + blur
   const dim = interpolate(frame, [DIM0, DIM1], [0, 0.45], CL);

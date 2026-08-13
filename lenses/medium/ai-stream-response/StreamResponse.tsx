@@ -12,9 +12,20 @@ import {
   AbsoluteFill,
   Easing,
   interpolate,
-  useCurrentFrame,
 } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（迁移自 013 lens-timings.json；流式输出刚性 42-120）
+const SHOT_TIME: ShotTime = {
+  segments: [
+    { from: 0, to: 42, mode: 'elastic', minFrames: 12 },
+    { from: 42, to: 120, mode: 'rigid' },
+    { from: 120, to: 180, mode: 'elastic', minFrames: 12 },
+  ],
+  minFrames: 102,
+};
 
 const clamp = {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'} as const;
 const ease = Easing.bezier(0.2, 0.75, 0.25, 1);
@@ -77,7 +88,7 @@ const CheckIcon: React.FC<{progress: number}> = ({progress}) => {
 };
 
 const EvidenceRow: React.FC<{cue: number; title: string; meta: string; index: number}> = ({cue, title, meta, index}) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const body = interpolate(frame, [cue, cue + 12], [0, 1], {...clamp, easing: ease});
   const status = interpolate(frame, [cue + 3, cue + 11], [0, 1], {...clamp, easing: ease});
   return (
@@ -109,7 +120,7 @@ export const StreamResponse: React.FC<StreamResponseProps> = ({
   completeText = '分析完成',
   completeMeta = '7 项检查完成 · 可开始构建',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   // 行入场时序：按行数动态（间隔 9f）
   const ROW_CUES = rows.map((_, i) => 42 + i * 9);
   const panelIn = interpolate(frame, [0, 16], [0, 1], {...clamp, easing: ease});

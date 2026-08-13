@@ -17,8 +17,15 @@
 // 半角（英文/数字）字符宽 58px，按字符动态取宽，避免中文叠字；打字/删除/停顿节奏参数化，
 // 供按口播时长校准（typeFrames / deleteFrames / pauseFrames）。
 import React from 'react';
-import { useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（lens-timings 无此镜头；按文件头「全程弹性」标）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 const CHAR_W_HALF = 58; // 半角（英文/数字）字符宽
 const CHAR_W_FULL = 96; // 全角（中文）字符宽
@@ -64,7 +71,7 @@ export const TypewriterErrorRetype: React.FC<TypewriterErrorRetypeProps> = ({
   deleteFrames = 1.5,
   pauseFrames = 16,
 }) => {
-  const f = useCurrentFrame();
+  const f = useShotFrame(SHOT_TIME);
 
   const T1 = 2; // 第一遍打字起点
   const PAUSE_START = T1 + (first.length - 1) * typeFrames;

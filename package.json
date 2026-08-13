@@ -6,7 +6,8 @@
     "preview": "remotion studio lenses/Root.preview.tsx --port=3003",
     "dev": "concurrently -n client,server -c cyan,magenta \"npm run dev:client\" \"npm run dev:server\"",
     "dev:client": "npm run dev --workspace client",
-    "dev:server": "npm run dev --workspace server"
+    "dev:server": "npm run dev --workspace server",
+    "dev:whole": "concurrently -k -n workbench,preview -c cyan,magenta \"npm run dev\" \"npx remotion studio out/whole-013B.tsx --port=3003\""
   },
   "workspaces": [
     "client",

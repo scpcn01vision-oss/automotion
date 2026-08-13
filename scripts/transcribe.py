@@ -11,6 +11,7 @@
 import json
 import re
 import sys
+import wave
 from pathlib import Path
 
 PROJECT_DIR = Path(r"E:\桌面\打破信息差\视频文件\013B")
@@ -458,6 +459,11 @@ def generate_subtitles(chunks, phrases, script_text):
 if __name__ == "__main__":
     skip_transcribe = "--skip-transcribe" in sys.argv
 
+    # 音频实际时长（时间轴唯一基准；Composition 总时长依据）
+    with wave.open(str(AUDIO), "rb") as w:
+        audio_duration = w.getnframes() / w.getframerate()
+    print(f"[0] 音频时长: {audio_duration:.3f}s")
+
     storyboard = read_storyboard(STORYBOARD)
     segments = storyboard["segments"]
     script_text = segment_full_text(segments)
@@ -510,6 +516,7 @@ if __name__ == "__main__":
             for i, e in enumerate(entries)
         ],
         "style": storyboard.get("meta", {}).get("subtitleStyle", {}),
+        "meta": {"audioDurationSec": round(audio_duration, 3)},
     }
     OUT_SUBTITLES.write_text(
         json.dumps(subtitles, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -525,7 +532,7 @@ if __name__ == "__main__":
         t = seg_times.get(s["id"])
         if t:
             real = round(max(x[1] for x in t) - min(x[0] for x in t), 3)
-            if abs(real - s.get("durationSec", 0)) > 0.2:
+            if abs(real - s.get("durationSec", 0)) > 0.001:
                 print(f"    seg {s['id']}: durationSec {s.get('durationSec')} → {real}")
                 s["durationSec"] = real
                 updated += 1

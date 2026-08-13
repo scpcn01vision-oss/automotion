@@ -9,8 +9,16 @@
 // === 适配注意 ===
 // 用于引用官方文件/政策原文；正文行数任意，逐行浮现。
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（lens-timings 无此镜头；按文件头「全程弹性」+ 关键帧 ~30 标）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 30 }],
+  minFrames: 30,
+};
 import { FONT_STACK } from '../../_system/typography';
 
 const RED = '#a83232'; // 红头朱红（纸墨化暗朱红，公文标准色）
@@ -30,7 +38,7 @@ export const RedHeadFileQuote: React.FC<RedHeadFileQuoteProps> = ({
   body = ['鼓励创新主体从 Token 消耗量计费转向价值计费。'],
   tag = '原文引用',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // 卡片浮现
   const cardT = interpolate(frame, [0, 14], [0, 1], {

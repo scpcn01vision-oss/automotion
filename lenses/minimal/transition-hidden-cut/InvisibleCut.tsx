@@ -9,11 +9,19 @@
 // === 适配注意 ===
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 import React from 'react';
-import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
+import { AbsoluteFill, Easing, interpolate } from 'remotion';
 import { CameraMotionBlur } from '@remotion/motion-blur';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
 import { FONT_STACK } from '../../_system/typography';
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（lens-timings 无此镜头；硬切短镜头，按文件头「全程弹性」标）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 20 }],
+  minFrames: 20,
+};
 
 // invisible-cut：前景遮挡隐形切——一张放大到超出画幅的卡片带重运动模糊
 // 从左侧贴脸扫过，糊满屏幕的瞬间背景从 A 无痕换成 B，卡片飞出右侧时
@@ -37,7 +45,7 @@ const Scene: React.FC<{
   sceneB: SceneContentData;
   card: { label: string; value: string };
 }> = ({ sceneA, sceneB, card }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const x = xAt(frame);
   // 瞬时速度（px/帧），驱动斜切与残影强度
   const v = xAt(frame + 0.5) - xAt(frame - 0.5);

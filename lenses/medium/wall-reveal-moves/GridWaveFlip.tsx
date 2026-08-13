@@ -8,10 +8,22 @@
 // === 适配注意 ===
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 import React from 'react';
-import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
+import { AbsoluteFill, Easing, interpolate } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { NeutralCard } from '../../_system/neutral-card';
 import type { SceneContentData } from '../../_system/scene-content';
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（lens-timings 无此镜头；按文件头「刚性:bento first 20f,grid flip 14f+stagger 6f」标 20-58）
+const SHOT_TIME: ShotTime = {
+  segments: [
+    { from: 0, to: 20, mode: 'elastic', minFrames: 8 },
+    { from: 20, to: 58, mode: 'rigid' },
+    { from: 58, to: 180, mode: 'elastic', minFrames: 20 },
+  ],
+  minFrames: 74,
+};
 
 // grid-wave-flip〔入场退场〕：灰背卡片墙沿对角线波前依次 rotateX 翻转 180°，
 // 灰背翻成正面内容卡；波浪约一秒扫完全屏，最后一张落定带轻微过冲。
@@ -63,7 +75,7 @@ export const GridWaveFlip: React.FC<GridWaveFlipProps> = ({
     { title: '指标三', rows: [{ label: '数值', value: '99%' }] },
   ],
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const n = cards.length;
   const cols = n <= 3 ? n : n === 4 ? 2 : 3;
   const rows = Math.ceil(n / cols);

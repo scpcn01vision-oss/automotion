@@ -13,8 +13,19 @@
 // v7 全参数化：面板标题、标签组、高亮标签、内容行全部可传（原 Inbox/All/Tasks 外壳已参数化）。
 import React from 'react';
 import { G } from '../../_fixtures/Fixtures';
-import { AbsoluteFill, useCurrentFrame, interpolate } from 'remotion';
+import { AbsoluteFill, interpolate } from 'remotion';
 import { FONT_STACK } from '../../_system/typography';
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（lens-timings 无此镜头；按文件头「刚性:sweep 110f,reveal 125f」标）
+const SHOT_TIME: ShotTime = {
+  segments: [
+    { from: 0, to: 110, mode: 'rigid' },
+    { from: 110, to: 180, mode: 'elastic', minFrames: 20 },
+  ],
+  minFrames: 130,
+};
 
 const FONT = '"Avenir Next", "Helvetica Neue", Helvetica, sans-serif';
 
@@ -101,7 +112,7 @@ export const CornerSpotlightReveal: React.FC<CornerSpotlightRevealProps> = ({
     { title: '任务 03', meta: '说明 03', detail: '负责人 丙', note: '备注 03' },
   ],
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // 聚光半径扩张：全程匀速（用户裁决"整个过程要匀速"——严格 linear，无缓动）
   // r+feather=1.85r 是光前沿；1.85*1300≈2400 恰在片尾盖满全屏对角，

@@ -13,8 +13,20 @@
 // 第二条拍下同帧卡片停晃、投影瞬间变薄、整卡 2px 下沉——"按死"的一瞬是主角。
 // 帧确定性：全部由 frame 派生，无随机。收尾 f86 后真静止 54f。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing, Img, staticFile } from 'remotion';
+import { interpolate, Easing, Img, staticFile } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（迁移自 013 lens-timings.json；空场/晃动弹性，胶带拍刚性）
+const SHOT_TIME: ShotTime = {
+  segments: [
+    { from: 0, to: 58, mode: 'elastic', minFrames: 12 },
+    { from: 58, to: 88, mode: 'rigid' },
+    { from: 88, to: 180, mode: 'elastic', minFrames: 20 },
+  ],
+  minFrames: 62,
+};
 
 const CARD_W = 560;
 const CARD_H = 350;
@@ -168,7 +180,7 @@ export const MaskingTapeSlap: React.FC<MaskingTapeSlapProps> = ({
     ],
   },
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // 卡片飘入：从上方 -120px 缓落
   const floatY = interpolate(frame, [FLOAT_START, FLOAT_END], [-120, 0], {

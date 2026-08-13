@@ -11,8 +11,16 @@
 // 马克笔下划线从左到右描画（粗细变化/端头圆润/微歪/边缘毛糙）。
 // 对标 notion-ai.mp4 2.3–3.6s。与库内 draw-svg-trace 撞车，本版做马克笔质感。
 import React from 'react';
-import { AbsoluteFill, interpolate, useCurrentFrame } from 'remotion';
+import { AbsoluteFill, interpolate } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（迁移自 013 lens-timings.json；全弹性）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 const mulberry32 = (a: number) => () => {
   let t = (a += 0x6d2b79f5);
@@ -54,7 +62,7 @@ export const MarkerUnderlineTitle: React.FC<MarkerUnderlineTitleProps> = ({
   highlight = 'new',
   title = 'Paper Notes',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   // 下划线长度：跟随强调词宽度自适应（斜体约 84px/字符 @118px 字号，下限 60）
   const LEN = Math.max(60, highlight.length * 84);
 

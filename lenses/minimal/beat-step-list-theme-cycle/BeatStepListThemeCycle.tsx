@@ -15,9 +15,21 @@
 // 机制逐帧照搬（列表 translateY 步进 / 胶囊固定 / 三通道同源 / 6f 跳变窗 / squash / 上下羽化），
 // 仅做纸墨换色 + 最小参数化（words/beats/beatFrames/firstBeat）。
 import React from 'react';
-import { AbsoluteFill, interpolate, useCurrentFrame } from 'remotion';
+import { AbsoluteFill, interpolate } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（迁移自 013 lens-timings.json；拍点列词刚性 30-84）
+const SHOT_TIME: ShotTime = {
+  segments: [
+    { from: 0, to: 30, mode: 'elastic', minFrames: 8 },
+    { from: 30, to: 84, mode: 'rigid' },
+    { from: 84, to: 180, mode: 'elastic', minFrames: 12 },
+  ],
+  minFrames: 74,
+};
 
 const ROW_H = 150; // 行高（列表步进单位）
 const SNAP_WINDOW = 6; // 跳变窗：拍头 6 帧内完成跳变，其余帧静置（配方卡命门，勿调大）
@@ -57,7 +69,7 @@ export const BeatStepListThemeCycle: React.FC<BeatStepListThemeCycleProps> = ({
   firstBeat = 30,
   fontSize = 92,
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   if (words.length === 0) {
     return <AbsoluteFill style={{ background: THEMES[0].bg }} />;
