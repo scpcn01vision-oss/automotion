@@ -17,9 +17,18 @@
 // 关键帧：0–35 完全静止(boil off) → 35–105 沸腾(boil on, seed 每 3 帧一换)
 // → 105 摘罩 → 105–140 真静止(boil off)。
 import React from 'react';
-import { useCurrentFrame } from 'remotion';
+
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const BOIL_START = 35;
 const BOIL_END = 105;
@@ -40,7 +49,7 @@ export const LineBoil: React.FC<LineBoilProps> = ({
     { label: 'Ship', value: 'Ready' },
   ],
 }) => {
-  const f = useCurrentFrame();
+  const f = useShotFrame(SHOT_TIME);
   const boiling = f >= BOIL_START && f < BOIL_END;
   // seed 每 3 帧阶梯换 → 8~10Hz 的手绘颤动感；帧确定，无随机源
   const seed = Math.floor(f / 3);

@@ -15,8 +15,17 @@
 // 过冲 36px 后 3f 回弹落位。左上角标 "on 3s"/"on 1s" 随段切换并带 line-boil
 // （boil 在 f=108 后冻结）。收尾真静止 ≥40f。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const W = 1920;
 const CARD_W = 420;
@@ -88,7 +97,7 @@ export const SakugaTimingShift: React.FC<SakugaTimingShiftProps> = ({
     { label: 'Ship', value: 'Ready' },
   ],
 }) => {
-  const f = useCurrentFrame();
+  const f = useShotFrame(SHOT_TIME);
   const onThrees = f < SWITCH;
 
   // ---- 卡片位置 ----

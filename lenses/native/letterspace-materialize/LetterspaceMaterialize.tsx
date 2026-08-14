@@ -14,8 +14,17 @@
 // ② 所有字母同时开始同时完成：去掉 v2 的逐字错峰（PER/jitter），全字符同一帧起笔、
 //    pathLength 归一保证不同笔画长度的字母在同一帧齐收（截图 2/3 的全行并行半截态）。
 import React from 'react';
-import { AbsoluteFill, interpolate, useCurrentFrame } from 'remotion';
+import { AbsoluteFill, interpolate } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 // 78x64 视框内的方正略宽细骨架字形（子笔画顺序=描画顺序）
 const GLYPHS: Record<string, string> = {
@@ -40,7 +49,7 @@ export interface LetterspaceMaterializeProps {
 export const LetterspaceMaterialize: React.FC<LetterspaceMaterializeProps> = ({
   word = 'SUPREME',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // 全字符共享同一进度：同时开始、同时完成
   const p = interpolate(frame, [START, START + DUR], [0, 1], {

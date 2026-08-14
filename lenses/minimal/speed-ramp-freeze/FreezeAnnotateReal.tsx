@@ -11,9 +11,18 @@
 // freeze-annotate 定格标注（轮 G）——真实卡片流运动中定格，
 // 马克笔琥珀圈注（feTurbulence 手绘抖动）圈住目标卡 + 箭头点题，解冻继续。
 // remap：0–45 流动 → 45–100 定格（斜率0）→ 100–135 解冻（1.4x 补偿）。
-import { AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame } from 'remotion';
+import { AbsoluteFill, Img, interpolate, staticFile } from 'remotion';
 import layout from '../../_textures/live-layout.json';
 import { G } from '../../_fixtures/Fixtures';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 135, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 export const FREEZEANNOTATE_DUR = 135;
 
@@ -30,7 +39,7 @@ export interface FreezeAnnotateRealProps {
 export const FreezeAnnotateReal: React.FC<FreezeAnnotateRealProps> = ({
   subjectImage = 'card4-hires.png',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const src = interpolate(frame, [0, 45, 100, 135], [0, 45, 45, 94], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });

@@ -15,9 +15,18 @@
 // SHIP 20–38、FASTER 42–75（长词慢读）、BREAK 85–103、NOTHING 107–130，词间停顿。
 // 正在填的词底下有 8px 深色下划线跟随填充右缘作读指。0–19f hold；130–149f 真静止。
 import React from 'react';
-import { useCurrentFrame, interpolate } from 'remotion';
+import { interpolate } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 type Word = { text: string; start: number; end: number };
 
@@ -76,7 +85,7 @@ export const KaraokeFillSync: React.FC<KaraokeFillSyncProps> = ({
     ],
   ],
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   return (
     <div
       style={{

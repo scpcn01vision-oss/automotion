@@ -14,9 +14,18 @@
 // Easing.in(cubic) 急推 scale 1→3.2 向命令行推入（末 2f 加 blur）硬切到
 // result 内容全屏，1.06→1 回稳 4f 落定。收尾真静止 ≥40f。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 // 终端窗几何
 const TW = 1100;
@@ -93,7 +102,7 @@ export const TerminalTypewriter: React.FC<TerminalTypewriterProps> = ({
     ],
   },
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // 时间轴随命令长度动态：10 起敲（2f/字符）→ 敲完停 12f → 6f 急推硬切 → 4f 落定
   const typeStart = 10;

@@ -13,9 +13,18 @@
 // delay = 卡索引×1.5f 微错峰，16f inOut(cubic) + 落定 3f 过冲 1.02。
 // 全部落定后整体加深脉冲收束。收尾真静止 ≥40f。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const CARD_W = 280;
 const CARD_H = 170;
@@ -122,7 +131,7 @@ export interface FlipGridReflowProps {
 }
 
 export const FlipGridReflow: React.FC<FlipGridReflowProps> = () => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // 加深脉冲：仅脉冲窗口内挂载 filter，窗口外完全不挂（摘罩）
   const pulsing = frame >= PULSE_IN && frame <= PULSE_OUT;

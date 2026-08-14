@@ -13,9 +13,18 @@
 // 连推三章（三种饱和底色，每章中央钉一张灰阶窗口卡随底色走）。
 // 推入用重 ease-out（快进慢停）。
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const H = 1080;
 
@@ -98,7 +107,7 @@ export const BottomPushStackWipe: React.FC<BottomPushStackWipeProps> = ({
   ],
   windowTitle = '概览',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   // 每章的推入进度
   const progress = PUSH_STARTS.map((s) =>
     interpolate(frame, [s, s + PUSH_DUR], [0, 1], {

@@ -19,9 +19,18 @@
 // 锁定帧 i*3+45 起 8f 加深脉冲（最后一字 69–77）→ 80–104 整词呼吸 →
 // 104–150 全静止（46f，无逐帧滤镜）。
 import React from 'react';
-import { useCurrentFrame, interpolate, interpolateColors, Easing } from 'remotion';
+import { interpolate, interpolateColors, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 const h = (n: number) => {
   const s = Math.sin(n * 127.3) * 43758.5453;
@@ -38,7 +47,7 @@ export interface LetterformDriftAssemblyProps {
 export const LetterformDriftAssembly: React.FC<LetterformDriftAssemblyProps> = ({
   word = 'ASSEMBLE',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const chars = word.split('');
 
   // 整词收束呼吸：80–92 放大到 1.04，92–104 回落，之后恒 1 → 帧确定

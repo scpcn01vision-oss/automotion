@@ -9,8 +9,17 @@
 // === 适配注意 ===
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 import React from 'react';
-import {AbsoluteFill, interpolate, useCurrentFrame} from 'remotion';
+import { AbsoluteFill, interpolate } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 /**
  * DatavizLandscapeOpen — 暗场支流线束地景开场
@@ -135,7 +144,7 @@ export interface DatavizLandscapeOpenProps {
 }
 
 export const DatavizLandscapeOpen: React.FC<DatavizLandscapeOpenProps> = () => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // 相机: 匀稳横移 3.2px/f (2–5 区间), 全程斜率恒定 (不急刹)
   const camX = frame * 3.2;

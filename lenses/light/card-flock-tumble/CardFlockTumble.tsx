@@ -16,8 +16,17 @@
 //    顶部偏奶桃色、出现后减速外扩且全程缓慢长大、衰减极慢（片尾仍在，
 //    弥散变淡而非熄灭）、中心无水面光。用 feTurbulence+位移贴图模拟。
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, Easing } from 'remotion';
 import { G } from '../../_system/colors';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 const FONT = '"Avenir Next", Futura, "Helvetica Neue", sans-serif';
 
@@ -294,7 +303,7 @@ export const CardFlockTumble: React.FC<CardFlockTumbleProps> = ({
     ['新建', '编辑'],
   ],
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const CARDS = CARD_POSES.map((p, i) => ({ ...p, title: cards[i] ?? '' }));
 
   // STRONGER 巨字

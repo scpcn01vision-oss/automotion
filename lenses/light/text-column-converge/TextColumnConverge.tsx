@@ -14,8 +14,17 @@
 // （左缘 412→554 / 右缘 867→725），"NEW RAYCAST" 以屏幕中线居中定格；
 // 定格后约 0.6s，斜体 "COMING 2026" 在下方近乎硬切浮现。
 import React from 'react';
-import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
+import { AbsoluteFill, Easing, interpolate } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 4 }],
+  minFrames: 4,
+};
 
 // 词轮换表默认（原版）：停留帧数不均（机器节奏），全程钉在右缘，不做间距收缩
 const DEFAULT_STEPS: { word: string; dur: number }[] = [
@@ -55,7 +64,7 @@ export const TextColumnConverge: React.FC<TextColumnConvergeProps> = ({
   rightWords = DEFAULT_STEPS,
   subtitle = 'COMING 2026',
 }) => {
-  const f = useCurrentFrame();
+  const f = useShotFrame(SHOT_TIME);
   const t = f - START;
   const STEPS = rightWords;
 

@@ -13,7 +13,16 @@
 // 对标 bear-app.mp4 0–3s（密帧核实：非同帧硬翻，是极快多道波纹翻色）。
 import React from 'react';
 import { G } from '../../_fixtures/Fixtures';
-import { AbsoluteFill, interpolate, useCurrentFrame } from 'remotion';
+import { AbsoluteFill, interpolate } from 'remotion';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const mulberry32 = (a: number) => () => {
   let t = (a += 0x6d2b79f5);
@@ -56,7 +65,7 @@ export interface IconFieldColorizeProps {
 }
 
 export const IconFieldColorize: React.FC<IconFieldColorizeProps> = () => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const rand = mulberry32(20260718);
   const icons: React.ReactNode[] = [];
 

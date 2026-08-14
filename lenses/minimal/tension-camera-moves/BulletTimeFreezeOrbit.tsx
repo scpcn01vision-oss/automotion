@@ -14,9 +14,18 @@
 // 同步 scale 1→1.12→1 + translateX 摆动增强绕行感;105–120 时钟恢复柱子长完;
 // 118–128 数字标签浮现;128–150 全静止收尾。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 const PANEL_W = 900;
 const PANEL_H = 560;
@@ -47,7 +56,7 @@ export const BulletTimeFreezeOrbit: React.FC<BulletTimeFreezeOrbitProps> = ({
   sideTitle = '增长势头',
   sideSubtitle = '季度增长趋势',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // ── 子弹时间时钟:0–45 正常走,45–105 冻结,105 起恢复 ──
   const effFrame =

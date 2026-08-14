@@ -13,9 +13,18 @@
 // 说话时中部高耸、停顿缩成点线，波形从右往左滚动；右端提交钮。
 // 演：说(0.5–1.9s) → 停(1.9–2.7s) → 说(2.7–4.1s) → 提交(4.1–5s)。
 import React from 'react';
-import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
+import { AbsoluteFill, Easing, interpolate } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 14 }],
+  minFrames: 14,
+};
 
 const mulberry32 = (a: number) => () => {
   let t = (a += 0x6d2b79f5);
@@ -53,7 +62,7 @@ export interface VoiceWaveformLiveProps {
 }
 
 export const VoiceWaveformLive: React.FC<VoiceWaveformLiveProps> = ({ statusText }) => {
-  const f = useCurrentFrame();
+  const f = useShotFrame(SHOT_TIME);
 
   // 提交动作
   const submitAt = 126;

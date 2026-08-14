@@ -16,9 +16,18 @@
 // ③ 帧 110 一拍：6f ease-out 全体齐整回正（rotate→0、偏移→0、scale 1.06→1），
 //    帧 116–150 真静止（≥25f）收尾。
 import React from 'react';
-import { useCurrentFrame, Easing } from 'remotion';
+import { Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 // 确定性伪随机
 const h = (n: number) => {
@@ -63,7 +72,7 @@ export interface LetterDropPhysicsProps {
 export const LetterDropPhysics: React.FC<LetterDropPhysicsProps> = ({
   word = 'GRAVITY',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const wordW = word.length * SLOT_W;
   const left = (1920 - wordW) / 2;
   // 帧 110 起的齐整回正进度

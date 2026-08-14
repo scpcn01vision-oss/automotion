@@ -14,9 +14,18 @@
 // 结构：0–19f 空场 hold（只有底部装饰线）；20–28f 标题从右画外 Easing.in(cubic)
 // 撞入屏心（帧 28 命中）；28–71f 双版错位震荡；72–75f 套准脉冲；76–119f 真静止 44f。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const HIT = 28; // 撞停命中帧
 const SNAP = 72; // 套准合一帧
@@ -58,7 +67,7 @@ export interface RisoMisregistrationHitProps {
 }
 
 export const RisoMisregistrationHit: React.FC<RisoMisregistrationHitProps> = ({ text = 'IMPACT' }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // 阶段判定
   const entering = frame >= 20 && frame < HIT; // 撞入

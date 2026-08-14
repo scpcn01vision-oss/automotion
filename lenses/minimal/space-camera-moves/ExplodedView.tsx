@@ -9,9 +9,18 @@
 // === 适配注意 ===
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 import React from 'react';
-import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
+import { AbsoluteFill, Easing, interpolate } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 // exploded-view：整页 dashboard 带 3D 倾斜，咔地沿 Z 轴炸开——顶栏/侧栏/六卡
 // 各自浮到不同深度悬停（近大而实、远略暗），层间透出投影；hold 一拍后
@@ -158,7 +167,7 @@ export const ExplodedView: React.FC<ExplodedViewProps> = ({
   searchText = '搜索',
   avatarText = '我',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const LAYERS = buildLayers(cards, sidebarItems, dashTitle, searchText, avatarText);
 
   // 每层进度：炸开 ease-out-back（带一点回弹的“咔”）× 合体逆序 ease-in

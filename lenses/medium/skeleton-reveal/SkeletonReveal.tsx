@@ -12,16 +12,18 @@
 // 灰条骨架 UI 窗口替换 → 骨架消息列表滚入，镜头推近时灰条逐行"显影"成
 // 头像+文字内容（最后一行末词晚半拍到）。
 import React from 'react';
-import {
-  AbsoluteFill,
-  useCurrentFrame,
-  useVideoConfig,
-  interpolate,
-  spring,
-  Easing,
-} from 'remotion';
+import { AbsoluteFill, useVideoConfig, interpolate, spring, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 const mulberry32 = (a: number) => () => {
   let t = (a += 0x6d2b79f5);
@@ -193,7 +195,7 @@ export const SkeletonReveal: React.FC<SkeletonRevealProps> = ({
     { name: 'Mia', text: 'Love it. Can we make it pink?' },
   ],
 }) => {
-  const f = useCurrentFrame();
+  const f = useShotFrame(SHOT_TIME);
   const { fps } = useVideoConfig();
 
   const SWAP = 32; // 涂鸦 → 骨架的那一拍

@@ -12,10 +12,19 @@
 // 超大描边箭头光标滑入点击，白 thumb 左→右 ~8f ease-out 滑动，
 // 到位瞬间新选项前弹出小图标、旧图标收起。
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, interpolate, Easing, spring, useVideoConfig } from 'remotion';
+import { AbsoluteFill, interpolate, Easing, spring, useVideoConfig } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
 
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 // 超大描边箭头光标
 const ArrowCursor: React.FC<{ x: number; y: number; press: number }> = ({ x, y, press }) => (
@@ -75,7 +84,7 @@ export const SegmentedThumbHero: React.FC<SegmentedThumbHeroProps> = ({
   askIcon = <AskIcon size={78} />,
   computerIcon = <SmileLaptop size={78} />,
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const { fps } = useVideoConfig();
 
   // ---- 时间轴 ----

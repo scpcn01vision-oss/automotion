@@ -9,9 +9,18 @@
 // === 适配注意 ===
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 import React from 'react';
-import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
+import { AbsoluteFill, Easing, interpolate } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 // beat-cut-accelerando：六个不同构图按 16→12→8→6→4 帧递减间隔全屏硬切，
 // 加速逼近，最后一切戛然定格回主画面并 1→1.06 慢推收住。
@@ -70,7 +79,7 @@ export const BeatCutAccelerando: React.FC<BeatCutAccelerandoProps> = ({
     image: 'textures/card6.png',
   },
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // 当前落在哪个区间（末段 = 主画面 v0）
   let seg = 0;

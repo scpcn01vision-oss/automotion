@@ -1,9 +1,18 @@
 // dolly-zoom 滑动变焦（轮 F）——主体卡（card4-hires）大小锁定屏中，
 // 背景真实卡群 + 整页反向膨胀逼近（scale + blur 渐深），
 // "世界压过来"而主角纹丝不动。伪 dolly-zoom：无需 3D，分层反向补偿。
-import { AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame, Easing } from 'remotion';
+import { AbsoluteFill, Img, interpolate, staticFile, Easing } from 'remotion';
 import layout from '../../_textures/live-layout.json';
 import { G } from '../../_fixtures/Fixtures';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 135, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 export const DOLLYZOOM_DUR = 135;
 
@@ -18,7 +27,7 @@ export const DollyZoomReal: React.FC<DollyZoomRealProps> = ({
   pageImage = 'textures/live/projects-full.png',
   subjectImage = 'textures/live/card4-hires.png',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const t = interpolate(frame, [15, 110], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
     easing: Easing.bezier(0.4, 0, 0.3, 1),

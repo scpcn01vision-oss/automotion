@@ -16,9 +16,18 @@
 // 标签 "$340k"；卡片震动 3→8px。收尾 f120 后真静止 40f。
 // 帧确定性：数据硬编码，全部 frame 派生，无 Math.random / Date.now。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const AMBER = G.accent;
 
@@ -66,7 +75,7 @@ export const AxisRescaleShock: React.FC<AxisRescaleShockProps> = ({
   oldTicks: oldTicksProp,
   newTicks: newTicksProp,
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const data = dataProp ?? DEFAULT_DATA;
   const months = monthsProp ?? DEFAULT_MONTHS;
   const N = data.length;

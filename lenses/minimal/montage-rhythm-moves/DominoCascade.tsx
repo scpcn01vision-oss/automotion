@@ -16,9 +16,18 @@
 //    末卡落地帧 78 = 第二次撞击（再震一拍 + 末卡向左歪 3° 给出横向动量）；
 // ③ 帧 78–100 左侧深色侧边栏被横向撞滑进场，Easing.out(cubic) 带过冲回弹；帧 100–150 全体真静止。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const easeInCubic = Easing.in(Easing.cubic);
 const easeOutCubic = Easing.out(Easing.cubic);
@@ -93,7 +102,7 @@ export const DominoCascade: React.FC<DominoCascadeProps> = ({
     { icon: '▲', label: '归档' },
   ],
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const n = cards.length;
   const IMPACT_2 = IMPACT_1 + (n - 1) * CARD_STAGGER + CARD_DUR; // 末卡落地
   const SIDE_END = IMPACT_2 + 14; // 侧边栏到位（过冲点）

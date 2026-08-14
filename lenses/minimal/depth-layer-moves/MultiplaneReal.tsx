@@ -12,9 +12,18 @@
 // 背景整页（0.35x，微 blur 退后）+ 中景真实卡组（0.7x）+
 // 前景浮块（1.4x，search 切片 + 高清卡，轻 blur 拉焦平面）。
 // 系数克制（背景不动排版，卡组独立成层）防"排版散架"。
-import { AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame, Easing } from 'remotion';
+import { AbsoluteFill, Img, interpolate, staticFile, Easing } from 'remotion';
 import layout from '../../_textures/live-layout.json';
 import { G } from '../../_fixtures/Fixtures';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 135, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 export const MULTIPLANE_DUR = 135;
 
@@ -31,7 +40,7 @@ export const MultiplaneReal: React.FC<MultiplaneRealProps> = ({
   foregroundImage = 'textures/live/float-search.png',
   subjectImage = 'textures/live/card4-hires.png',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const drive = interpolate(frame, [10, 125], [0, 1000], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
     easing: Easing.bezier(0.35, 0, 0.25, 1),

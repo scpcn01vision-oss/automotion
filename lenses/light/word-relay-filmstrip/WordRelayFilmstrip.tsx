@@ -16,9 +16,18 @@
 // ③ 尺寸/字号/位置按截图量取：卡 x=106 宽 940，词右对齐至 x≈1710，
 //    Didot 系衬线 116px，"Computer" 固定第一行，动词第二行原位灰化淡出换词。
 import React from 'react';
-import { AbsoluteFill, interpolate, useCurrentFrame } from 'remotion';
+import { AbsoluteFill, interpolate } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const CARD_W = 940;
 const CARD_H = 530;
@@ -217,7 +226,7 @@ export const WordRelayFilmstrip: React.FC<WordRelayFilmstripProps> = ({
   subject = 'Computer',
   words = ['researches', 'builds', 'codes'],
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // —— 滚动步进：平时静止，仅在切词窗口内滚一格（ease-in-out）——
   let stepF = 0;

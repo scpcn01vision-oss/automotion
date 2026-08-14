@@ -16,10 +16,19 @@
 // 112–124f 框闭合后 B 卡内容淡入 12f。124–160f 真静止 36f ≥ 35f。
 // 帧确定，无随机；笔头墨点 118f 起条件卸载（摘罩判例）。
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContentData } from '../../_system/scene-content';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 // ---- 世界几何（一条折线：进度条 + 横线 + 直角 + 矩形框）----
 // M 400,705 → 2600,705（进度 560 + 冲出 1640）→ 上 2600,375 → 右 3160,375
@@ -106,7 +115,7 @@ export const LineCarryTransition: React.FC<LineCarryTransitionProps> = ({
     ],
   },
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // 镜头：34–94f 左移 1920px，inOut cubic
   const cam = interpolate(frame, [34, 94], [0, 1920], {

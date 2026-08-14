@@ -15,9 +15,18 @@
 // ③保留项不动：错峰 3 帧起点、界面位置顺序（行优先左→右）、重力加速
 // （距离∝t²）、贴落完成后页面立起转正收尾。
 import React from 'react';
-import { AbsoluteFill, interpolate, useCurrentFrame, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 const INK = G.ink;
 const MID = G.mid;
@@ -161,7 +170,7 @@ export const RunwayGroundSkim: React.FC<RunwayGroundSkimProps> = ({
   ],
   rowMeta = '刚刚',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const rand = mulberry32(20260718);
   const CARDS = cards.map((c, i) => ({ ...c, ...CARD_SLOTS[i] }));
   const jit = CARDS.map(() => rand() * 1.2); // ≤1.2 帧微差 < 3 帧错峰，顺序绝不乱

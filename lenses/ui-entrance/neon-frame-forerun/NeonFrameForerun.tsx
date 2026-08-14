@@ -14,9 +14,18 @@
 // tab/组件悬空带错位影 → ④全部贴合）。v2 已有：强透视直角框左缘中点
 // 两头奔画、面板原地由暗转亮、背景霓虹管框群中亮尾熄。
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 const easeFall = Easing.bezier(0.5, 0.05, 0.6, 1); // 加速下落、末端软着陆
 
@@ -233,7 +242,7 @@ export const NeonFrameForerun: React.FC<NeonFrameForerunProps> = ({
     { title: '条目 04', avatars: ['J', 'K', 'L'] },
   ],
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   // 主框描画：左缘中点向两头奔跑，26 帧成型（截图①→②）
   const trace = interpolate(frame, [2, 28], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',

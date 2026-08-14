@@ -15,9 +15,18 @@
 // 背景 60–110f 从 #ececea 沉入 #141414；主卡白光晕 60–100f 淡入。
 // 帧 110–150 完全静止：暗场中央孤悬一张发光小卡——全片只为这一个数字。
 import React from 'react';
-import { useCurrentFrame, interpolate, interpolateColors, Easing } from 'remotion';
+import { interpolate, interpolateColors, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 // 8 张兄弟卡：相对主卡中心 (960,540) 的偏移 + 尺寸 + seed
 const SIBS = [
@@ -84,7 +93,7 @@ export const PullBackIsolation: React.FC<PullBackIsolationProps> = ({
     { label: '吞吐', value: '1.2k/s' },
   ],
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // 相机后拉：2.2（怼脸特写）→ 0.62（大远景孤悬）
   const scale = interpolate(frame, [0, 110], [2.2, 0.62], {

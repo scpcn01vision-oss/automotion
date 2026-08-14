@@ -16,8 +16,17 @@
 // 框群；镜头视角 rotateY 从左侧(+38°) 连续弧线旋到右侧(-26°)。
 import React from 'react';
 import { G } from '../../_fixtures/Fixtures';
-import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, Easing } from 'remotion';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 const easeFall = Easing.bezier(0.5, 0.05, 0.6, 1); // 加速下落、末端软着陆
 
@@ -234,7 +243,7 @@ export const NeonFrameForerunOrbit: React.FC<NeonFrameForerunOrbitProps> = ({
     { title: '条目 04', avatars: ['J', 'K', 'L'] },
   ],
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   // 开场快速描框（同款左缘中点两头奔画，14 帧成型——样式与 v3 一致）
   const trace = interpolate(frame, [0, 14], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',

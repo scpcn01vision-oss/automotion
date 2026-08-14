@@ -9,16 +9,18 @@
 // === 适配注意 ===
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 import React from 'react';
-import {
-  AbsoluteFill,
-  Img,
-  interpolate,
-  staticFile,
-  useCurrentFrame,
-  useVideoConfig,
-} from 'remotion';
+import { AbsoluteFill, Img, interpolate, staticFile, useVideoConfig } from 'remotion';
 import { VerticalTicker, TickerColumn } from './VerticalTicker';
 import { G } from '../../_fixtures/Fixtures';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const BG = G.bg;
 
@@ -77,7 +79,7 @@ export const PageWaterfallWall: React.FC<PageWaterfallWallProps> = ({
   gap = 30,
   pushTo = 1.06,
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const { durationInFrames } = useVideoConfig();
   // 镜头缓推寄生在外层，墙自身循环、镜头单向
   const push = interpolate(frame, [0, durationInFrames], [1, pushTo]);

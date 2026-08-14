@@ -12,9 +12,18 @@
 // 链接块被参数实时推开（flex gap 插值），标注线跟随。
 // demo 放大做：间距从紧(16)拉到松(64)，再弹簧回弹归位。
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, interpolate, spring, useVideoConfig, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, spring, useVideoConfig, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 16 }],
+  minFrames: 16,
+};
 
 const BLOCK_H = 100;
 const ROW_Y = 540; // 行中心
@@ -34,7 +43,7 @@ export const AutolayoutGapDial: React.FC<AutolayoutGapDialProps> = ({
   blocks = [230, 190, 265, 210, 245],
   blockLabels = ['条目 01', '条目 02', '条目 03', '条目 04', '条目 05'],
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const BLOCK_WIDTHS = blocks;
   const { fps } = useVideoConfig();
 

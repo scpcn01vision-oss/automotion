@@ -18,9 +18,18 @@
 // 48–56 闪黑加粗（48–50 上 50–56 回）+ 内容 8f 淡入 →
 // 54–64 描边淡出 / 自身 border 淡入 → 68–86 下划线短版生长 → 90–140 真静止 50f。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing, Img, staticFile } from 'remotion';
+import { interpolate, Easing, Img, staticFile } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 const CW = 560;
 const CH = 380;
@@ -92,7 +101,7 @@ export const DrawSvgTrace: React.FC<DrawSvgTraceProps> = ({
     ],
   },
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // 轮廓描边进度：8–48，40f，inOut cubic
   const p = interpolate(frame, [8, 48], [0, 1], {

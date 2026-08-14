@@ -11,10 +11,19 @@
 // 无剪切转场：珠光气泡群从画外飘入、越来越大遮满整屏，页面同时被"洗白"，
 // 遮蔽峰值处藏场景切换，气泡散开后已是新场景。混入 i18n 文字胶囊变体元素。
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 const mulberry32 = (a: number) => () => {
   let t = (a += 0x6d2b79f5);
@@ -164,7 +173,7 @@ export const BubbleSwarmTakeover: React.FC<BubbleSwarmTakeoverProps> = ({
     ],
   },
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   // 页面"洗白"：靠近峰值时整体亮度提升
   const whiteout = interpolate(frame, [42, 68, 82, 104], [0, 0.92, 0.92, 0], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',

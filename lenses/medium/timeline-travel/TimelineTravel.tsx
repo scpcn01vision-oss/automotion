@@ -13,9 +13,18 @@
 // 末刻度 4f 急停 + 推近 1.28×。世界层只动 translateX/scale。
 // f0–12 初始静置；f118 起真静止 ≥42f（160f 总长）。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing, spring } from 'remotion';
+import { interpolate, Easing, spring } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const W = 1920;
 const AXIS_Y = 700;
@@ -125,7 +134,7 @@ export interface TimelineTravelProps {
 export const TimelineTravel: React.FC<TimelineTravelProps> = ({
   title = 'TIMELINE',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const camX = camXAt(frame);
 
   // 急停后推近末刻度：scale 1 → 1.28，中心对准 Today 刻度

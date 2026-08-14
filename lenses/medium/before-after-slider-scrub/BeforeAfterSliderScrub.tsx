@@ -14,9 +14,18 @@
 // 再慢速回扫到 40% 停住。杆经过处 after 揭出（clip-path inset 跟随杆 x）。
 // 先快甩后慢扫速度对比是节奏关键。f=110 后全静止（40f）。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const CL = { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' } as const;
 
@@ -61,7 +70,7 @@ export const BeforeAfterSliderScrub: React.FC<BeforeAfterSliderScrubProps> = ({
     ],
   },
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const p = posAt(frame); // 杆位置 %
   const x = (p / 100) * 1920;
 

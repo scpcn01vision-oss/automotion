@@ -15,8 +15,17 @@
 // 每段入场：opacity 0→1 + 沿笔画方向 12px 滑入（out 缓动），6f。
 // f0–14 静置空场；末段落位于 f104，脉冲至 f112，真静止 ≥38f（150f 总长）。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 // "SHIP" 手工笔画段。坐标系：每字 200 宽、320 高，字间距 60。
 // 段 = {x1,y1,x2,y2}，线宽 44，方形端帽（不连续感更强）。
@@ -74,7 +83,7 @@ export interface StrokeSegmentBuildProps {
 export const StrokeSegmentBuild: React.FC<StrokeSegmentBuildProps> = ({
   segments = SEGS,
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // 末段落位：整字脉冲 1 → 1.06 → 1（8f）
   const pulse = interpolate(

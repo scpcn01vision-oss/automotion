@@ -12,9 +12,18 @@
 // 开场俯视 dashboard 顶部（rotateX 平躺、只露顶栏），~43f 机位抬头回正，
 // 内容一排排涌入视野。out-cubic + 末端轻微过冲回正，落定真静止 ≥35f。
 import React from 'react';
-import { AbsoluteFill, interpolate, useCurrentFrame, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const HOLD = 25; // 俯角定格
 const MOVE = 43; // 主抬升
@@ -35,7 +44,7 @@ export const TiltReveal: React.FC<TiltRevealProps> = ({
     ],
   },
 }) => {
-  const f = useCurrentFrame();
+  const f = useShotFrame(SHOT_TIME);
 
   const rotX = interpolate(
     f,

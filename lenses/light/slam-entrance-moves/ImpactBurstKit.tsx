@@ -17,9 +17,18 @@
 //   + 4f 震屏 6px 衰减 + 主卡 6f 压扁回弹 → 23 环前沿过邻卡(中心距 460px)：
 //   邻卡外推 30px + rotate ±3° 阻尼振荡弹回(40f 内钳到 0) → 63–140 全静止(77f)。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 // 伪随机（帧确定）
 const h = (n: number): number => {
@@ -92,7 +101,7 @@ export const ImpactBurstKit: React.FC<ImpactBurstKitProps> = ({
     { label: '指标三', value: '96.4%' },
   ],
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // ── 主卡砸落：14–20 帧 scale 1.8→1 / y -120→0，加速进场
   const dropP = interpolate(frame, [14, IMPACT], [0, 1], {

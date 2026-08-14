@@ -13,9 +13,18 @@
 // 落定同帧盘下数值文字弹出。三表错峰形成波浪。f60 后真静止 80f。
 // 帧确定性：纯 interpolate 分段，全部 clamp，settle 后每帧输出常数。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const AMBER = G.accent;
 const RED = G.mid;
@@ -72,7 +81,7 @@ const needleAngle = (frame: number, s: number, target: number): number => {
 };
 
 const Gauge: React.FC<{ start: number; target: number }> = ({ start, target }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const d = needleAngle(frame, start, target);
   const settle = start + 32;
   const value = Math.round((target / 270) * 100);

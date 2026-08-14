@@ -13,9 +13,18 @@
 // 再 20f 线性回落到 0.35 驻留柔晕（扩散/消散解耦判例），随后 15f 缓收到 0.22 稳态。
 // 深底白字：白底上提亮不可见判例。收尾真静止 ≥40f。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const BG = G.bg; // 纸色（原 G.side 深底，按用户要求改纸色）
 const WHITE = G.ink; // 深墨字（纸色底上白字不可见）
@@ -55,7 +64,7 @@ export const HalationBloom: React.FC<HalationBloomProps> = ({
   value = '10x',
   label = 'GLOW',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // —— crash-zoom 入场：scale 2.4 → 0.94（7f in-quad 加速撞停）→ 1（2f 回弹）——
   const zoomIn = interpolate(frame, [ZOOM_START, IMPACT], [2.4, 0.94], {

@@ -12,9 +12,18 @@
 // 正圆呼吸一拍(anticipation) → path d 逐数值插值变形成 520×300 圆角矩形卡片轮廓
 // → 卡片内部灰阶内容条淡入。全部帧驱动、确定性。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 const CX = 960;
 const CY = 540;
@@ -144,7 +153,7 @@ export interface MorphFromPrimitiveProps {
 export const MorphFromPrimitive: React.FC<MorphFromPrimitiveProps> = ({
   card = { label: '指标一', value: '+18%' },
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   const breath = interpolate(frame, [10, 20, 30], [1, 1.12, 1], {
     easing: Easing.inOut(Easing.cubic),

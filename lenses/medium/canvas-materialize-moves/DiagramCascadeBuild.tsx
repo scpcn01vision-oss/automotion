@@ -11,9 +11,18 @@
 // prompt 行打字 → 图表节点自上而下逐层级联弹出（根→2 子→4 孙），
 // 连线跟随节点生长（SVG path 描线），成树后整体呼吸一拍。
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, interpolate, spring, useVideoConfig, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, spring, useVideoConfig, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const PROMPT = '生成实体关系图';
 const TYPE_START = 6;
@@ -78,7 +87,7 @@ export const DiagramCascadeBuild: React.FC<DiagramCascadeBuildProps> = ({
     { title: '节点 06', sub: '说明 06' },
   ],
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const { fps } = useVideoConfig();
 
   const typed = Math.min(prompt.length, Math.max(0, Math.floor((frame - TYPE_START) * TYPE_CPS)));

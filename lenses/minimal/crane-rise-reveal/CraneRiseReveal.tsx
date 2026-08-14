@@ -15,9 +15,18 @@
 // 帧 20–120 scale 3.2→1 + 对准点 (520,958)→(960,540)，Easing.out(quad) 减速升起；
 // 视野上缘每越过一行顶边，该行深色脉冲一拍（4f 起 18f 落）读作"涌入"；帧 120–150 满幅真静止。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const HOLD = 20; // 开场特写 hold
 const MOVE_END = 120; // 运镜结束，此后真静止
@@ -58,7 +67,7 @@ export const CraneRiseReveal: React.FC<CraneRiseRevealProps> = ({
     { label: '可用性', value: '99.98%' },
   ],
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const { s, tx, ty } = camAt(frame);
   // 每行脉冲触发帧：视野上缘首次越过该行顶边（底行开场已在画内 → 运动一起步即触发）
   const triggers = Array.from({ length: rows.length }, (_, i) => {

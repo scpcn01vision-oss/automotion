@@ -13,9 +13,18 @@
 // （scaleX 峰值 ≈2.2 / scaleY ≈0.72，糖稀拉丝感），落点 Back.out 式回弹。
 // 速度用位置差分 p(f)-p(f-1) 驱动，低于阈值不拉伸。收尾真静止 ≥35f。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const W = 1920;
 const CARD_W = 380;
@@ -123,7 +132,7 @@ export const AxialStretch: React.FC<AxialStretchProps> = ({
     { label: '指标三', value: '96.4%' },
   ],
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       {/* 落位虚线槽，标出目标位置 */}

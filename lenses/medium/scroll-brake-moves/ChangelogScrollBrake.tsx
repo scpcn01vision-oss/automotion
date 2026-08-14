@@ -12,8 +12,17 @@
 // 高速段叠 blur（速度差分驱动，糊成色带），急刹精准停位后目标行抬升
 // （scale 1.03 + 阴影加深）+ 高亮描边，其余行退暗。f=84 后全静止（56f）。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const CL = { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' } as const;
 
@@ -115,7 +124,7 @@ export interface ChangelogScrollBrakeProps {
 export const ChangelogScrollBrake: React.FC<ChangelogScrollBrakeProps> = ({
   items = DEFAULT_ITEMS,
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const T = scrollAt(frame);
 
   // 速度差分驱动模糊：v 达 60px/f 即满 6px blur

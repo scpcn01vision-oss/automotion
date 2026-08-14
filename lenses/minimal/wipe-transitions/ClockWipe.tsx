@@ -14,9 +14,18 @@
 // 90–96f 亮线淡出，96f 起摘罩（B 直接满屏、无 clip-path、亮线卸载），
 // 96–150f 真静止 54f ≥ 40f。帧确定，无随机。
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, interpolate } from 'remotion';
+import { AbsoluteFill, interpolate } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 const CX = 960;
 const CY = 540;
@@ -61,7 +70,7 @@ export const ClockWipe: React.FC<ClockWipeProps> = ({
     ],
   },
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // 30–90f 指针 0→360°，linear（时钟扫描要匀速才像雷达）
   const theta = interpolate(frame, [30, 90], [0, 360], {

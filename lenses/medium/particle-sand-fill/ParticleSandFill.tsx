@@ -14,9 +14,18 @@
 // 结尾全部粒子条件卸载、只剩实体柱 + 标签，真静止 ≥35f。
 // 帧确定性：sin 散列派生每颗出发帧抖动/起点错高，落地帧由高度差闭式反解。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const AMBER = G.accent;
 const frac = (x: number) => x - Math.floor(x);
@@ -53,7 +62,7 @@ export const ParticleSandFill: React.FC<ParticleSandFillProps> = ({
   cardTitle = '指标概览',
   cardSubtitle = '实时更新',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>

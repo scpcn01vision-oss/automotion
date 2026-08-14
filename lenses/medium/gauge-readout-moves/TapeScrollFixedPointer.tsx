@@ -14,9 +14,18 @@
 // spring 刹车回摆一次（442→415→420）落定。窗内读数同步。f96 后真静止 44f。
 // 帧确定性：value(frame) 纯分段 interpolate 全 clamp，带偏移 = value 线性映射。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 const AMBER = G.accent;
 
@@ -54,7 +63,7 @@ export interface TapeScrollFixedPointerProps {
 export const TapeScrollFixedPointer: React.FC<TapeScrollFixedPointerProps> = ({
   readoutLabel = '当前读数',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const v = valueAt(frame);
 
   // 刻度带：数值大在上。单位 u 的屏幕 y = CENTER_Y + (v - u) * PXU

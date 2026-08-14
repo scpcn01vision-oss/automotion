@@ -14,9 +14,18 @@
 // 关键帧：字符 i 于 i*2 起跑、45f 沿线到达 t_i（out cubic）→ 到达后停 8f →
 // 12f 摆正到水平基线（y 拉平、rotate→0）→ 全部落定约 f103 → 103–150 真静止。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 // 上升贝塞尔：左下 → 右上，先缓后陡（增长线形状）
 const P0 = { x: 200, y: 820 };
@@ -49,7 +58,7 @@ export interface TextOnPathProps {
 export const TextOnPath: React.FC<TextOnPathProps> = ({
   text = 'GROWTH ALL THE WAY',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const n = text.length;
   const finalX0 = 960 - (n * CHAR_W) / 2;
   // 曲线 evolve：随最前字符推进同步生长

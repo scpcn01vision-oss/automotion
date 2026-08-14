@@ -15,10 +15,19 @@
 // f0–14 面板静置；f14–24 飞入；f24–46 收缩（含过冲回弹）；f46 咬合；
 // 标签 f46–56 弹出；f56 后真静止 ≥84f（140f 总长）。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 // 目标：variant A 网格第 2 张卡（第一行中间）。
 // 布局推导：侧栏 220 + padding 36，网格 3 列 gap 28，
@@ -53,7 +62,7 @@ export const ReticleLockOn: React.FC<ReticleLockOnProps> = ({
   },
   focus = { x: 808, y: 108, w: 524, h: 425 },
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const fx = focus.x;
   const fy = focus.y;
   const fw = focus.w;

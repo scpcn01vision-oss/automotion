@@ -12,9 +12,18 @@
 // 停一拍 → 画框整圈 colorA→colorB 同帧硬翻色，窗口内容同帧换承载。
 // 一个画框色完成章节导航/状态提示/内容切换。
 import React from 'react';
-import { useCurrentFrame, spring, interpolate, Img, staticFile } from 'remotion';
+import { spring, interpolate, Img, staticFile } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const FPS = 30;
 const FLIP_FRAME = 78; // 同帧硬翻色时刻
@@ -116,7 +125,7 @@ export const BrandFrameSnap: React.FC<BrandFrameSnapProps> = ({
   cardWidthA = 980,
   cardWidthB = 980,
 }) => {
-  const f = useCurrentFrame();
+  const f = useShotFrame(SHOT_TIME);
   const mode: 'design' | 'dev' = f < FLIP_FRAME ? 'design' : 'dev';
   const frameColor = mode === 'design' ? colorA : colorB;
 

@@ -16,9 +16,18 @@
 // （stiffness 110→150、DUR 26→20）。收尾 f126 后真静止 44f。
 // 帧确定性：伪随机全用 sin 散列，无 Math.random / Date.now。
 import React from 'react';
-import { useCurrentFrame, spring, interpolate } from 'remotion';
+import { spring, interpolate } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const AMBER = G.accent;
 const FPS = 30;
@@ -141,7 +150,7 @@ export const UnitDotSwarmRegroup: React.FC<UnitDotSwarmRegroupProps> = ({
   groups = ['组一', '组二', '组三'],
   caption = '每点 ≈ 40 用户',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   const dots = Array.from({ length: N }, (_, i) => {
     const stag = rnd(i, 7) * STAG;

@@ -13,9 +13,18 @@
 // （俯仰角跟随切线），镜头伴飞穿过多层视差漂浮的灰阶道具，
 // 飞抵窗口 B 前落定，窗口 B 放大接管全屏。发送语义实体化成转场信使。
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const mulberry32 = (a: number) => () => {
   let t = (a += 0x6d2b79f5);
@@ -136,7 +145,7 @@ export const PaperPlaneMessenger: React.FC<PaperPlaneMessengerProps> = ({
   },
   sendLabel = '发送',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // 飞行进度（整体 ease-in-out：起飞加速、落定减速）
   const tFly = interpolate(frame, [FLY[0], FLY[1]], [0, 1], {

@@ -17,9 +17,18 @@
 // 关键帧：0–50 展开（Easing.out(poly(5)))＋去糊提亮 → 35–58 副标题淡入（≈主词展开 70% 时点）
 // → 58–130 全静止（≥72f，滤镜彻底摘除）。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 58 }],
+  minFrames: 58,
+};
 
 const FS = 150; // 主词字号
 // 每个字缝的起始-终点差：(-0.42em) - (0.14em) = -0.56em = -84px @150px
@@ -34,7 +43,7 @@ export const TrackingExpandReveal: React.FC<TrackingExpandRevealProps> = ({
   word = 'BREATHE',
   subtitle = 'SYSTEM',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   // 展开进度 0→1（0–50f，out poly(5)）
   const p = interpolate(frame, [0, 50], [0, 1], {
     extrapolateLeft: 'clamp',

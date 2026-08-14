@@ -11,10 +11,19 @@
 // 源：notion-ai 4.5–8.5s。旧 pill 上飞淡出、新 pill 从下带运动模糊滑入，
 // 连换 6 次后 pill 消失、句子落成 "One AI tool to do it all." 收束。
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
 
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const BEAT = 21; // ~0.7s @30fps
 const INTRO = 12; // 句干入场
@@ -80,7 +89,7 @@ export const PillSlotCycle: React.FC<PillSlotCycleProps> = ({
   ],
   finale = 'do it all.',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const CYCLES = pills.length;
 
   // 句干入场：ease-out 上浮淡入

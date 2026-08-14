@@ -15,11 +15,20 @@
 // 节拍：0–12 静置 → 12 起跳（4 跳递增，各 16/18/20/24f）→ ~90 落定 →
 // 92–104 面板卡弹出 → 110 后真静止 40f。帧确定，尘点用 sin 散列。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { NeutralCard } from '../../_system/neutral-card';
 import type { SceneContentData } from '../../_system/scene-content';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 const AMBER = G.accent;
 const ICON = 400; // icon 边长（半屏级）
@@ -48,7 +57,7 @@ export const AttentionBounce: React.FC<AttentionBounceProps> = ({
     ],
   },
 }) => {
-  const f = useCurrentFrame();
+  const f = useShotFrame(SHOT_TIME);
 
   // 弹跳高度 + 落地挤压
   let y = 0; // 离地高度

@@ -16,9 +16,18 @@
 // 波 20–52f；52f 起摘罩（整页 B 直出、条结构与亮线全部卸载），
 // 52–150f 真静止 98f ≥ 40f。帧确定，无随机源。
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const STRIPS = 12;
 const W = 160; // 每条宽 12×160 = 1920
@@ -57,7 +66,7 @@ export const BlindsSlice: React.FC<BlindsSliceProps> = ({
     ],
   },
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // 摘罩：波完成后条结构全部卸载，B 整页直出
   if (frame >= WAVE_END) {

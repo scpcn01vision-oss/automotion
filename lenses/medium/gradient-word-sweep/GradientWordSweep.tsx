@@ -13,8 +13,17 @@
 // 3) 波前尾迹梯度：刚被点亮的字符辉光最强，随扫过距离衰减到稳态
 //    （trailing-window 增亮层，填充结束后淡出到稳态呼吸）。
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 12 }],
+  minFrames: 12,
+};
 
 const mulberry32 = (a: number) => () => {
   let t = (a += 0x6d2b79f5);
@@ -84,7 +93,7 @@ export interface GradientWordSweepProps {
 export const GradientWordSweep: React.FC<GradientWordSweepProps> = ({
   lines = ['Supercharged', 'with rock-solid reliability'],
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const [lineA, lineB] = lines;
 
   const enter = interpolate(frame, [0, 12], [0, 1], {

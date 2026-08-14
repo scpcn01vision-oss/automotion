@@ -13,9 +13,18 @@
 // 灰阶为主 + 1/3 琥珀。全部彩屑 ~f100 前落出画外（越界即条件卸载），结尾真静止 ≥55f。
 // 帧确定性：sin 散列伪随机派生每颗初速/角度/翻转率，弹道 = 纯 age 的函数。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 14 }],
+  minFrames: 14,
+};
 
 const AMBER = G.accent;
 const FIRE = 16; // 揭晓帧 = 发射帧
@@ -70,7 +79,7 @@ export const ConfettiCrossfire: React.FC<ConfettiCrossfireProps> = ({
   value = '98.5%',
   subtitle = '同比增长',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const age = frame - FIRE;
 
   // KPI 卡 scale 入场落定

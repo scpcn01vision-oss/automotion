@@ -9,10 +9,19 @@
 // === 适配注意 ===
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 import React from 'react';
-import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
+import { AbsoluteFill, Easing, interpolate } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 // 斜角滚正（dutch-roll-to-level）：呈现痛点时整帧带 -10° 斜角悬着（叠极缓慢
 // 正弦漂移防止读作静态歪图），帧 70 解决方案的一拍整帧带单次过冲滚回水平
@@ -41,7 +50,7 @@ export const DutchRollToLevel: React.FC<DutchRollToLevelProps> = ({
   alertText = '注意',
   solution = { title: '已解决', value: '✓' },
 }) => {
-  const f = useCurrentFrame();
+  const f = useShotFrame(SHOT_TIME);
 
   // —— 斜置期的缓慢漂移（帧 70 前）：±0.8° 长周期正弦 + 2px 纵漂 ——
   const driftT = Math.min(f, ROLL);

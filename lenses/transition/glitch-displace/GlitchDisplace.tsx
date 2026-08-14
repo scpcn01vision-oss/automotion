@@ -17,9 +17,18 @@
 // 再抖 4f 至 62f 归位。62f 起摘罩直出 B（条带/重影全部条件卸载），
 // 62–135f 真静止 73f ≥ 40f。帧确定：h() 伪随机，无 Math.random。
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 const STRIPS = 16;
 const H = 1080;
@@ -55,7 +64,7 @@ export const GlitchDisplace: React.FC<GlitchDisplaceProps> = ({
     ],
   },
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   const tearing = frame >= 45 && frame < 62;
   const variant: 'A' | 'B' = frame >= 58 ? 'B' : 'A';

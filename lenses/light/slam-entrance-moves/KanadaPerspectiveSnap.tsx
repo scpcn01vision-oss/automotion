@@ -17,9 +17,18 @@
 // 关键帧：0–18 透视甩入（out cubic）→ 14–18 rotateY 过冲至 +5° →
 // 18–22 回弹归 0 + 震屏衰减 + 阴影收正 → 22–130 全静止（≥45f）。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 22 }],
+  minFrames: 22,
+};
 
 // 确定性伪随机（震屏抖动用）
 const h = (n: number): number => {
@@ -66,7 +75,7 @@ const MiniCard: React.FC<{ w: number; h: number; label: string; value: string }>
 export const KanadaPerspectiveSnap: React.FC<KanadaPerspectiveSnapProps> = ({
   card = { label: '指标一', value: '+18%' },
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // 0–18f 甩入主通道（out cubic：先猛后缓，急停感）
   const p = interpolate(frame, [0, 18], [0, 1], { ...CLAMP, easing: Easing.out(Easing.cubic) });

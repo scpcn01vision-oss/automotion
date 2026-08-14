@@ -13,9 +13,18 @@
 // （20px 宽、6px 间隙），条高按伪 FFT 跳动 64f（低频端高、高频端矮的包络），
 // 条底对齐原线、向上生长。两小节后 12f 收拢回 8px 直线，收线后真静止 ≥35f。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 10 }],
+  minFrames: 10,
+};
 
 // 库内标准 seed hash（帧确定，无 Math.random）
 const h = (n: number) => {
@@ -48,7 +57,7 @@ export interface SpectrumMorphUiProps {
 }
 
 export const SpectrumMorphUi: React.FC<SpectrumMorphUiProps> = ({ title = 'LAUNCH WEEK' }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   const titleOp = interpolate(frame, [0, 10], [0, 1], {
     extrapolateLeft: 'clamp',

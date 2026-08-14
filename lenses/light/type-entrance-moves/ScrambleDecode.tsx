@@ -14,8 +14,17 @@
 // （G.ink 色块白字 2f）随即恢复。跳动期字符 G.mid，锁定后 G.ink。
 // 关键帧：0–20f 全员乱跳 → 20–86f 从左到右逐个锁定 → 87–130f 完全静止收尾。
 import React from 'react';
-import { useCurrentFrame } from 'remotion';
+
 import { G } from '../../_fixtures/Fixtures';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const CHARSET = 'ABCDEF0123456789#$%&';
 const LOCK_START = 20; // 第 0 个字符锁定帧
@@ -35,7 +44,7 @@ export interface ScrambleDecodeProps {
 export const ScrambleDecode: React.FC<ScrambleDecodeProps> = ({
   text = 'DECODE SPEED',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const chars = text.split('');
   const lockedCount = chars.filter((c, i) => c === ' ' || frame >= LOCK_START + i * LOCK_STEP).length;
   const allLocked = lockedCount === chars.length;

@@ -16,9 +16,18 @@
 // 59 急刹+角标飞入 → 59–72 咬合回弹/高亮/标签 → 75–150 真静止 75f。
 // 帧确定，无随机源。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const SCROLL_START = 12;
 const BRAKE = 59;
@@ -109,7 +118,7 @@ export const BrakeReticleLock: React.FC<BrakeReticleLockProps> = ({
   rows = defaultRows(),
   tagText = 'v2.41',
 }) => {
-  const f = useCurrentFrame();
+  const f = useShotFrame(SHOT_TIME);
   const scroll = scrollAt(f);
 
   // 速度段 blur：由相邻帧位移决定，冲刺段全糊，刹停即清晰

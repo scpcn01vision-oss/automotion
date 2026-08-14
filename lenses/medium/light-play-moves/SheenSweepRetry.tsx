@@ -12,8 +12,17 @@
 // 约束：单点(只扫主角卡)、圆角裁剪(overflow hidden)、扫前扫后完全静止。
 import React from 'react';
 import { G } from '../../_fixtures/Fixtures';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 const CARD_W = 760;
 const CARD_H = 420;
@@ -28,7 +37,7 @@ export const SheenSweepRetry: React.FC<SheenSweepRetryProps> = ({
   title = '指标',
   rows = ['指标一 +18%', '指标二 2.1×'],
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // 扫光：40–68f，从卡左外(-SHEEN_W)扫到卡右外(CARD_W)，inOut(cubic)，只一次
   const sweepActive = frame >= 40 && frame <= 68;

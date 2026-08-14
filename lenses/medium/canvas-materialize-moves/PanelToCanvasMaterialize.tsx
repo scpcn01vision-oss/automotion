@@ -11,9 +11,18 @@
 // 侧面板表格行复选框自动逐个打勾 → 按钮按下 → 三行内容飞出面板、
 // 物化成画布上三张独立卡片落位（行→卡跨容器形态迁移，尺寸/形状插值）。
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, interpolate, spring, useVideoConfig, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, spring, useVideoConfig, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const PANEL_X = 1210;
 const PANEL_Y = 90;
@@ -57,7 +66,7 @@ export const PanelToCanvasMaterialize: React.FC<PanelToCanvasMaterializeProps> =
     { title: '汇总', rows: [{ label: '指标五', value: '7.1×' }, { label: '指标六', value: '88%' }], name: '成员 03' },
   ],
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const { fps } = useVideoConfig();
 
   const btnPress = interpolate(frame, [BUTTON_FRAME, BUTTON_FRAME + 3, BUTTON_FRAME + 9], [0, 1, 0], {

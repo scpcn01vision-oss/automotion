@@ -12,8 +12,17 @@
 // logo 划过，光到即亮、光走即暗，尾段沉回黑暗（右缘残留蓝紫）。
 import React from 'react';
 import { G } from '../../_fixtures/Fixtures';
-import { AbsoluteFill, useCurrentFrame, interpolate } from 'remotion';
+import { AbsoluteFill, interpolate } from 'remotion';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 const W = 1250;
 const H = 860;
@@ -161,7 +170,7 @@ export const GlowWakeSleepPanel: React.FC<GlowWakeSleepPanelProps> = ({
     },
   ],
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // 聚光沿面板顶边从左向右匀速扫过（面板本地座标）
   const sx = interpolate(frame, [4, 120], [-260, W + 260], {

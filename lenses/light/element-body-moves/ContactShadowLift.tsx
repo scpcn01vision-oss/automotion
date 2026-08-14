@@ -13,9 +13,18 @@
 // 其正下方独立椭圆阴影同步放大变淡——纸片离桌感；落回时阴影收紧变实，
 // 落地 2f 卡壳 scale 0.99 微压。三张依次各来一遍。收尾真静止 ≥35f。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 43 }],
+  minFrames: 43,
+};
 
 const outCubic = Easing.out(Easing.cubic);
 const inCubic = Easing.in(Easing.cubic);
@@ -107,7 +116,7 @@ export const ContactShadowLift: React.FC<ContactShadowLiftProps> = ({
   dashTitle = '项目工作区',
   avatarText = '我',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const rowW = CARD_W * 3 + GAP * 2;
   const left0 = (1920 - rowW) / 2;
   const top = (1080 - CARD_H) / 2 - 20;

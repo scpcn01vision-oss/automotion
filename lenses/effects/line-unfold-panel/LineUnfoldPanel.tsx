@@ -14,10 +14,19 @@
 // 静置展示后反向退场：压扁成线（7f）→ 线缩成点 → 熄灭，像老 CRT 关机。
 // f0–12 空场静置；入场 f12–34；持面板至 f78；退场 f78–98；末静止 ≥42f（140f）。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContentData } from '../../_system/scene-content';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const PANEL_W = 760;
 const PANEL_H = 460;
@@ -53,7 +62,7 @@ export const LineUnfoldPanel: React.FC<LineUnfoldPanelProps> = ({
     ],
   },
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // 入场：scaleX（线抽出）快进快停，入场后保持 1
   const inSX = interpolate(frame, [T0, LINE_END], [0.004, 1], {

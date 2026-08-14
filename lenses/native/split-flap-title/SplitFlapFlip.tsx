@@ -9,9 +9,18 @@
 // === 适配注意 ===
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 import React from 'react';
-import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
+import { AbsoluteFill, Easing, interpolate } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 22 }],
+  minFrames: 22,
+};
 
 // split-flap-flip：机场翻牌字。每字符一个深底翻牌格（上下两半），
 // 逐格翻过 3 个乱码中间态后咔哒停在目标字，左→右 4f 级联成波。
@@ -183,7 +192,7 @@ export const SplitFlapFlip: React.FC<SplitFlapFlipProps> = ({
   text = 'READY GO',
   previewLabel = '预览',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   let letterIdx = 0;
   return (
     <AbsoluteFill style={{ background: G.bg, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>

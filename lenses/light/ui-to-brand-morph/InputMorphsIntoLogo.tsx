@@ -13,16 +13,18 @@
 // 圆角胶囊；上方依次落下 圆、胶囊、小圆，四粒元素集结排成抽象 logo
 // 单瓣（泪滴 + 胶囊的抽象组合，非真 Slack logo），落定呼吸。
 import React from 'react';
-import {
-  AbsoluteFill,
-  useCurrentFrame,
-  useVideoConfig,
-  interpolate,
-  spring,
-  Easing,
-} from 'remotion';
+import { AbsoluteFill, useVideoConfig, interpolate, spring, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const BG = G.side; // 深棕墨色
 const CX = 960;
@@ -44,7 +46,7 @@ export interface InputMorphsIntoLogoProps {
 export const InputMorphsIntoLogo: React.FC<InputMorphsIntoLogoProps> = ({
   inputText = 'Ready, set, go!',
 }) => {
-  const f = useCurrentFrame();
+  const f = useShotFrame(SHOT_TIME);
   const { fps } = useVideoConfig();
 
   // —— 时间轴 ——

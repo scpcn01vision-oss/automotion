@@ -14,9 +14,18 @@
 // 结尾所有火星寿命耗尽条件卸载，真静止 ≥40f。
 // 帧确定性：tick 帧从同一 easeOut 曲线预解析（模块级求出），火星 = 纯 age 闭式弹道。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const AMBER = G.accent;
 const TARGET = 12847;
@@ -56,7 +65,7 @@ export const CounterTickSparks: React.FC<CounterTickSparksProps> = ({
   title = '累计值',
   subtitle = '实时统计',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const value = valueAt(frame);
 
   // 终值揭晓弹 1.1x 回落
