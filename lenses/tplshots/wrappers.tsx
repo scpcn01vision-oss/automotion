@@ -5,10 +5,12 @@
 // 依赖: PageCam（2.5D 相机，需 three）+ live-layout.json（template 版）+ textures/live 纹理
 // props: 无内容可变项（wrapper 仅做帧段裁剪；模板场景内容由 Scene 组件承载）
 // === 时间特性 ===
+// 策略: 固定帧（共享 Scene + start 帧段裁剪）
 // 刚性（不可压缩）: 各镜头动作核心（发牌/打字/落卡/字标 hold≥1s），见配方卡 references/shots/
-// 弹性（可伸缩）: 场景内过渡段可等比缩放（Scene 组件支持 start 偏移裁剪）
+// 弹性（可伸缩）: 无（同一 Scene 被多个 wrapper 用不同 start 帧段复用，弹性映射会破坏裁剪语义）
 // === 适配注意 ===
 // 场景来自 template/src/aifl/live/，含 AI Foundation Lab 模板内容——M2 评估替换/中性化（Scene 为底层组件，保留 id）
+// 不接弹刚：时间轴由 Scene 内部帧坐标 + start 偏移控制，随段长伸缩需 Scene 层支持（暂缓）。
 // 字标/文档内容为项目真实内容；start prop 控制镜头帧段起点。
 // 8 个 template 场景镜头 wrapper（按配方卡参考实现帧段裁剪）
 import { SceneOpen } from "./SceneOpen";

@@ -4,10 +4,11 @@
 // 描述: 魔法卡牌弹射——光效起手后卡牌沿弧线弹射定格
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性；光效/飞行/定格/扫光按比例伸缩）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // magician-card-flourish v6 —— 批次 15（无截图，用户意见即全部真相）：
 // 用户意见（逐字）"这个光需要带点辉光，0.8秒就行；然后十字星应该做成更符合
 // 光学实感的，现在太5毛特效了；卡片最开始出来的时候，要做成那种弹射出来的
@@ -21,9 +22,17 @@
 // v5 其余保留：中心极远飞出+13 圈自旋+94% 定格+sheen 扫光。总长 141 帧。
 import React from 'react';
 import { G } from '../../_fixtures/Fixtures';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { CameraMotionBlur } from '@remotion/motion-blur';
 import type { SceneContentData } from '../../_system/scene-content';
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（总长 141 帧基准，时长适配语音）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 141, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 const CARD_W = 380;
 const CARD_H = 540;
@@ -191,7 +200,7 @@ const SpawnFlash: React.FC<{ f: number }> = ({ f }) => {
 };
 
 const Scene: React.FC<{ card: SceneContentData }> = ({ card }) => {
-  const f = useCurrentFrame();
+  const f = useShotFrame(SHOT_TIME);
   // 硬定格：闪光后 f=TAKEOFF 起飞，到达（f=LAND）后时间冻结——所有量按 tEff 计算
   const tEff = Math.min(1, Math.max(0, (f - TAKEOFF) / FLIGHT));
   const airborne = f >= TAKEOFF;
@@ -291,7 +300,7 @@ const Scene: React.FC<{ card: SceneContentData }> = ({ card }) => {
 
 // 闪光层独立于 CameraMotionBlur（细针光束旋转会被采样拆成条纹分身）
 const FlashLayer: React.FC = () => {
-  const f = useCurrentFrame();
+  const f = useShotFrame(SHOT_TIME);
   return (
     <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
       <SpawnFlash f={f} />
