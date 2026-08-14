@@ -132,6 +132,7 @@ export interface GlowWakeSleepPanelProps {
   subItems?: { icon: string; label: string }[]; // 侧栏次级菜单
   searchText?: string; // 搜索占位
   columns?: { title: string; rows: { title: string; sub: string; status?: string }[] }[]; // 任务列
+  revealAtSec?: number; // 口播对齐：滑光扫视开始时刻（段内秒）；提供后忽略默认 4f
 }
 
 export const GlowWakeSleepPanel: React.FC<GlowWakeSleepPanelProps> = ({
@@ -170,22 +171,24 @@ export const GlowWakeSleepPanel: React.FC<GlowWakeSleepPanelProps> = ({
       ],
     },
   ],
+  revealAtSec,
 }) => {
   const frame = useShotFrame(SHOT_TIME);
+  const S = revealAtSec !== undefined ? Math.round(revealAtSec * 30) : 4;
 
   // 聚光沿面板顶边从左向右匀速扫过（面板本地座标）
-  const sx = interpolate(frame, [4, 120], [-260, W + 260], {
+  const sx = interpolate(frame, [S, S + 116], [-260, W + 260], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
   const sy = 150; // 聚光照在面板上部
 
   // 全局明暗包络：醒 → 展示 → 睡
-  const env = interpolate(frame, [0, 16, 100, 130], [0, 1, 1, 0], {
+  const env = interpolate(frame, [Math.max(0, S - 4), S + 12, S + 96, S + 126], [0, 1, 1, 0], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
   // 尾段右缘残光：最后只剩右缘一线蓝紫
   const rightNear = Math.max(0, Math.min(1, (sx - (W - 420)) / 420));
-  const tailBlue = interpolate(frame, [100, 116, 132], [0, 0.8, 0.25], {
+  const tailBlue = interpolate(frame, [S + 96, S + 112, S + 128], [0, 0.8, 0.25], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
 

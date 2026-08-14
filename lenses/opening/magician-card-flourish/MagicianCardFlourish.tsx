@@ -22,7 +22,7 @@
 // v5 其余保留：中心极远飞出+13 圈自旋+94% 定格+sheen 扫光。总长 141 帧。
 import React from 'react';
 import { G } from '../../_fixtures/Fixtures';
-import { interpolate, Easing } from 'remotion';
+import { interpolate, Easing, useCurrentFrame } from 'remotion';
 import { CameraMotionBlur } from '@remotion/motion-blur';
 import type { SceneContentData } from '../../_system/scene-content';
 import { useShotFrame } from '../../../engine/useShotFrame';
@@ -42,11 +42,7 @@ const AY = CARD_H / Math.hypot(CARD_W, CARD_H);
 
 // —— 时间轴（30fps / 126 帧）——
 // v9.6（批次 18）：光效 0.5s→0.3s（9f）
-const TAKEOFF = 9;               // 开场光效 0.3s（9f）后卡片才起飞
-const FLASH_END = 12;            // 闪光尾焰完全消失（坍缩略拖 3 帧）
 const FLIGHT = 50;               // 飞行帧数
-const LAND = TAKEOFF + FLIGHT;   // f=53 硬定格
-const SHEEN_START = LAND + 8;    // 定格稳住 8 帧后开始扫光
 const SHEEN_DUR = 26;            // 扫光时长（一次性）
 const TURNS = 13;                // 飞行总圈数（整数→定格瞬间恰好正面朝镜头）
 const FINAL_SCALE = 1.88;        // 终态：卡高 540×1.88≈1015 ≈ 94% 画面高（1080）
@@ -107,22 +103,23 @@ const CardBack: React.FC = () => (
 // ④ 青蓝色（参考图上星青色/下星蓝色，取青蓝中间调）；
 // ⑤ 背景纯黑，光束边缘干净锐利（真实衍射，无宽糊外层）。
 // 时长 0.5s：渐亮（f0–4）→ 全芒微闪（f4–10）→ 坍缩（f10–15）。
-const SpawnFlash: React.FC<{ f: number }> = ({ f }) => {
-  if (f > FLASH_END) return null;
+const SpawnFlash: React.FC<{ f: number; takeoff: number }> = ({ f, takeoff }) => {
+  const flashEnd = takeoff + 3; // 闪光尾焰完全消失（坍缩略拖 3 帧）
+  if (f > flashEnd) return null;
   const grow = interpolate(f, [0, 2.5], [0.2, 1], {
     extrapolateRight: 'clamp', easing: Easing.out(Easing.quad),
   });
-  const shrink = interpolate(f, [6, TAKEOFF, FLASH_END], [1, 0.3, 0.05], {
+  const shrink = interpolate(f, [6, takeoff, flashEnd], [1, 0.3, 0.05], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.in(Easing.quad),
   });
   const s = grow * shrink;
   // 亮度微闪（真实光源级细微抖动）
   const flicker = 0.94 + 0.06 * (0.5 + 0.5 * Math.sin(f * 1.9) * Math.sin(f * 0.83 + 1.7));
-  const opacity = interpolate(f, [0, 2, 6, FLASH_END], [0, 1, 1, 0], {
+  const opacity = interpolate(f, [0, 2, 6, flashEnd], [0, 1, 1, 0], {
     extrapolateRight: 'clamp',
   }) * flicker;
   // v9：用户意见"开场光点的光芒要旋转90度"——闪光期间星芒动态旋转 90°
-  const rot = interpolate(f, [0, FLASH_END], [0, 90], { extrapolateRight: 'clamp', easing: Easing.inOut(Easing.quad) });
+  const rot = interpolate(f, [0, flashEnd], [0, 90], { extrapolateRight: 'clamp', easing: Easing.inOut(Easing.quad) });
   // 针状光束：极细楔形（根部窄、尖端归零）+ 亮度指数渐隐——对照参考图
   // v9（批次 18）：用户意见"开场光点的光芒要旋转90度"——整体转 90°：长轴 -38°→52°（陡斜近竖贯），短轴 52°→142°
   const SPIKE_ID = 'mcf-needle';
@@ -199,11 +196,15 @@ const SpawnFlash: React.FC<{ f: number }> = ({ f }) => {
   );
 };
 
-const Scene: React.FC<{ card: SceneContentData }> = ({ card }) => {
-  const f = useShotFrame(SHOT_TIME);
+const Scene: React.FC<{ card: SceneContentData; takeoff: number; anchored: boolean }> = ({ card, takeoff, anchored }) => {
+  const frameShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const f = anchored ? realFrame : frameShot;
+  const LAND = takeoff + FLIGHT; // 硬定格帧
+  const SHEEN_START = LAND + 8; // 定格稳住 8 帧后开始扫光
   // 硬定格：闪光后 f=TAKEOFF 起飞，到达（f=LAND）后时间冻结——所有量按 tEff 计算
-  const tEff = Math.min(1, Math.max(0, (f - TAKEOFF) / FLIGHT));
-  const airborne = f >= TAKEOFF;
+  const tEff = Math.min(1, Math.max(0, (f - takeoff) / FLIGHT));
+  const airborne = f >= takeoff;
 
   // —— 自旋（v7）：用户意见"靠近镜头时，卡片自旋速度开始随距离靠近而衰减"
   // 前 40% 行程近匀速极快，之后角速度随 tEff 持续衰减（easeOut 2.4 次幂），
@@ -299,17 +300,20 @@ const Scene: React.FC<{ card: SceneContentData }> = ({ card }) => {
 };
 
 // 闪光层独立于 CameraMotionBlur（细针光束旋转会被采样拆成条纹分身）
-const FlashLayer: React.FC = () => {
-  const f = useShotFrame(SHOT_TIME);
+const FlashLayer: React.FC<{ takeoff: number; anchored: boolean }> = ({ takeoff, anchored }) => {
+  const frameShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const f = anchored ? realFrame : frameShot;
   return (
     <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
-      <SpawnFlash f={f} />
+      <SpawnFlash f={f} takeoff={takeoff} />
     </div>
   );
 };
 
 export interface MagicianCardFlourishProps {
   card?: SceneContentData;
+  revealAtSec?: number; // 口播对齐：卡片起飞时刻（段内秒）；提供后忽略默认 9f
 }
 
 export const MagicianCardFlourish: React.FC<MagicianCardFlourishProps> = ({
@@ -321,11 +325,16 @@ export const MagicianCardFlourish: React.FC<MagicianCardFlourishProps> = ({
       { label: '指标三', value: '99%' },
     ],
   },
-}) => (
-  <>
-    <CameraMotionBlur shutterAngle={150} samples={7}>
-      <Scene card={card} />
-    </CameraMotionBlur>
-    <FlashLayer />
-  </>
-);
+  revealAtSec,
+}) => {
+  const anchored = revealAtSec !== undefined;
+  const takeoff = anchored ? Math.round(revealAtSec * 30) : 9;
+  return (
+    <>
+      <CameraMotionBlur shutterAngle={150} samples={7}>
+        <Scene card={card} takeoff={takeoff} anchored={anchored} />
+      </CameraMotionBlur>
+      <FlashLayer takeoff={takeoff} anchored={anchored} />
+    </>
+  );
+};

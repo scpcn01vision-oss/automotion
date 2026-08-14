@@ -18,7 +18,7 @@
 //   + 4f 震屏 6px 衰减 + 主卡 6f 压扁回弹 → 23 环前沿过邻卡(中心距 460px)：
 //   邻卡外推 30px + rotate ±3° 阻尼振荡弹回(40f 内钳到 0) → 63–140 全静止(77f)。
 import React from 'react';
-import { interpolate, Easing } from 'remotion';
+import { interpolate, Easing, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
 
@@ -49,10 +49,8 @@ const Y = (1080 - CH) / 2; // 400
 const CX = 960; // 主卡中心
 const CY = Y + CH / 2; // 540
 
-const IMPACT = 20; // 落点帧
 // 冲击波：80→900px 14f out-cubic。前沿到达邻卡中心距 460px 的帧：
 // (460-80)/820=0.463 → 1-(1-p)^3 → p≈0.19 → t≈2.6f → 取落点后 3f = 帧 23
-const HIT_NEIGHBOR = IMPACT + 3;
 
 // 14 个粒子：方/圆混合，角度带向上偏置，飞散 160–340px 减速缩小消失
 const PARTICLES = Array.from({ length: 14 }).map((_, i) => ({
@@ -62,15 +60,9 @@ const PARTICLES = Array.from({ length: 14 }).map((_, i) => ({
   square: i % 2 === 0,
 }));
 
-// 邻卡被推开的阻尼振荡包络：t=0 瞬时到 1，之后余弦衰减弹回，40f 后钳 0 保真静止
-const pushEnv = (f: number): number => {
-  const t = f - HIT_NEIGHBOR;
-  if (t < 0 || t >= 40) return 0;
-  return Math.cos(t * 0.5) * Math.exp(-t / 8);
-};
-
 export interface ImpactBurstKitProps {
   cards?: { label: string; value: string }[];
+  revealAtSec?: number; // 口播对齐：落点冲击时刻（段内秒）；提供后忽略默认 20f
 }
 
 const MiniCard: React.FC<{ w: number; h: number; label: string; value: string; glow?: boolean }> = ({ w, h, label, value, glow }) => (
@@ -105,8 +97,20 @@ export const ImpactBurstKit: React.FC<ImpactBurstKitProps> = ({
     { label: '指标二', value: '2.1×' },
     { label: '指标三', value: '96.4%' },
   ],
+  revealAtSec,
 }) => {
-  const frame = useShotFrame(SHOT_TIME);
+  const frameShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const cueMode = revealAtSec !== undefined;
+  const frame = cueMode ? realFrame : frameShot;
+  const IMPACT = cueMode ? Math.round(revealAtSec * 30) : 20; // 落点帧
+  const HIT_NEIGHBOR = IMPACT + 3;
+  // 邻卡被推开的阻尼振荡包络：t=0 瞬时到 1，之后余弦衰减弹回，40f 后钳 0 保真静止
+  const pushEnv = (f: number): number => {
+    const t = f - HIT_NEIGHBOR;
+    if (t < 0 || t >= 40) return 0;
+    return Math.cos(t * 0.5) * Math.exp(-t / 8);
+  };
 
   // ── 主卡砸落：14–20 帧 scale 1.8→1 / y -120→0，加速进场
   const dropP = interpolate(frame, [14, IMPACT], [0, 1], {

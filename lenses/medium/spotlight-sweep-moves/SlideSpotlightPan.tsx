@@ -113,6 +113,7 @@ export interface SlideSpotlightPanProps {
   sectionLabel?: string; // 侧栏分区标签
   subItems?: { icon: string; label: string }[]; // 侧栏次级菜单
   searchText?: string; // 顶栏搜索
+  revealAtSec?: number; // 口播对齐：滑光扫视开始时刻（段内秒）；提供后忽略默认 0f
   actions?: string[]; // 顶栏操作
   columns?: { title: string; rows: { title: string; sub: string }[] }[]; // 看板列
 }
@@ -159,13 +160,15 @@ export const SlideSpotlightPan: React.FC<SlideSpotlightPanProps> = ({
       ],
     },
   ],
+  revealAtSec,
 }) => {
   const frame = useShotFrame(SHOT_TIME);
+  const S = revealAtSec !== undefined ? Math.round(revealAtSec * 30) : 0;
   // 面板匀速左滑（相机右摇）——严格 linear
-  const slide = interpolate(frame, [0, 132], [180, -1100]);
+  const slide = interpolate(frame, [S, S + 132], [180, -1100]);
   // 聚光头在面板本地座标沿顶边匀速右移——严格 linear
   // 起点在左上角竖缘（负值=还在左缘竖直段），随后转过角沿顶边走
-  const head = interpolate(frame, [0, 132], [-360, 2600]);
+  const head = interpolate(frame, [S, S + 132], [-360, 2600]);
   const onTop = Math.max(0, head);            // 顶边段进度
   const cornerT = Math.min(1, Math.max(0, (head + 360) / 360)); // 竖缘段 0→1
   const vertHeadY = TOP + 620 - cornerT * 620; // 左缘光头从下往上爬到角

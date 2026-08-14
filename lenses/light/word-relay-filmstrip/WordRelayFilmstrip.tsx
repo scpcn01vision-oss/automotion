@@ -214,20 +214,24 @@ const CARDS: React.FC<{ seed: number }>[] = [
 ];
 
 // 切词窗口：第一个词入场 f14–30；换词 f62–78、f108–124
-const SWITCHES = [14, 62, 108];
+const DEFAULT_SWITCHES = [14, 62, 108];
 const SW_DUR = 16;
 const SERIF = '"Didot", "Bodoni 72", "Playfair Display", Georgia, serif';
 
 export interface WordRelayFilmstripProps {
   subject?: string;
   words?: string[];
+  cueSec?: number[]; // 口播对齐：每个词的切词时刻（段内秒，与 words 一一对应）；提供后忽略默认拍长
 }
 
 export const WordRelayFilmstrip: React.FC<WordRelayFilmstripProps> = ({
   subject = 'Computer',
   words = ['researches', 'builds', 'codes'],
+  cueSec,
 }) => {
   const frame = useShotFrame(SHOT_TIME);
+  const cueMode = !!cueSec && cueSec.length === words.length;
+  const SWITCHES = cueMode ? cueSec.map((s) => Math.round(s * 30)) : DEFAULT_SWITCHES;
 
   // —— 滚动步进：平时静止，仅在切词窗口内滚一格（ease-in-out）——
   let stepF = 0;

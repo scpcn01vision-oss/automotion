@@ -47,6 +47,7 @@ export interface DrawSvgTraceContent {
 
 export interface DrawSvgTraceProps {
   content?: DrawSvgTraceContent;
+  revealAtSec?: number; // 口播对齐：轮廓描边开始时刻（段内秒）；提供后忽略默认 8f
 }
 
 // 卡片内容渲染器：标题条 + 行列表（默认）/ 标题条 + 圆角图片
@@ -101,39 +102,41 @@ export const DrawSvgTrace: React.FC<DrawSvgTraceProps> = ({
       { label: '指标四', value: '42ms' },
     ],
   },
+  revealAtSec,
 }) => {
   const frame = useShotFrame(SHOT_TIME);
+  const DRAW_START = revealAtSec !== undefined ? Math.round(revealAtSec * 30) : 8;
 
   // 轮廓描边进度：8–48，40f，inOut cubic
-  const p = interpolate(frame, [8, 48], [0, 1], {
+  const p = interpolate(frame, [DRAW_START, DRAW_START + 40], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
     easing: Easing.inOut(Easing.cubic),
   });
 
   // 闭合闪烁：48–50 冲到峰值，50–56 回落。峰值 = 纯黑 + 4→8px 加粗
-  const flashUp = interpolate(frame, [48, 50], [0, 1], {
+  const flashUp = interpolate(frame, [DRAW_START + 40, DRAW_START + 42], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
-  const flashDown = interpolate(frame, [50, 56], [1, 0], {
+  const flashDown = interpolate(frame, [DRAW_START + 42, DRAW_START + 48], [1, 0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
     easing: Easing.out(Easing.quad),
   });
-  const flash = frame < 50 ? flashUp : flashDown;
+  const flash = frame < DRAW_START + 42 ? flashUp : flashDown;
   const strokeW = 4 + flash * 4;
   const strokeColor = G.ink;
 
   // 内容淡入：48–56（8f）
-  const contentOp = interpolate(frame, [48, 56], [0, 1], {
+  const contentOp = interpolate(frame, [DRAW_START + 40, DRAW_START + 48], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
     easing: Easing.out(Easing.quad),
   });
 
   // 描边淡出 / 卡片自身 border 淡入：54–64
-  const traceOp = interpolate(frame, [54, 64], [1, 0], {
+  const traceOp = interpolate(frame, [DRAW_START + 46, DRAW_START + 56], [1, 0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
@@ -143,7 +146,7 @@ export const DrawSvgTrace: React.FC<DrawSvgTraceProps> = ({
   const penOp = p > 0.02 && p < 0.985 ? 1 : 0;
 
   // 第二用法：标题下划线短版生长 68–86（18f，out cubic）
-  const up = interpolate(frame, [68, 86], [0, 1], {
+  const up = interpolate(frame, [DRAW_START + 60, DRAW_START + 78], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
     easing: Easing.out(Easing.cubic),
