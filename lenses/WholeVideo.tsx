@@ -12,6 +12,7 @@ import {
 
 // ---------- 镜头组件映射（lensId → 组件；新增镜头时补 import + 映射） ----------
 import { MarkerUnderlineTitle } from './native/marker-underline-title/MarkerUnderlineTitle';
+import { SmearMultiples } from './minimal/smear-multiples/SmearMultiples';
 import { TextAsMask } from './light/text-as-mask/TextAsMask';
 import { MaskingTapeSlap } from './native/paper-craft-moves/MaskingTapeSlap';
 import { BeatStepListThemeCycle } from './minimal/beat-step-list-theme-cycle/BeatStepListThemeCycle';
@@ -42,6 +43,7 @@ import { PaperTitleCard } from './opening/paper-title-card/PaperTitleCard';
 
 export const LENS_MAP: Record<string, React.FC<any>> = {
   MarkerUnderlineTitle,
+  SmearMultiples,
   TextAsMask,
   MaskingTapeSlap,
   BeatStepListThemeCycle,

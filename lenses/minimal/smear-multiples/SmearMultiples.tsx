@@ -25,14 +25,14 @@ const OVER = 27; // 3% 过冲
 const Y = 380; // 卡片顶边（垂直居中 1080-320）
 
 // 本体位置：25–37 高速横移到过冲点，37–43 回弹落座，之后恒定 → 帧确定
-const posAt = (f: number): number =>
-  f < 37
-    ? interpolate(f, [25, 37], [X0, X1 + OVER], {
+const posAt = (f: number, moveStart: number): number =>
+  f < moveStart + 12
+    ? interpolate(f, [moveStart, moveStart + 12], [X0, X1 + OVER], {
         extrapolateLeft: 'clamp',
         extrapolateRight: 'clamp',
         easing: Easing.inOut(Easing.cubic),
       })
-    : interpolate(f, [37, 43], [X1 + OVER, X1], {
+    : interpolate(f, [moveStart + 12, moveStart + 18], [X1 + OVER, X1], {
         extrapolateLeft: 'clamp',
         extrapolateRight: 'clamp',
         easing: Easing.out(Easing.cubic),
@@ -82,27 +82,30 @@ const SmearCard: React.FC<{ label: string; value: string }> = ({ label, value })
 export interface SmearMultiplesProps {
   cardA?: { label: string; value: string }; // 运动前（左槽）
   cardB?: { label: string; value: string }; // 运动后（右槽）
+  revealAtSec?: number; // 口播对齐：卡片开始横移（A→B）的段内秒；提供后前段左槽 hold 到该时刻
 }
 
 export const SmearMultiples: React.FC<SmearMultiplesProps> = ({
   cardA = { label: '指标一', value: '+18%' },
   cardB = { label: '节点', value: '4/4' },
+  revealAtSec,
 }) => {
   const frame = useCurrentFrame();
-  const bodyX = posAt(frame);
+  const MOVE_START = revealAtSec !== undefined ? Math.round(revealAtSec * 30) : 25;
+  const bodyX = posAt(frame, MOVE_START);
   // 本体速度 = 相邻帧位置差；>25px/f 才渲染分身
-  const speed = Math.abs(posAt(frame) - posAt(frame - 1));
+  const speed = Math.abs(posAt(frame, MOVE_START) - posAt(frame - 1, MOVE_START));
   const speedGate = interpolate(speed, [25, 60], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
   // 落位合拢：35–38 三帧内分身延迟收缩到 0（位置滑向本体）+ 不透明度归零
-  const cv = interpolate(frame, [35, 38], [0, 1], {
+  const cv = interpolate(frame, [MOVE_START + 10, MOVE_START + 13], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
     easing: Easing.out(Easing.quad),
   });
-  const convergeFade = frame >= 35 ? 1 - cv : 0;
+  const convergeFade = frame >= MOVE_START + 10 ? 1 - cv : 0;
 
   const ghostOps = [0.45, 0.3, 0.18, 0.09];
 
@@ -113,7 +116,7 @@ export const SmearMultiples: React.FC<SmearMultiplesProps> = ({
       {/* 4 个分身：第 k 个取 frame - k*2 帧时刻的位置；合拢期延迟×(1-cv) 收缩到 0 */}
       {ghostOps.map((baseOp, i) => {
         const k = i + 1;
-        const gx = posAt(frame - k * 2 * (1 - cv));
+        const gx = posAt(frame - k * 2 * (1 - cv), MOVE_START);
         const op = baseOp * Math.max(speedGate, convergeFade);
         if (op <= 0.001) return null;
         return (
@@ -123,7 +126,10 @@ export const SmearMultiples: React.FC<SmearMultiplesProps> = ({
         );
       })}
       <div style={{ position: 'absolute', left: bodyX, top: Y }}>
-        <SmearCard label={frame >= 38 ? cardB.label : cardA.label} value={frame >= 38 ? cardB.value : cardA.value} />
+        <SmearCard
+          label={frame >= MOVE_START + 13 ? cardB.label : cardA.label}
+          value={frame >= MOVE_START + 13 ? cardB.value : cardA.value}
+        />
       </div>
     </div>
   );

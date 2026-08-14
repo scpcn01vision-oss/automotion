@@ -13,7 +13,7 @@
 // → 5 条候选行错峰浮现 → 模拟输入 2 字母（灰块当字符）候选 5→3→2 收窄
 // → 高亮首条。f=110 后全静止（40f）。光标 f<104 闪烁、之后常亮。
 import React from 'react';
-import { interpolate, Easing } from 'remotion';
+import { interpolate, Easing, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
 import { FONT_STACK } from '../../_system/typography';
@@ -33,8 +33,6 @@ const DIM0 = 12; // 压暗开始（前 12f 初始静置）
 const DIM1 = 22;
 const PANEL_IN = 18; // 面板开始弹落
 const ROWS_START = 32; // 候选行开始错峰浮现
-const KEY1 = 62; // 第一个字母
-const KEY2 = 78; // 第二个字母
 const HL = 94; // 高亮首条
 const BLINK_END = 104; // 光标停止闪烁（常亮）
 
@@ -43,33 +41,21 @@ const PANEL_X = (1920 - PANEL_W) / 2;
 const PANEL_Y = 330;
 const ROW_H = 66;
 const ROW_GAP = 6;
-const EXIT_DUR = 10;
-
-// exitAt: 0=留到最后，1=第一次按键后退出，2=第二次按键后退出（由 commands prop 提供）
 
 const PaletteRow: React.FC<{
   i: number;
   frame: number;
-  rows: { icon: string; label: string; kbd: string; exitAt: number }[];
-}> = ({ i, frame, rows }) => {
-  const { icon, label, kbd, exitAt } = rows[i];
-  const inStart = ROWS_START + i * 4;
-  const exitStart = exitAt === 1 ? KEY1 + 3 : exitAt === 2 ? KEY2 + 3 : null;
-
-  if (exitStart !== null && frame >= exitStart + EXIT_DUR) return null; // 条件卸载，非 opacity 0
+  cue: number; // 入场帧（口播对齐 cueSec 或固定错峰）
+  rows: { icon: string; label: string; kbd: string }[];
+}> = ({ i, frame, cue, rows }) => {
+  const { icon, label, kbd } = rows[i];
+  const inStart = cue;
 
   const inOp = interpolate(frame, [inStart, inStart + 8], [0, 1], CL);
   const inY = interpolate(frame, [inStart, inStart + 8], [12, 0], {
     easing: Easing.out(Easing.cubic),
     ...CL,
   });
-  const exitT =
-    exitStart === null
-      ? 1
-      : interpolate(frame, [exitStart, exitStart + EXIT_DUR], [1, 0], {
-          easing: Easing.inOut(Easing.cubic),
-          ...CL,
-        });
 
   // 高亮首条
   const hl = i === 0 ? interpolate(frame, [HL, HL + 10], [0, 1], CL) : 0;
@@ -77,8 +63,8 @@ const PaletteRow: React.FC<{
   return (
     <div
       style={{
-        height: (ROW_H + ROW_GAP) * exitT,
-        opacity: inOp * exitT,
+        height: ROW_H + ROW_GAP,
+        opacity: inOp,
         overflow: 'hidden',
       }}
     >
@@ -108,7 +94,8 @@ export interface CommandPaletteSummonProps {
   scene?: SceneContentData; // 背景内容
   query?: string; // 已键入字符
   placeholder?: string; // 输入提示
-  commands?: { icon: string; label: string; kbd: string; exitAt: number }[]; // 候选命令
+  commands?: { icon: string; label: string; kbd: string }[]; // 候选命令
+  cueSec?: number[]; // 口播对齐：每条候选命令入场的段内秒（与 commands 一一对应）；提供后忽略固定错峰
 }
 
 export const CommandPaletteSummon: React.FC<CommandPaletteSummonProps> = ({
@@ -124,14 +111,18 @@ export const CommandPaletteSummon: React.FC<CommandPaletteSummonProps> = ({
   query = 'AB',
   placeholder = '输入命令…',
   commands = [
-    { icon: '◆', label: '新建文档', kbd: '⌘N', exitAt: 0 },
-    { icon: '●', label: '打开文件', kbd: '⌘O', exitAt: 0 },
-    { icon: '▲', label: '切换窗口', kbd: '⌘K', exitAt: 2 },
-    { icon: '●', label: '搜索内容', kbd: '⌘P', exitAt: 1 },
-    { icon: '◆', label: '运行命令', kbd: '⌘S', exitAt: 1 },
+    { icon: '◆', label: '新建文档', kbd: '⌘N' },
+    { icon: '●', label: '打开文件', kbd: '⌘O' },
+    { icon: '▲', label: '切换窗口', kbd: '⌘K' },
+    { icon: '●', label: '搜索内容', kbd: '⌘P' },
+    { icon: '◆', label: '运行命令', kbd: '⌘S' },
   ],
+  cueSec,
 }) => {
-  const frame = useShotFrame(SHOT_TIME);
+  const frameShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const cueMode = !!cueSec && cueSec.length === commands.length;
+  const frame = cueMode ? realFrame : frameShot;
 
   // 背景压暗 + blur
   const dim = interpolate(frame, [DIM0, DIM1], [0, 0.45], CL);
@@ -150,8 +141,6 @@ export const CommandPaletteSummon: React.FC<CommandPaletteSummonProps> = ({
         });
   const panelOp = interpolate(frame, [PANEL_IN, PANEL_IN + 7], [0, 1], CL);
 
-  // 模拟输入：已敲字符数
-  const typed = (frame >= KEY1 ? 1 : 0) + (frame >= KEY2 ? 1 : 0);
   // 光标闪烁（周期 16f），BLINK_END 后常亮保证收尾静止
   const cursorOn = frame >= BLINK_END ? true : (frame - PANEL_IN) % 16 < 8;
 
@@ -193,21 +182,27 @@ export const CommandPaletteSummon: React.FC<CommandPaletteSummonProps> = ({
             }}
           >
             <div style={{ width: 32, height: 32, borderRadius: 8, background: G.mid, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, fontWeight: 800, color: G.bg }}>◆</div>
-            {/* 已敲入字符 */}
-            {Array.from({ length: typed }).map((_, c) => (
-              <div key={c} style={{ fontFamily: FONT_STACK, fontSize: 26, fontWeight: 700, color: G.ink }}>{query[c] ?? '?'}</div>
-            ))}
+            {/* 输入内容：完整显示 query（2026-08-14 用户裁决：不按模拟按键截断） */}
+            <div style={{ fontFamily: FONT_STACK, fontSize: 26, fontWeight: 700, color: G.ink }}>
+              {query}
+            </div>
             {/* 光标 */}
             {cursorOn && <div style={{ width: 4, height: 42, background: G.ink, borderRadius: 2 }} />}
-            {/* 占位提示 */}
-            {typed === 0 && (
+            {/* 占位提示：query 为空时显示 */}
+            {!query && (
               <div style={{ fontFamily: FONT_STACK, fontSize: 24, color: G.mid, opacity: 0.8 }}>{placeholder}</div>
             )}
           </div>
           {/* 候选行 */}
           <div style={{ paddingTop: 14 }}>
             {commands.map((_, i) => (
-              <PaletteRow key={i} i={i} frame={frame} rows={commands} />
+              <PaletteRow
+                key={i}
+                i={i}
+                frame={frame}
+                cue={cueMode ? Math.round(cueSec[i] * 30) : ROWS_START + i * 4}
+                rows={commands}
+              />
             ))}
           </div>
         </div>
