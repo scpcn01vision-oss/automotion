@@ -11,8 +11,8 @@
 // 底色闪砸字（cel-flash-stomp）——stomp-typography 逐词节拍砸字 ×
 // background-cel-flash 纯色底闪的组合变异。三个大词逐拍硬切占满屏，
 // 每词像图章一样歪着砸落（scale 1.18→0.98→1 弹落 + 交替 ±2.5° rotate）；
-// 词落定帧起背景层每 2f 在 G.bg 与加深灰之间闪切——文字层独立在上纹丝
-// 不动，只闪背景是本组合命门（动漫必杀技字卡感）。第三词闪加倍且对比拉大。
+// 背景闪默认关闭（flashLen=0，2026-08-14 用户裁决：频闪影响观感）；
+// 如需闪切，把对应词 flashLen 设为正帧数（每 2f 在 G.bg 与 flashDark 间交替）。
 // 关键帧：0 "SHIP" 硬切入(rot+2.5°) → 0–6 弹落 → 6–11 背景闪(#cfcfca, 2f 交替×6f)
 // → 30 "FASTER" 硬切(rot−2.5°) → 30–36 弹落 → 36–41 背景闪
 // → 60 "TODAY" 硬切(rot 0°) → 60–66 弹落 → 66–73 背景闪加倍(8f, #c4c4c0)
@@ -53,9 +53,9 @@ export interface CelFlashStompProps {
 
 export const CelFlashStomp: React.FC<CelFlashStompProps> = ({
   words = [
-    { text: 'READY', start: 0, end: 30, rot: 2.5, flashLen: 6, flashDark: '#cfcfca' },
-    { text: 'GO', start: 30, end: 60, rot: -2.5, flashLen: 6, flashDark: '#cfcfca' },
-    { text: 'NOW', start: 60, end: 9999, rot: 0, flashLen: 8, flashDark: '#c4c4c0' },
+    { text: 'READY', start: 0, end: 30, rot: 2.5, flashLen: 0, flashDark: '#cfcfca' },
+    { text: 'GO', start: 30, end: 60, rot: -2.5, flashLen: 0, flashDark: '#cfcfca' },
+    { text: 'NOW', start: 60, end: 9999, rot: 0, flashLen: 0, flashDark: '#c4c4c0' },
   ],
   footer = { icon: '✦', label: 'GOAL', tag: 'READY' },
   cueSec,
@@ -82,6 +82,7 @@ export const CelFlashStomp: React.FC<CelFlashStompProps> = ({
   const scale =
     t < 4
       ? interpolate(t, [0, 4], [1.18, 0.98], {
+          extrapolateLeft: 'clamp', // 词未到 cue 时刻（t<0）时保持 1.18，禁止左端外推爆炸
           extrapolateRight: 'clamp',
           easing: Easing.out(Easing.poly(5)),
         })

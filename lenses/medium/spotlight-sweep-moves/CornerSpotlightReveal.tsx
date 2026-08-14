@@ -74,20 +74,20 @@ const Panel: React.FC<{
         </div>
       ))}
     </div>
-    {[0, 1, 2].map((row) => (
-      <div key={row} style={{ display: 'flex', alignItems: 'center', gap: 30, marginTop: row === 0 ? 96 : 64 }}>
+    {rows.map((r, i) => (
+      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 30, marginTop: i === 0 ? 96 : 64 }}>
         <div style={{ width: 42, height: 42, border: `3px solid ${G.border}`, borderRadius: 10 }} />
         <div style={{ width: 14, height: 14, borderRadius: 7, background: G.accent }} />
         <div style={{ width: 56, height: 56, borderRadius: 28, background: G.panel }} />
         <div>
           <div style={{ display: 'flex', gap: 22, alignItems: 'center' }}>
-            <div style={{ fontFamily: FONT_STACK, fontSize: 24, fontWeight: 700, color: G.ink }}>{rows[row].title}</div>
+            <div style={{ fontFamily: FONT_STACK, fontSize: 24, fontWeight: 700, color: G.ink }}>{r.title}</div>
             <div style={{ width: 8, height: 8, borderRadius: 4, background: G.mid }} />
-            <div style={{ fontFamily: FONT_STACK, fontSize: 18, color: G.mid }}>{rows[row].meta}</div>
+            <div style={{ fontFamily: FONT_STACK, fontSize: 18, color: G.mid }}>{r.meta}</div>
           </div>
           <div style={{ display: 'flex', gap: 14, marginTop: 16 }}>
-            <div style={{ fontFamily: FONT_STACK, fontSize: 16, color: G.ink, opacity: 0.85 }}>{rows[row].detail}</div>
-            <div style={{ fontFamily: FONT_STACK, fontSize: 16, color: G.mid }}>{rows[row].note}</div>
+            <div style={{ fontFamily: FONT_STACK, fontSize: 16, color: G.ink, opacity: 0.85 }}>{r.detail}</div>
+            <div style={{ fontFamily: FONT_STACK, fontSize: 16, color: G.mid }}>{r.note}</div>
           </div>
         </div>
       </div>

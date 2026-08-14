@@ -151,9 +151,14 @@ const FlipCard: React.FC<{ i: number; frame: number; start: number; card: CardFl
             style={{
               fontFamily: FONT_STACK,
               fontWeight: 800,
-              fontSize: Math.min(96, Math.floor(w * 0.24)),
+              fontSize: labelFont((card.result ?? '').length, availW), // 与正面同自适应规则，翻面后字号统一
               color: G.ink,
-              letterSpacing: -2,
+              letterSpacing: -0.5,
+              textAlign: 'center',
+              lineHeight: 1.2,
+              maxWidth: '100%',
+              overflowWrap: 'break-word',
+              wordBreak: 'break-word',
             }}
           >
             {card.result}

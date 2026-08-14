@@ -236,7 +236,16 @@ export const App = () => {
               <Player
                 component={LensComp}
                 inputProps={params}
-                durationInFrames={entry.durationInFrames}
+                durationInFrames={
+                  // 口播对齐镜头（cueSec/revealAtSec）的事件可能晚于镜头默认时长：
+                  // 预览时长取 镜头默认 与 当前段真实时长 的较大值，保证事件在预览里可见
+                  Math.max(
+                    entry.durationInFrames,
+                    Math.round(
+                      (storyboard?.segments.find((s) => s.id === currentSegmentId)?.durationSec ?? 0) * 30,
+                    ),
+                  )
+                }
                 fps={30}
                 compositionWidth={1920}
                 compositionHeight={1080}

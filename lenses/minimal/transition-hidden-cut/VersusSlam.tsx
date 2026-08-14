@@ -37,6 +37,8 @@ export interface VersusSlamProps {
   sceneB?: SceneContentData;
   vsText?: string;
   revealAtSec?: number; // 口播对齐：撞击时刻段内秒；提供后前段（建立+对冲）压缩到该时刻前
+  sceneAAtSec?: number; // 口播对齐（分时）：sceneA 左屏入场的段内秒
+  sceneBAtSec?: number; // 口播对齐（分时）：sceneB 右屏入场（撞合+盖章）的段内秒
 }
 
 export const VersusSlam: React.FC<VersusSlamProps> = ({
@@ -58,21 +60,45 @@ export const VersusSlam: React.FC<VersusSlamProps> = ({
   },
   vsText = 'VS',
   revealAtSec,
+  sceneAAtSec,
+  sceneBAtSec,
 }) => {
   const frame = useShotFrame(SHOT_TIME);
   const realFrame = useCurrentFrame();
-  const cueMode = revealAtSec !== undefined;
+  const splitMode = sceneAAtSec !== undefined && sceneBAtSec !== undefined;
+  const cueMode = splitMode || revealAtSec !== undefined;
   const f = cueMode ? realFrame : frame;
-  const IMPACT_F = cueMode ? Math.round(revealAtSec * 30) : IMPACT;
-  const pre = cueMode ? Math.min(1, (realFrame / 30) / (revealAtSec ?? 1)) * IMPACT : f;
+  const IMPACT_F = splitMode
+    ? Math.round(sceneBAtSec * 30)
+    : cueMode
+      ? Math.round((revealAtSec ?? 0) * 30)
+      : IMPACT;
 
   // 两半屏对冲：ease-in 加速，10f 从 ±1200px 冲到位
-  const leftX = interpolate(pre, [20, IMPACT], [-1200, 0], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-    easing: Easing.in(Easing.cubic),
-  });
-  const rightX = -leftX;
+  // 口播对齐（分时）：sceneA 在「市场」时刻入场、sceneB 在「公司」时刻入场，各自 20f 滑入
+  const leftX = splitMode
+    ? interpolate(f, [Math.round(sceneAAtSec * 30), Math.round(sceneAAtSec * 30) + 20], [-1200, 0], {
+        extrapolateLeft: 'clamp',
+        extrapolateRight: 'clamp',
+        easing: Easing.in(Easing.cubic),
+      })
+    : cueMode
+      ? interpolate(f, [0, IMPACT_F], [-1200, 0], {
+          extrapolateLeft: 'clamp',
+          extrapolateRight: 'clamp',
+        })
+      : interpolate(f, [20, IMPACT], [-1200, 0], {
+          extrapolateLeft: 'clamp',
+          extrapolateRight: 'clamp',
+          easing: Easing.in(Easing.cubic),
+        });
+  const rightX = splitMode
+    ? interpolate(f, [Math.round(sceneBAtSec * 30), Math.round(sceneBAtSec * 30) + 20], [1200, 0], {
+        extrapolateLeft: 'clamp',
+        extrapolateRight: 'clamp',
+        easing: Easing.in(Easing.cubic),
+      })
+    : -leftX;
 
   // 撞击帧起：整机震屏 12px 指数衰减（约 5f 收干）
   const since = f - IMPACT_F;
@@ -80,11 +106,14 @@ export const VersusSlam: React.FC<VersusSlamProps> = ({
   const shakeX = env * Math.sin(since * 3.4);
   const shakeY = env * 0.6 * Math.sin(since * 4.1 + 0.7);
 
-  // 白闪：撞击帧 0.9 → 0，3f 收掉
-  const flash = interpolate(f, [IMPACT_F, IMPACT_F + 3], [0.9, 0], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
+  // 白闪：撞击帧 0.9 → 0，3f 收掉；撞击前必须为 0（clamp 左端会返回 0.9 遮住全屏）
+  const flash =
+    f >= IMPACT_F
+      ? interpolate(f, [IMPACT_F, IMPACT_F + 3], [0.9, 0], {
+          extrapolateLeft: 'clamp',
+          extrapolateRight: 'clamp',
+        })
+      : 0;
 
   // "VS" 盖章：scale 1.6 → 1 带 back overshoot，6f 压出
   const vsScale = interpolate(f, [IMPACT_F, IMPACT_F + 6], [1.6, 1], {
@@ -123,7 +152,8 @@ export const VersusSlam: React.FC<VersusSlamProps> = ({
         <div style={{
           position: 'absolute', left: 960, top: 0, width: 960, height: 1080, overflow: 'hidden',
           transform: `translateX(${rightX}px)`,
-          clipPath: `polygon(${SEAM_TOP_X}px 0px, 1920px 0px, 1920px 1080px, ${SEAM_BOT_X}px 1080px)`,
+          // clip-path 坐标相对元素自身（右半 div 宽 960）：缝线屏幕坐标 1075/845 → 相对 115/-115
+          clipPath: `polygon(${SEAM_TOP_X - 960}px 0px, 960px 0px, 960px 1080px, ${SEAM_BOT_X - 960}px 1080px)`,
         }}>
           <SceneContent content={sceneB} titleSize={46} panelWidth={720} />
         </div>
