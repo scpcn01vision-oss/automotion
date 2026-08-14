@@ -16,7 +16,7 @@
 //   0–18 hold → 卡0: 18–36 翻至 192° → 36–44 回弹落 180° →
 //   卡1: 28–46–54，卡2: 38–56–64 → 64–145 三卡全静止（81f ≥ 40f）。
 import React, { useMemo } from 'react';
-import { interpolate, Easing } from 'remotion';
+import { interpolate, Easing, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { useShotFrame } from '../../../engine/useShotFrame';
 import type { ShotTime } from '../../../engine/time';
@@ -32,8 +32,7 @@ const SETTLE = 8;
 const OVERSHOOT = 12; // 末端过冲角度（原案 8°，肉眼存疑加码到 12°）
 
 // 卡 i 在帧 f 的翻转角：0 → 192（先加速后减速）→ 180（弹性落定），帧确定
-const angleAt = (f: number, i: number): number => {
-  const s = FLIP_START + i * STAGGER;
+const angleAt = (f: number, s: number): number => {
   if (f < s + FLIP_DUR) {
     return interpolate(f, [s, s + FLIP_DUR], [0, 180 + OVERSHOOT], {
       extrapolateLeft: 'clamp',
@@ -83,10 +82,11 @@ export interface CardFlipRevealCard {
 
 export interface CardFlipRevealProps {
   cards?: CardFlipRevealCard[];
+  cueSec?: number[]; // 口播对齐：每张卡翻转开始的段内秒（与 cards 一一对应）；提供后忽略固定错峰
 }
 
-const FlipCard: React.FC<{ i: number; frame: number; card: CardFlipRevealCard; w: number }> = ({ i, frame, card, w }) => {
-  const angle = angleAt(frame, i);
+const FlipCard: React.FC<{ i: number; frame: number; start: number; card: CardFlipRevealCard; w: number }> = ({ i, frame, start, card, w }) => {
+  const angle = angleAt(frame, start);
   const len = (card.label ?? '').length;
   const availW = w - 48;
   return (
@@ -171,6 +171,7 @@ export const CardFlipReveal: React.FC<CardFlipRevealProps> = ({
     { label: '指标二', result: '2.4×' },
     { label: '指标三', result: '99%' },
   ],
+  cueSec,
 }) => {
   const n = cards.length;
   // 卡宽随数量自适应：总宽不超过 1920 - 左右边距 160
@@ -187,13 +188,16 @@ export const CardFlipReveal: React.FC<CardFlipRevealProps> = ({
       minFrames: 88,
     };
   }, [n]);
-  const frame = useShotFrame(shotTime);
+  const frameShot = useShotFrame(shotTime);
+  const realFrame = useCurrentFrame();
+  const cueMode = !!cueSec && cueSec.length === n;
+  const frame = cueMode ? realFrame : frameShot;
   const X0 = (1920 - (n * cardW + (n - 1) * GAP)) / 2;
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       {cards.map((card, i) => (
         <div key={i} style={{ position: 'absolute', left: X0 + i * (cardW + GAP), top: 0, width: cardW, height: CH }}>
-          <FlipCard i={i} frame={frame} card={card} w={cardW} />
+          <FlipCard i={i} frame={frame} start={cueMode ? Math.round(cueSec[i] * 30) : FLIP_START + i * STAGGER} card={card} w={cardW} />
         </div>
       ))}
     </div>

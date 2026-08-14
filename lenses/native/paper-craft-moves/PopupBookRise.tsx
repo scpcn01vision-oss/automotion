@@ -14,7 +14,7 @@
 // 根部投影随立起角度收窄变淡。全部立起后整个场景轻微回正（75°→68°）收尾。
 // 收尾 f108 后真静止 ≥52f。帧确定性：全由 frame 派生。
 import React from 'react';
-import { interpolate, spring, Easing } from 'remotion';
+import { interpolate, spring, Easing, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
 import { useShotFrame } from '../../../engine/useShotFrame';
@@ -36,7 +36,6 @@ const STAGGER = 7;
 const RISE_DUR = 34; // spring 视觉收敛帧数
 const LAST_START = HOLD + 5 * STAGGER; // 49
 const SETTLE = LAST_START + RISE_DUR; // 83：全部立起
-const REST = SETTLE + 25; // 108：场景回正完成
 
 // dashboard A 区几何（照抄 FakeDashboard：侧栏 220 + 顶栏 72 + padding 36 + gap 28）
 const AREA_X = 220 + 36;
@@ -47,18 +46,16 @@ const GAP = 28;
 const PageCard: React.FC<{
   i: number;
   frame: number;
+  start: number;
   label: string;
   value: string;
   cellW: number;
   cellH: number;
   cols: number;
   rows: number;
-}> = ({ i, frame, label, value, cellW, cellH, cols, rows }) => {
+}> = ({ i, frame, start, label, value, cellW, cellH, cols, rows }) => {
   const col = i % cols;
   const row = Math.floor(i / cols);
-  // 远排（row 0）先立，近排后立；同排从左到右
-  const order = row === 0 ? col : cols + col;
-  const start = HOLD + order * STAGGER;
 
   const s = spring({
     frame: frame - start,
@@ -142,6 +139,7 @@ export interface PopupBookRiseProps {
   menuItems?: { icon: string; label: string }[]; // 侧栏菜单
   searchText?: string; // 搜索占位文字
   avatarText?: string; // 顶栏头像首字母
+  cueSec?: number[]; // 口播对齐：每张卡立起的段内秒（与 cards 一一对应）；提供后忽略固定错峰
 }
 
 export const PopupBookRise: React.FC<PopupBookRiseProps> = ({
@@ -165,8 +163,14 @@ export const PopupBookRise: React.FC<PopupBookRiseProps> = ({
   ],
   searchText = '搜索',
   avatarText = '我',
+  cueSec,
 }) => {
-  const frame = useShotFrame(SHOT_TIME);
+  const frameShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const cueMode = !!cueSec && cueSec.length === cards.length;
+  const frame = cueMode ? realFrame : frameShot;
+  const cardStart = (i: number): number =>
+    cueMode ? Math.round(cueSec[i] * 30) : HOLD + (Math.floor(i / 3) === 0 ? i % 3 : 3 + (i % 3)) * STAGGER;
   const cols = 3;
   const rows = Math.max(1, Math.ceil(cards.length / cols));
   const AREA_H = 1080 - 72 - 72;
@@ -174,7 +178,9 @@ export const PopupBookRise: React.FC<PopupBookRiseProps> = ({
   const CELL_H = (AREA_H - (rows - 1) * GAP) / rows;
 
   // 场景（书页）俯视角：全程 75°，全部立起后轻微回正到 68°
-  const sceneRx = interpolate(frame, [SETTLE, REST], [75, 68], {
+  const settleFrame = cueMode ? Math.round(Math.max(...cueSec) * 30) + RISE_DUR : SETTLE;
+  const restFrame = settleFrame + 25;
+  const sceneRx = interpolate(frame, [settleFrame, restFrame], [75, 68], {
     easing: Easing.inOut(Easing.cubic),
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
@@ -215,6 +221,7 @@ export const PopupBookRise: React.FC<PopupBookRiseProps> = ({
               key={i}
               i={i}
               frame={frame}
+              start={cardStart(i)}
               label={c.label}
               value={c.value}
               cellW={CELL_W}
