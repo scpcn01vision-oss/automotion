@@ -1,7 +1,9 @@
-import { AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame, Easing } from 'remotion';
+import { AbsoluteFill, Img, interpolate, staticFile, Easing } from 'remotion';
 import { PageCam, CamKey } from './PageCam';
 import { AIFL_SHOTS } from './aifl-shots';
 import layout from './live-layout.json';
+import { useShotFrame } from '../../engine/useShotFrame';
+import type { ShotTime } from '../../engine/time';
 
 const SERIF = 'ui-serif, Georgia, "Times New Roman", serif';
 const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
@@ -11,6 +13,17 @@ const WBR_PAGE_H = layout.wbr.pageH;
 // real overshoot on landing (the old bezier(0.25,0.9,0.3,1) never crossed 1)
 const FLY_EASE = Easing.bezier(0.34, 1.4, 0.44, 1);
 const CRANE_EASE = Easing.bezier(0.3, 0, 0.2, 1);
+
+// 时长画像：crane+元素飞入（弹性过渡）→ wordmark/rule/tag 动作核心（刚性）
+// → 静止 hold + fadeOut（弹性收尾）。115 帧脚本铺满段落实际时长，fadeOut 落在段尾。
+const OUTRO_SHOT_TIME: ShotTime = {
+  segments: [
+    { from: 0, to: 42, mode: 'elastic', minFrames: 24 },
+    { from: 42, to: 70, mode: 'rigid' },
+    { from: 70, to: 115, mode: 'elastic', minFrames: 16 },
+  ],
+  minFrames: 68,
+};
 
 /** One member of the group photo: a page element flying in from off-screen
  * to its settled pose around the wordmark. Sizes are 1x CSS px (textures 2x). */
@@ -66,7 +79,7 @@ export const SceneOutroLive: React.FC<{ start?: number; wordmark?: string }> = (
   start = 0,
   wordmark = 'AUTOMOTION',
 }) => {
-  const frame = useCurrentFrame() + start;
+  const frame = useShotFrame(OUTRO_SHOT_TIME) + start;
   const LETTERS = wordmark.split('');
   const duration = AIFL_SHOTS.outro.duration; // 115
 
