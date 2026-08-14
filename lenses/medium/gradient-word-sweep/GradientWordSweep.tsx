@@ -41,10 +41,6 @@ const FONT = '"Avenir Next", Futura, "Helvetica Neue", sans-serif';
 // 截图 5：S 偏蓝青 → 中段紫 → 粉 → 尾部琥珀
 const GRAD = `linear-gradient(92deg, #e8a44a 0%, #b87a2e 32%, #f2c98a 62%, ${G.accent} 100%)`;
 
-const FILL_START = 12;
-const FILL_END = 30; // 18 帧 ≈ 0.6s，快扫
-const LIGHT_START = FILL_END + 3;
-
 // ---------- 种子化噪声与闪电 ----------
 const rand = mulberry32(20260718);
 const FLICKER: number[] = Array.from({ length: 160 }, () => rand());
@@ -83,6 +79,7 @@ const makeShortBolt = (r: () => number): Bolt => {
 const BOLTS: Bolt[] = Array.from({ length: 16 }, (_, i) =>
   i % 3 === 0 ? makeShortBolt(rand) : makeLongBolt(rand),
 );
+const LIGHT_START = 33; // 闪电起始（默认 FILL_END 30 + 3，固定不随扫光锚点平移）
 // 闪烁事件：帧窗内某条闪电点亮，随机跳位
 type Flash = { at: number; life: number; bolt: number };
 const FLASHES: Flash[] = Array.from({ length: 36 }, () => ({
@@ -93,12 +90,16 @@ const FLASHES: Flash[] = Array.from({ length: 36 }, () => ({
 
 export interface GradientWordSweepProps {
   lines?: [string, string];
+  revealAtSec?: number; // 口播对齐：扫光填充开始的段内秒；提供后忽略默认 12f
 }
 
 export const GradientWordSweep: React.FC<GradientWordSweepProps> = ({
   lines = ['Supercharged', 'with rock-solid reliability'],
+  revealAtSec,
 }) => {
   const frame = useShotFrame(SHOT_TIME);
+  const FILL_START = revealAtSec !== undefined ? Math.round(revealAtSec * 30) : 12;
+  const FILL_END = FILL_START + 18; // 18 帧 ≈ 0.6s，快扫
   const [lineA, lineB] = lines;
 
   const enter = interpolate(frame, [0, 12], [0, 1], {

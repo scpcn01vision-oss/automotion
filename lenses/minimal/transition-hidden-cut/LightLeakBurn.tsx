@@ -28,12 +28,11 @@ import { FONT_STACK } from '../../_system/typography';
 // 节拍：0–25 建立旧页 hold；25–52 光斜扫入、爬向峰值；52 峰值帧切页；
 // 52–95 光沿对角线退出、强度衰减；95–130 新页静止 hold。
 
-const PEAK = 52; // 光峰帧 = 藏切点
-
 export interface LightLeakBurnProps {
   sceneA?: SceneContentData;
   sceneB?: SceneContentData;
   nextTitle?: string;
+  revealAtSec?: number; // 口播对齐：光峰切页时刻（段内秒）；提供后忽略默认 52f
 }
 
 export const LightLeakBurn: React.FC<LightLeakBurnProps> = ({
@@ -54,8 +53,10 @@ export const LightLeakBurn: React.FC<LightLeakBurnProps> = ({
     ],
   },
   nextTitle = 'Next',
+  revealAtSec,
 }) => {
   const frame = useShotFrame(SHOT_TIME);
+  const PEAK = revealAtSec !== undefined ? Math.round(revealAtSec * 30) : 52; // 光峰帧 = 藏切点
 
   // 光团沿对角线的位移进度：右上外 → 左下外，贯穿 25–95
   const sweep = interpolate(frame, [25, 95], [0, 1], {

@@ -38,8 +38,6 @@ const PAD = 14; // 咬合后角标与卡的呼吸距
 
 const FLY_IN = 14; // 飞入开始
 const FLY_END = 24; // 飞入结束（大框就位）
-const LOCK_END = 46; // 咬合帧
-const LABEL_END = 56;
 
 const ARM = 56; // L 臂长
 const THICK = 10; // L 粗
@@ -49,6 +47,7 @@ const clamp = { extrapolateLeft: 'clamp' as const, extrapolateRight: 'clamp' as 
 export interface ReticleLockOnProps {
   scene?: SceneContentData;
   focus?: { x: number; y: number; w: number; h: number }; // 对焦框位置与尺寸
+  revealAtSec?: number; // 口播对齐：准星咬合锁定时刻（段内秒）；提供后忽略默认 46f
 }
 
 export const ReticleLockOn: React.FC<ReticleLockOnProps> = ({
@@ -62,8 +61,11 @@ export const ReticleLockOn: React.FC<ReticleLockOnProps> = ({
     ],
   },
   focus = { x: 808, y: 108, w: 524, h: 425 },
+  revealAtSec,
 }) => {
   const frame = useShotFrame(SHOT_TIME);
+  const LOCK_END = revealAtSec !== undefined ? Math.round(revealAtSec * 30) : 46; // 咬合帧
+  const LABEL_END = LOCK_END + 10;
   const fx = focus.x;
   const fy = focus.y;
   const fw = focus.w;

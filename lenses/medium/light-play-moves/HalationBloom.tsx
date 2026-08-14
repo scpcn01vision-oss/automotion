@@ -35,14 +35,7 @@ const BG = G.bg; // 纸色（原 G.side 深底，按用户要求改纸色）
 const WHITE = G.ink; // 深墨字（纸色底上白字不可见）
 const MID = G.mid;
 
-// —— 时间轴（30fps）——
-const ZOOM_START = 8; // 入场起始
-const IMPACT = 15; // 撞停帧（7f 急速缩入）
-const REBOUND_END = 17; // 2f 回弹
-const POP_END = IMPACT + 6; // 晕层猛涨 6f → f21
-const FALL_END = POP_END + 20; // 20f 线性回落 → f41
-const SETTLE_END = FALL_END + 15; // 15f 缓收 → f56，此后全静止
-// 总时长 145f → 静止 89f ≥ 40f
+// —— 时间轴（30fps；IMPACT 可由 revealAtSec 覆盖）——
 
 const TextBlock: React.FC<{ color: string; text: string }> = ({ color, text }) => (
   <div
@@ -63,13 +56,21 @@ const TextBlock: React.FC<{ color: string; text: string }> = ({ color, text }) =
 export interface HalationBloomProps {
   value?: string;
   label?: string; // 顶部小标签（中性化保留，不删除）
+  revealAtSec?: number; // 口播对齐：撞停冲击时刻（段内秒）；提供后忽略默认 15f
 }
 
 export const HalationBloom: React.FC<HalationBloomProps> = ({
   value = '10x',
   label = 'GLOW',
+  revealAtSec,
 }) => {
   const frame = useShotFrame(SHOT_TIME);
+  const IMPACT = revealAtSec !== undefined ? Math.round(revealAtSec * 30) : 15; // 撞停帧
+  const ZOOM_START = Math.max(0, IMPACT - 7); // 7f 急速缩入
+  const REBOUND_END = IMPACT + 2; // 2f 回弹
+  const POP_END = IMPACT + 6; // 晕层猛涨 6f
+  const FALL_END = POP_END + 20; // 20f 线性回落
+  const SETTLE_END = FALL_END + 15; // 15f 缓收，此后全静止
 
   // —— crash-zoom 入场：scale 2.4 → 0.94（7f in-quad 加速撞停）→ 1（2f 回弹）——
   const zoomIn = interpolate(frame, [ZOOM_START, IMPACT], [2.4, 0.94], {

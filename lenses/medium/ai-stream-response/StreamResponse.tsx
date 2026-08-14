@@ -39,6 +39,7 @@ export interface StreamResponseProps {
   rows?: StreamResponseRow[];
   completeText?: string;
   completeMeta?: string;
+  cueSec?: number[]; // 口播对齐：每条 rows 进入态/完成的段内秒（与 rows 一一对应）；提供后忽略固定间隔
 }
 
 const DEFAULT_ROWS: StreamResponseRow[] = [
@@ -115,10 +116,14 @@ export const StreamResponse: React.FC<StreamResponseProps> = ({
   rows = DEFAULT_ROWS,
   completeText = '分析完成',
   completeMeta = '7 项检查完成 · 可开始构建',
+  cueSec,
 }) => {
   const frame = useShotFrame(SHOT_TIME);
   // 行入场时序：按行数动态（间隔 9f）
-  const ROW_CUES = rows.map((_, i) => 42 + i * 9);
+  const cueMode = !!cueSec && cueSec.length === rows.length;
+  const ROW_CUES = cueMode
+    ? cueSec.map((s) => Math.round(s * 30))
+    : rows.map((_, i) => 42 + i * 9);
   const panelIn = interpolate(frame, [0, 16], [0, 1], {...clamp, easing: ease});
   const summaryT = interpolate(frame, [18, 30], [0, 1], {...clamp, easing: ease});
   const pulse = interpolate(frame, [110, 115, 120], [0.25, 0.55, 0.25], clamp);
