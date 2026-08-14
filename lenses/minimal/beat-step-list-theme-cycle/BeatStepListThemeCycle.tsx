@@ -15,7 +15,7 @@
 // 机制逐帧照搬（列表 translateY 步进 / 胶囊固定 / 三通道同源 / 6f 跳变窗 / squash / 上下羽化），
 // 仅做纸墨换色 + 最小参数化（words/beats/beatFrames/firstBeat）。
 import React from 'react';
-import { AbsoluteFill, interpolate } from 'remotion';
+import { AbsoluteFill, interpolate, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
 import { useShotFrame } from '../../../engine/useShotFrame';
@@ -60,6 +60,8 @@ export interface BeatStepListThemeCycleProps {
   beatFrames?: number;
   firstBeat?: number;
   fontSize?: number;
+  cueSec?: number[]; // 口播对齐：每个词进入胶囊位的段内秒（与 words 一一对应）；
+  //                 提供后忽略 beats/beatFrames/firstBeat，切词时刻=口播念到该词的时刻
 }
 
 export const BeatStepListThemeCycle: React.FC<BeatStepListThemeCycleProps> = ({
@@ -68,18 +70,35 @@ export const BeatStepListThemeCycle: React.FC<BeatStepListThemeCycleProps> = ({
   beatFrames = 18,
   firstBeat = 30,
   fontSize = 92,
+  cueSec,
 }) => {
-  const frame = useShotFrame(SHOT_TIME);
+  const frameShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const cueMode = !!cueSec && cueSec.length === words.length;
+  const frame = cueMode ? realFrame : frameShot;
 
   if (words.length === 0) {
     return <AbsoluteFill style={{ background: THEMES[0].bg }} />;
   }
 
-  // 当前拍序号与拍内进度（跳变只占拍头 6 帧）
-  const raw = (frame - firstBeat) / beatFrames;
-  const beat = Math.min(beats, Math.max(0, Math.floor(raw) + 1)); // 已触发的拍数
-  const beatStartFrame = firstBeat + (beat - 1) * beatFrames;
-  const tInBeat = beat === 0 ? 1 : snap((frame - beatStartFrame) / SNAP_WINDOW);
+  // 当前词序号与切词进度（跳变只占切词点后 6 帧）
+  // 口播对齐模式：按 cueSec 时刻表（段内秒）切词；默认模式：按 firstBeat/beatFrames 固定拍长
+  let beat: number;
+  let beatStartFrame: number;
+  let tInBeat: number;
+  if (cueMode) {
+    const sec = realFrame / 30;
+    let idx = 0;
+    while (idx < cueSec.length - 1 && sec >= cueSec[idx + 1]) idx++;
+    beat = idx;
+    beatStartFrame = Math.round(cueSec[idx] * 30);
+    tInBeat = idx === 0 ? 1 : snap((realFrame - beatStartFrame) / SNAP_WINDOW);
+  } else {
+    const raw = (frame - firstBeat) / beatFrames;
+    beat = Math.min(beats, Math.max(0, Math.floor(raw) + 1)); // 已触发的拍数
+    beatStartFrame = firstBeat + (beat - 1) * beatFrames;
+    tInBeat = beat === 0 ? 1 : snap((frame - beatStartFrame) / SNAP_WINDOW);
+  }
 
   // 连续步进量：整数拍 + 拍头 6 帧内的插值
   const step = beat === 0 ? 0 : (beat - 1) + tInBeat;

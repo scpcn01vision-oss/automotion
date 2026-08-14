@@ -16,7 +16,7 @@
 // （sidebarItems / dashTitle / searchText / avatarText / cards），配色走 v7 G 色板；
 // 网站版底部「TEXT AS MASK」手法名标签已去掉。
 import React from 'react';
-import { interpolate, Easing } from 'remotion';
+import { interpolate, Easing, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
 import { NeutralCard } from '../../_system/neutral-card';
@@ -77,6 +77,8 @@ export interface TextAsMaskProps {
   searchText?: string; // 搜索框占位文字
   avatarText?: string; // 顶栏头像首字母
   cards?: SceneContentData[]; // 3×2 指标卡内容
+  revealAtSec?: number; // 口播对齐：mask 放大（字内→全屏接管）的开始段内秒；
+  //                   提供后前段（hold+平移）压缩到该时刻前，放大动画本体不变，之后全屏静止到段尾
 }
 
 export const TextAsMask: React.FC<TextAsMaskProps> = ({
@@ -101,9 +103,15 @@ export const TextAsMask: React.FC<TextAsMaskProps> = ({
     { title: '风险', rows: [{ label: '指标九', value: '21%' }, { label: '指标十', value: '57%' }] },
     { title: '备注', rows: [{ label: '指标十一', value: '✓' }, { label: '指标十二', value: '–' }] },
   ],
+  revealAtSec,
 }) => {
-  const f = useShotFrame(SHOT_TIME);
+  const frameShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const cueMode = revealAtSec !== undefined;
+  const f = cueMode ? realFrame : frameShot;
   const clamp = { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' } as const;
+  // 放大动画本体时长（2s：保持 bezier 平滑，接管不拖沓；可随 params 微调）
+  const REVEAL_DUR = 2;
 
   // 遮罩 SVG：超粗大字按 text prop 渲染，字号 360（网站版默认）
   const MASK_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080"><text x="960" y="666" font-family="${FONT_STACK}" font-size="360" font-weight="900" letter-spacing="-8" text-anchor="middle" fill="white">${text}</text></svg>`;
@@ -111,15 +119,37 @@ export const TextAsMask: React.FC<TextAsMaskProps> = ({
   // mask 放大原点：取字母 L 的竖笔位置（约 61.5% 处），保证放大时原点落在实心笔画内
   const ORIGIN = '61.5% 50%';
 
-  // 结尾撤场进度：100–130f 单段 bezier
-  const endT = interpolate(f, [100, 130], [0, 1], {
-    ...clamp,
-    easing: Easing.bezier(0.4, 0, 0.2, 1),
-  });
+  // 撤场/接管进度（单段 bezier）：
+  // 默认模式：原始坐标 100–130f；口播对齐模式：从 revealAtSec 起 2s
+  let endT: number;
+  if (cueMode) {
+    endT = interpolate(realFrame, [revealAtSec * 30, revealAtSec * 30 + REVEAL_DUR * 30], [0, 1], {
+      ...clamp,
+      easing: Easing.bezier(0.4, 0, 0.2, 1),
+    });
+  } else {
+    endT = interpolate(f, [100, 130], [0, 1], {
+      ...clamp,
+      easing: Easing.bezier(0.4, 0, 0.2, 1),
+    });
+  }
 
-  // dashboard 内容运动：20–100f 匀速漂移，100–130f 归位到全屏
-  const driftX = interpolate(f, [20, 100], [110, -110], clamp);
-  const dx = f < 100 ? driftX : interpolate(endT, [0, 1], [-110, 0]);
+  // dashboard 内容运动：默认模式 20–100f 匀速漂移；口播对齐模式压缩到 revealAtSec 前（hold 20% + 平移 80%）
+  let driftX: number;
+  if (cueMode) {
+    const sec = realFrame / 30;
+    const holdEnd = revealAtSec * 0.2;
+    if (sec < holdEnd) {
+      driftX = 110; // hold：静止在平移起点
+    } else if (sec < revealAtSec) {
+      driftX = interpolate(sec, [holdEnd, revealAtSec], [110, -110], clamp);
+    } else {
+      driftX = interpolate(endT, [0, 1], [-110, 0]); // 放大时归位（与默认模式一致）
+    }
+  } else {
+    driftX = interpolate(f, [20, 100], [110, -110], clamp);
+  }
+  const dx = cueMode ? driftX : f < 100 ? driftX : interpolate(endT, [0, 1], [-110, 0]);
   const dashS = interpolate(endT, [0, 1], [1.15, 1]);
 
   // mask 层放大（内容层反向抵消，dashboard 不跟着几何畸变）
