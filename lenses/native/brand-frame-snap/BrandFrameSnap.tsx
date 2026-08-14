@@ -4,10 +4,11 @@
 // 功能: 宣告,承接
 // props: colorA / colorB（画框翻色前后色）、labelA / labelB（模式角标）、contentA / contentB（窗口内容承载）
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // brand-frame-snap —— 一圈粗色画框先于内容出现包住全屏 → 灰阶"录屏窗口"在框内落位 →
 // 停一拍 → 画框整圈 colorA→colorB 同帧硬翻色，窗口内容同帧换承载。
 // 一个画框色完成章节导航/状态提示/内容切换。
@@ -19,7 +20,7 @@ import { FONT_STACK } from '../../_system/typography';
 import { useShotFrame } from '../../../engine/useShotFrame';
 import type { ShotTime } from '../../../engine/time';
 
-// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+// 时长画像：整段弹性（2026-08-14 精修）
 const SHOT_TIME: ShotTime = {
   segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
   minFrames: 0,

@@ -3,10 +3,11 @@
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 宣告,举证
 // === 时间特性 ===
-// 刚性（不可压缩）: 刚性:halation 17f,sweep 110f
-// 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
+// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // sheen-sweep-retry —— 单点扫光（高标准重试）
 // 深墨大卡居中，一道 45° 高光带在 40–68f 从左外扫到右外，仅此一次。
 // 约束：单点(只扫主角卡)、圆角裁剪(overflow hidden)、扫前扫后完全静止。
@@ -18,7 +19,7 @@ import { FONT_STACK } from '../../_system/typography';
 import { useShotFrame } from '../../../engine/useShotFrame';
 import type { ShotTime } from '../../../engine/time';
 
-// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+// 时长画像：整段弹性（2026-08-14 精修）
 const SHOT_TIME: ShotTime = {
   segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
   minFrames: 60,

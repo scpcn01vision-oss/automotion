@@ -4,10 +4,11 @@
 // 功能: 钩子,宣告
 // props: segments（笔画段坐标数组，默认内置 SHIP 16 段，可自定义字形）
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // stroke-segment-build —— 断笔成字（《异形》式）
 // "SHIP" 拆成 16 段互不相连的粗线段，按乱序表逐段点亮。
 // 前 70%（11 段）读不出字，最后 3 段落位瞬间突然可读；
@@ -21,7 +22,7 @@ import { G } from '../../_fixtures/Fixtures';
 import { useShotFrame } from '../../../engine/useShotFrame';
 import type { ShotTime } from '../../../engine/time';
 
-// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+// 时长画像：整段弹性（2026-08-14 精修）
 const SHOT_TIME: ShotTime = {
   segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
   minFrames: 0,

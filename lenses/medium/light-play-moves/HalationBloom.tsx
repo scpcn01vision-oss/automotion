@@ -3,10 +3,11 @@
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 宣告,举证
 // === 时间特性 ===
-// 刚性（不可压缩）: 刚性:halation 17f,sweep 110f
-// 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
+// 策略: 弹刚 ShotTime（刚弹分段）
+// 刚性（不可压缩）: 冲击+光晕涨落 8–56f（倍数宣告核心动作固定）
+// 弹性（可伸缩）: 前段 hold 0–8 / 后段静止 56–180
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 冲击段固定不随段长伸缩；段长不足 64f（8+48+8）时回退原始帧。
 // halation-bloom —— 高光晕染
 // 深灰底大白字 "10x" crash-zoom 急停入场（2.4→1，7f in-quad + 2f 回弹）。
 // 撞停帧起：底层复制文字（blur+提亮的白色晕层）猛涨一圈（scale 1→1.3，6f out-cubic 扩散），
@@ -20,10 +21,14 @@ import { FONT_STACK } from '../../_system/typography';
 import { useShotFrame } from '../../../engine/useShotFrame';
 import type { ShotTime } from '../../../engine/time';
 
-// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+// 时长画像：冲击+光晕刚性（8–56f），前后弹性（2026-08-14 精修）
 const SHOT_TIME: ShotTime = {
-  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
-  minFrames: 0,
+  segments: [
+    { from: 0, to: 8, mode: 'elastic', minFrames: 8 },
+    { from: 8, to: 56, mode: 'rigid' },
+    { from: 56, to: 180, mode: 'elastic', minFrames: 8 },
+  ],
+  minFrames: 64,
 };
 
 const BG = G.bg; // 纸色（原 G.side 深底，按用户要求改纸色）

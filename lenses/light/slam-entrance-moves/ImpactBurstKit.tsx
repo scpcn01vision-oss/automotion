@@ -4,10 +4,11 @@
 // 功能: 钩子,宣告
 // props: cards（主卡 + 两张邻卡内容）
 // === 时间特性 ===
-// 刚性（不可压缩）: 刚性:impact 20f,score 14f
-// 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
+// 策略: 弹刚 ShotTime（刚弹分段）
+// 刚性（不可压缩）: 落点冲击连锁 20–63f（砸落命中→环/粒子/震屏/邻卡振荡，物理连锁固定）
+// 弹性（可伸缩）: 前段悬停 0–20 / 后段全静止 hold 63–180
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 冲击连锁固定不随段长伸缩；段长不足 59f（8+43+8）时回退原始帧。
 // 落点冲击套件（impact-burst-kit）——shockwave-ring + particle-burst 组合变异。
 // 主卡砸落的落点帧同时触发：冲击波环扩散 + 14 粒子放射迸发 + 震屏，
 // 且冲击波前沿扫到左右邻卡的那一帧（按半径-距离算准=落点后 3f）邻卡被
@@ -24,11 +25,15 @@ import { FONT_STACK } from '../../_system/typography';
 import { useShotFrame } from '../../../engine/useShotFrame';
 import type { ShotTime } from '../../../engine/time';
 
-// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
-const SHOT_TIME: ShotTime = {
-  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
-  minFrames: 0,
-};
+  // 时长画像：落点冲击连锁刚性（20–63f），前后弹性（2026-08-14 精修）
+  const SHOT_TIME: ShotTime = {
+    segments: [
+      { from: 0, to: 20, mode: 'elastic', minFrames: 8 },
+      { from: 20, to: 63, mode: 'rigid' },
+      { from: 63, to: 180, mode: 'elastic', minFrames: 8 },
+    ],
+    minFrames: 59,
+  };
 
 // 伪随机（帧确定）
 const h = (n: number): number => {

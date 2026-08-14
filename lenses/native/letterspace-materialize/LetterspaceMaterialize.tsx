@@ -4,10 +4,11 @@
 // 功能: 钩子,宣告
 // props: word（字标内容，仅内置字形 S/U/P/E/R/H/M/A/N，未收录字母渲染为圆点）
 // === 时间特性 ===
-// 刚性（不可压缩）: 刚性:52f
-// 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
+// 策略: 弹刚 ShotTime（刚弹分段）
+// 刚性（不可压缩）: 全字符描画 16–68f（52f 起画齐收，核心动作固定）
+// 弹性（可伸缩）: 前段空场 hold 0–16 / 后段静止 68–180
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 描画段固定不随段长伸缩；段长不足 68f（8+52+8）时回退原始帧。
 // letterspace-materialize v3 —— 按批次 11 用户意见修正（截图 superhuman，4 张）：
 // ① 字形比例改宽：v2 竖长（60x100），对照终态截图字高≈50/字宽≈58（宽高比≈1.15），
 //    v3 重绘全部骨架字形到 78x64 视框（字面 58x54），方正略宽 + 细笔画 + 大字距；
@@ -20,11 +21,15 @@ import { G } from '../../_fixtures/Fixtures';
 import { useShotFrame } from '../../../engine/useShotFrame';
 import type { ShotTime } from '../../../engine/time';
 
-// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
-const SHOT_TIME: ShotTime = {
-  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
-  minFrames: 0,
-};
+  // 时长画像：全字符描画刚性（16–68f），前后弹性（2026-08-14 精修）
+  const SHOT_TIME: ShotTime = {
+    segments: [
+      { from: 0, to: 16, mode: 'elastic', minFrames: 8 },
+      { from: 16, to: 68, mode: 'rigid' },
+      { from: 68, to: 180, mode: 'elastic', minFrames: 8 },
+    ],
+    minFrames: 68,
+  };
 
 // 78x64 视框内的方正略宽细骨架字形（子笔画顺序=描画顺序）
 const GLYPHS: Record<string, string> = {

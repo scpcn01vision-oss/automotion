@@ -3,10 +3,11 @@
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 宣告
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
-// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
+// 策略: 弹刚 ShotTime（刚弹分段）
+// 刚性（不可压缩）: 光扫填充 12–30f（0.6s 快扫，核心动作固定）
+// 弹性（可伸缩）: 前段入场 0–12 / 后段停留收尾 30–180
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 快扫段固定不随段长伸缩；段长不足 34f（8+18+8）时回退原始帧。
 // gradient-word-sweep v3 —— 批次 12 按用户意见微调（v2 结构保留）：
 // 1) 闪电偏紫红色 + 线宽调细（约减半）；
 // 2) 整体泛光强度略降（各辉光层 opacity 下调）；
@@ -19,11 +20,15 @@ import { G } from '../../_fixtures/Fixtures';
 import { useShotFrame } from '../../../engine/useShotFrame';
 import type { ShotTime } from '../../../engine/time';
 
-// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
-const SHOT_TIME: ShotTime = {
-  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 12 }],
-  minFrames: 12,
-};
+  // 时长画像：光扫填充刚性（12–30f），前后弹性（2026-08-14 精修）
+  const SHOT_TIME: ShotTime = {
+    segments: [
+      { from: 0, to: 12, mode: 'elastic', minFrames: 8 },
+      { from: 12, to: 30, mode: 'rigid' },
+      { from: 30, to: 180, mode: 'elastic', minFrames: 8 },
+    ],
+    minFrames: 34,
+  };
 
 const mulberry32 = (a: number) => () => {
   let t = (a += 0x6d2b79f5);

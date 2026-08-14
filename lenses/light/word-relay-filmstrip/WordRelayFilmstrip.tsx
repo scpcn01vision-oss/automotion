@@ -4,10 +4,11 @@
 // 功能: 展开,序列
 // props: subject（固定第一行主题词）、words（接力动词序列）
 // === 时间特性 ===
-// 刚性（不可压缩）: 刚性:切词16f
-// 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
+// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // word-relay-filmstrip v3 —— 批次 12 单点微调：右侧大词块（Computer+动词）
 // 的垂直中心与左列当前页面卡的垂直中点（y=540）对齐（top 462→402）。
 // 其余沿用 v2：对照用户截图重做（perplexity-promo01，7 张）：
@@ -23,7 +24,7 @@ import { FONT_STACK } from '../../_system/typography';
 import { useShotFrame } from '../../../engine/useShotFrame';
 import type { ShotTime } from '../../../engine/time';
 
-// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+// 时长画像：整段弹性（2026-08-14 精修）
 const SHOT_TIME: ShotTime = {
   segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
   minFrames: 0,

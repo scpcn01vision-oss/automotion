@@ -4,10 +4,11 @@
 // 描述: 点阵重组——散点重组成图形
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // unit-dot-swarm-regroup-v2 —— 单位点阵重组 v2（批次 6 "改改再看" 重做）
 // 相对 v1 的加码：点数 200→320、点径 7→9；真实叙事语境：图例 "Each dot ≈ 40 customers"，
 // 聚簇时每簇上方浮真标签（Free · 7,210 / Pro · 4,102 / Enterprise · 1,535，Pro 琥珀主角色），
@@ -23,7 +24,7 @@ import { FONT_STACK } from '../../_system/typography';
 import { useShotFrame } from '../../../engine/useShotFrame';
 import type { ShotTime } from '../../../engine/time';
 
-// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+// 时长画像：整段弹性（2026-08-14 精修）
 const SHOT_TIME: ShotTime = {
   segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
   minFrames: 0,

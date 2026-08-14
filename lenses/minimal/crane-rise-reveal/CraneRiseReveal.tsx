@@ -4,10 +4,11 @@
 // 功能: 展开
 // props: rows（内容行列表，默认 5 行，行脉冲按行数自适应）
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // 升降臂拉升揭示（crane-rise-reveal）——crane shot。
 // 世界 = 内容行面板（默认 5 行列表）。相机 transform-origin 左上，联动公式：
 // translate = 屏幕中心 - 对准点*scale（对准点始终落在屏幕中心）。
@@ -22,7 +23,7 @@ import { FONT_STACK } from '../../_system/typography';
 import { useShotFrame } from '../../../engine/useShotFrame';
 import type { ShotTime } from '../../../engine/time';
 
-// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+// 时长画像：整段弹性（2026-08-14 精修）
 const SHOT_TIME: ShotTime = {
   segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
   minFrames: 0,

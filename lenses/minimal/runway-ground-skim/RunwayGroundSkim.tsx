@@ -4,10 +4,11 @@
 // 功能: 展开
 // props: workspaceName（工作区名）、cards（Recent 卡内容，7 张默认）
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // runway-ground-skim v5 —— 源片 clickup-30.mp4 约 46–50s（clickup10 截图 5 张）：
 // 用户 v5 意见（逐字）："去掉落地后弹起的效果，然后整个下落的过程快一点"
 // 落实：①删除落地压弹——着地即停，零回弹零压缩（判例：掉落感=干脆利落）；
@@ -22,7 +23,7 @@ import { FONT_STACK } from '../../_system/typography';
 import { useShotFrame } from '../../../engine/useShotFrame';
 import type { ShotTime } from '../../../engine/time';
 
-// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+// 时长画像：整段弹性（2026-08-14 精修）
 const SHOT_TIME: ShotTime = {
   segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
   minFrames: 60,

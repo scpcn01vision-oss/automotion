@@ -3,10 +3,11 @@
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 展开
 // === 时间特性 ===
-// 刚性（不可压缩）: 刚性:沸腾段70f
-// 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
+// 策略: 弹刚 ShotTime（刚弹分段）
+// 刚性（不可压缩）: 沸腾段 35–105f（70f 手绘抖动节奏固定，seed 每 3 帧换）
+// 弹性（可伸缩）: 前段静止 0–35 / 后段真静止 105–180
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 沸腾段固定不随段长伸缩（保持手绘抖动频率）；段长不足 86f（8+70+8）时回退原始帧。
 // 线条沸腾（line-boil）——手绘动画 line boil 质感：静止线稿在"沸腾段"
 // 边缘逐帧微颤，像手绘逐帧描线的抖动。SVG filter feTurbulence(baseFrequency
 // 0.015, numOctaves 2, seed = Math.floor(f/3) 每 3 帧阶梯换) + feDisplacementMap
@@ -24,11 +25,15 @@ import { FONT_STACK } from '../../_system/typography';
 import { useShotFrame } from '../../../engine/useShotFrame';
 import type { ShotTime } from '../../../engine/time';
 
-// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
-const SHOT_TIME: ShotTime = {
-  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
-  minFrames: 0,
-};
+  // 时长画像：沸腾段刚性（35–105f），前后静止弹性（2026-08-14 精修）
+  const SHOT_TIME: ShotTime = {
+    segments: [
+      { from: 0, to: 35, mode: 'elastic', minFrames: 8 },
+      { from: 35, to: 105, mode: 'rigid' },
+      { from: 105, to: 180, mode: 'elastic', minFrames: 8 },
+    ],
+    minFrames: 86,
+  };
 
 const BOIL_START = 35;
 const BOIL_END = 105;

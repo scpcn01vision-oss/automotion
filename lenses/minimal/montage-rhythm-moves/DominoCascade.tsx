@@ -4,10 +4,11 @@
 // 功能: 展开,举证
 // props: title（砸落标题）、cards（多米诺卡片内容数组，数量自适应）
 // === 时间特性 ===
-// 刚性（不可压缩）: 刚性:每卡12f
-// 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
+// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // 多米诺连锁入场（domino-cascade）——Rube Goldberg / OK Go MV。
 // 三级动量链，每级 startFrame = 上一级 impact 帧：
 // ① 帧 36–51 标题 "CHAIN REACTION" 从画外顶 ease-in(cubic) 砸落上半屏，
@@ -23,7 +24,7 @@ import { FONT_STACK } from '../../_system/typography';
 import { useShotFrame } from '../../../engine/useShotFrame';
 import type { ShotTime } from '../../../engine/time';
 
-// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+// 时长画像：整段弹性（2026-08-14 精修）
 const SHOT_TIME: ShotTime = {
   segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
   minFrames: 0,

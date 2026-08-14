@@ -4,10 +4,11 @@
 // 功能: 展开,举证
 // props: pageImage（背景整页）、foregroundImage（前景浮块）、subjectImage（前景高清卡）
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // multiplane parallax（轮 E）——真实页面拆 3 层深度横移：
 // 背景整页（0.35x，微 blur 退后）+ 中景真实卡组（0.7x）+
 // 前景浮块（1.4x，search 切片 + 高清卡，轻 blur 拉焦平面）。
@@ -19,7 +20,7 @@ import { G } from '../../_fixtures/Fixtures';
 import { useShotFrame } from '../../../engine/useShotFrame';
 import type { ShotTime } from '../../../engine/time';
 
-// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+// 时长画像：整段弹性（2026-08-14 精修）
 const SHOT_TIME: ShotTime = {
   segments: [{ from: 0, to: 135, mode: 'elastic', minFrames: 60 }],
   minFrames: 60,

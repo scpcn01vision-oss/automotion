@@ -4,10 +4,11 @@
 // 功能: 承接,转折
 // props: windowA / windowB（收发窗口内容：标题 + 行列表）、sendLabel（发送按钮文本）
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // paper-plane-messenger —— pitch-app 77–82s（2.5D 简化）
 // 点击"发送"后镜头拉远脱离窗口 A，折纸飞机从窗口飞出沿弧线飞行
 // （俯仰角跟随切线），镜头伴飞穿过多层视差漂浮的灰阶道具，
@@ -20,7 +21,7 @@ import { FONT_STACK } from '../../_system/typography';
 import { useShotFrame } from '../../../engine/useShotFrame';
 import type { ShotTime } from '../../../engine/time';
 
-// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+// 时长画像：整段弹性（2026-08-14 精修）
 const SHOT_TIME: ShotTime = {
   segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
   minFrames: 0,

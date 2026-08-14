@@ -4,10 +4,11 @@
 // 功能: 宣告,展开
 // props: text（沿曲线流入的标题）
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // 文字沿曲线流入（text-on-path）——字符沿一条上升贝塞尔曲线（像图表增长线）
 // 鱼贯滑入，行进中按切线角旋转；到达各自终点后再从"贴线姿态"lerp 到水平基线位
 // 拼成正常标题。曲线本身随字符前进同步 evolve（dashoffset 生长）。
@@ -21,7 +22,7 @@ import { FONT_STACK } from '../../_system/typography';
 import { useShotFrame } from '../../../engine/useShotFrame';
 import type { ShotTime } from '../../../engine/time';
 
-// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+// 时长画像：整段弹性（2026-08-14 精修）
 const SHOT_TIME: ShotTime = {
   segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
   minFrames: 60,

@@ -4,10 +4,11 @@
 // 功能: 转折,承接
 // props: sceneA / sceneB（百叶窗前后景内容承载）
 // === 时间特性 ===
-// 刚性（不可压缩）: 弹性(clock),刚性:wave 20f(blinds)
-// 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
+// 策略: 弹刚 ShotTime（刚弹分段）
+// 刚性（不可压缩）: 百叶横切 20–52f（波浪扫过 1.07s，转场必须快）
+// 弹性（可伸缩）: 前段 A 画面 hold 0–20 / 后段 B 画面 52–180
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 转场段固定不随段长伸缩；段长不足 48f（8+32+8）时回退原始帧。
 // blinds-slice｜百叶窗切条错峰擦除
 // FakeDashboard A → B。12 根 160px 竖条，从左到右 delay=列号×2f，
 // 每条 10f 内完成翻换：条内 A scaleX 1→0（origin 左缘）与 B scaleX 0→1
@@ -23,10 +24,14 @@ import { SceneContent, SceneContentData } from '../../_system/scene-content';
 import { useShotFrame } from '../../../engine/useShotFrame';
 import type { ShotTime } from '../../../engine/time';
 
-// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+// 时长画像：百叶横切刚性（20–52f），前后弹性（2026-08-14 精修）
 const SHOT_TIME: ShotTime = {
-  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
-  minFrames: 0,
+  segments: [
+    { from: 0, to: 20, mode: 'elastic', minFrames: 8 },
+    { from: 20, to: 52, mode: 'rigid' },
+    { from: 52, to: 180, mode: 'elastic', minFrames: 8 },
+  ],
+  minFrames: 48,
 };
 
 const STRIPS = 12;

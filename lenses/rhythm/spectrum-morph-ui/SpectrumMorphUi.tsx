@@ -4,10 +4,11 @@
 // 描述: 下划线频谱化——标题下划线裂成竖条随 FFT 跳动再收拢
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // spectrum-morph-ui —— 频谱化 UI
 // 标题 "LAUNCH WEEK" 下方 8px ink 下划线（720px）。25f 起裂成 28 根竖条
 // （20px 宽、6px 间隙），条高按伪 FFT 跳动 64f（低频端高、高频端矮的包络），
@@ -20,7 +21,7 @@ import { FONT_STACK } from '../../_system/typography';
 import { useShotFrame } from '../../../engine/useShotFrame';
 import type { ShotTime } from '../../../engine/time';
 
-// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+// 时长画像：整段弹性（2026-08-14 精修）
 const SHOT_TIME: ShotTime = {
   segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 10 }],
   minFrames: 10,

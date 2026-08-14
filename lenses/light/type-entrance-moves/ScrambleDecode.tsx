@@ -4,10 +4,11 @@
 // 功能: 钩子,宣告
 // props: text（乱码解码的标题）
 // === 时间特性 ===
-// 刚性（不可压缩）: 刚性:锁定闪2f
-// 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
+// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // 乱码解码字（scramble-decode）——终端黑客感文字入场。
 // 标题 "DECODE SPEED" 每字符先高速跳随机字母/数字（每 2f 换一个，seed hash 取字符），
 // 从左到右逐个锁定：第 i 个字符在帧 20+i*6 锁定为真字符，锁定瞬间该字符反色闪
@@ -20,7 +21,7 @@ import { G } from '../../_fixtures/Fixtures';
 import { useShotFrame } from '../../../engine/useShotFrame';
 import type { ShotTime } from '../../../engine/time';
 
-// 时长画像（保守兜底：整段弹性；精修阶段按镜头关键帧画像刚弹分段）
+// 时长画像：整段弹性（2026-08-14 精修）
 const SHOT_TIME: ShotTime = {
   segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
   minFrames: 0,
