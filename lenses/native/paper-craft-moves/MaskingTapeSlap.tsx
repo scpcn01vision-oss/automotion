@@ -13,7 +13,7 @@
 // 第二条拍下同帧卡片停晃、投影瞬间变薄、整卡 2px 下沉——"按死"的一瞬是主角。
 // 帧确定性：全部由 frame 派生，无随机。收尾 f86 后真静止 54f。
 import React from 'react';
-import { interpolate, Easing, Img, staticFile } from 'remotion';
+import { interpolate, Easing, Img, staticFile, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { useShotFrame } from '../../../engine/useShotFrame';
 import type { ShotTime } from '../../../engine/time';
@@ -41,26 +41,28 @@ const APPROACH = 6; // 胶带从画外扑向卡面的帧数
 const FREEZE = 2; // 拍死后晃动归零帧数
 
 // 悬浮晃动幅度包络：入位后升起 → 第一条胶带拍下后减半 → 第二条拍下冻结（由外层处理）
-const amp = (f: number): number => {
-  const rise = interpolate(f, [FLOAT_END, FLOAT_END + 8], [0, 1], {
+const amp = (f: number, floatEnd: number, slap1: number): number => {
+  const rise = interpolate(f, [floatEnd, floatEnd + 8], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
-  const damp = interpolate(f, [SLAP1, SLAP1 + 4], [1, 0.45], {
+  const damp = interpolate(f, [slap1, slap1 + 4], [1, 0.45], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
   return rise * damp;
 };
 
-const rawRot = (f: number): number => amp(f) * 1.5 * Math.sin((f - FLOAT_END) * 0.16);
-const rawBob = (f: number): number => amp(f) * 5 * Math.sin((f - FLOAT_END) * 0.11);
+const rawRot = (f: number, floatEnd: number, slap1: number): number =>
+  amp(f, floatEnd, slap1) * 1.5 * Math.sin((f - floatEnd) * 0.16);
+const rawBob = (f: number, floatEnd: number, slap1: number): number =>
+  amp(f, floatEnd, slap1) * 5 * Math.sin((f - floatEnd) * 0.11);
 
 // 第二条拍下（SLAP2）同帧起 2f 内把晃动按死到 0
-const frozen = (f: number, raw: (x: number) => number): number =>
-  f <= SLAP2
+const frozen = (f: number, raw: (x: number) => number, slap2: number): number =>
+  f <= slap2
     ? raw(f)
-    : interpolate(f, [SLAP2, SLAP2 + FREEZE], [raw(SLAP2), 0], {
+    : interpolate(f, [slap2, slap2 + FREEZE], [raw(slap2), 0], {
         extrapolateRight: 'clamp',
       });
 
@@ -126,6 +128,7 @@ export interface MaskingTapeCard {
 
 export interface MaskingTapeSlapProps {
   card?: MaskingTapeCard;
+  revealAtSec?: number; // 口播对齐：第一条胶带拍下的段内秒；提供后飘入压缩到该时刻前，第二条相对 +24 帧
 }
 
 // 卡片内容渲染器（可扩展：新形态 = 在 type 联合里加值 + 此处加分支）
@@ -179,37 +182,45 @@ export const MaskingTapeSlap: React.FC<MaskingTapeSlapProps> = ({
       { label: 'Ship', value: 'Ready' },
     ],
   },
+  revealAtSec,
 }) => {
-  const frame = useShotFrame(SHOT_TIME);
+  const frameShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const cueMode = revealAtSec !== undefined;
+  const frame = cueMode ? realFrame : frameShot;
+  // cue 模式：飘入（0–38 原始）压缩到 revealAtSec 前；胶带拍 SLAP1=revealAtSec，SLAP2 相对 +24 帧
+  const pre = cueMode ? Math.min(1, (realFrame / 30) / (revealAtSec ?? 1)) * FLOAT_END : frame;
+  const SLAP1F = cueMode ? Math.round(revealAtSec * 30) : SLAP1;
+  const SLAP2F = SLAP1F + (SLAP2 - SLAP1);
 
   // 卡片飘入：从上方 -120px 缓落
-  const floatY = interpolate(frame, [FLOAT_START, FLOAT_END], [-120, 0], {
+  const floatY = interpolate(pre, [FLOAT_START, FLOAT_END], [-120, 0], {
     easing: Easing.out(Easing.cubic),
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
-  const floatOp = interpolate(frame, [FLOAT_START, FLOAT_START + 10], [0, 1], {
+  const floatOp = interpolate(pre, [FLOAT_START, FLOAT_START + 10], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
 
-  const rot = frozen(frame, rawRot);
-  const bob = frozen(frame, rawBob);
+  const rot = frozen(pre, (f) => rawRot(f, FLOAT_END, SLAP1F), SLAP2F);
+  const bob = frozen(pre, (f) => rawBob(f, FLOAT_END, SLAP1F), SLAP2F);
 
   // 按死：2px 下沉 + 投影瞬间变薄
-  const sink = interpolate(frame, [SLAP2, SLAP2 + FREEZE], [0, 2], {
+  const sink = interpolate(frame, [SLAP2F, SLAP2F + FREEZE], [0, 2], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
-  const shOff = interpolate(frame, [SLAP2, SLAP2 + FREEZE], [16, 3], {
+  const shOff = interpolate(frame, [SLAP2F, SLAP2F + FREEZE], [16, 3], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
-  const shBlur = interpolate(frame, [SLAP2, SLAP2 + FREEZE], [34, 8], {
+  const shBlur = interpolate(frame, [SLAP2F, SLAP2F + FREEZE], [34, 8], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
-  const shAlpha = interpolate(frame, [SLAP2, SLAP2 + FREEZE], [0.22, 0.1], {
+  const shAlpha = interpolate(frame, [SLAP2F, SLAP2F + FREEZE], [0.22, 0.1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
@@ -233,8 +244,8 @@ export const MaskingTapeSlap: React.FC<MaskingTapeSlapProps> = ({
       </div>
 
       {/* 两条胶带钉在卡片对角（世界坐标，卡片在其下滑动微晃） */}
-      <Tape frame={frame} land={SLAP1} cx={CX + 55} cy={CY + 40} rot={-45} fromX={-170} fromY={-130} />
-      <Tape frame={frame} land={SLAP2} cx={CX + CARD_W - 55} cy={CY + CARD_H - 40} rot={-45} fromX={170} fromY={130} />
+      <Tape frame={frame} land={SLAP1F} cx={CX + 55} cy={CY + 40} rot={-45} fromX={-170} fromY={-130} />
+      <Tape frame={frame} land={SLAP2F} cx={CX + CARD_W - 55} cy={CY + CARD_H - 40} rot={-45} fromX={170} fromY={130} />
     </div>
   );
 };

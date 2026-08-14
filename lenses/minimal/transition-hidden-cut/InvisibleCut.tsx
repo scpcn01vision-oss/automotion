@@ -9,7 +9,7 @@
 // === 适配注意 ===
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 import React from 'react';
-import { AbsoluteFill, Easing, interpolate } from 'remotion';
+import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
 import { CameraMotionBlur } from '@remotion/motion-blur';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
@@ -31,10 +31,10 @@ const SW_END = 54; // 卡片出场（14f 横扫）
 const CUT = 47; // 硬切点：扫掠中点，卡片完全糊满画面的那一帧
 
 // 卡片中扫掠曲线上的水平位置（容器 left，未缩放坐标）
-const xAt = (f: number) =>
+const xAt = (f: number, s: number, e: number) =>
   // 卡片 scale(1.6) 后半宽 1280：起点右缘 -120 / 终点左缘 2120，均完全出画；
   // 中点 f47 覆盖 -280..2280，糊满整个 1920 画幅
-  interpolate(f, [SW_START, SW_END], [-2200, 2600], {
+  interpolate(f, [s, e], [-2200, 2600], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
     easing: Easing.bezier(0.3, 0, 0.7, 1),
@@ -44,21 +44,28 @@ const Scene: React.FC<{
   sceneA: SceneContentData;
   sceneB: SceneContentData;
   card: { label: string; value: string };
-}> = ({ sceneA, sceneB, card }) => {
+  revealAtSec?: number;
+}> = ({ sceneA, sceneB, card, revealAtSec }) => {
   const frame = useShotFrame(SHOT_TIME);
-  const x = xAt(frame);
+  const realFrame = useCurrentFrame();
+  const cueMode = revealAtSec !== undefined;
+  const f = cueMode ? realFrame : frame;
+  const CUT_F = cueMode ? Math.round(revealAtSec * 30) : CUT;
+  const SW_START_F = CUT_F - (CUT - SW_START);
+  const SW_END_F = CUT_F + (SW_END - CUT);
+  const x = xAt(f, SW_START_F, SW_END_F);
   // 瞬时速度（px/帧），驱动斜切与残影强度
-  const v = xAt(frame + 0.5) - xAt(frame - 0.5);
-  const sweeping = frame > SW_START - 2 && frame < SW_END + 3;
+  const v = xAt(f + 0.5, SW_START_F, SW_END_F) - xAt(f - 0.5, SW_START_F, SW_END_F);
+  const sweeping = f > SW_START_F - 2 && f < SW_END_F + 3;
   // 背景被"带风"轻推：A 被拖向左，切成 B 后从右侧回稳——卖同一镜错觉
   const shove =
-    frame < CUT
-      ? interpolate(frame, [SW_START, CUT], [0, -40], {
+    f < CUT_F
+      ? interpolate(f, [SW_START_F, CUT_F], [0, -40], {
           extrapolateLeft: 'clamp',
           extrapolateRight: 'clamp',
           easing: Easing.in(Easing.quad),
         })
-      : interpolate(frame, [CUT, CUT + 13], [40, 0], {
+      : interpolate(f, [CUT_F, CUT_F + 13], [40, 0], {
           extrapolateLeft: 'clamp',
           extrapolateRight: 'clamp',
           easing: Easing.out(Easing.cubic),
@@ -67,7 +74,7 @@ const Scene: React.FC<{
     <AbsoluteFill style={{ background: G.bg, overflow: 'hidden' }}>
       {/* 背景层：硬切藏在遮挡帧内 */}
       <div style={{ position: 'absolute', inset: 0, transform: `translateX(${shove}px)` }}>
-        {frame < CUT ? <SceneContent content={sceneA} /> : <SceneContent content={sceneB} />}
+        {f < CUT_F ? <SceneContent content={sceneA} /> : <SceneContent content={sceneB} />}
       </div>
       {/* 手动残影：4 层拖尾（在主卡身后），保证遮挡窗口糊满全屏 */}
       {sweeping &&
@@ -76,7 +83,7 @@ const Scene: React.FC<{
             key={i}
             style={{
               position: 'absolute',
-              left: xAt(frame - i * 0.55),
+              left: xAt(f - i * 0.55, SW_START_F, SW_END_F),
               top: 40,
               width: 1600,
               height: 1000,
@@ -114,6 +121,7 @@ export interface InvisibleCutProps {
   sceneA?: SceneContentData;
   sceneB?: SceneContentData;
   card?: { label: string; value: string };
+  revealAtSec?: number; // 口播对齐：硬切（sceneA→sceneB）的段内秒；提供后 sceneA 展示到该时刻
 }
 
 const OcclusionCard: React.FC<{ label: string; value: string }> = ({ label, value }) => (
@@ -159,8 +167,9 @@ export const InvisibleCut: React.FC<InvisibleCutProps> = ({
     ],
   },
   card = { label: '指标', value: '+18%' },
+  revealAtSec,
 }) => (
   <CameraMotionBlur shutterAngle={300} samples={12}>
-    <Scene sceneA={sceneA} sceneB={sceneB} card={card} />
+    <Scene sceneA={sceneA} sceneB={sceneB} card={card} revealAtSec={revealAtSec} />
   </CameraMotionBlur>
 );

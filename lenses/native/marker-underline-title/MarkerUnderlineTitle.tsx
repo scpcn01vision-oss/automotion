@@ -11,7 +11,7 @@
 // 马克笔下划线从左到右描画（粗细变化/端头圆润/微歪/边缘毛糙）。
 // 对标 notion-ai.mp4 2.3–3.6s。与库内 draw-svg-trace 撞车，本版做马克笔质感。
 import React from 'react';
-import { AbsoluteFill, interpolate } from 'remotion';
+import { AbsoluteFill, interpolate, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { useShotFrame } from '../../../engine/useShotFrame';
 import type { ShotTime } from '../../../engine/time';
@@ -55,19 +55,26 @@ export interface MarkerUnderlineTitleProps {
   prefix?: string;
   highlight?: string;
   title?: string;
+  revealAtSec?: number; // 口播对齐：马克笔下划线开始描画的段内秒；提供后标题入场压缩到该时刻前
 }
 
 export const MarkerUnderlineTitle: React.FC<MarkerUnderlineTitleProps> = ({
   prefix = 'Meet the ',
   highlight = 'new',
   title = 'Paper Notes',
+  revealAtSec,
 }) => {
-  const frame = useShotFrame(SHOT_TIME);
+  const frameShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const cueMode = revealAtSec !== undefined;
+  const frame = cueMode ? realFrame : frameShot;
   // 下划线长度：跟随强调词宽度自适应（斜体约 84px/字符 @118px 字号，下限 60）
   const LEN = Math.max(60, highlight.length * 84);
 
-  // 标题落定：整块从下方 30px 弹入（ease-out），24 帧内完成
-  const enter = interpolate(frame, [0, 22], [0, 1], {
+  // 标题落定：整块从下方 30px 弹入（ease-out），24 帧内完成；
+  // 口播对齐模式：入场压缩到 revealAtSec 前（保持比例）
+  const enterF = cueMode ? Math.min(1, (realFrame / 30) / (revealAtSec ?? 1)) * 22 : frame;
+  const enter = interpolate(enterF, [0, 22], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
   const eo = 1 - Math.pow(1 - enter, 3);
@@ -75,7 +82,8 @@ export const MarkerUnderlineTitle: React.FC<MarkerUnderlineTitleProps> = ({
   const titleOp = Math.min(1, enter * 1.6);
 
   // 下划线：标题落定停一拍后描画，10 帧从左到右（提速一档），ease-out
-  const draw = interpolate(frame, [32, 42], [0, 1], {
+  const drawStart = cueMode ? Math.round(revealAtSec * 30) : 32;
+  const draw = interpolate(frame, [drawStart, drawStart + 10], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
   const drawE = 1 - Math.pow(1 - draw, 2.2);

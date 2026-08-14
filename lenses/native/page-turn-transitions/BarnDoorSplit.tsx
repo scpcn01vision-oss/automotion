@@ -17,7 +17,7 @@
 // 30–50 两半各 translateX ∓980（Easing.in cubic 加速滑出）→
 // 30–55 底层 B scale 1.06→1.0（out cubic）→ 55–130 全静止（75f）。
 import React from 'react';
-import { interpolate, Easing } from 'remotion';
+import { interpolate, Easing, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
 import { useShotFrame } from '../../../engine/useShotFrame';
@@ -32,6 +32,7 @@ const SHOT_TIME: ShotTime = {
 export interface BarnDoorSplitProps {
   sceneA?: SceneContentData;
   sceneB?: SceneContentData;
+  revealAtSec?: number; // 口播对齐：两扇门开始分裂的段内秒；提供后前段静止到该时刻
 }
 
 export const BarnDoorSplit: React.FC<BarnDoorSplitProps> = ({
@@ -53,18 +54,23 @@ export const BarnDoorSplit: React.FC<BarnDoorSplitProps> = ({
       { label: '可用性', value: '99.98%' },
     ],
   },
+  revealAtSec,
 }) => {
   const frame = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const cueMode = revealAtSec !== undefined;
+  const f = cueMode ? realFrame : frame;
+  const SLIDE_F = cueMode ? Math.round(revealAtSec * 30) : 30;
 
   // 两半外滑位移：30–50f，0 → 980px，加速离场
-  const slide = interpolate(frame, [30, 50], [0, 980], {
+  const slide = interpolate(f, [SLIDE_F, SLIDE_F + 20], [0, 980], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
     easing: Easing.in(Easing.cubic),
   });
 
   // 底层 B：30–55f 从 1.06 轻推到 1.0 迎上来
-  const bScale = interpolate(frame, [30, 55], [1.06, 1.0], {
+  const bScale = interpolate(f, [SLIDE_F, SLIDE_F + 25], [1.06, 1.0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
     easing: Easing.out(Easing.cubic),
@@ -72,9 +78,9 @@ export const BarnDoorSplit: React.FC<BarnDoorSplitProps> = ({
 
   // 裂前预告：中缝细线两次闪现（帧确定的开关，无随机）
   const crackFlash =
-    (frame >= 18 && frame < 22) || (frame >= 25 && frame < 29);
+    (f >= SLIDE_F - 12 && f < SLIDE_F - 8) || (f >= SLIDE_F - 5 && f < SLIDE_F - 1);
   // 裂开后内边缘亮线 + 阴影常驻（随门一起滑出画外）
-  const tornEdge = frame >= 30;
+  const tornEdge = f >= SLIDE_F;
 
   const edgeLine = (side: 'left' | 'right'): React.CSSProperties => ({
     position: 'absolute',

@@ -16,7 +16,7 @@
 //  4) 再 1 帧硬切揭示成品笔记页：奶油底、墨绿大标题 "My favorite bands"、胶囊换成鼠尾草绿、正文三行——
 //     原片没有"胶囊飞入下方滑入卡片"的段落（批次 8 的飞行段为杜撰，已砍）
 import React from 'react';
-import { AbsoluteFill, interpolate, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, Easing, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
 import { useShotFrame } from '../../../engine/useShotFrame';
@@ -104,6 +104,7 @@ export interface HashtagToPillMaterializeProps {
   icon?: string; // 胶囊图标字符（默认 #，段 15 用 ¥）
   title?: string;
   body?: string[]; // 成品页要点（短词，建议 ≤6 字，排版固定）
+  revealAtSec?: number; // 口播对齐：标签实体化（MORPH）段内秒；提供后打字阶段压缩到该时刻前
 }
 
 export const HashtagToPillMaterialize: React.FC<HashtagToPillMaterializeProps> = ({
@@ -116,8 +117,17 @@ export const HashtagToPillMaterialize: React.FC<HashtagToPillMaterializeProps> =
     'and the song that I always listen when driving',
     'to home. Welcome. Bring headphones.',
   ],
+  revealAtSec,
 }) => {
-  const frame = useShotFrame(SHOT_TIME);
+  const frameShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const cueMode = revealAtSec !== undefined;
+  const frame = cueMode ? realFrame : frameShot;
+  const MORPH_F = cueMode ? Math.round(revealAtSec * 30) : MORPH;
+  const preF = cueMode ? Math.min(1, (realFrame / 30) / (revealAtSec ?? 1)) * MORPH : frame;
+  const MOVE_START_F = MORPH_F + (MOVE_START - MORPH);
+  const MOVE_END_F = MORPH_F + (MOVE_END - MORPH);
+  const REVEAL_F = MORPH_F + (REVEAL - MORPH);
   const TEXT = hashtag;
   const TYPE_AT = typeAt(TEXT);
 
@@ -129,11 +139,11 @@ export const HashtagToPillMaterialize: React.FC<HashtagToPillMaterializeProps> =
   const slotX = ALIGN_X + (pillW * END_SCALE) / 2;
 
   // ---- 打字 ----
-  const typedCount = TYPE_AT.filter((t) => frame >= t).length;
+  const typedCount = TYPE_AT.filter((t) => preF >= t).length;
   const typed = TEXT.slice(0, typedCount);
 
   // ---- 缩小左移 ----
-  const moveT = interpolate(frame, [MOVE_START, MOVE_END], [0, 1], {
+  const moveT = interpolate(frame, [MOVE_START_F, MOVE_END_F], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
     easing: Easing.bezier(0.5, 0, 0.25, 1),
   });
@@ -141,11 +151,11 @@ export const HashtagToPillMaterialize: React.FC<HashtagToPillMaterializeProps> =
   const py = interpolate(moveT, [0, 1], [HERO.y, SLOT_Y]);
   const ps = interpolate(moveT, [0, 1], [1, END_SCALE]);
   // 实体化瞬间极轻微落定（原片近乎硬切，仅 3 帧 1.03→1，避免死板）
-  const settle = interpolate(frame, [MORPH, MORPH + 3], [1.03, 1], {
+  const settle = interpolate(frame, [MORPH_F, MORPH_F + 3], [1.03, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.quad),
   });
 
-  const revealed = frame >= REVEAL;
+  const revealed = frame >= REVEAL_F;
 
   return (
     <AbsoluteFill style={{ background: revealed ? G.panel : G.bg, fontFamily: FONT_STACK }}>
@@ -188,7 +198,7 @@ export const HashtagToPillMaterialize: React.FC<HashtagToPillMaterializeProps> =
       )}
 
       {/* 打字层：文字 + 恒亮红光标（原片光标不闪烁），实体化帧整体消失 */}
-      {frame < MORPH && (
+      {frame < MORPH_F && (
         <AbsoluteFill style={{ justifyContent: 'center', alignItems: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <span style={{ fontSize: FS, fontWeight: 500, color: G.ink, letterSpacing: 2, whiteSpace: 'pre' }}>
@@ -203,7 +213,7 @@ export const HashtagToPillMaterialize: React.FC<HashtagToPillMaterializeProps> =
       )}
 
       {/* 胶囊层：实体化 1 帧硬切出现 → hold → 缩小左移落位 → 揭示帧换鼠尾草绿 */}
-      {frame >= MORPH && (
+      {frame >= MORPH_F && (
         <div style={{
           position: 'absolute', left: 0, top: 0,
           // origin 必须是 0 0：translate 先把原点送到目标中心，scale 绕该点缩放，

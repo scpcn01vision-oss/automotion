@@ -16,7 +16,7 @@
 // 0→1450（Easing.out(quad)）再叠 ±8% 低频正弦扰动（帧 78–98 扰动衰减到 0，
 // 洇满全屏）；帧 100–130 摘掉 mask 直接铺新景，真静止 30f。
 import React from 'react';
-import { interpolate, Easing, Img, staticFile } from 'remotion';
+import { interpolate, Easing, Img, staticFile, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
 import { useShotFrame } from '../../../engine/useShotFrame';
@@ -42,6 +42,7 @@ export interface InkBleedRevealNewScene {
 export interface InkBleedRevealProps {
   oldTitle?: string;
   newScene?: InkBleedRevealNewScene;
+  revealAtSec?: number; // 口播对齐：墨渗揭幕完成（全屏铺满）的段内秒；提供后旧景展示到该时刻前
 }
 
 // 新景内容渲染器：标题 + 行列表（默认）/ 标题 + 圆角图片
@@ -103,35 +104,40 @@ export const InkBleedReveal: React.FC<InkBleedRevealProps> = ({
       { label: 'Uptime', value: '99.9%' },
     ],
   },
+  revealAtSec,
 }) => {
-  const frame = useShotFrame(SHOT_TIME);
+  const frameShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const cueMode = revealAtSec !== undefined;
+  const frame = cueMode ? realFrame : frameShot;
+  const OFFSET = cueMode ? Math.round(revealAtSec * 30) - 98 : 0;
 
   // 墨滴落点：画面中心偏左上
   const cx = 800;
   const cy = 420;
 
   // 基础半径：帧 20–98，0 → 1450px（最远角 ~1300px + 渗边位移余量 150px）
-  const baseR = interpolate(frame, [20, 98], [0, 1450], {
+  const baseR = interpolate(frame, [20 + OFFSET, 98 + OFFSET], [0, 1450], {
     easing: Easing.out(Easing.quad),
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
 
   // ±8% 低频正弦扰动 = 快慢不匀的洇开；帧 78–98 幅度衰减到 0，保证吃满后能真静止
-  const wobbleEnv = interpolate(frame, [78, 98], [1, 0], {
+  const wobbleEnv = interpolate(frame, [78 + OFFSET, 98 + OFFSET], [1, 0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
   const r = Math.max(0, baseR * (1 + 0.08 * Math.sin(frame * 0.32) * wobbleEnv));
 
   // 渗边发散度：displacement scale 60 → 160（边缘越洇越散、指尖分叉越长）
-  const dispScale = interpolate(frame, [20, 98], [60, 160], {
+  const dispScale = interpolate(frame, [20 + OFFSET, 98 + OFFSET], [60, 160], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
 
   // 帧 100 起 mask 已全白：摘掉 SVG 直接铺新景，确保结尾像素级真静止
-  const settled = frame >= 100;
+  const settled = frame >= 100 + OFFSET;
 
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>

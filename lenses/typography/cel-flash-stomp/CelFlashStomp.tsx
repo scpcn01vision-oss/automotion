@@ -18,7 +18,7 @@
 // → 60 "TODAY" 硬切(rot 0°) → 60–66 弹落 → 66–73 背景闪加倍(8f, #c4c4c0)
 // + 66–80 底部标签条淡入 → 80–144 全静止(≥45f, 无逐帧噪声层)。
 import React from 'react';
-import { interpolate, Easing } from 'remotion';
+import { interpolate, Easing, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
 import { useShotFrame } from '../../../engine/useShotFrame';
@@ -48,6 +48,7 @@ export interface CelFlashStompFooter {
 export interface CelFlashStompProps {
   words?: Word[];
   footer?: CelFlashStompFooter;
+  cueSec?: number[]; // 口播对齐：每词入场段内秒（与 words 一一对应）；提供后忽略 words 自带 start/end
 }
 
 export const CelFlashStomp: React.FC<CelFlashStompProps> = ({
@@ -57,9 +58,24 @@ export const CelFlashStomp: React.FC<CelFlashStompProps> = ({
     { text: 'NOW', start: 60, end: 9999, rot: 0, flashLen: 8, flashDark: '#c4c4c0' },
   ],
   footer = { icon: '✦', label: 'GOAL', tag: 'READY' },
+  cueSec,
 }) => {
-  const frame = useShotFrame(SHOT_TIME);
-  const word = words.find((w) => frame >= w.start && frame < w.end)!;
+  const frameShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const cueMode = !!cueSec && cueSec.length === words.length;
+  const frame = cueMode ? realFrame : frameShot;
+
+  let word: Word;
+  if (cueMode) {
+    const sec = realFrame / 30;
+    let idx = 0;
+    while (idx < cueSec.length - 1 && sec >= cueSec[idx + 1]) idx++;
+    const w = words[idx];
+    const end = cueSec[idx + 1] !== undefined ? Math.round(cueSec[idx + 1] * 30) : 99999;
+    word = { ...w, start: Math.round(cueSec[idx] * 30), end };
+  } else {
+    word = words.find((w) => frame >= w.start && frame < w.end)!;
+  }
   const t = frame - word.start;
 
   // 弹落：scale 1.18 → 0.98(2% 过冲) → 1，6f 内完成，poly(5) 出缓
@@ -81,7 +97,8 @@ export const CelFlashStomp: React.FC<CelFlashStompProps> = ({
   const bg = flashing && Math.floor(ft / 2) % 2 === 0 ? word.flashDark : G.bg;
 
   // 第三词落定同帧起底部标签条淡入（66–80）
-  const labelOp = interpolate(frame, [66, 80], [0, 1], {
+  const labelStart = cueMode ? Math.round(cueSec[cueSec.length - 1] * 30) + LAND : 66;
+  const labelOp = interpolate(frame, [labelStart, labelStart + 14], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
     easing: Easing.out(Easing.quad),

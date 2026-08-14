@@ -9,7 +9,7 @@
 // === 适配注意 ===
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 import React from 'react';
-import { AbsoluteFill, Easing, interpolate } from 'remotion';
+import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { useShotFrame } from '../../../engine/useShotFrame';
 import type { ShotTime } from '../../../engine/time';
@@ -36,6 +36,7 @@ export interface VersusSlamProps {
   sceneA?: SceneContentData;
   sceneB?: SceneContentData;
   vsText?: string;
+  revealAtSec?: number; // 口播对齐：撞击时刻段内秒；提供后前段（建立+对冲）压缩到该时刻前
 }
 
 export const VersusSlam: React.FC<VersusSlamProps> = ({
@@ -56,11 +57,17 @@ export const VersusSlam: React.FC<VersusSlamProps> = ({
     ],
   },
   vsText = 'VS',
+  revealAtSec,
 }) => {
   const frame = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const cueMode = revealAtSec !== undefined;
+  const f = cueMode ? realFrame : frame;
+  const IMPACT_F = cueMode ? Math.round(revealAtSec * 30) : IMPACT;
+  const pre = cueMode ? Math.min(1, (realFrame / 30) / (revealAtSec ?? 1)) * IMPACT : f;
 
   // 两半屏对冲：ease-in 加速，10f 从 ±1200px 冲到位
-  const leftX = interpolate(frame, [20, IMPACT], [-1200, 0], {
+  const leftX = interpolate(pre, [20, IMPACT], [-1200, 0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
     easing: Easing.in(Easing.cubic),
@@ -68,29 +75,29 @@ export const VersusSlam: React.FC<VersusSlamProps> = ({
   const rightX = -leftX;
 
   // 撞击帧起：整机震屏 12px 指数衰减（约 5f 收干）
-  const since = frame - IMPACT;
+  const since = f - IMPACT_F;
   const env = since >= 0 ? 12 * Math.exp(-since / 1.6) : 0;
   const shakeX = env * Math.sin(since * 3.4);
   const shakeY = env * 0.6 * Math.sin(since * 4.1 + 0.7);
 
   // 白闪：撞击帧 0.9 → 0，3f 收掉
-  const flash = interpolate(frame, [IMPACT, IMPACT + 3], [0.9, 0], {
+  const flash = interpolate(f, [IMPACT_F, IMPACT_F + 3], [0.9, 0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
 
   // "VS" 盖章：scale 1.6 → 1 带 back overshoot，6f 压出
-  const vsScale = interpolate(frame, [IMPACT, IMPACT + 6], [1.6, 1], {
+  const vsScale = interpolate(f, [IMPACT_F, IMPACT_F + 6], [1.6, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
     easing: Easing.out(Easing.back(2.6)),
   });
-  const vsOpacity = interpolate(frame, [IMPACT, IMPACT + 2], [0, 1], {
+  const vsOpacity = interpolate(f, [IMPACT_F, IMPACT_F + 2], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
 
-  const impacted = frame >= IMPACT;
+  const impacted = f >= IMPACT_F;
 
   return (
     <AbsoluteFill style={{ background: G.bg, overflow: 'hidden' }}>

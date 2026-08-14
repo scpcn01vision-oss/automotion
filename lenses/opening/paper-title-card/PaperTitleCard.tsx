@@ -9,6 +9,7 @@
 // === 适配注意 ===
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 import { AbsoluteFill, interpolate, Easing } from 'remotion';
+import { useCurrentFrame } from 'remotion';
 import { DigitRoll } from './DigitRoll';
 import { G } from '../../_fixtures/Fixtures';
 import { useShotFrame } from '../../../engine/useShotFrame';
@@ -32,10 +33,14 @@ export interface PaperTitleCardProps {
   words?: { text: string; accent?: boolean }[];
   sub?: string;
   subDigits?: string;
+  cueSec?: number[]; // 口播对齐：每词压印段内秒（与 words 一一对应）；提供后忽略固定错峰
 }
 
-export const PaperTitleCard: React.FC<PaperTitleCardProps> = ({ duration = 180, words = [{ text: 'READY', accent: false }, { text: 'GO', accent: true }], sub = '', subDigits = '' }) => {
-  const frame = useShotFrame(SHOT_TIME);
+export const PaperTitleCard: React.FC<PaperTitleCardProps> = ({ duration = 180, words = [{ text: 'READY', accent: false }, { text: 'GO', accent: true }], sub = '', subDigits = '', cueSec }) => {
+  const frameShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const cueMode = !!cueSec && cueSec.length === words.length;
+  const frame = cueMode ? realFrame : frameShot;
   const fadeOut = interpolate(frame, [duration - 8, duration], [1, 0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
@@ -69,7 +74,7 @@ export const PaperTitleCard: React.FC<PaperTitleCardProps> = ({ duration = 180, 
           }}
         >
           {words.map((w, i) => {
-            const delay = 4 + i * 4;
+            const delay = cueMode ? Math.round(cueSec[i] * 30) : 4 + i * 4;
             const t = interpolate(frame, [delay, delay + 9], [0, 1], {
               extrapolateLeft: 'clamp',
               extrapolateRight: 'clamp',

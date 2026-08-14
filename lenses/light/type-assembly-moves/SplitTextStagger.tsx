@@ -17,7 +17,7 @@
 // 14f 升至 -10% 过冲 → 再 6f 回落归 0 → 末字(索引12)于 56f 落定 →
 // 56–130 全静止（74f ≥ 40f，无逐帧噪声层）。
 import React from 'react';
-import { interpolate, Easing } from 'remotion';
+import { interpolate, Easing, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
 import { useShotFrame } from '../../../engine/useShotFrame';
@@ -36,8 +36,8 @@ const OVERSHOOT = -10; // 过冲到 -10%（原案 6%，加码）
 const FONT = 120;
 
 // 单字符纵向位移（%）：115 → -10（out cubic）→ 0（out quad），帧确定
-const charY = (f: number, idx: number): number => {
-  const t0 = START + idx * 2;
+const charY = (f: number, idx: number, start: number): number => {
+  const t0 = start + idx * 2;
   if (f < t0 + RISE) {
     return interpolate(f, [t0, t0 + RISE], [115, OVERSHOOT], {
       extrapolateLeft: 'clamp',
@@ -54,15 +54,21 @@ const charY = (f: number, idx: number): number => {
 
 export interface SplitTextStaggerProps {
   text?: string;
+  revealAtSec?: number; // 口播对齐：首字起跳段内秒；提供后前段空场到该时刻
 }
 
 export const SplitTextStagger: React.FC<SplitTextStaggerProps> = ({
   text = 'MOTION SYSTEM',
+  revealAtSec,
 }) => {
-  const frame = useShotFrame(SHOT_TIME);
+  const frameShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const cueMode = revealAtSec !== undefined;
+  const frame = cueMode ? realFrame : frameShot;
+  const START_F = cueMode ? Math.round(revealAtSec * 30) : START;
   const chars = text.split('');
   // 基线：首字起跳同帧开始，从左向右生长到 100%
-  const lineW = interpolate(frame, [START, START + 26], [0, 100], {
+  const lineW = interpolate(frame, [START_F, START_F + 26], [0, 100], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
     easing: Easing.out(Easing.cubic),
@@ -104,7 +110,7 @@ export const SplitTextStagger: React.FC<SplitTextStaggerProps> = ({
                   lineHeight: 1.05,
                   color: G.ink,
                   letterSpacing: 2,
-                  transform: `translateY(${charY(frame, i)}%)`,
+                  transform: `translateY(${charY(frame, i, START_F)}%)`,
                 }}
               >
                 {c === ' ' ? ' ' : c}

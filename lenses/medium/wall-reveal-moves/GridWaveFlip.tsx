@@ -8,7 +8,7 @@
 // === 适配注意 ===
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 import React from 'react';
-import { AbsoluteFill, Easing, interpolate } from 'remotion';
+import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { NeutralCard } from '../../_system/neutral-card';
 import type { SceneContentData } from '../../_system/scene-content';
@@ -40,8 +40,7 @@ const FLIP = 14; // 单张翻转时长
 const flipEase = Easing.bezier(0.35, 0, 0.25, 1);
 
 // 单张卡的翻转角度：普通卡 0→180；最后一张（波前最末）过冲到 ~190 再回落 180
-const angleAt = (frame: number, row: number, col: number, rows: number, cols: number): number => {
-  const delay = HOLD + (row + col) * STAGGER;
+const angleAt = (frame: number, delay: number, row: number, col: number, rows: number, cols: number): number => {
   const isLast = row === rows - 1 && col === cols - 1;
   if (!isLast) {
     return interpolate(frame, [delay, delay + FLIP], [0, 180], {
@@ -66,6 +65,7 @@ const angleAt = (frame: number, row: number, col: number, rows: number, cols: nu
 
 export interface GridWaveFlipProps {
   cards?: SceneContentData[];
+  cueSec?: number[]; // 口播对齐：每张卡翻转开始段内秒（与 cards 一一对应）；提供后忽略对角线错峰
 }
 
 export const GridWaveFlip: React.FC<GridWaveFlipProps> = ({
@@ -74,9 +74,13 @@ export const GridWaveFlip: React.FC<GridWaveFlipProps> = ({
     { title: '指标二', rows: [{ label: '数值', value: '2.4×' }] },
     { title: '指标三', rows: [{ label: '数值', value: '99%' }] },
   ],
+  cueSec,
 }) => {
-  const frame = useShotFrame(SHOT_TIME);
   const n = cards.length;
+  const frameShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const cueMode = !!cueSec && cueSec.length === n;
+  const frame = cueMode ? realFrame : frameShot;
   const cols = n <= 3 ? n : n === 4 ? 2 : 3;
   const rows = Math.ceil(n / cols);
   const wallW = cols * CELL_W + (cols - 1) * GAP;
@@ -106,7 +110,14 @@ export const GridWaveFlip: React.FC<GridWaveFlipProps> = ({
         {Array.from({ length: n }).map((_, i) => {
           const row = Math.floor(i / cols);
           const col = i % cols;
-          const angle = angleAt(frame, row, col, rows, cols);
+          const angle = angleAt(
+            frame,
+            cueMode ? Math.round(cueSec[i] * 30) : HOLD + (row + col) * STAGGER,
+            row,
+            col,
+            rows,
+            cols,
+          );
           // 高光线：翻到 90°（最薄处）时最亮，位置随角度从上缘扫向下缘
           const glow = Math.max(0, 1 - Math.abs(angle - 90) / 45);
           const glowTop = interpolate(angle, [45, 135], [8, 92], {

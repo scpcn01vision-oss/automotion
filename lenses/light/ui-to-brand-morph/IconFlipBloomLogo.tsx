@@ -12,7 +12,7 @@
 // 沿 Y 轴翻转压扁成竖线（拖影/模糊）→ 翻过最薄处绽放花形 mark（花瓣张开）→
 // wordmark 从 mark 右侧带方向模糊逐段扫出（字符从糊到锐利）。
 import React from 'react';
-import { AbsoluteFill, interpolate, Easing, spring, useVideoConfig } from 'remotion';
+import { AbsoluteFill, interpolate, Easing, spring, useVideoConfig, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
 import { useShotFrame } from '../../../engine/useShotFrame';
@@ -66,10 +66,14 @@ const FlowerMark: React.FC<{ size: number; bloom: number }> = ({ size, bloom }) 
 
 export interface IconFlipBloomLogoProps {
   wordmark?: string;
+  revealAtSec?: number; // 口播对齐：图标开始翻转（蓄力结束）的段内秒；提供后前段（登场+蓄力）压缩到该时刻前
 }
 
-export const IconFlipBloomLogo: React.FC<IconFlipBloomLogoProps> = ({ wordmark = 'inkmark' }) => {
-  const frame = useShotFrame(SHOT_TIME);
+export const IconFlipBloomLogo: React.FC<IconFlipBloomLogoProps> = ({ wordmark = 'inkmark', revealAtSec }) => {
+  const frameShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const cueMode = revealAtSec !== undefined;
+  const frame = cueMode ? realFrame : frameShot;
   const { fps } = useVideoConfig();
 
   // ---- 时间轴 ----
@@ -81,20 +85,24 @@ export const IconFlipBloomLogo: React.FC<IconFlipBloomLogoProps> = ({ wordmark =
   const FLIP_START = 34;
   const FLIP_MID = 46;
   const WORD_START = 66;
+  const FLIP_F = cueMode ? Math.round(revealAtSec * 30) : FLIP_START;
+  const FLIP_MID_F = FLIP_F + (FLIP_MID - FLIP_START);
+  const WORD_START_F = FLIP_F + (WORD_START - FLIP_START);
+  const preW = cueMode ? Math.min(1, (realFrame / 30) / (revealAtSec ?? 1)) * FLIP_START : frame;
 
   // 登场
-  const inT = spring({ frame, fps, config: { damping: 13, stiffness: 140, mass: 0.8 } });
+  const inT = spring({ frame: realFrame, fps, config: { damping: 13, stiffness: 140, mass: 0.8 } });
 
   // anticipation：两次倾斜摆动，幅度递增（-10° / +14°），最后向反方向压一下蓄力
   const wobble =
-    interpolate(frame, [12, 18, 24, 30, FLIP_START], [0, -12, 14, -18, 0], {
+    interpolate(preW, [12, 18, 24, 30, FLIP_START], [0, -12, 14, -18, 0], {
       extrapolateLeft: 'clamp',
       extrapolateRight: 'clamp',
       easing: Easing.inOut(Easing.sin),
     });
 
   // 翻转前半：scaleX 1 -> 0.04（加速入），伴随拖影
-  const flipIn = interpolate(frame, [FLIP_START, FLIP_MID], [0, 1], {
+  const flipIn = interpolate(frame, [FLIP_F, FLIP_MID_F], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
     easing: Easing.in(Easing.cubic),
@@ -103,26 +111,26 @@ export const IconFlipBloomLogo: React.FC<IconFlipBloomLogoProps> = ({ wordmark =
 
   // 绽放：spring 过冲
   const bloomSpring = spring({
-    frame: frame - FLIP_MID,
+    frame: frame - FLIP_MID_F,
     fps,
     config: { damping: 11, stiffness: 130, mass: 0.9 },
   });
-  const bloom = frame < FLIP_MID ? 0 : bloomSpring;
+  const bloom = frame < FLIP_MID_F ? 0 : bloomSpring;
   // mark 从竖线厚度撑开：scaleX 0.04 -> 1
   const markScaleX = interpolate(bloom, [0, 1], [0.04, 1]);
 
   // mark 左移让位（wordmark 登场时）
-  const shift = interpolate(frame, [WORD_START - 2, WORD_START + 16], [0, 1], {
+  const shift = interpolate(frame, [WORD_START_F - 2, WORD_START_F + 16], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
     easing: Easing.out(Easing.cubic),
   });
   const markX = interpolate(shift, [0, 1], [0, -420]);
 
-  const showIcon = frame < FLIP_MID;
+  const showIcon = frame < FLIP_MID_F;
 
   // 拖影帧（翻转期间画 2 个残影）
-  const ghosts = frame >= FLIP_START && frame < FLIP_MID ? [0.12, 0.24] : [];
+  const ghosts = frame >= FLIP_F && frame < FLIP_MID_F ? [0.12, 0.24] : [];
 
   return (
     <AbsoluteFill style={{ background: G.bg, alignItems: 'center', justifyContent: 'center' }}>

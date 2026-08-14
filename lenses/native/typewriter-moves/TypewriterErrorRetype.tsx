@@ -17,6 +17,7 @@
 // 半角（英文/数字）字符宽 58px，按字符动态取宽，避免中文叠字；打字/删除/停顿节奏参数化，
 // 供按口播时长校准（typeFrames / deleteFrames / pauseFrames）。
 import React from 'react';
+import { useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { useShotFrame } from '../../../engine/useShotFrame';
 import type { ShotTime } from '../../../engine/time';
@@ -61,6 +62,7 @@ export interface TypewriterErrorRetypeProps {
   typeFrames?: number; // 打 1 字帧数（默认 2，可调慢以适配口播）
   deleteFrames?: number; // 删 1 字帧数（默认 1.5）
   pauseFrames?: number; // 第一遍打完后的犹豫停顿帧数（默认 16）
+  revealAtSec?: number; // 口播对齐：重打（second 开始打出）的段内秒；提供后第一遍打字/删除压缩到该时刻前
 }
 
 export const TypewriterErrorRetype: React.FC<TypewriterErrorRetypeProps> = ({
@@ -70,8 +72,12 @@ export const TypewriterErrorRetype: React.FC<TypewriterErrorRetypeProps> = ({
   typeFrames = 2,
   deleteFrames = 1.5,
   pauseFrames = 16,
+  revealAtSec,
 }) => {
-  const f = useShotFrame(SHOT_TIME);
+  const frameShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const cueMode = revealAtSec !== undefined;
+  const f = cueMode ? realFrame : frameShot;
 
   const T1 = 2; // 第一遍打字起点
   const PAUSE_START = T1 + (first.length - 1) * typeFrames;
@@ -79,15 +85,17 @@ export const TypewriterErrorRetype: React.FC<TypewriterErrorRetypeProps> = ({
   const KEEP = Math.min(keepChars, first.length); // 保留前缀
   const DEL = first.length - KEEP;
   const RS = Math.max(68, DS + DEL * deleteFrames + 4); // 重打起点（删完小顿）
-  const TYPE2_END = RS + (second.length - 1) * deleteFrames;
-  const CURSOR_OFF = TYPE2_END + 20; // 两个 10f 闪烁周期后熄灭
+  const RS_F = cueMode ? Math.round(revealAtSec * 30) : RS;
+  const preF = cueMode ? Math.min(1, realFrame / RS_F) * RS : f;
+  const TYPE2_END_F = RS_F + (second.length - 1) * deleteFrames;
+  const CURSOR_OFF = TYPE2_END_F + 20; // 两个 10f 闪烁周期后熄灭
 
   // 第一遍已打出字符数
-  const n1 = f < T1 ? 0 : Math.min(first.length, Math.floor((f - T1) / typeFrames) + 1);
+  const n1 = preF < T1 ? 0 : Math.min(first.length, Math.floor((preF - T1) / typeFrames) + 1);
   // 已删除字符数（从尾部删）
-  const removed = f < DS ? 0 : Math.min(DEL, Math.floor((f - DS) / deleteFrames) + 1);
+  const removed = preF < DS ? 0 : Math.min(DEL, Math.floor((preF - DS) / deleteFrames) + 1);
   // 第二遍已打出字符数
-  const n2 = f < RS ? 0 : Math.min(second.length, Math.floor((f - RS) / deleteFrames) + 1);
+  const n2 = realFrame < RS_F ? 0 : Math.min(second.length, Math.floor((realFrame - RS_F) / deleteFrames) + 1);
 
   const shown =
     first.slice(0, Math.max(KEEP, n1 - removed)).slice(0, n1) +
@@ -136,7 +144,13 @@ export const TypewriterErrorRetype: React.FC<TypewriterErrorRetypeProps> = ({
           </span>
         ))}
         {/* 光标：竖线，条件挂载而非 opacity 0 */}
-        {cursorOn(f, PAUSE_START, DS, TYPE2_END, CURSOR_OFF) && (
+        {cursorOn(
+          realFrame,
+          cueMode ? (RS_F * PAUSE_START) / RS : PAUSE_START,
+          cueMode ? (RS_F * DS) / RS : DS,
+          TYPE2_END_F,
+          CURSOR_OFF,
+        ) && (
           <span
             style={{
               display: 'inline-block',

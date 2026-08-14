@@ -9,7 +9,7 @@
 // === 适配注意 ===
 // 用于引用官方文件/政策原文；正文行数任意，逐行浮现。
 import React from 'react';
-import { AbsoluteFill, interpolate, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, Easing, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { useShotFrame } from '../../../engine/useShotFrame';
 import type { ShotTime } from '../../../engine/time';
@@ -29,6 +29,7 @@ export interface RedHeadFileQuoteProps {
   docNo?: string; // 文号/条款号（如「第 37 句」）
   body?: string[]; // 正文行
   tag?: string; // 底部来源角标
+  revealAtSec?: number; // 口播对齐：引用卡开始浮现的段内秒；提供后整体浮现序列平移到该时刻
 }
 
 export const RedHeadFileQuote: React.FC<RedHeadFileQuoteProps> = ({
@@ -37,30 +38,35 @@ export const RedHeadFileQuote: React.FC<RedHeadFileQuoteProps> = ({
   docNo = '第 37 句',
   body = ['鼓励创新主体从 Token 消耗量计费转向价值计费。'],
   tag = '原文引用',
+  revealAtSec,
 }) => {
-  const frame = useShotFrame(SHOT_TIME);
+  const frameShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const cueMode = revealAtSec !== undefined;
+  const frame = cueMode ? realFrame : frameShot;
+  const OFFSET = cueMode ? Math.round(revealAtSec * 30) : 0;
 
   // 卡片浮现
-  const cardT = interpolate(frame, [0, 14], [0, 1], {
+  const cardT = interpolate(frame, [0 + OFFSET, 14 + OFFSET], [0, 1], {
     extrapolateRight: 'clamp',
     easing: Easing.out(Easing.cubic),
   });
   // 红头：机关名 + 双红线
-  const headT = interpolate(frame, [12, 28], [0, 1], {
+  const headT = interpolate(frame, [12 + OFFSET, 28 + OFFSET], [0, 1], {
     extrapolateRight: 'clamp',
     easing: Easing.out(Easing.cubic),
   });
-  const lineW = interpolate(frame, [18, 34], [0, 1], {
+  const lineW = interpolate(frame, [18 + OFFSET, 34 + OFFSET], [0, 1], {
     extrapolateRight: 'clamp',
     easing: Easing.out(Easing.cubic),
   });
   // 标题 + 文号
-  const titleT = interpolate(frame, [30, 44], [0, 1], {
+  const titleT = interpolate(frame, [30 + OFFSET, 44 + OFFSET], [0, 1], {
     extrapolateRight: 'clamp',
     easing: Easing.out(Easing.cubic),
   });
   // 正文逐行
-  const bodyStart = 46;
+  const bodyStart = 46 + OFFSET;
   // 来源角标
   const tagT = interpolate(
     frame,
