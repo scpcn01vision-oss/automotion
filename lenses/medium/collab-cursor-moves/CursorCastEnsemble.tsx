@@ -3,18 +3,28 @@
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 展开,对比
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // cursor-cast-ensemble —— figma 0:05 (cursor-badge-cast) + miro 全片 cursor-ensemble-ambience
 // 5 枚具名彩色光标从画外飞入（弹簧减速+名牌淡入），落位后在灰阶画布上持续漂移、
 // 指向、聚拢；灰阶便签当环境道具；其中一枚(Rita)在便签上实时打字补全一行文本
 // （pitch collaborator-cameo 的打字戏并入）。
 import React from 'react';
-import { useCurrentFrame, spring, interpolate } from 'remotion';
+import { spring, interpolate } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 const mulberry32 = (a: number) => () => {
   let t = (a += 0x6d2b79f5);
@@ -78,7 +88,7 @@ export const CursorCastEnsemble: React.FC<CursorCastEnsembleProps> = ({
   ],
   noteTitle = '协作便签',
 }) => {
-  const f = useCurrentFrame();
+  const f = useShotFrame(SHOT_TIME);
   const TYPED = typed;
   const ACTORS: Actor[] = ACTOR_LAYOUT.map((a, i) => ({ ...a, name: names[i] ?? `User ${i + 1}` }));
   const rnd = mulberry32(88);

@@ -4,16 +4,26 @@
 // 功能: 展开
 // props: 无内容可变项（图标点亮表现，色板统一）
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // icon-field-colorize —— 灰阶图标原野错峰浮现（错峰淡入+微弹），停一拍后
 // 蓝色整场极快扫翻，随后橙/绿/红三道色波依次向下扫过，终态四色横带。
 // 对标 bear-app.mp4 0–3s（密帧核实：非同帧硬翻，是极快多道波纹翻色）。
 import React from 'react';
 import { G } from '../../_fixtures/Fixtures';
-import { AbsoluteFill, interpolate, useCurrentFrame } from 'remotion';
+import { AbsoluteFill, interpolate } from 'remotion';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const mulberry32 = (a: number) => () => {
   let t = (a += 0x6d2b79f5);
@@ -56,7 +66,7 @@ export interface IconFieldColorizeProps {
 }
 
 export const IconFieldColorize: React.FC<IconFieldColorizeProps> = () => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const rand = mulberry32(20260718);
   const icons: React.ReactNode[] = [];
 

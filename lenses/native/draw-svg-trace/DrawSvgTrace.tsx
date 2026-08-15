@@ -4,10 +4,11 @@
 // 功能: 钩子,宣告
 // props: title（左上角标题）、content（卡片内容承载 rows/image）
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // 描边生长圈注（draw-svg-trace）——DrawSVG 惯用的入场退场。
 // 屏心 560×380 卡片位置先空着，一条 G.ink 4px 描边沿圆角矩形轮廓跑一整圈
 // 把轮廓"画"出来（rect pathLength=1，dasharray=1，dashoffset 1→0）；
@@ -18,9 +19,18 @@
 // 48–56 闪黑加粗（48–50 上 50–56 回）+ 内容 8f 淡入 →
 // 54–64 描边淡出 / 自身 border 淡入 → 68–86 下划线短版生长 → 90–140 真静止 50f。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing, Img, staticFile } from 'remotion';
+import { interpolate, Easing, Img, staticFile } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 const CW = 560;
 const CH = 380;
@@ -37,6 +47,7 @@ export interface DrawSvgTraceContent {
 
 export interface DrawSvgTraceProps {
   content?: DrawSvgTraceContent;
+  revealAtSec?: number; // 口播对齐：轮廓描边开始时刻（段内秒）；提供后忽略默认 8f
 }
 
 // 卡片内容渲染器：标题条 + 行列表（默认）/ 标题条 + 圆角图片
@@ -91,39 +102,41 @@ export const DrawSvgTrace: React.FC<DrawSvgTraceProps> = ({
       { label: '指标四', value: '42ms' },
     ],
   },
+  revealAtSec,
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
+  const DRAW_START = revealAtSec !== undefined ? Math.round(revealAtSec * 30) : 8;
 
   // 轮廓描边进度：8–48，40f，inOut cubic
-  const p = interpolate(frame, [8, 48], [0, 1], {
+  const p = interpolate(frame, [DRAW_START, DRAW_START + 40], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
     easing: Easing.inOut(Easing.cubic),
   });
 
   // 闭合闪烁：48–50 冲到峰值，50–56 回落。峰值 = 纯黑 + 4→8px 加粗
-  const flashUp = interpolate(frame, [48, 50], [0, 1], {
+  const flashUp = interpolate(frame, [DRAW_START + 40, DRAW_START + 42], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
-  const flashDown = interpolate(frame, [50, 56], [1, 0], {
+  const flashDown = interpolate(frame, [DRAW_START + 42, DRAW_START + 48], [1, 0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
     easing: Easing.out(Easing.quad),
   });
-  const flash = frame < 50 ? flashUp : flashDown;
+  const flash = frame < DRAW_START + 42 ? flashUp : flashDown;
   const strokeW = 4 + flash * 4;
   const strokeColor = G.ink;
 
   // 内容淡入：48–56（8f）
-  const contentOp = interpolate(frame, [48, 56], [0, 1], {
+  const contentOp = interpolate(frame, [DRAW_START + 40, DRAW_START + 48], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
     easing: Easing.out(Easing.quad),
   });
 
   // 描边淡出 / 卡片自身 border 淡入：54–64
-  const traceOp = interpolate(frame, [54, 64], [1, 0], {
+  const traceOp = interpolate(frame, [DRAW_START + 46, DRAW_START + 56], [1, 0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
@@ -133,7 +146,7 @@ export const DrawSvgTrace: React.FC<DrawSvgTraceProps> = ({
   const penOp = p > 0.02 && p < 0.985 ? 1 : 0;
 
   // 第二用法：标题下划线短版生长 68–86（18f，out cubic）
-  const up = interpolate(frame, [68, 86], [0, 1], {
+  const up = interpolate(frame, [DRAW_START + 60, DRAW_START + 78], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
     easing: Easing.out(Easing.cubic),

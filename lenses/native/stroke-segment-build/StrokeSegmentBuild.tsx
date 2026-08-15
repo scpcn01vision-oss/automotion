@@ -4,10 +4,11 @@
 // 功能: 钩子,宣告
 // props: segments（笔画段坐标数组，默认内置 SHIP 16 段，可自定义字形）
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // stroke-segment-build —— 断笔成字（《异形》式）
 // "SHIP" 拆成 16 段互不相连的粗线段，按乱序表逐段点亮。
 // 前 70%（11 段）读不出字，最后 3 段落位瞬间突然可读；
@@ -15,8 +16,17 @@
 // 每段入场：opacity 0→1 + 沿笔画方向 12px 滑入（out 缓动），6f。
 // f0–14 静置空场；末段落位于 f104，脉冲至 f112，真静止 ≥38f（150f 总长）。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 // "SHIP" 手工笔画段。坐标系：每字 200 宽、320 高，字间距 60。
 // 段 = {x1,y1,x2,y2}，线宽 44，方形端帽（不连续感更强）。
@@ -74,7 +84,7 @@ export interface StrokeSegmentBuildProps {
 export const StrokeSegmentBuild: React.FC<StrokeSegmentBuildProps> = ({
   segments = SEGS,
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // 末段落位：整字脉冲 1 → 1.06 → 1（8f）
   const pulse = interpolate(

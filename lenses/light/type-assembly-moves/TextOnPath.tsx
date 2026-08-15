@@ -4,19 +4,29 @@
 // 功能: 宣告,展开
 // props: text（沿曲线流入的标题）
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // 文字沿曲线流入（text-on-path）——字符沿一条上升贝塞尔曲线（像图表增长线）
 // 鱼贯滑入，行进中按切线角旋转；到达各自终点后再从"贴线姿态"lerp 到水平基线位
 // 拼成正常标题。曲线本身随字符前进同步 evolve（dashoffset 生长）。
 // 关键帧：字符 i 于 i*2 起跑、45f 沿线到达 t_i（out cubic）→ 到达后停 8f →
 // 12f 摆正到水平基线（y 拉平、rotate→0）→ 全部落定约 f103 → 103–150 真静止。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 // 上升贝塞尔：左下 → 右上，先缓后陡（增长线形状）
 const P0 = { x: 200, y: 820 };
@@ -49,7 +59,7 @@ export interface TextOnPathProps {
 export const TextOnPath: React.FC<TextOnPathProps> = ({
   text = 'GROWTH ALL THE WAY',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const n = text.length;
   const finalX0 = 960 - (n * CHAR_W) / 2;
   // 曲线 evolve：随最前字符推进同步生长

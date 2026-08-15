@@ -4,10 +4,11 @@
 // 功能: 钩子,宣告
 // props: cards（主卡 + 两张邻卡内容）
 // === 时间特性 ===
-// 刚性（不可压缩）: 刚性:impact 20f,score 14f
-// 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
+// 策略: 弹刚 ShotTime（刚弹分段）
+// 刚性（不可压缩）: 落点冲击连锁 20–63f（砸落命中→环/粒子/震屏/邻卡振荡，物理连锁固定）
+// 弹性（可伸缩）: 前段悬停 0–20 / 后段全静止 hold 63–180
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 冲击连锁固定不随段长伸缩；段长不足 59f（8+43+8）时回退原始帧。
 // 落点冲击套件（impact-burst-kit）——shockwave-ring + particle-burst 组合变异。
 // 主卡砸落的落点帧同时触发：冲击波环扩散 + 14 粒子放射迸发 + 震屏，
 // 且冲击波前沿扫到左右邻卡的那一帧（按半径-距离算准=落点后 3f）邻卡被
@@ -17,9 +18,22 @@
 //   + 4f 震屏 6px 衰减 + 主卡 6f 压扁回弹 → 23 环前沿过邻卡(中心距 460px)：
 //   邻卡外推 30px + rotate ±3° 阻尼振荡弹回(40f 内钳到 0) → 63–140 全静止(77f)。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+  // 时长画像：落点冲击连锁刚性（20–63f），前后弹性（2026-08-14 精修）
+  const SHOT_TIME: ShotTime = {
+    segments: [
+      { from: 0, to: 20, mode: 'elastic', minFrames: 8 },
+      { from: 20, to: 63, mode: 'rigid' },
+      { from: 63, to: 180, mode: 'elastic', minFrames: 8 },
+    ],
+    minFrames: 59,
+  };
 
 // 伪随机（帧确定）
 const h = (n: number): number => {
@@ -35,10 +49,8 @@ const Y = (1080 - CH) / 2; // 400
 const CX = 960; // 主卡中心
 const CY = Y + CH / 2; // 540
 
-const IMPACT = 20; // 落点帧
 // 冲击波：80→900px 14f out-cubic。前沿到达邻卡中心距 460px 的帧：
 // (460-80)/820=0.463 → 1-(1-p)^3 → p≈0.19 → t≈2.6f → 取落点后 3f = 帧 23
-const HIT_NEIGHBOR = IMPACT + 3;
 
 // 14 个粒子：方/圆混合，角度带向上偏置，飞散 160–340px 减速缩小消失
 const PARTICLES = Array.from({ length: 14 }).map((_, i) => ({
@@ -48,15 +60,9 @@ const PARTICLES = Array.from({ length: 14 }).map((_, i) => ({
   square: i % 2 === 0,
 }));
 
-// 邻卡被推开的阻尼振荡包络：t=0 瞬时到 1，之后余弦衰减弹回，40f 后钳 0 保真静止
-const pushEnv = (f: number): number => {
-  const t = f - HIT_NEIGHBOR;
-  if (t < 0 || t >= 40) return 0;
-  return Math.cos(t * 0.5) * Math.exp(-t / 8);
-};
-
 export interface ImpactBurstKitProps {
   cards?: { label: string; value: string }[];
+  revealAtSec?: number; // 口播对齐：落点冲击时刻（段内秒）；提供后忽略默认 20f
 }
 
 const MiniCard: React.FC<{ w: number; h: number; label: string; value: string; glow?: boolean }> = ({ w, h, label, value, glow }) => (
@@ -91,8 +97,20 @@ export const ImpactBurstKit: React.FC<ImpactBurstKitProps> = ({
     { label: '指标二', value: '2.1×' },
     { label: '指标三', value: '96.4%' },
   ],
+  revealAtSec,
 }) => {
-  const frame = useCurrentFrame();
+  const frameShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const cueMode = revealAtSec !== undefined;
+  const frame = cueMode ? realFrame : frameShot;
+  const IMPACT = cueMode ? Math.round(revealAtSec * 30) : 20; // 落点帧
+  const HIT_NEIGHBOR = IMPACT + 3;
+  // 邻卡被推开的阻尼振荡包络：t=0 瞬时到 1，之后余弦衰减弹回，40f 后钳 0 保真静止
+  const pushEnv = (f: number): number => {
+    const t = f - HIT_NEIGHBOR;
+    if (t < 0 || t >= 40) return 0;
+    return Math.cos(t * 0.5) * Math.exp(-t / 8);
+  };
 
   // ── 主卡砸落：14–20 帧 scale 1.8→1 / y -120→0，加速进场
   const dropP = interpolate(frame, [14, IMPACT], [0, 1], {

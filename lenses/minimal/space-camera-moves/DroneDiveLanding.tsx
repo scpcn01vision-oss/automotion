@@ -4,15 +4,25 @@
 // 功能: 展开
 // props: scene（俯冲落点内容承载，hero 中心 = 画面中心）
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 import React from 'react';
-import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
+import { AbsoluteFill, Easing, interpolate } from 'remotion';
 import { CameraMotionBlur } from '@remotion/motion-blur';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 // drone-dive-landing：上帝视角俯视整页平躺的内容面板（近垂直俯角、缩小居中），
 // 相机猛扎下来——俯角抬平、页面放大立正，最后一段气垫式长尾减速，
@@ -24,7 +34,7 @@ const LAND_END = 65;   // 气垫段 20f，ease-out(quint) 长尾减速，之后�
 const DIVE_SHARE = 0.82; // 俯冲段吃掉 82% 行程，剩 18% 留给气垫
 
 const Scene: React.FC<{ scene: SceneContentData }> = ({ scene }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // 两段速度曲线拼一条行程 p∈[0,1]：先猛加速扎下，切换帧速度骤降 = 气垫顶住的体感
   const pDive = interpolate(frame, [DIVE_START, DIVE_END], [0, DIVE_SHARE], {

@@ -4,19 +4,28 @@
 // 功能: 举证,宣告
 // props: subjectImage（目标高清卡素材，长廊卡取 live-layout）
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
-// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
+// 策略: 弹刚 ShotTime（整段弹性；变速窗按比例伸缩）
+// 刚性（不可压缩）: 无
+// 弹性（可伸缩）: 全程可等比缩放（快-慢-快三段比例保持，时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // speed-ramp 变速（轮 C）——真实卡片流帧号 remap：快(斜率2.2) →
 // 0.2x 慢速展示窗 → 快。慢速窗中目标卡（card4-hires）清晰滑过屏中。
 // blur 联动速率：快段包 blur、慢段不包，反差即"凝视感"。
-import { AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame } from 'remotion';
+import { AbsoluteFill, Img, interpolate, staticFile } from 'remotion';
 import { CameraMotionBlur } from '@remotion/motion-blur';
 import layout from '../../_textures/live-layout.json';
 import { G } from '../../_fixtures/Fixtures';
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
 
 export const SPEEDRAMP_DUR = 135;
+
+// 时长画像：整段弹性（快-慢-快变速窗按比例伸缩，时长适配语音）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 135, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 const CARD_W = 460;
 const GAP = 60;
@@ -24,7 +33,7 @@ const RAIL = layout.projects.cards.slice(0, 9);
 const TARGET_I = 5;
 
 const Scene: React.FC<{ subjectImage: string }> = ({ subjectImage }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   // remap：0–40f 走 88 源帧（快），40–85f 走 9 源帧（0.2x），85–135f 走 110（快）
   const src = interpolate(frame, [0, 40, 85, 135], [0, 88, 97, 207], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
@@ -63,7 +72,7 @@ export interface SpeedRampRealProps {
 export const SpeedRampReal: React.FC<SpeedRampRealProps> = ({
   subjectImage = 'card4-hires.png',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const fast = frame < 42 || frame > 83;
   return fast ? (
     <CameraMotionBlur shutterAngle={200} samples={20}>

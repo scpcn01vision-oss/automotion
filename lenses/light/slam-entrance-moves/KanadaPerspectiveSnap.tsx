@@ -4,10 +4,11 @@
 // 功能: 钩子,宣告
 // props: card（甩入卡内容）
 // === 时间特性 ===
-// 刚性（不可压缩）: 刚性:impact 20f,score 14f
-// 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
+// 策略: 弹刚 ShotTime（刚弹分段）
+// 刚性（不可压缩）: 甩入+过冲回弹 0–22f（透视甩入与落定回弹，核心动作固定）
+// 弹性（可伸缩）: 后段全静止 hold 22–180
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 甩入段固定不随段长伸缩（0.73s）；段长不足 30f（22+8）时回退原始帧。
 // 金田透视急停（kanada-perspective-snap）——金田伊功式夸张透视入场。
 // 一张卡片以鱼眼级夸张透视姿态高速甩入画面中心：容器 perspective 300→1500px
 // （短焦→长焦，透视畸变随之收敛），卡片 rotate3d(0.5,1,0.1) 58°→0 +
@@ -17,9 +18,21 @@
 // 关键帧：0–18 透视甩入（out cubic）→ 14–18 rotateY 过冲至 +5° →
 // 18–22 回弹归 0 + 震屏衰减 + 阴影收正 → 22–130 全静止（≥45f）。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+  // 时长画像：甩入+回弹刚性（0–22f），尾部静止弹性（2026-08-14 精修）
+  const SHOT_TIME: ShotTime = {
+    segments: [
+      { from: 0, to: 22, mode: 'rigid' },
+      { from: 22, to: 180, mode: 'elastic', minFrames: 8 },
+    ],
+    minFrames: 30,
+  };
 
 // 确定性伪随机（震屏抖动用）
 const h = (n: number): number => {
@@ -66,7 +79,7 @@ const MiniCard: React.FC<{ w: number; h: number; label: string; value: string }>
 export const KanadaPerspectiveSnap: React.FC<KanadaPerspectiveSnapProps> = ({
   card = { label: '指标一', value: '+18%' },
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // 0–18f 甩入主通道（out cubic：先猛后缓，急停感）
   const p = interpolate(frame, [0, 18], [0, 1], { ...CLAMP, easing: Easing.out(Easing.cubic) });

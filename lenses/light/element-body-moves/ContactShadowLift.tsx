@@ -4,18 +4,28 @@
 // 功能: 展开
 // props: cards（三张抬升卡内容）
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // contact-shadow-lift｜接触阴影离面抬升
 // 浅底上一排 3 张卡，逐张被"点名"抬起：卡 translateY(-28px)+scale(1.08)，
 // 其正下方独立椭圆阴影同步放大变淡——纸片离桌感；落回时阴影收紧变实，
 // 落地 2f 卡壳 scale 0.99 微压。三张依次各来一遍。收尾真静止 ≥35f。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 43 }],
+  minFrames: 43,
+};
 
 const outCubic = Easing.out(Easing.cubic);
 const inCubic = Easing.in(Easing.cubic);
@@ -107,7 +117,7 @@ export const ContactShadowLift: React.FC<ContactShadowLiftProps> = ({
   dashTitle = '项目工作区',
   avatarText = '我',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const rowW = CARD_W * 3 + GAP * 2;
   const left0 = (1920 - rowW) / 2;
   const top = (1080 - CARD_H) / 2 - 20;

@@ -4,10 +4,11 @@
 // 描述: 准星锁定——准星围绕目标组装锁定
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // reticle-lock-on —— 准星咬合（钢铁侠 HUD / 安德的游戏）
 // FakeDashboard 静置。四个 L 形角标组成的取景框从画外飞入（大框），
 // 超调回弹后收缩贴紧目标卡片四角"咔"地咬合定格；咬合帧卡片微亮 +
@@ -15,10 +16,19 @@
 // f0–14 面板静置；f14–24 飞入；f24–46 收缩（含过冲回弹）；f46 咬合；
 // 标签 f46–56 弹出；f56 后真静止 ≥84f（140f 总长）。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 // 目标：variant A 网格第 2 张卡（第一行中间）。
 // 布局推导：侧栏 220 + padding 36，网格 3 列 gap 28，
@@ -28,8 +38,6 @@ const PAD = 14; // 咬合后角标与卡的呼吸距
 
 const FLY_IN = 14; // 飞入开始
 const FLY_END = 24; // 飞入结束（大框就位）
-const LOCK_END = 46; // 咬合帧
-const LABEL_END = 56;
 
 const ARM = 56; // L 臂长
 const THICK = 10; // L 粗
@@ -39,6 +47,7 @@ const clamp = { extrapolateLeft: 'clamp' as const, extrapolateRight: 'clamp' as 
 export interface ReticleLockOnProps {
   scene?: SceneContentData;
   focus?: { x: number; y: number; w: number; h: number }; // 对焦框位置与尺寸
+  revealAtSec?: number; // 口播对齐：准星咬合锁定时刻（段内秒）；提供后忽略默认 46f
 }
 
 export const ReticleLockOn: React.FC<ReticleLockOnProps> = ({
@@ -52,8 +61,11 @@ export const ReticleLockOn: React.FC<ReticleLockOnProps> = ({
     ],
   },
   focus = { x: 808, y: 108, w: 524, h: 425 },
+  revealAtSec,
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
+  const LOCK_END = revealAtSec !== undefined ? Math.round(revealAtSec * 30) : 46; // 咬合帧
+  const LABEL_END = LOCK_END + 10;
   const fx = focus.x;
   const fy = focus.y;
   const fw = focus.w;

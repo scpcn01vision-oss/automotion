@@ -4,10 +4,11 @@
 // 描述: 坐标轴强制缩放——轴被迫重标尺的冲击
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // axis-rescale-shock-v2 —— 轴爆表重标 v2（批次 6 "改改再看" 重做）
 // 相对 v1 的加码：爆表点冲出卡片顶 80→220px（真的冲进标题字区域）、冲出段折线
 // 加粗 10px 且变琥珀；重标瞬间"哗"——旧刻度数字向下飞出淡出、新刻度从上滑入，
@@ -16,9 +17,18 @@
 // 标签 "$340k"；卡片震动 3→8px。收尾 f120 后真静止 40f。
 // 帧确定性：数据硬编码，全部 frame 派生，无 Math.random / Date.now。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const AMBER = G.accent;
 
@@ -66,7 +76,7 @@ export const AxisRescaleShock: React.FC<AxisRescaleShockProps> = ({
   oldTicks: oldTicksProp,
   newTicks: newTicksProp,
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const data = dataProp ?? DEFAULT_DATA;
   const months = monthsProp ?? DEFAULT_MONTHS;
   const N = data.length;

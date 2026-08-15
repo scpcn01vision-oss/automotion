@@ -4,10 +4,11 @@
 // 功能: 展开
 // props: rows（内容行列表，默认 5 行，行脉冲按行数自适应）
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // 升降臂拉升揭示（crane-rise-reveal）——crane shot。
 // 世界 = 内容行面板（默认 5 行列表）。相机 transform-origin 左上，联动公式：
 // translate = 屏幕中心 - 对准点*scale（对准点始终落在屏幕中心）。
@@ -15,9 +16,18 @@
 // 帧 20–120 scale 3.2→1 + 对准点 (520,958)→(960,540)，Easing.out(quad) 减速升起；
 // 视野上缘每越过一行顶边，该行深色脉冲一拍（4f 起 18f 落）读作"涌入"；帧 120–150 满幅真静止。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const HOLD = 20; // 开场特写 hold
 const MOVE_END = 120; // 运镜结束，此后真静止
@@ -58,7 +68,7 @@ export const CraneRiseReveal: React.FC<CraneRiseRevealProps> = ({
     { label: '可用性', value: '99.98%' },
   ],
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const { s, tx, ty } = camAt(frame);
   // 每行脉冲触发帧：视野上缘首次越过该行顶边（底行开场已在画内 → 运动一起步即触发）
   const triggers = Array.from({ length: rows.length }, (_, i) => {

@@ -4,10 +4,11 @@
 // 描述: 撕裂位移藏切——水平条撕裂位移盖住硬切
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
-// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
+// 策略: 弹刚 ShotTime（刚弹分段）
+// 刚性（不可压缩）: 撕裂转场 45–62f（固定 0.57s，转场必须快、不可随段长拖长）
+// 弹性（可伸缩）: 前段 A 画面 hold（0–45）/ 后段 B 画面（62–180）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 撕裂段固定不随段长伸缩；段长不足 33f（8+17+8）时回退原始帧（动画按原速、可能被截断）。
 // glitch-displace｜噪声置换撕裂
 // FakeDashboard A 播到 45f，45–62f 撕裂转场：页面切 16 条水平条带
 // （外层 overflow hidden + 内层整页反向 translateY 对位），每条 translateX
@@ -17,9 +18,22 @@
 // 再抖 4f 至 62f 归位。62f 起摘罩直出 B（条带/重影全部条件卸载），
 // 62–135f 真静止 73f ≥ 40f。帧确定：h() 伪随机，无 Math.random。
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+  // 时长画像：撕裂转场刚性（45–62f），前后 A/B 画面弹性 hold（2026-08-14 精修）
+  const SHOT_TIME: ShotTime = {
+    segments: [
+      { from: 0, to: 45, mode: 'elastic', minFrames: 8 },
+      { from: 45, to: 62, mode: 'rigid' },
+      { from: 62, to: 180, mode: 'elastic', minFrames: 8 },
+    ],
+    minFrames: 33,
+  };
 
 const STRIPS = 16;
 const H = 1080;
@@ -55,7 +69,7 @@ export const GlitchDisplace: React.FC<GlitchDisplaceProps> = ({
     ],
   },
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   const tearing = frame >= 45 && frame < 62;
   const variant: 'A' | 'B' = frame >= 58 ? 'B' : 'A';

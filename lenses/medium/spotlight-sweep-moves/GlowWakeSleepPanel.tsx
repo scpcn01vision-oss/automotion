@@ -3,17 +3,27 @@
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 展开,承接
 // === 时间特性 ===
-// 刚性（不可压缩）: 刚性:sweep 110f,reveal 125f
-// 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
+// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // glow-wake-sleep-panel v3 —— 扫光方向改为从左向右（用户裁决）：
 // 聚光灯从左向右"扫过"斜置面板；一条带辉光的紫色光线贴着 UI 顶边/边框/
 // logo 划过，光到即亮、光走即暗，尾段沉回黑暗（右缘残留蓝紫）。
 import React from 'react';
 import { G } from '../../_fixtures/Fixtures';
-import { AbsoluteFill, useCurrentFrame, interpolate } from 'remotion';
+import { AbsoluteFill, interpolate } from 'remotion';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 const W = 1250;
 const H = 860;
@@ -122,6 +132,7 @@ export interface GlowWakeSleepPanelProps {
   subItems?: { icon: string; label: string }[]; // 侧栏次级菜单
   searchText?: string; // 搜索占位
   columns?: { title: string; rows: { title: string; sub: string; status?: string }[] }[]; // 任务列
+  revealAtSec?: number; // 口播对齐：滑光扫视开始时刻（段内秒）；提供后忽略默认 4f
 }
 
 export const GlowWakeSleepPanel: React.FC<GlowWakeSleepPanelProps> = ({
@@ -160,22 +171,24 @@ export const GlowWakeSleepPanel: React.FC<GlowWakeSleepPanelProps> = ({
       ],
     },
   ],
+  revealAtSec,
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
+  const S = revealAtSec !== undefined ? Math.round(revealAtSec * 30) : 4;
 
   // 聚光沿面板顶边从左向右匀速扫过（面板本地座标）
-  const sx = interpolate(frame, [4, 120], [-260, W + 260], {
+  const sx = interpolate(frame, [S, S + 116], [-260, W + 260], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
   const sy = 150; // 聚光照在面板上部
 
   // 全局明暗包络：醒 → 展示 → 睡
-  const env = interpolate(frame, [0, 16, 100, 130], [0, 1, 1, 0], {
+  const env = interpolate(frame, [Math.max(0, S - 4), S + 12, S + 96, S + 126], [0, 1, 1, 0], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
   // 尾段右缘残光：最后只剩右缘一线蓝紫
   const rightNear = Math.max(0, Math.min(1, (sx - (W - 420)) / 420));
-  const tailBlue = interpolate(frame, [100, 116, 132], [0, 0.8, 0.25], {
+  const tailBlue = interpolate(frame, [S + 96, S + 112, S + 128], [0, 0.8, 0.25], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
 

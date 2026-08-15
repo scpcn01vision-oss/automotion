@@ -4,17 +4,27 @@
 // 功能: 钩子,展开
 // props: card（变形卡内容）
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // morph-from-primitive｜原型变形
 // 正圆呼吸一拍(anticipation) → path d 逐数值插值变形成 520×300 圆角矩形卡片轮廓
 // → 卡片内部灰阶内容条淡入。全部帧驱动、确定性。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 const CX = 960;
 const CY = 540;
@@ -144,7 +154,7 @@ export interface MorphFromPrimitiveProps {
 export const MorphFromPrimitive: React.FC<MorphFromPrimitiveProps> = ({
   card = { label: '指标一', value: '+18%' },
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   const breath = interpolate(frame, [10, 20, 30], [1, 1.12, 1], {
     easing: Easing.inOut(Easing.cubic),

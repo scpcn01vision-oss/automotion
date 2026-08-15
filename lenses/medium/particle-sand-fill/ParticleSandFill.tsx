@@ -3,10 +3,11 @@
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 举证
 // === 时间特性 ===
-// 刚性（不可压缩）: 刚性:层间交错6f
-// 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
+// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // particle-sand-fill —— 粒子落斗成柱
 // 图表卡内 4 根柱，每根柱上方"下雨"：14px 方点错峰坠落（重力加速），触堆积面即停
 // + 15% 回弹一下，逐层堆高——堆积高度闭式预解析（第 k 层顶面 = 基线 - (k+1)×粒径，
@@ -14,9 +15,18 @@
 // 结尾全部粒子条件卸载、只剩实体柱 + 标签，真静止 ≥35f。
 // 帧确定性：sin 散列派生每颗出发帧抖动/起点错高，落地帧由高度差闭式反解。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const AMBER = G.accent;
 const frac = (x: number) => x - Math.floor(x);
@@ -53,7 +63,7 @@ export const ParticleSandFill: React.FC<ParticleSandFillProps> = ({
   cardTitle = '指标概览',
   cardSubtitle = '实时更新',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>

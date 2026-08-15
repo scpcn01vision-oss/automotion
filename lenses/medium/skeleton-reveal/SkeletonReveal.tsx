@@ -3,25 +3,28 @@
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 展开
 // === 时间特性 ===
-// 刚性（不可压缩）: 刚性:swap 32f,start 82f
-// 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
+// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // skeleton-reveal —— slack-promo 4–15s 合并
 // 三级显影：全屏手绘粗笔触涂鸦占位（圆头 blob 线稿，煮沸抖动）→ 一拍内被
 // 灰条骨架 UI 窗口替换 → 骨架消息列表滚入，镜头推近时灰条逐行"显影"成
 // 头像+文字内容（最后一行末词晚半拍到）。
 import React from 'react';
-import {
-  AbsoluteFill,
-  useCurrentFrame,
-  useVideoConfig,
-  interpolate,
-  spring,
-  Easing,
-} from 'remotion';
+import { AbsoluteFill, useVideoConfig, interpolate, spring, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 const mulberry32 = (a: number) => () => {
   let t = (a += 0x6d2b79f5);
@@ -183,6 +186,7 @@ const Row: React.FC<{
 
 export interface SkeletonRevealProps {
   messages?: { name: string; text: string }[];
+  cueSec?: number[]; // 口播对齐：每条消息显影的段内秒（与 messages 一一对应）；提供后忽略固定错峰
 }
 
 export const SkeletonReveal: React.FC<SkeletonRevealProps> = ({
@@ -192,9 +196,11 @@ export const SkeletonReveal: React.FC<SkeletonRevealProps> = ({
     { name: 'Kai', text: 'Nice — shipping the deck this afternoon' },
     { name: 'Mia', text: 'Love it. Can we make it pink?' },
   ],
+  cueSec,
 }) => {
-  const f = useCurrentFrame();
+  const f = useShotFrame(SHOT_TIME);
   const { fps } = useVideoConfig();
+  const cueMode = !!cueSec && cueSec.length === messages.length;
 
   const SWAP = 32; // 涂鸦 → 骨架的那一拍
 
@@ -223,11 +229,13 @@ export const SkeletonReveal: React.FC<SkeletonRevealProps> = ({
   });
 
   // 逐行显影
-  const devAt = (i: number) =>
-    interpolate(f, [80 + i * 13, 92 + i * 13], [0, 1], {
+  const devAt = (i: number) => {
+    const start = cueMode ? Math.round(cueSec[i] * 30) : 80 + i * 13;
+    return interpolate(f, [start, start + 12], [0, 1], {
       extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
       easing: Easing.out(Easing.quad),
     });
+  };
 
   // 逐词进场；最后一行最后一个词晚半拍（+14 帧）
   const wordAt = (row: number) => (w: number, n: number) => {

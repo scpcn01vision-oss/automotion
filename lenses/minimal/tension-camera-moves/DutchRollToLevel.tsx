@@ -4,15 +4,25 @@
 // 功能: 宣告,举证
 // props: scene（斜置内容承载）、alertText（痛点警示条）、solution（滚正浮现卡）
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 import React from 'react';
-import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
+import { AbsoluteFill, Easing, interpolate } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 // 斜角滚正（dutch-roll-to-level）：呈现痛点时整帧带 -10° 斜角悬着（叠极缓慢
 // 正弦漂移防止读作静态歪图），帧 70 解决方案的一拍整帧带单次过冲滚回水平
@@ -41,7 +51,7 @@ export const DutchRollToLevel: React.FC<DutchRollToLevelProps> = ({
   alertText = '注意',
   solution = { title: '已解决', value: '✓' },
 }) => {
-  const f = useCurrentFrame();
+  const f = useShotFrame(SHOT_TIME);
 
   // —— 斜置期的缓慢漂移（帧 70 前）：±0.8° 长周期正弦 + 2px 纵漂 ——
   const driftT = Math.min(f, ROLL);

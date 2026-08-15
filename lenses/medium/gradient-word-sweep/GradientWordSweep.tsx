@@ -3,18 +3,32 @@
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 宣告
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
-// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
+// 策略: 弹刚 ShotTime（刚弹分段）
+// 刚性（不可压缩）: 光扫填充 12–30f（0.6s 快扫，核心动作固定）
+// 弹性（可伸缩）: 前段入场 0–12 / 后段停留收尾 30–180
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 快扫段固定不随段长伸缩；段长不足 34f（8+18+8）时回退原始帧。
 // gradient-word-sweep v3 —— 批次 12 按用户意见微调（v2 结构保留）：
 // 1) 闪电偏紫红色 + 线宽调细（约减半）；
 // 2) 整体泛光强度略降（各辉光层 opacity 下调）；
 // 3) 波前尾迹梯度：刚被点亮的字符辉光最强，随扫过距离衰减到稳态
 //    （trailing-window 增亮层，填充结束后淡出到稳态呼吸）。
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+  // 时长画像：光扫填充刚性（12–30f），前后弹性（2026-08-14 精修）
+  const SHOT_TIME: ShotTime = {
+    segments: [
+      { from: 0, to: 12, mode: 'elastic', minFrames: 8 },
+      { from: 12, to: 30, mode: 'rigid' },
+      { from: 30, to: 180, mode: 'elastic', minFrames: 8 },
+    ],
+    minFrames: 34,
+  };
 
 const mulberry32 = (a: number) => () => {
   let t = (a += 0x6d2b79f5);
@@ -26,10 +40,6 @@ const mulberry32 = (a: number) => () => {
 const FONT = '"Avenir Next", Futura, "Helvetica Neue", sans-serif';
 // 截图 5：S 偏蓝青 → 中段紫 → 粉 → 尾部琥珀
 const GRAD = `linear-gradient(92deg, #e8a44a 0%, #b87a2e 32%, #f2c98a 62%, ${G.accent} 100%)`;
-
-const FILL_START = 12;
-const FILL_END = 30; // 18 帧 ≈ 0.6s，快扫
-const LIGHT_START = FILL_END + 3;
 
 // ---------- 种子化噪声与闪电 ----------
 const rand = mulberry32(20260718);
@@ -69,6 +79,7 @@ const makeShortBolt = (r: () => number): Bolt => {
 const BOLTS: Bolt[] = Array.from({ length: 16 }, (_, i) =>
   i % 3 === 0 ? makeShortBolt(rand) : makeLongBolt(rand),
 );
+const LIGHT_START = 33; // 闪电起始（默认 FILL_END 30 + 3，固定不随扫光锚点平移）
 // 闪烁事件：帧窗内某条闪电点亮，随机跳位
 type Flash = { at: number; life: number; bolt: number };
 const FLASHES: Flash[] = Array.from({ length: 36 }, () => ({
@@ -79,12 +90,16 @@ const FLASHES: Flash[] = Array.from({ length: 36 }, () => ({
 
 export interface GradientWordSweepProps {
   lines?: [string, string];
+  revealAtSec?: number; // 口播对齐：扫光填充开始的段内秒；提供后忽略默认 12f
 }
 
 export const GradientWordSweep: React.FC<GradientWordSweepProps> = ({
   lines = ['Supercharged', 'with rock-solid reliability'],
+  revealAtSec,
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
+  const FILL_START = revealAtSec !== undefined ? Math.round(revealAtSec * 30) : 12;
+  const FILL_END = FILL_START + 18; // 18 帧 ≈ 0.6s，快扫
   const [lineA, lineB] = lines;
 
   const enter = interpolate(frame, [0, 12], [0, 1], {

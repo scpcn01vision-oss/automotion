@@ -4,19 +4,29 @@
 // 功能: 展开
 // props: command（终端命令）、history（历史行）、result（回车后全屏内容承载）
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // terminal-typewriter —— 终端打字机触发
 // 深色终端窗居中，"$ deploy --prod" 逐字符敲出（2f/字符，帧确定
 // substring），方块光标 12f 方波闪 → 敲完停 12f → 回车帧：整场景 6f
 // Easing.in(cubic) 急推 scale 1→3.2 向命令行推入（末 2f 加 blur）硬切到
 // result 内容全屏，1.06→1 回稳 4f 落定。收尾真静止 ≥40f。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 // 终端窗几何
 const TW = 1100;
@@ -93,7 +103,7 @@ export const TerminalTypewriter: React.FC<TerminalTypewriterProps> = ({
     ],
   },
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // 时间轴随命令长度动态：10 起敲（2f/字符）→ 敲完停 12f → 6f 急推硬切 → 4f 落定
   const typeStart = 10;

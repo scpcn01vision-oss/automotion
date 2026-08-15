@@ -4,19 +4,29 @@
 // 描述: 霓虹框预跑——直角框两头奔画后组件悬空贴落
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // neon-frame-forerun v3 —— v2 基础上按用户意见新增（clickup04 五张）：
 // 框内各组件/文字初始悬空在页面上空（3D 抬起），悬空时在面板上映射
 // 同形软影，随页面点亮进程同步先后贴合（FloatWrap 模式，对标截图③：
 // tab/组件悬空带错位影 → ④全部贴合）。v2 已有：强透视直角框左缘中点
 // 两头奔画、面板原地由暗转亮、背景霓虹管框群中亮尾熄。
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 const easeFall = Easing.bezier(0.5, 0.05, 0.6, 1); // 加速下落、末端软着陆
 
@@ -233,7 +243,7 @@ export const NeonFrameForerun: React.FC<NeonFrameForerunProps> = ({
     { title: '条目 04', avatars: ['J', 'K', 'L'] },
   ],
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   // 主框描画：左缘中点向两头奔跑，26 帧成型（截图①→②）
   const trace = interpolate(frame, [2, 28], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',

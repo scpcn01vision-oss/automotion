@@ -3,10 +3,11 @@
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 全景
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
-// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
+// 策略: 固定帧（循环滚动墙）
+// 刚性（不可压缩）: 无（循环滚动，不随段长伸缩）
+// 弹性（可伸缩）: 无（每列 durationInSeconds 控制单圈时长，进度取模循环）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 不接弹刚：无限循环滚动墙，节奏与段长无关；伸缩对循环无意义。
 // origin: vibe-motion/skills remotion-3d-ticker assets/VerticalTicker.tsx
 //         (2026-07-13 扫描，2026-07-15 吸收；改动：items 泛化为 ReactNode、
 //          遮罩高度/透视角/scale/列宽/间距提为 props)

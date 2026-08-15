@@ -4,17 +4,27 @@
 // 功能: 钩子,展开
 // props: scene（俯仰揭示的内容承载）
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // tilt-reveal｜俯仰揭示
 // 开场俯视 dashboard 顶部（rotateX 平躺、只露顶栏），~43f 机位抬头回正，
 // 内容一排排涌入视野。out-cubic + 末端轻微过冲回正，落定真静止 ≥35f。
 import React from 'react';
-import { AbsoluteFill, interpolate, useCurrentFrame, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const HOLD = 25; // 俯角定格
 const MOVE = 43; // 主抬升
@@ -35,7 +45,7 @@ export const TiltReveal: React.FC<TiltRevealProps> = ({
     ],
   },
 }) => {
-  const f = useCurrentFrame();
+  const f = useShotFrame(SHOT_TIME);
 
   const rotX = interpolate(
     f,

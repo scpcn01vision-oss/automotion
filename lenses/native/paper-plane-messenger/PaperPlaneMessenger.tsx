@@ -4,18 +4,28 @@
 // 功能: 承接,转折
 // props: windowA / windowB（收发窗口内容：标题 + 行列表）、sendLabel（发送按钮文本）
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // paper-plane-messenger —— pitch-app 77–82s（2.5D 简化）
 // 点击"发送"后镜头拉远脱离窗口 A，折纸飞机从窗口飞出沿弧线飞行
 // （俯仰角跟随切线），镜头伴飞穿过多层视差漂浮的灰阶道具，
 // 飞抵窗口 B 前落定，窗口 B 放大接管全屏。发送语义实体化成转场信使。
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const mulberry32 = (a: number) => () => {
   let t = (a += 0x6d2b79f5);
@@ -136,7 +146,7 @@ export const PaperPlaneMessenger: React.FC<PaperPlaneMessengerProps> = ({
   },
   sendLabel = '发送',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // 飞行进度（整体 ease-in-out：起飞加速、落定减速）
   const tFly = interpolate(frame, [FLY[0], FLY[1]], [0, 1], {

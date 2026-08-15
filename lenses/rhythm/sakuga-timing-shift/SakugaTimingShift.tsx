@@ -4,10 +4,11 @@
 // 描述: 作画打拍切换——一拍三顿挫转一拍一丝滑冲刺
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // sakuga-timing-shift —— 一拍三转一拍一（作画打拍切换）
 // 0–48f：驱动帧 q = floor(f/3)*3，卡从左侧顿挫横移到右侧（10fps 手翻书感），
 // 每步 ≈74px + rotate 摆动 = 一拍三的钝感；48f 切换点后改用原始 f 连续驱动，
@@ -15,8 +16,17 @@
 // 过冲 36px 后 3f 回弹落位。左上角标 "on 3s"/"on 1s" 随段切换并带 line-boil
 // （boil 在 f=108 后冻结）。收尾真静止 ≥40f。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const W = 1920;
 const CARD_W = 420;
@@ -88,7 +98,7 @@ export const SakugaTimingShift: React.FC<SakugaTimingShiftProps> = ({
     { label: 'Ship', value: 'Ready' },
   ],
 }) => {
-  const f = useCurrentFrame();
+  const f = useShotFrame(SHOT_TIME);
   const onThrees = f < SWITCH;
 
   // ---- 卡片位置 ----

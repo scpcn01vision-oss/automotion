@@ -3,10 +3,11 @@
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 宣告,对比
 // === 时间特性 ===
-// 刚性（不可压缩）: 刚性:合拢36f
-// 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
+// 策略: 弹刚 ShotTime（刚弹分段）
+// 刚性（不可压缩）: 合拢 100–136f（唯一一次合拢 36f ≈1.2s，固定时长）
+// 弹性（可伸缩）: 前段开场+词轮换 0–100 / 后段静止 hold 136–180
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 合拢段固定不随段长伸缩；段长不足 52f（8+36+8）时回退原始帧。
 // text-column-converge —— raycast-teams（实测素材 28–36s 段）重做版：
 // 原片测量（1280 宽）：NEW 左缘钉死 x=412，特性词右缘钉死 x=867，
 // 两词到左右屏边距相等（412 vs 413），轮换期间间距完全不收缩；
@@ -14,8 +15,21 @@
 // （左缘 412→554 / 右缘 867→725），"NEW RAYCAST" 以屏幕中线居中定格；
 // 定格后约 0.6s，斜体 "COMING 2026" 在下方近乎硬切浮现。
 import React from 'react';
-import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
+import { AbsoluteFill, Easing, interpolate } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+  // 时长画像：合拢刚性（100–136f），前后弹性（2026-08-14 精修）
+  const SHOT_TIME: ShotTime = {
+    segments: [
+      { from: 0, to: 100, mode: 'elastic', minFrames: 8 },
+      { from: 100, to: 136, mode: 'rigid' },
+      { from: 136, to: 180, mode: 'elastic', minFrames: 8 },
+    ],
+    minFrames: 52,
+  };
 
 // 词轮换表默认（原版）：停留帧数不均（机器节奏），全程钉在右缘，不做间距收缩
 const DEFAULT_STEPS: { word: string; dur: number }[] = [
@@ -55,7 +69,7 @@ export const TextColumnConverge: React.FC<TextColumnConvergeProps> = ({
   rightWords = DEFAULT_STEPS,
   subtitle = 'COMING 2026',
 }) => {
-  const f = useCurrentFrame();
+  const f = useShotFrame(SHOT_TIME);
   const t = f - START;
   const STEPS = rightWords;
 

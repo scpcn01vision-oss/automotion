@@ -4,18 +4,27 @@
 // 功能: 展开
 // props: workspaceName（工作区名）、recentCards（Recent 区卡内容）、tasks（任务行）
 // === 时间特性 ===
-// 刚性（不可压缩）: 刚性:每段50f×3段
-// 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
+// 策略: 弹刚 ShotTime（整段弹性；三段接力按比例伸缩）
+// 刚性（不可压缩）: 无
+// 弹性（可伸缩）: 全程可等比缩放（三段接力各占 1/3，时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // graze-face-tour v2 —— 源片 clickup-30.mp4 约 28.5–33s：
 // 相机大倾角贴着 UI 表面游走特写，三段接力：侧栏树 → 顶部 tab 条 → 列表行。
 // v2（用户意见）：页面文字初始悬浮在界面上空（3D 抬高），空中时在 UI 面上
 // 投模糊同形软影；随镜头推进先后落贴回界面，影子随高度收敛消失。
 import React from 'react';
-import { AbsoluteFill, interpolate, useCurrentFrame, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：三段接力（每段 50f 基准）整段弹性，随段长等比伸缩
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 150, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 const INK = G.ink;
 const MID = G.mid;
@@ -444,7 +453,7 @@ const FADE = 7;
 // Stage 收到的 segs 已被包装为单参 render（ctx 在主组件绑定）
 type StageSeg = { cam: Cam; edge: 'left' | 'top'; render: (t: number) => React.ReactNode };
 const Stage: React.FC<{ segs: StageSeg[] }> = ({ segs }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   return (
     <AbsoluteFill style={{ background: G.ink }}>
       {segs.map((s, i) => {
@@ -474,7 +483,7 @@ export const GrazeFaceTour: React.FC<GrazeFaceTourProps> = ({
   tasks = ['每周新增问题', '设计手册', '移动端页面', '产品路线'],
   rowMeta = '刚刚',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const segs = SEGS.map((s) => ({
     ...s,
     render: (t: number) => s.render(t, { workspaceName, recentCards, tasks, rowMeta }),

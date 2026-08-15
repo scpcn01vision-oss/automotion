@@ -4,10 +4,11 @@
 // 功能: 承接
 // props: sceneA / sceneB（前后景内容承载 rows/image）
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // line-carry-transition｜线条接力横移转场（Catch Me If You Can 图形接力）
 // 世界宽 3840（A 左半 / B 右半）。0–24f 卡 A 底部 6px ink 进度条走满；
 // 24–34f 进度条末端延伸成横线冲出卡右缘；34–94f 镜头整体左移 1920px
@@ -16,10 +17,19 @@
 // 112–124f 框闭合后 B 卡内容淡入 12f。124–160f 真静止 36f ≥ 35f。
 // 帧确定，无随机；笔头墨点 118f 起条件卸载（摘罩判例）。
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContentData } from '../../_system/scene-content';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 // ---- 世界几何（一条折线：进度条 + 横线 + 直角 + 矩形框）----
 // M 400,705 → 2600,705（进度 560 + 冲出 1640）→ 上 2600,375 → 右 3160,375
@@ -106,7 +116,7 @@ export const LineCarryTransition: React.FC<LineCarryTransitionProps> = ({
     ],
   },
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // 镜头：34–94f 左移 1920px，inOut cubic
   const cam = interpolate(frame, [34, 94], [0, 1920], {

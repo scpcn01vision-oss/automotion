@@ -4,14 +4,24 @@
 // 功能: 钩子,宣告
 // props: text（翻牌文本，大写 A-Z/0-9/#$%&）、backdrop（背景压暗内容承载）
 // === 时间特性 ===
-// 刚性（不可压缩）: 刚性:每字符翻转物理下限
-// 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
+// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 import React from 'react';
-import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
+import { AbsoluteFill, Easing, interpolate } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 22 }],
+  minFrames: 22,
+};
 
 // split-flap-flip：机场翻牌字。每字符一个深底翻牌格（上下两半），
 // 逐格翻过 3 个乱码中间态后咔哒停在目标字，左→右 4f 级联成波。
@@ -183,7 +193,7 @@ export const SplitFlapFlip: React.FC<SplitFlapFlipProps> = ({
   text = 'READY GO',
   previewLabel = '预览',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   let letterIdx = 0;
   return (
     <AbsoluteFill style={{ background: G.bg, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>

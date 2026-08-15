@@ -4,25 +4,28 @@
 // 功能: 收束
 // props: inputText（输入框文字）
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // input-morphs-into-logo —— slack-promo 40–41s
 // 消息输入框（一行文字 + 发送键）点击发送：文字飞走，输入框收缩变形成
 // 圆角胶囊；上方依次落下 圆、胶囊、小圆，四粒元素集结排成抽象 logo
 // 单瓣（泪滴 + 胶囊的抽象组合，非真 Slack logo），落定呼吸。
 import React from 'react';
-import {
-  AbsoluteFill,
-  useCurrentFrame,
-  useVideoConfig,
-  interpolate,
-  spring,
-  Easing,
-} from 'remotion';
+import { AbsoluteFill, useVideoConfig, interpolate, spring, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const BG = G.side; // 深棕墨色
 const CX = 960;
@@ -44,7 +47,7 @@ export interface InputMorphsIntoLogoProps {
 export const InputMorphsIntoLogo: React.FC<InputMorphsIntoLogoProps> = ({
   inputText = 'Ready, set, go!',
 }) => {
-  const f = useCurrentFrame();
+  const f = useShotFrame(SHOT_TIME);
   const { fps } = useVideoConfig();
 
   // —— 时间轴 ——

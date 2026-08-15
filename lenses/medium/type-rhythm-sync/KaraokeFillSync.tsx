@@ -4,10 +4,11 @@
 // 功能: 宣告,举证
 // props: lines（两行词表：text + 填充帧区间）
 // === 时间特性 ===
-// 刚性（不可压缩）: 需 BGM 节拍驱动（无刚性帧）
-// 弹性（可伸缩）: 需按节拍对齐，不适用纯时长缩放
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
+// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // 卡拉OK填色随读（karaoke-fill-sync）——旁白读到哪个词，哪个词就被深色从左到右
 // 点亮。两行标语 "SHIP FASTER / BREAK NOTHING"，每个词双层同文本叠放：底层 G.line
 // 浅灰字，上层 G.ink 深字用 clip-path: inset(0 X% 0 0) 按词内进度线性填充（逐词独立
@@ -15,9 +16,18 @@
 // SHIP 20–38、FASTER 42–75（长词慢读）、BREAK 85–103、NOTHING 107–130，词间停顿。
 // 正在填的词底下有 8px 深色下划线跟随填充右缘作读指。0–19f hold；130–149f 真静止。
 import React from 'react';
-import { useCurrentFrame, interpolate } from 'remotion';
+import { interpolate } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 type Word = { text: string; start: number; end: number };
 
@@ -76,7 +86,7 @@ export const KaraokeFillSync: React.FC<KaraokeFillSyncProps> = ({
     ],
   ],
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   return (
     <div
       style={{

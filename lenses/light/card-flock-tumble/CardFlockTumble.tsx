@@ -3,10 +3,11 @@
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 钩子,宣告
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // card-flock-tumble v5 —— 批次 14 按用户意见再改（承 v4）：
 // 用户意见（逐字）："首先三个页面不要加模糊效果；然后那个水波扩散一个
 // 圆环就够，不是多个；但是效果你截图看看原片的样式，要一样"
@@ -16,8 +17,17 @@
 //    顶部偏奶桃色、出现后减速外扩且全程缓慢长大、衰减极慢（片尾仍在，
 //    弥散变淡而非熄灭）、中心无水面光。用 feTurbulence+位移贴图模拟。
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, Easing } from 'remotion';
 import { G } from '../../_system/colors';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 const FONT = '"Avenir Next", Futura, "Helvetica Neue", sans-serif';
 
@@ -294,7 +304,7 @@ export const CardFlockTumble: React.FC<CardFlockTumbleProps> = ({
     ['新建', '编辑'],
   ],
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const CARDS = CARD_POSES.map((p, i) => ({ ...p, title: cards[i] ?? '' }));
 
   // STRONGER 巨字

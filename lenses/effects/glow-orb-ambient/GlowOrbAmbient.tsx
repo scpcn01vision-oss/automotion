@@ -4,18 +4,27 @@
 // 描述: 暗场辉光球——环境光球漂浮
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性；光斑呼吸/收敛按比例伸缩）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // glow-orb-ambient｜暗场光斑呼吸
 // 近黑底上三团大光斑（radial-gradient 亮灰 + blur100）用 seed hash 驱动
 // 多正弦叠加做有机漂移；中央深色描边卡的边缘辉光随最近光斑距离呼吸。
 // 0–20f 光斑淡入，中段正常速度漂移，90–120f 缓动收敛到静止，末 30f 真静止。
 import React from 'react';
 import { G } from '../../_fixtures/Fixtures';
-import { AbsoluteFill, interpolate, useCurrentFrame, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, Easing } from 'remotion';
 import { FONT_STACK } from '../../_system/typography';
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（光斑漂移收敛到 120f，段长适配语音）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 // 库内标准伪随机（帧确定）
 const h = (n: number) => {
@@ -66,7 +75,7 @@ export const GlowOrbAmbient: React.FC<GlowOrbAmbientProps> = ({
   rows = ['指标一 +18%', '指标二 24%', '指标三 9%'],
   avatarText = '我',
 }) => {
-  const f = useCurrentFrame();
+  const f = useShotFrame(SHOT_TIME);
 
   // 有效时间：0–90f 匀速，90–120f 用 out-sine 减速收敛（起始斜率≈0.94，近似连续），
   // f≥120 clamp 恒定 => 末 30f 所有位置/阴影完全静止。

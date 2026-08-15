@@ -4,10 +4,11 @@
 // 功能: 宣告,举证
 // props: value（主卡数字）、cards（8 张兄弟卡内容）
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // 拉远孤立收束（pull-back-isolation）——pull-back shot。
 // 相机容器 scale 2.2→0.62（0–110f，Easing.out(cubic)）：开场怼在主卡
 // "99.9%" 特写上，缓缓后拉露出周围 8 张兄弟卡。帧 30 起兄弟卡按离主卡
@@ -15,9 +16,18 @@
 // 背景 60–110f 从 #ececea 沉入 #141414；主卡白光晕 60–100f 淡入。
 // 帧 110–150 完全静止：暗场中央孤悬一张发光小卡——全片只为这一个数字。
 import React from 'react';
-import { useCurrentFrame, interpolate, interpolateColors, Easing } from 'remotion';
+import { interpolate, interpolateColors, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 // 8 张兄弟卡：相对主卡中心 (960,540) 的偏移 + 尺寸 + seed
 const SIBS = [
@@ -84,7 +94,7 @@ export const PullBackIsolation: React.FC<PullBackIsolationProps> = ({
     { label: '吞吐', value: '1.2k/s' },
   ],
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // 相机后拉：2.2（怼脸特写）→ 0.62（大远景孤悬）
   const scale = interpolate(frame, [0, 110], [2.2, 0.62], {

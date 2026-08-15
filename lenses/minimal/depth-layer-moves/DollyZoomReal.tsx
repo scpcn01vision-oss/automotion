@@ -1,9 +1,28 @@
+// === 可调参数 ===
+// DURATION: 135（总帧数，可调；弹性段随 DURATION 等比缩放）
+// 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
+// 功能: 举证
+// === 时间特性 ===
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
+// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
+// === 适配注意 ===
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // dolly-zoom 滑动变焦（轮 F）——主体卡（card4-hires）大小锁定屏中，
 // 背景真实卡群 + 整页反向膨胀逼近（scale + blur 渐深），
 // "世界压过来"而主角纹丝不动。伪 dolly-zoom：无需 3D，分层反向补偿。
-import { AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame, Easing } from 'remotion';
+import { AbsoluteFill, Img, interpolate, staticFile, Easing } from 'remotion';
 import layout from '../../_textures/live-layout.json';
 import { G } from '../../_fixtures/Fixtures';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 135, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 export const DOLLYZOOM_DUR = 135;
 
@@ -18,7 +37,7 @@ export const DollyZoomReal: React.FC<DollyZoomRealProps> = ({
   pageImage = 'textures/live/projects-full.png',
   subjectImage = 'textures/live/card4-hires.png',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const t = interpolate(frame, [15, 110], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
     easing: Easing.bezier(0.4, 0, 0.3, 1),

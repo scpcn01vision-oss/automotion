@@ -3,17 +3,27 @@
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 展开,对比
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // cursor-dialogue-duet —— figma-devmode 0:16–0:20
 // 纯暗场上 Designer(蓝)/Developer(绿) 两枚具名光标做"对话式"双人舞：
 // 相互靠近 → 绕位交换 → 名牌一亮一暗交接 → 一枚放大成巨箭头当转场。
 import React from 'react';
-import { useCurrentFrame, interpolate } from 'remotion';
+import { interpolate } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const BLUE = '#b87a2e';
 const GREEN = G.accent;
@@ -71,7 +81,7 @@ export const CursorDialogueDuet: React.FC<CursorDialogueDuetProps> = ({
   designer = 'Designer',
   developer = 'Developer',
 }) => {
-  const f = useCurrentFrame();
+  const f = useShotFrame(SHOT_TIME);
   const CX = 960; const CY = 520;
   const R = 270;
 

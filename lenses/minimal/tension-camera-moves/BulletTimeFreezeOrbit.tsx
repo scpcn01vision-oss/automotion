@@ -3,10 +3,11 @@
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 宣告,举证
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // 子弹时间冻结环绕(bullet-time-freeze-orbit)——The Matrix bullet time。
 // 中央 900×560 面板内 5 根柱状图错峰生长(动画时钟 effFrame 驱动)。
 // 关键帧:0–20 hold 读布景;20–45 柱子正常生长;45–105 时钟咬死(柱子完全静止),
@@ -14,9 +15,18 @@
 // 同步 scale 1→1.12→1 + translateX 摆动增强绕行感;105–120 时钟恢复柱子长完;
 // 118–128 数字标签浮现;128–150 全静止收尾。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 const PANEL_W = 900;
 const PANEL_H = 560;
@@ -47,7 +57,7 @@ export const BulletTimeFreezeOrbit: React.FC<BulletTimeFreezeOrbitProps> = ({
   sideTitle = '增长势头',
   sideSubtitle = '季度增长趋势',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // ── 子弹时间时钟:0–45 正常走,45–105 冻结,105 起恢复 ──
   const effFrame =

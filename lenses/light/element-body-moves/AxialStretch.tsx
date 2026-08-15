@@ -4,18 +4,28 @@
 // 功能: 展开
 // props: cards（三张飞行卡内容）
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // axial-stretch —— 轴向拉伸速度感
 // 三张 Card 从右外依次横向飞入落位，飞行途中沿运动轴速度驱动拉伸
 // （scaleX 峰值 ≈2.2 / scaleY ≈0.72，糖稀拉丝感），落点 Back.out 式回弹。
 // 速度用位置差分 p(f)-p(f-1) 驱动，低于阈值不拉伸。收尾真静止 ≥35f。
 import React from 'react';
-import { useCurrentFrame, interpolate, Easing } from 'remotion';
+import { interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 0 }],
+  minFrames: 0,
+};
 
 const W = 1920;
 const CARD_W = 380;
@@ -123,7 +133,7 @@ export const AxialStretch: React.FC<AxialStretchProps> = ({
     { label: '指标三', value: '96.4%' },
   ],
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       {/* 落位虚线槽，标出目标位置 */}

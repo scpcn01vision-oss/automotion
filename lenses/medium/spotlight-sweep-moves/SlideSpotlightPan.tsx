@@ -3,18 +3,28 @@
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 展开,承接
 // === 时间特性 ===
-// 刚性（不可压缩）: 刚性:sweep 110f,reveal 125f
-// 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
+// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // slide-spotlight-pan v2 —— 按用户截图 clickup03 重做：
 // 紫色光线贴着 UI 面板边缘泛光（先绕左上角竖缘、再沿顶边横走），
 // 聚光头匀速右移，照到处显影、离开处沉暗；面板匀速左滑（相机右摇感）。
 // 用户裁决："紫色的光线是贴着ui界面泛光的，聚光的移动是匀速的"。
 import React from 'react';
 import { G } from '../../_fixtures/Fixtures';
-import { AbsoluteFill, useCurrentFrame, interpolate } from 'remotion';
+import { AbsoluteFill, interpolate } from 'remotion';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 const ink = G.ink;
 const mid = G.mid;
@@ -103,6 +113,7 @@ export interface SlideSpotlightPanProps {
   sectionLabel?: string; // 侧栏分区标签
   subItems?: { icon: string; label: string }[]; // 侧栏次级菜单
   searchText?: string; // 顶栏搜索
+  revealAtSec?: number; // 口播对齐：滑光扫视开始时刻（段内秒）；提供后忽略默认 0f
   actions?: string[]; // 顶栏操作
   columns?: { title: string; rows: { title: string; sub: string }[] }[]; // 看板列
 }
@@ -149,13 +160,15 @@ export const SlideSpotlightPan: React.FC<SlideSpotlightPanProps> = ({
       ],
     },
   ],
+  revealAtSec,
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
+  const S = revealAtSec !== undefined ? Math.round(revealAtSec * 30) : 0;
   // 面板匀速左滑（相机右摇）——严格 linear
-  const slide = interpolate(frame, [0, 132], [180, -1100]);
+  const slide = interpolate(frame, [S, S + 132], [180, -1100]);
   // 聚光头在面板本地座标沿顶边匀速右移——严格 linear
   // 起点在左上角竖缘（负值=还在左缘竖直段），随后转过角沿顶边走
-  const head = interpolate(frame, [0, 132], [-360, 2600]);
+  const head = interpolate(frame, [S, S + 132], [-360, 2600]);
   const onTop = Math.max(0, head);            // 顶边段进度
   const cornerT = Math.min(1, Math.max(0, (head + 360) / 360)); // 竖缘段 0→1
   const vertHeadY = TOP + 620 - cornerT * 620; // 左缘光头从下往上爬到角

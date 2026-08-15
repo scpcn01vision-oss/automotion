@@ -166,7 +166,8 @@ const DemoteScene: React.FC<{
 export interface TitleDemoteToLabelProps {
   titleA?: string;
   titleB?: string;
-  contentRows?: { label: string; value: string }[]; // 降格后内容行
+  contentRows?: { label: string; value: string }[];
+  revealAtSec?: number; // 口播对齐：A→B 切换（选中高亮登场）的段内秒；提供后忽略默认 92f
 }
 
 export const TitleDemoteToLabel: React.FC<TitleDemoteToLabelProps> = ({
@@ -178,9 +179,10 @@ export const TitleDemoteToLabel: React.FC<TitleDemoteToLabelProps> = ({
     { label: '指标三', value: '96.4%' },
     { label: '指标四', value: '42ms' },
   ],
+  revealAtSec,
 }) => {
   const frame = useShotFrame(SHOT_TIME);
-  const SPLIT = 92; // 变体 A 时长
+  const SPLIT = revealAtSec !== undefined ? Math.round(revealAtSec * 30) : 92; // 变体 A 时长
 
   if (frame < SPLIT) {
     return <DemoteScene frame={frame} title={titleA} withSelection={false} rows={contentRows} />;

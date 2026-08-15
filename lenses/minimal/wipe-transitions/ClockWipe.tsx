@@ -4,19 +4,33 @@
 // 功能: 转折,承接
 // props: sceneA / sceneB（时钟扫描前后景内容承载）
 // === 时间特性 ===
-// 刚性（不可压缩）: 弹性(clock),刚性:wave 20f(blinds)
-// 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
+// 策略: 弹刚 ShotTime（刚弹分段）
+// 刚性（不可压缩）: 时钟扫过 30–96f（2.2s 转场，必须快、不可随段长拖长）
+// 弹性（可伸缩）: 前段 A 画面 hold 0–30 / 后段 B 画面 96–180
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 转场段固定不随段长伸缩；段长不足 82f（8+66+8）时回退原始帧。
 // clock-wipe｜时钟扫描擦除
 // FakeDashboard A → B。30–90f 一根隐形雷达指针从 12 点方向顺时针扫一圈，
 // B 页在上层用大扇形 clip-path polygon 逐帧张开；扫描沿带亮线（白核+暗描边+柔光）。
 // 90–96f 亮线淡出，96f 起摘罩（B 直接满屏、无 clip-path、亮线卸载），
 // 96–150f 真静止 54f ≥ 40f。帧确定，无随机。
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, interpolate } from 'remotion';
+import { AbsoluteFill, interpolate } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：时钟扫过刚性（30–96f），前后弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [
+    { from: 0, to: 30, mode: 'elastic', minFrames: 8 },
+    { from: 30, to: 96, mode: 'rigid' },
+    { from: 96, to: 180, mode: 'elastic', minFrames: 8 },
+  ],
+  minFrames: 82,
+};
 
 const CX = 960;
 const CY = 540;
@@ -61,7 +75,7 @@ export const ClockWipe: React.FC<ClockWipeProps> = ({
     ],
   },
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
 
   // 30–90f 指针 0→360°，linear（时钟扫描要匀速才像雷达）
   const theta = interpolate(frame, [30, 90], [0, 360], {

@@ -4,10 +4,11 @@
 // 功能: 宣告,展开
 // props: word（漂移合拢的字标，默认 ASSEMBLE）
 // === 时间特性 ===
-// 刚性（不可压缩）: 无（全程弹性）
+// 策略: 弹刚 ShotTime（整段弹性）
+// 刚性（不可压缩）: 无
 // 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
 // === 适配注意 ===
-// 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
+// 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // 字形漂移合拢（letterform-drift-assembly）——Stranger Things 片头式入场。
 // 标题 "ASSEMBLE" 拆 9 字符：各自从不同方向（h(i) seeded 随机向量，
 // 幅度 ±260–360px）带 blur 8px + opacity 0.35 缓慢漂入，错峰归位
@@ -19,9 +20,18 @@
 // 锁定帧 i*3+45 起 8f 加深脉冲（最后一字 69–77）→ 80–104 整词呼吸 →
 // 104–150 全静止（46f，无逐帧滤镜）。
 import React from 'react';
-import { useCurrentFrame, interpolate, interpolateColors, Easing } from 'remotion';
+import { interpolate, interpolateColors, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+
+import { useShotFrame } from '../../../engine/useShotFrame';
+import type { ShotTime } from '../../../engine/time';
+
+// 时长画像：整段弹性（2026-08-14 精修）
+const SHOT_TIME: ShotTime = {
+  segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 60 }],
+  minFrames: 60,
+};
 
 const h = (n: number) => {
   const s = Math.sin(n * 127.3) * 43758.5453;
@@ -38,7 +48,7 @@ export interface LetterformDriftAssemblyProps {
 export const LetterformDriftAssembly: React.FC<LetterformDriftAssemblyProps> = ({
   word = 'ASSEMBLE',
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useShotFrame(SHOT_TIME);
   const chars = word.split('');
 
   // 整词收束呼吸：80–92 放大到 1.04，92–104 回落，之后恒 1 → 帧确定
