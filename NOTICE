@@ -1,0 +1,36 @@
+automotion-v7
+Copyright 2026 automotion-v7 contributors
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+--------------------------------------------------------------------
+Attribution / 来源声明
+
+本项目的镜头库是以下开源项目的衍生作品（derivative work）：
+
+  video-shotcraft
+  https://github.com/Vincentwei1021/video-shotcraft
+  Copyright 2026 Wei Yihao
+  Licensed under the Apache License, Version 2.0
+
+修改说明：本项目对 video-shotcraft 的镜头源码做了「纸墨化」改造——
+内容参数化、G 色板统一、镜头名/手法名标签清理、时间轴引擎（ShotTime）
+接入与口播锚点（cueSec / revealAtSec）支持等。各镜头文件头保留原来源注释。
+
+第三方素材来源（非 video-shotcraft 原生）：
+
+  lenses/native/page-waterfall-wall/VerticalTicker.tsx
+    源自 vibe-motion/skills remotion-3d-ticker（许可证未在本仓库确认，
+    文件头保留来源标注；商业使用前请核实上游许可）。
+
+音频与其余素材：本项目输出不含 BGM；项目侧录音（full.wav）由使用者提供。
