@@ -170,7 +170,32 @@ def align_to_script(whisper_words, script_text):
 
     return phrases
 
+
+def enforce_monotonic_timestamps(phrases):
+    """词时间戳单调化：口语时间轴不可倒流。
+
+    whisper 词级时间戳本身存在非单调（同一时间段被多词重复占用、倒挂），
+    difflib 对齐错位还会把时间戳映射到错误词位；不清洗则字幕时间会出现
+    重叠/倒挂。顺序扫描：每词 start 不得早于前词 end，end 不得早于 start；
+    0 时长词给最小宽度 0.05s。清洗幂等（重复运行结果不变）。
+    """
+    prev_end = 0.0
+    for p in phrases:
+        st = max(p["start"], prev_end)
+        en = max(p["end"], st)
+        if en <= st:
+            en = st + 0.05
+        p["start"] = round(st, 3)
+        p["end"] = round(en, 3)
+        prev_end = en
+    return phrases
+
 # ---------- 4. 字幕切分（规范 v4） ----------
+def clean_text(s):
+    """去标点/空白，得到纯字符序列（对齐、定位、校验共用）"""
+    return re.sub(r"[^\u4e00-\u9fffA-Za-z0-9]", "", s)
+
+
 def han_count(s):
     """汉字数（单条字幕 ≤18 汉字）"""
     return sum(1 for ch in s if "\u4e00" <= ch <= "\u9fff")
@@ -480,38 +505,151 @@ def fix_word_boundaries(chunks, protected):
             out.append(c)
     return out
 
-# ---------- 6. 字幕时间定位 ----------
-def generate_subtitles(chunks, phrases, script_text):
-    """每条字幕在词级时间戳中定位起止"""
-    # phrases 是文案词序列（已对齐时间）；把 chunks 映射到 phrases 的词范围
-    entries = []
-    search_pos = 0
+# ---------- 6. 段边界测量 + 段内字幕定位（机制：段是权威，字幕是段的展示） ----------
+def measure_segment_bounds(segments, script_words):
+    """在全文词序列中直接测量每段的词索引范围 [start, end)。
 
-    for chunk in chunks:
-        chunk_clean = re.sub(r"[，。？！；：、\s]", "", chunk)
-        found = False
-        for start_idx in range(search_pos, len(phrases)):
-            acc = ""
-            for end_idx in range(start_idx, min(start_idx + 40, len(phrases))):
-                acc += phrases[end_idx]["text"]
-                acc_clean = re.sub(r"[，。？！；：、\s]", "", acc)
-                if acc_clean == chunk_clean:
-                    entries.append({
-                        "text": chunk,
-                        "start": phrases[start_idx]["start"],
-                        "end": phrases[end_idx]["end"],
-                        "startIdx": start_idx,
-                    })
-                    search_pos = end_idx + 1
-                    found = True
-                    break
-            if found:
-                break
-        if not found:
-            prev_end = entries[-1]["end"] if entries else 0.0
-            entries.append({"text": chunk, "start": prev_end, "end": prev_end + 2.0, "startIdx": search_pos})
+    原理：段 text 是全文的子串，按干净字符长度逐段消费全文词序列；
+    不依赖"每段单独分词再累加"的估算（估算会受 jieba 分词上下文影响而漂移）。
+    """
+    bounds = []
+    cur = 0
+    n_words = len(script_words)
+    for s in segments:
+        target = len(clean_text(s["text"]))
+        start = cur
+        # 跳过段首空词（标点/换行等无干净字符的词）
+        while start < n_words and not clean_text(script_words[start]):
+            start += 1
+        end = start
+        acc = 0
+        while end < n_words and acc < target:
+            acc += len(clean_text(script_words[end]))
+            end += 1
+        if acc != target:
+            raise ValueError(
+                f"[FAIL] 段 {s['id']} 在全文词序列中消费 {acc} 字符，"
+                f"预期 {target}，段边界测量失败")
+        bounds.append((s["id"], start, end))
+        cur = end
+    return bounds
 
-    return entries
+
+def generate_subtitles_per_segment(segments, phrases, bounds):
+    """按段切分字幕，并把字幕作为"段字符轴上的区间"直接映射到词级时间戳。
+
+    机制要点：
+    1. 段边界直接测量（measure_segment_bounds），不做估算；
+    2. 字幕在段内按字符区间顺序定位，跨段凑字在机制上不可能；
+    3. 时间 = 覆盖字幕首字符的词 start → 覆盖末字符的词 end，
+       彻底消除"字符级切分 vs 词级时间戳"的粒度错位
+       （旧机制在词序列里"凑"字幕文本，词内切割永远凑不出）；
+    4. 找不到就抛错，绝不产出"上一条结束 + 2 秒"之类的占位时间。
+    """
+    all_entries = []
+    seg_by_id = {s["id"]: s for s in segments}
+    for sid, w0, w1 in bounds:
+        seg = seg_by_id[sid]
+        chunks = split_subtitles(seg["text"])
+        seg_phrases = phrases[w0:w1]
+        # 词 i 在段 clean 字符轴上的范围 [cs[i], ce[i])
+        cs = []
+        ce = []
+        starts = []
+        ends = []
+        acc = 0
+        for p in seg_phrases:
+            cs.append(acc)
+            acc += len(clean_text(p["text"]))
+            ce.append(acc)
+            starts.append(p["start"])
+            ends.append(p["end"])
+        seg_clean = clean_text(seg["text"])
+        if acc != len(seg_clean):
+            raise ValueError(
+                f"[FAIL] 段 {sid} 词序列 clean 长度 {acc} != 段文本 {len(seg_clean)}")
+        total = acc
+
+        # 0 时长词修正：结束时间取下一个有宽度词的开始（无则 +0.05s），
+        # 否则单字/词内字幕会得到 start==end 的非法时间
+        for i in range(len(starts)):
+            if ends[i] <= starts[i]:
+                nxt = next(
+                    (starts[j] for j in range(i + 1, len(starts))
+                     if ends[j] > starts[j]),
+                    None,
+                )
+                ends[i] = nxt if nxt is not None else starts[i] + 0.05
+
+        def char_time(cpos):
+            """字符 cpos 的时间：定位所在词，词内按字符数线性插值。
+
+            词级时间戳无法表达"词内某段字符"的时间；字幕边界落在词中间时，
+            相邻字幕若都引用整词时间戳必然重叠。插值后字符轴上的任意区间
+            都有明确定义的时间，且同一词内相邻字幕时间严格递增。
+            cpos >= total（段末位置）时返回段内最后一个有宽度词的结束时间。
+            """
+            if cpos >= total:
+                for i in range(len(cs) - 1, -1, -1):
+                    if ce[i] > cs[i]:
+                        return ends[i]
+                return 0.0
+            for i in range(len(cs)):
+                if cs[i] <= cpos < ce[i]:
+                    span = ce[i] - cs[i]
+                    if span <= 1:
+                        return starts[i]
+                    ratio = (cpos - cs[i]) / span
+                    return starts[i] + ratio * (ends[i] - starts[i])
+            raise ValueError(f"[FAIL] 字符位置 {cpos} 超出段 {sid} 词范围")
+
+        pos = 0
+        for chunk in chunks:
+            chunk_clean = clean_text(chunk)
+            if not chunk_clean:
+                continue
+            c0 = seg_clean.find(chunk_clean, pos)
+            if c0 < 0:
+                raise ValueError(f"[FAIL] 段 {sid} 字幕定位失败：{chunk!r}")
+            c1 = c0 + len(chunk_clean)
+            all_entries.append({
+                "text": chunk,
+                "start": char_time(c0),
+                "end": char_time(c1),
+                "segmentId": sid,
+            })
+            pos = c1
+    return all_entries
+
+
+def validate_entries(entries, segments):
+    """机制不变量校验：任何一条不满足立即报错，不产出错误数据。
+
+    1. 每段字幕拼接（去标点）必须与段文案逐字一致；
+    2. 每条字幕必须有真实且非零的时间跨度；
+    3. 全片字幕时间单调不重叠。
+    """
+    from collections import defaultdict
+    by_seg = defaultdict(list)
+    for e in entries:
+        if not (e["start"] < e["end"]):
+            raise ValueError(f"[FAIL] 字幕时间非法（start>=end）：{e}")
+        by_seg[e["segmentId"]].append(e)
+    for s in segments:
+        es = by_seg.get(s["id"], [])
+        joined = clean_text("".join(e["text"] for e in es))
+        expect = clean_text(s["text"])
+        if joined != expect:
+            raise ValueError(
+                f"[FAIL] 段 {s['id']} 字幕未完整覆盖文案\n"
+                f"  字幕拼接: {joined}\n"
+                f"  段文案:   {expect}")
+    prev_end = 0.0
+    for e in sorted(entries, key=lambda x: x["start"]):
+        if e["start"] < prev_end - 0.001:
+            raise ValueError(f"[FAIL] 字幕时间重叠：{e}")
+        prev_end = e["end"]
+    return True
 
 # ---------- 主流程 ----------
 if __name__ == "__main__":
@@ -538,37 +676,24 @@ if __name__ == "__main__":
     else:
         whisper_words = whisper_transcribe(AUDIO)
         phrases = align_to_script(whisper_words, script_text)
-        OUT_TRANSCRIPT.write_text(
-            json.dumps({"whisper_words": whisper_words, "phrases": phrases},
-                       ensure_ascii=False, indent=2),
-            encoding="utf-8",
-        )
         print(f"    transcript.json 已保存 ({len(phrases)} 词)")
 
-    print("[4] 字幕切分...")
-    chunks = split_subtitles(script_text)
-    print(f"    切分: {len(chunks)} 条")
+    phrases = enforce_monotonic_timestamps(phrases)
+    OUT_TRANSCRIPT.write_text(
+        json.dumps({"whisper_words": whisper_words, "phrases": phrases},
+                   ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+    print(f"    词时间戳单调化完成（transcript.json 已回写）")
 
-    print("[6] 字幕时间定位...")
-    entries = generate_subtitles(chunks, phrases, script_text)
-
-    # 段归属：按字幕匹配到的词序号（startIdx）落在哪个段的词范围
+    print("[4] 段边界测量 + 按段字幕切分/定位...")
     import jieba
     jieba.setLogLevel(0)
     script_words = list(jieba.cut(script_text))
-    seg_word_bounds = []
-    wid = 0
-    for s in segments:
-        n = len(list(jieba.cut(s["text"])))
-        seg_word_bounds.append((s["id"], wid, wid + n))
-        wid += n + 1  # +1 跳过段间换行 token（script_words 含 \n）
-
-    for e in entries:
-        si = e.get("startIdx", 0)
-        e["segmentId"] = next(
-            (sid for sid, a, b in seg_word_bounds if a <= si < b), segments[0]["id"]
-        )
-        e.pop("startIdx", None)
+    bounds = measure_segment_bounds(segments, script_words)
+    entries = generate_subtitles_per_segment(segments, phrases, bounds)
+    validate_entries(entries, segments)
+    print(f"    字幕 {len(entries)} 条（按段定位，机制校验通过）")
 
     subtitles = {
         "entries": [
