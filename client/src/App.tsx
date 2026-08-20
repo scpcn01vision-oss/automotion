@@ -37,7 +37,10 @@ export const App = () => {
       })
       .catch((e) => setLoadError(`registry 加载失败：${e.message}`));
     fetch('/api/match')
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error(`匹配结果不存在（HTTP ${r.status}）`);
+        return r.json();
+      })
       .then(setMatch)
       .catch((e) => setLoadError(`match 加载失败：${e.message}`));
     fetch('/api/project/segments')

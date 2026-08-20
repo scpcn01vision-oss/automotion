@@ -13,8 +13,10 @@ const PORT = Number(process.env.PORT ?? 3004);
 const PROJECT_DIR = process.env.V7_PROJECT_DIR; // 项目侧数据目录，如 E:\桌面\打破信息差\视频文件\015
 // 默认文件名按项目目录名推导（如目录 015 → out/match-015.json），显式环境变量优先
 const PROJECT_NAME = PROJECT_DIR ? path.basename(PROJECT_DIR) : '';
-const MATCH_FILE = process.env.MATCH_FILE; // 匹配结果文件（默认仓库 out/match-<项目名>.json）
-const DEFAULT_MATCH = path.join(ROOT, 'out', `match-${PROJECT_NAME}.json`);
+const MATCH_FILE = process.env.MATCH_FILE; // 匹配结果文件（默认项目侧 out/match-<项目名>.json，与 storyboard 一致）
+const DEFAULT_MATCH = PROJECT_DIR
+  ? path.join(PROJECT_DIR, 'out', `match-${PROJECT_NAME}.json`)
+  : path.join(ROOT, 'out', `match-${PROJECT_NAME}.json`);
 const STORYBOARD_FILE = 'storyboard.json'; // 项目侧 storyboard 文件名
 
 const app = express();
@@ -72,7 +74,7 @@ app.get('/api/project/segments', (_req, res) => {
   res.json({ file: STORYBOARD_FILE, segments });
 });
 
-// 匹配结果（MatchResult）：优先 MATCH_FILE，默认 out/match-<项目名>.json
+// 匹配结果（MatchResult）：优先 MATCH_FILE，默认项目侧 out/match-<项目名>.json
 app.get('/api/match', (_req, res) => {
   const p = MATCH_FILE ?? DEFAULT_MATCH;
   if (!existsSync(p)) {
