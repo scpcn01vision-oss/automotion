@@ -14,14 +14,14 @@
 ## 环境要求
 
 - Node.js（npm workspaces）
-- Python 3.11+（转录：`whisper`、`jieba`、`opencc`）
+- Python 3.11+（转录：`openai-whisper`、`jieba`、`opencc-python-reimplemented`）
 - ffmpeg（响度检测/成片检查）
 
 ## 安装
 
 ```bash
 npm install
-pip install whisper jieba opencc
+pip install openai-whisper jieba opencc-python-reimplemented
 ```
 
 ## 启动

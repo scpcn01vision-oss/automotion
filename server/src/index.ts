@@ -5,6 +5,7 @@ import cors from 'cors';
 import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { isStoryboard } from '../../shared/types.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..', '..');
@@ -98,7 +99,12 @@ app.get('/api/storyboard', (_req, res) => {
   }
   const sbPath = path.join(PROJECT_DIR, STORYBOARD_FILE);
   if (existsSync(sbPath)) {
-    res.json({ exists: true, storyboard: JSON.parse(readFileSync(sbPath, 'utf8')) });
+    const storyboard = JSON.parse(readFileSync(sbPath, 'utf8'));
+    if (!isStoryboard(storyboard)) {
+      res.status(500).json({ error: 'storyboard.json 校验失败（结构不合法）' });
+      return;
+    }
+    res.json({ exists: true, storyboard });
     return;
   }
   // 生成待定稿骨架：段信息就位、镜头未定
@@ -139,8 +145,8 @@ app.post('/api/storyboard', (req, res) => {
     return;
   }
   const sb = req.body;
-  if (!sb || !Array.isArray(sb.segments)) {
-    res.status(400).json({ error: 'storyboard 结构不合法（需含 segments 数组）' });
+  if (!isStoryboard(sb)) {
+    res.status(400).json({ error: 'storyboard 结构不合法（meta.title/created/subtitleStyle 或 segments 字段不符合规范）' });
     return;
   }
   const sbPath = path.join(PROJECT_DIR, STORYBOARD_FILE);

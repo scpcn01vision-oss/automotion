@@ -10,11 +10,17 @@
   --skip-transcribe：跳过 whisper 转录（复用已生成的 transcript.json，调试切分用）
 """
 import json
+import math
 import os
 import re
 import sys
 import wave
+import warnings
 from pathlib import Path
+
+# jieba 0.42.1（PyPI 最新版）内部仍 import pkg_resources，触发 setuptools 废弃警告；
+# 定向抑制该已知噪音，待 jieba 上游修复后移除
+warnings.filterwarnings("ignore", message="pkg_resources is deprecated as an API")
 
 PROJECT_DIR = Path(os.environ.get("V7_PROJECT_DIR", r"E:\桌面\打破信息差\视频文件\013B"))
 AUDIO = PROJECT_DIR / "full.wav"
@@ -26,6 +32,53 @@ OUT_SUBTITLES = PROJECT_DIR / "subtitles.json"
 def read_storyboard(path):
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
+
+def validate_storyboard(sb):
+    """转录前校验 storyboard 结构，返回错误列表（空 = 通过）。
+
+    与 shared/types.ts 的 isStoryboard 保持同规则（Python 侧独立实现）。
+    """
+    errors = []
+    meta = sb.get("meta") if isinstance(sb, dict) else None
+    if not isinstance(meta, dict):
+        errors.append("meta 缺失或不是对象")
+    else:
+        for k in ("title", "created"):
+            if not isinstance(meta.get(k), str):
+                errors.append(f"meta.{k} 缺失或不是字符串")
+    segments = sb.get("segments") if isinstance(sb, dict) else None
+    if not isinstance(segments, list):
+        errors.append("segments 缺失或不是数组")
+        return errors
+    for i, s in enumerate(segments):
+        tag = f"segments[{i}]"
+        if not isinstance(s, dict):
+            errors.append(f"{tag} 不是对象")
+            continue
+        for k in ("id", "text"):
+            if not isinstance(s.get(k), str):
+                errors.append(f"{tag}.{k} 缺失或不是字符串")
+        keywords = s.get("keywords")
+        if not isinstance(keywords, list) or not all(isinstance(w, str) for w in keywords):
+            errors.append(f"{tag}.keywords 缺失或不是字符串数组")
+        pr = s.get("phraseRange")
+        if (
+            not isinstance(pr, list)
+            or len(pr) != 2
+            or not all(
+                isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v)
+                for v in pr
+            )
+        ):
+            errors.append(f"{tag}.phraseRange 缺失或不是 [number, number]")
+        ds = s.get("durationSec")
+        if not isinstance(ds, (int, float)) or isinstance(ds, bool) or not math.isfinite(ds):
+            errors.append(f"{tag}.durationSec 缺失或不是数字")
+        if not isinstance(s.get("lensId"), str):
+            errors.append(f"{tag}.lensId 缺失或不是字符串")
+        if not isinstance(s.get("params"), dict):
+            errors.append(f"{tag}.params 缺失或不是对象")
+    return errors
 
 def segment_full_text(segments):
     """把 32 段 text 拼成全文（段间用特殊分隔符标记边界）"""
@@ -63,7 +116,7 @@ def align_to_script(whisper_words, script_text):
             w["text"] = cc.convert(w["text"])
         print("    繁→简完成")
     except ImportError:
-        pass
+        print("[!] opencc 未安装（需 pip install opencc-python-reimplemented），转录文本将不做繁→简转换")
 
     script_words = list(jieba.cut(script_text))
     print(f"    文案分词: {len(script_words)} 词")
@@ -467,6 +520,9 @@ if __name__ == "__main__":
     print(f"[0] 音频时长: {audio_duration:.3f}s")
 
     storyboard = read_storyboard(STORYBOARD)
+    sb_errors = validate_storyboard(storyboard)
+    if sb_errors:
+        sys.exit("[FAIL] storyboard.json 校验失败：\n  " + "\n  ".join(sb_errors))
     segments = storyboard["segments"]
     script_text = segment_full_text(segments)
     print(f"[1] storyboard: {len(segments)} 段, 全文 {len(script_text)} 字符")
