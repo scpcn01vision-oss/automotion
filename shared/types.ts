@@ -65,6 +65,7 @@ export interface SubtitleStyle {
 export interface StoryboardSegment {
   id: string;
   text: string;
+  summary?: string; // 段摘要（工作台左栏显示；派生时 AI 生成，缺省由 text 截取）
   keywords: string[];
   phraseRange: [number, number]; // 词级转录中的起止词序号
   durationSec: number; // 段真实时长（转录确定）

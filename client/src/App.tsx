@@ -43,7 +43,7 @@ export const App = () => {
     fetch('/api/project/segments')
       .then((r) => r.json())
       .then((d) => setSegments(d.segments ?? []))
-      .catch((e) => setLoadError(`段画像加载失败：${e.message}`));
+      .catch((e) => setLoadError(`段列表加载失败：${e.message}`));
     fetch('/api/storyboard')
       .then((r) => r.json())
       .then((d) => {

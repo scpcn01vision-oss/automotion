@@ -1,4 +1,4 @@
-// 左栏段列表：段画像 + 定稿状态 + 保存/下一步
+// 左栏段列表：段信息 + 定稿状态 + 保存/下一步
 import type { Storyboard } from '../../../shared/types';
 
 export type SegmentProfile = {

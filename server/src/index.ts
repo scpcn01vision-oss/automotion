@@ -11,12 +11,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..', '..');
 const PORT = Number(process.env.PORT ?? 3004);
 const PROJECT_DIR = process.env.V7_PROJECT_DIR; // 项目侧数据目录，如 E:\桌面\打破信息差\视频文件\015
-// 默认文件名按项目目录名推导（如目录 015 → 段画像-015.md / out/match-015.json），显式环境变量优先
+// 默认文件名按项目目录名推导（如目录 015 → out/match-015.json），显式环境变量优先
 const PROJECT_NAME = PROJECT_DIR ? path.basename(PROJECT_DIR) : '';
 const MATCH_FILE = process.env.MATCH_FILE; // 匹配结果文件（默认仓库 out/match-<项目名>.json）
 const DEFAULT_MATCH = path.join(ROOT, 'out', `match-${PROJECT_NAME}.json`);
-const SEGMENT_PROFILE_FILE =
-  process.env.V7_PROFILE_FILE ?? `段画像-${PROJECT_NAME}.md`; // 项目侧段画像文件名（默认按项目名推导）
 const STORYBOARD_FILE = 'storyboard.json'; // 项目侧 storyboard 文件名
 
 const app = express();
@@ -52,35 +50,26 @@ app.get('/api/project/info', (_req, res) => {
   res.json({ configured: true, exists: true, dir: PROJECT_DIR, files });
 });
 
-// 段画像解析：项目侧「段画像-<项目名>.md」表格 → 段数组
+// 段列表：从项目侧 storyboard.json 派生（段画像已并入 storyboard，不再有独立文件）
 app.get('/api/project/segments', (_req, res) => {
   if (!PROJECT_DIR) {
     res.status(400).json({ error: '未设置 V7_PROJECT_DIR' });
     return;
   }
-  const profilePath = path.join(PROJECT_DIR, SEGMENT_PROFILE_FILE);
-  if (!existsSync(profilePath)) {
-    res.status(404).json({ error: `段画像不存在：${SEGMENT_PROFILE_FILE}` });
+  const sbPath = path.join(PROJECT_DIR, STORYBOARD_FILE);
+  if (!existsSync(sbPath)) {
+    res.status(404).json({ error: 'storyboard.json 不存在（先完成分割定稿并派生）' });
     return;
   }
-  const md = readFileSync(profilePath, 'utf8');
-  const segments = [];
-  for (const line of md.split('\n')) {
-    const m = line.match(/^\| (\d+) \| (.+?) \| (.+?) \| (.+?) \|\s*$/);
-    if (!m) continue;
-    const index = Number(m[1]);
-    segments.push({
-      id: `seg-${String(index).padStart(2, '0')}`,
-      index,
-      summary: m[2].trim(),
-      role: m[3].trim(),
-      contentTags: m[4]
-        .split(',')
-        .map((s) => s.trim())
-        .filter(Boolean),
-    });
-  }
-  res.json({ file: SEGMENT_PROFILE_FILE, segments });
+  const storyboard = JSON.parse(readFileSync(sbPath, 'utf8'));
+  const segments = storyboard.segments.map((s: any, i: number) => ({
+    id: s.id,
+    index: Number(s.id.replace(/\D/g, '')) || i + 1,
+    summary: s.summary ?? (typeof s.text === 'string' ? s.text.slice(0, 40) : ''),
+    role: s.role ?? '',
+    contentTags: Array.isArray(s.features) ? s.features : [],
+  }));
+  res.json({ file: STORYBOARD_FILE, segments });
 });
 
 // 匹配结果（MatchResult）：优先 MATCH_FILE，默认 out/match-<项目名>.json
@@ -109,35 +98,8 @@ app.get('/api/storyboard', (_req, res) => {
     res.json({ exists: true, storyboard });
     return;
   }
-  // 生成待定稿骨架：段信息就位、镜头未定
-  const profilePath = path.join(PROJECT_DIR, SEGMENT_PROFILE_FILE);
-  if (!existsSync(profilePath)) {
-    res.json({ exists: false, storyboard: null });
-    return;
-  }
-  const md = readFileSync(profilePath, 'utf8');
-  const segments = [];
-  for (const line of md.split('\n')) {
-    const m = line.match(/^\| (\d+) \| (.+?) \|/);
-    if (!m) continue;
-    const index = Number(m[1]);
-    segments.push({
-      id: `seg-${String(index).padStart(2, '0')}`,
-      text: m[2].trim(),
-      keywords: [],
-      phraseRange: [0, 0],
-      durationSec: 0, // 待转录填充真实时长
-      lensId: '',
-      params: {},
-    });
-  }
-  res.json({
-    exists: false,
-    storyboard: {
-      meta: { title: '待定稿项目', created: new Date().toISOString(), subtitleStyle: {} },
-      segments,
-    },
-  });
+  // storyboard 不存在：由派生步骤（定稿分割版 → storyboard.json）生成，server 不兜底
+  res.json({ exists: false, storyboard: null });
 });
 
 // storyboard 写入（项目侧）
