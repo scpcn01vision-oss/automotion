@@ -1,7 +1,7 @@
 """查文案词/短语在指定段内的口播开始秒（口播对齐填参工具）
 
 用法：python scripts/query-cues.py --segment 4 "Agentic AI" "以模治模"
-  项目目录经环境变量 V7_PROJECT_DIR 指定（缺省回退 013B 开发默认路径）
+  项目目录经环境变量 V7_PROJECT_DIR 指定（未设置时直接报错退出）
   输出：每个词/短语的 整片秒 → 段内秒（段内秒 = 整片秒 − 段起始整片秒）
   数据源：transcript.json 的 phrases（文案词级时间戳）
 """
@@ -15,7 +15,10 @@ try:
 except Exception:
     pass
 
-PROJECT = Path(os.environ.get("V7_PROJECT_DIR", r"E:\桌面\打破信息差\视频文件\013B"))
+_v7_project_dir = os.environ.get("V7_PROJECT_DIR")
+if not _v7_project_dir:
+    sys.exit("[FAIL] 未设置 V7_PROJECT_DIR 环境变量（指向项目目录）")
+PROJECT = Path(_v7_project_dir)
 
 
 def main():

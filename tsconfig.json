@@ -14,5 +14,5 @@
     "forceConsistentCasingInFileNames": true,
     "noUnusedLocals": true
   },
-  "exclude": ["out", "dist", "node_modules"]
+  "exclude": ["out", "dist", "node_modules", "templates"]
 }

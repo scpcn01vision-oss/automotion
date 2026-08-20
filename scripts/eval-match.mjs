@@ -1,14 +1,13 @@
 // M3 校准：候选 JSON vs 参考答案，算命中率（参考答案镜头 ∈ Top5 即命中）
-// 用法：node scripts/eval-match.mjs [候选JSON] [参考答案md]
+// 用法：node scripts/eval-match.mjs <候选JSON> <参考答案md>
 import { readFileSync } from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = path.resolve(__dirname, '..');
-const candFile = process.argv[2] || path.join(ROOT, 'out', 'match-013B.json');
-const stdFile =
-  process.argv[3] || 'E:\\桌面\\打破信息差\\视频文件\\013B\\理想镜头参考答案-013B.md';
+const candFile = process.argv[2];
+const stdFile = process.argv[3];
+if (!candFile || !stdFile) {
+  console.error('用法：node scripts/eval-match.mjs <候选JSON> <参考答案md>');
+  process.exit(1);
+}
 
 const cand = JSON.parse(readFileSync(candFile, 'utf8'));
 const stdSrc = readFileSync(stdFile, 'utf8');

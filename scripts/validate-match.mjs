@@ -1,5 +1,5 @@
 // M3 匹配候选校验：MatchResult schema + 镜头存在 + Top5 数量 + 防重复（间隔 <5 段的同一镜头）
-// 用法：node scripts/validate-match.mjs [候选JSON]
+// 用法：node scripts/validate-match.mjs <候选JSON>
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -7,7 +7,11 @@ import { isMatchResult } from '../shared/types.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
-const file = process.argv[2] || path.join(ROOT, 'out', 'match-013B.json');
+const file = process.argv[2];
+if (!file) {
+  console.error('用法：node scripts/validate-match.mjs <候选JSON>');
+  process.exit(1);
+}
 const registry = JSON.parse(readFileSync(path.join(ROOT, 'shared', 'registry.json'), 'utf8'));
 const lensIds = new Set(registry.entries.map((e) => e.id));
 

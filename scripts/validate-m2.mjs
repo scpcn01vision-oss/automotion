@@ -1,5 +1,5 @@
-// M2 校验：registry 一致性 + 数据模型 schema 校验（013B 真实文案 / 最小示例 / 负面测试）
-// 用法：node scripts/validate-m2.mjs
+// M2 校验：registry 一致性 + 数据模型 schema 校验（真实文案 / 最小示例 / 负面测试）
+// 用法：node scripts/validate-m2.mjs <项目目录> <文案文件名>
 // 通过输出 0 退出；失败输出 1
 import { readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
@@ -13,7 +13,12 @@ import {
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
-const ISOLATED_DIR = 'E:\\桌面\\打破信息差\\视频文件\\013B';
+const ISOLATED_DIR = process.argv[2] || process.env.V7_PROJECT_DIR;
+const scriptName = process.argv[3];
+if (!ISOLATED_DIR || !scriptName) {
+  console.error('用法：node scripts/validate-m2.mjs <项目目录> <文案文件名>');
+  process.exit(1);
+}
 
 let failed = 0;
 const fail = (msg) => {
@@ -66,11 +71,11 @@ const bracketMismatch = registry.entries.flatMap((e) => {
 if (bracketMismatch.length) fail(`字段类型括号不配对（疑似截断）：${bracketMismatch.slice(0, 8).join('; ')}`);
 else ok('字段类型括号配对（元组/数组完整性）');
 
-// ---------- 2. storyboard：013B 真实文案 ----------
-console.log('[2] storyboard schema 校验（013B 真实文案）');
-const scriptPath = path.join(ISOLATED_DIR, '北京智能体新政-视频文案.md');
+// ---------- 2. storyboard：真实文案 ----------
+console.log('[2] storyboard schema 校验（真实文案）');
+const scriptPath = path.join(ISOLATED_DIR, scriptName);
 if (!existsSync(scriptPath)) {
-  fail(`013B 文案不存在：${scriptPath}`);
+  fail(`真实文案不存在：${scriptPath}`);
 } else {
   const script = readFileSync(scriptPath, 'utf8');
   const rawSegments = script
@@ -93,8 +98,8 @@ if (!existsSync(scriptPath)) {
       params: {},
     })),
   };
-  if (!isStoryboard(storyboard)) fail('013B 文案构造的 storyboard 未通过校验');
-  else ok(`013B 文案 → ${storyboard.segments.length} 个段，校验通过`);
+  if (!isStoryboard(storyboard)) fail('真实文案构造的 storyboard 未通过校验');
+  else ok(`真实文案 → ${storyboard.segments.length} 个段，校验通过`);
 }
 
 // ---------- 3. 转录 / 字幕最小示例 ----------

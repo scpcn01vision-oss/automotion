@@ -6,7 +6,7 @@
 切分规则：docs/字幕切分规范-M5.md（v4，2026-08-11 定稿）
 
 用法：python scripts/transcribe.py [--skip-transcribe]
-  项目目录经环境变量 V7_PROJECT_DIR 指定（未设置时回退 013B 开发默认路径）
+  项目目录经环境变量 V7_PROJECT_DIR 指定（未设置时直接报错退出）
   --skip-transcribe：跳过 whisper 转录（复用已生成的 transcript.json，调试切分用）
 """
 import json
@@ -22,7 +22,10 @@ from pathlib import Path
 # 定向抑制该已知噪音，待 jieba 上游修复后移除
 warnings.filterwarnings("ignore", message="pkg_resources is deprecated as an API")
 
-PROJECT_DIR = Path(os.environ.get("V7_PROJECT_DIR", r"E:\桌面\打破信息差\视频文件\013B"))
+_v7_project_dir = os.environ.get("V7_PROJECT_DIR")
+if not _v7_project_dir:
+    sys.exit("[FAIL] 未设置 V7_PROJECT_DIR 环境变量（指向项目目录，需含 full.wav / storyboard.json）")
+PROJECT_DIR = Path(_v7_project_dir)
 AUDIO = PROJECT_DIR / "full.wav"
 STORYBOARD = PROJECT_DIR / "storyboard.json"
 OUT_TRANSCRIPT = PROJECT_DIR / "transcript.json"

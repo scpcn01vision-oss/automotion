@@ -10,11 +10,13 @@ import { isStoryboard } from '../../shared/types.ts';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..', '..');
 const PORT = Number(process.env.PORT ?? 3004);
-const PROJECT_DIR = process.env.V7_PROJECT_DIR; // 如 E:\桌面\打破信息差\视频文件\013B
-const MATCH_FILE = process.env.MATCH_FILE; // 匹配结果文件（默认仓库 out/match-013B.json）
-const DEFAULT_MATCH = path.join(ROOT, 'out', 'match-013B.json');
+const PROJECT_DIR = process.env.V7_PROJECT_DIR; // 项目侧数据目录，如 E:\桌面\打破信息差\视频文件\015
+// 默认文件名按项目目录名推导（如目录 015 → 段画像-015.md / out/match-015.json），显式环境变量优先
+const PROJECT_NAME = PROJECT_DIR ? path.basename(PROJECT_DIR) : '';
+const MATCH_FILE = process.env.MATCH_FILE; // 匹配结果文件（默认仓库 out/match-<项目名>.json）
+const DEFAULT_MATCH = path.join(ROOT, 'out', `match-${PROJECT_NAME}.json`);
 const SEGMENT_PROFILE_FILE =
-  process.env.V7_PROFILE_FILE ?? '段画像-013B.md'; // 项目侧段画像文件名（可用 V7_PROFILE_FILE 覆盖）
+  process.env.V7_PROFILE_FILE ?? `段画像-${PROJECT_NAME}.md`; // 项目侧段画像文件名（默认按项目名推导）
 const STORYBOARD_FILE = 'storyboard.json'; // 项目侧 storyboard 文件名
 
 const app = express();
@@ -50,7 +52,7 @@ app.get('/api/project/info', (_req, res) => {
   res.json({ configured: true, exists: true, dir: PROJECT_DIR, files });
 });
 
-// 段画像解析：项目侧「段画像-013B.md」表格 → 段数组
+// 段画像解析：项目侧「段画像-<项目名>.md」表格 → 段数组
 app.get('/api/project/segments', (_req, res) => {
   if (!PROJECT_DIR) {
     res.status(400).json({ error: '未设置 V7_PROJECT_DIR' });
@@ -81,7 +83,7 @@ app.get('/api/project/segments', (_req, res) => {
   res.json({ file: SEGMENT_PROFILE_FILE, segments });
 });
 
-// 匹配结果（MatchResult）：优先 MATCH_FILE，默认 out/match-013B.json
+// 匹配结果（MatchResult）：优先 MATCH_FILE，默认 out/match-<项目名>.json
 app.get('/api/match', (_req, res) => {
   const p = MATCH_FILE ?? DEFAULT_MATCH;
   if (!existsSync(p)) {
