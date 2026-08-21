@@ -162,7 +162,8 @@ export const App = () => {
       return;
     }
     const m = match?.segments.find((s) => s.id === segId);
-    if (m?.top5?.length) selectLens(m.top5[0].lensId);
+    // 未定稿：自动预选 Top 1；若 Step 3.5 已预生成 params，带上作为建议参数（否则显示镜头默认值）
+    if (m?.top5?.length) selectLens(m.top5[0].lensId, saved?.params as AnyLensProps | undefined);
   };
 
   // 初始自动预选：数据就绪后对当前段应用一次（之后由段切换驱动）
