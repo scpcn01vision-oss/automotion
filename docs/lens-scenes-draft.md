@@ -48,7 +48,7 @@
 | SplitTextStagger | 分段错开 | 宣告,展开 | 标题展示 |
 | TextOnPath | 沿径排字 | 宣告,展开 | 标题展示 |
 | TrackingExpandReveal | 字距舒展 | 宣告,展开 | 标题展示 |
-| LetterDropPhysics | 字母坠落 | 钩子,宣告 | 标题展示 |
+| LetterDropPhysics | 字母坠落 | 钩子,宣告 | 仅适合标题式开场（短断言/金句独立成词）；不适合揭穿/论证/段落级内容 |
 | ScrambleDecode | 乱码归位 | 钩子,宣告 | 仅适合英文/数字内容（乱码字符集为字母与数字）；不适合中文标题或段落 |
 | UiStripAwayOutro | 逐层剥离 | 收束 | 对于事情或工作的最后总结处理 |
 | IconFlipBloomLogo | 图标绽放 | 收束 | 标题展示 |
@@ -71,7 +71,7 @@
 | NeedleSweepSelftest | 指针自检 | 举证 | 多指标展示，仪表 |
 | TapeScrollFixedPointer | 刻度奔袭 | 举证 | 仅适合有统计意义的单指标刻度展示（如价格、数量、比例）；不适合文字含义或抽象概念 |
 | GradientWordSweep | 光扫词面 | 宣告 | 仅适合单个短词的扫光强调（如单句口号）；不适合长句、结论或段落级内容 |
-| HashtagToPillMaterialize | 标签化签 | 展开 | 把一个词/标签实体化成结论的揭穿（如「按Token计费」→「只算消耗，不看结果」）；适合揭示类内容，不适合纯展示 |
+| HashtagToPillMaterialize | 标签化签 | 展开,钩子 | 把一个词/标签实体化成结论的揭穿（如「按Token计费」→「只算消耗，不看结果」）；适合「设问-揭穿/标签实体化」类内容（如「简单/轻松」→「三流教程」）；不适合纯展示 |
 | IconFieldColorize | 图标点亮 | 展开 | 图标墙 |
 | AttentionBounce | 注目弹跳 | 宣告 | 消息提醒 |
 | PopBurstConfirm | 爆点确认 | 宣告 | 任务完成 |
@@ -100,7 +100,7 @@
 
 | id | 中文名 | 场景标签 | 使用场景描述 |
 |---|---|---|---|
-| BeatCutAccelerando | 节拍加速切 | 钩子,宣告 | 单一事物局部的展示或强调 |
+| BeatCutAccelerando | 节拍加速切 | 钩子,宣告 | 单一事物/判断的节奏切强调（节拍加速）；适合节奏型钩子或单一判断强调；不适合揭穿/论证结构 |
 | BeatStepListThemeCycle | 拍点列词 | 宣告,节奏 | 多个关键词/形容词的连打轮换（多主题、多气质体量展示，节奏密集） |
 | BottomPushStackWipe | 底推换景 | 转折 | 多个事物按顺序逐一展现/换景（一页推一页） |
 | CircleMatchIris | 圆心虹膜 | 举证 | 多个事物中对其中一个事物的具体展示 |
@@ -133,7 +133,7 @@
 | BrandFrameSnap | 品牌框定 | 宣告,承接 | 模式切换 |
 | DrawSvgTrace | 墨线描边 | 钩子,宣告 | 单一事物的展示或强调 |
 | RedHeadFileQuote | 红头引文 | 举证 | 引用官方文件/政策原文（红头文件样式） |
-| LetterspaceMaterialize | 字距显形 | 钩子,宣告 | 品牌展示 |
+| LetterspaceMaterialize | 字距显形 | 钩子,宣告 | 仅适合品牌/短词展示；不适合论证内容 |
 | LineBoil | 墨线沸腾 | 展开 | 单一事物的展示或强调 |
 | MarkerUnderlineTitle | 笔锋划题 | 宣告 | 对一句话中关键词的强调或对一句包含关键词的话的强调 |
 | BarnDoorSplit | 谷仓门裂 | 转折,承接, 对比 | 适合二元对立的两侧分裂对比（如能做到 vs 做不到、正面 vs 反面清单）；前后时间对比用 LightLeakBurn/InvisibleCut |
@@ -153,7 +153,7 @@
 
 | id | 中文名 | 场景标签 | 使用场景描述 |
 |---|---|---|---|
-| MagicianCardFlourish | 魔术卡弹 | 钩子,宣告 | 单一事物的展示或强调 |
+| MagicianCardFlourish | 魔术卡弹 | 钩子,宣告 | 魔术卡翻牌式揭示，适合开场亮出断言/结论；画面以卡牌翻飞为主 |
 | PaperTitleCard | 纸墨字卡 | 宣告 | 品牌或文字展示、强调 |
 | DatavizLandscapeOpen | 数据景观 | 举证 | 时间线收束或进程的推进 |
 
@@ -168,7 +168,7 @@
 
 | id | 中文名 | 场景标签 | 使用场景描述 |
 |---|---|---|---|
-| BrandInkOpen | 墨印开场 | 钩子 | 品牌或IP展示 |
+| BrandInkOpen | 墨印开场 | 钩子 | 仅适合品牌/IP 标识开场；不适合内容论证 |
 | SpotlightHeroCard | 追光主卡 | 举证 | 多个事物中对其中一个事物的具体展示 |
 | RowEmbed | 行嵌入 | 展开 | 对于一个事物中包含内容的展示 |
 | ListStackPress | 列表压叠 | 展开 | 对于一个事物中包含内容的展示 |
