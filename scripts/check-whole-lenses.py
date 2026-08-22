@@ -9,6 +9,9 @@
 动态解析（渲染面=镜头库），本脚本是进入整片前的独立闸门，防止：
   - storyboard 里出现 registry 外的镜头 id；
   - 未来整片入口退化回静态映射时静默缺失。
+  - storyboard 段缺绝对时间边界 startSec/endSec（整片会静默回退累计定位，
+    段间停顿被丢弃，边界逐段偏移——2026-08-23 教训：automotion-v7 环境
+    用旧转录脚本重新生成 storyboard 后该字段丢失，需重跑 transcribe.py 回填）。
 
 用法：
   python scripts/check-whole-lenses.py --project-dir <项目目录>
@@ -59,6 +62,11 @@ def main() -> None:
             missing.append(f"{s['id']}: 未定稿（lensId 为空）")
         elif lens_id not in registry_ids:
             missing.append(f"{s['id']}: {lens_id} 不在 registry")
+        if s.get("startSec") is None or s.get("endSec") is None:
+            missing.append(
+                f"{s['id']}: 缺绝对时间边界 startSec/endSec"
+                f"（需用新脚本重跑 transcribe.py 回填）"
+            )
 
     if missing:
         print("[FAIL] 整片镜头可用性校验未通过：")
