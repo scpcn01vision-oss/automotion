@@ -2,7 +2,7 @@
 // 端口 3004；项目侧数据路径由环境变量 V7_PROJECT_DIR 指定（不进仓库）
 import express from 'express';
 import cors from 'cors';
-import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { isStoryboard } from '../../shared/types.ts';
@@ -18,6 +18,7 @@ const DEFAULT_MATCH = PROJECT_DIR
   ? path.join(PROJECT_DIR, 'out', `match-${PROJECT_NAME}.json`)
   : path.join(ROOT, 'out', `match-${PROJECT_NAME}.json`);
 const STORYBOARD_FILE = 'storyboard.json'; // 项目侧 storyboard 文件名
+const PIC_DIR = PROJECT_DIR ? path.join(PROJECT_DIR, 'pic') : null; // 图片素材标准目录（项目侧 pic/）
 
 const app = express();
 app.use(cors());
@@ -118,6 +119,45 @@ app.post('/api/storyboard', (req, res) => {
   const sbPath = path.join(PROJECT_DIR, STORYBOARD_FILE);
   writeFileSync(sbPath, JSON.stringify(sb, null, 2), 'utf8');
   res.json({ ok: true, path: sbPath });
+});
+
+// 项目图片上传：JSON body { filename, dataBase64 }，保存到项目侧 pic/，返回可访问 URL
+// pic/ 为图片素材标准目录（不存在则自动创建）
+app.post('/api/image', (req, res) => {
+  if (!PROJECT_DIR) {
+    res.status(400).json({ error: '未设置 V7_PROJECT_DIR' });
+    return;
+  }
+  const { filename, dataBase64 } = req.body ?? {};
+  if (typeof filename !== 'string' || typeof dataBase64 !== 'string') {
+    res.status(400).json({ error: '需要 filename + dataBase64' });
+    return;
+  }
+  const name = path.basename(filename); // 防目录穿越
+  if (!name) {
+    res.status(400).json({ error: '文件名无效' });
+    return;
+  }
+  if (PIC_DIR) mkdirSync(PIC_DIR, { recursive: true });
+  const p = PIC_DIR ? path.join(PIC_DIR, name) : '';
+  writeFileSync(p, Buffer.from(dataBase64, 'base64'));
+  res.json({ ok: true, url: `http://localhost:${PORT}/img/${encodeURIComponent(name)}` });
+});
+
+// 项目图片静态访问：serve 项目侧 pic/ 下文件（basename 防目录穿越）
+app.get('/img/:file', (req, res) => {
+  if (!PROJECT_DIR || !PIC_DIR) {
+    res.status(400).json({ error: '未设置 V7_PROJECT_DIR' });
+    return;
+  }
+  const name = path.basename(req.params.file);
+  const p = path.join(PIC_DIR, name);
+  if (!existsSync(p)) {
+    res.status(404).json({ error: `图片不存在：${name}` });
+    return;
+  }
+  res.type(path.extname(name) || 'image/png');
+  res.sendFile(p);
 });
 
 // 项目侧音频路由：预览/渲染共用一条 http 地址，音频只存项目目录一份（无快照）

@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generatedAt": "2026-08-22T02:35:12.687Z",
+    "generatedAt": "2026-08-22T11:56:27.000Z",
     "count": 122,
     "source": "Root.preview.tsx + docs/lens-names.md + 组件 XxxProps 接口（同文件/跨文件/内联对象字段）+ docs/lens-scenes-draft.md"
   },
@@ -3253,14 +3253,73 @@
           "name": "subject",
           "type": "string",
           "optional": true,
-          "default": "Computer"
+          "default": ""
         },
         {
-          "name": "words",
-          "type": "string[]",
-          "optional": true
+          "name": "items",
+          "type": "WordRelayItem[]",
+          "optional": true,
+          "fields": [
+            {
+              "description": "接力词（右侧第二行）",
+              "name": "word",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）",
+              "name": "type",
+              "type": "'rows' | 'image'",
+              "optional": true
+            },
+            {
+              "description": "rows 用：卡标题（image 卡无标题）",
+              "showWhen": {
+                "field": "type",
+                "value": "rows"
+              },
+              "name": "cardTitle",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "description": "rows 用：行",
+              "showWhen": {
+                "field": "type",
+                "value": "rows"
+              },
+              "name": "rows",
+              "type": "{ label: string; value: string }[]",
+              "optional": true,
+              "fields": [
+                {
+                  "name": "label",
+                  "type": "string",
+                  "optional": false
+                },
+                {
+                  "name": "value",
+                  "type": "string",
+                  "optional": false
+                }
+              ]
+            },
+            {
+              "description": "推荐插入 16:9 的图片",
+              "showWhen": {
+                "field": "type",
+                "value": "image"
+              },
+              "file": true,
+              "name": "image",
+              "type": "string",
+              "optional": true
+            }
+          ]
         },
         {
+          "description": "口播锚点（技能口播对齐流程用 query-cues.py 自动生成，非用户可调）",
+          "internal": true,
           "name": "cueSec",
           "type": "number[]",
           "optional": true
@@ -5921,7 +5980,18 @@
       "file": "lenses/tplshots/wrappers.tsx",
       "group": "tplshots",
       "durationInFrames": 83,
-      "props": [],
+      "props": [
+        {
+          "name": "wordmark",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "kicker",
+          "type": "string",
+          "optional": true
+        }
+      ],
       "scenes": [
         "钩子"
       ],

@@ -30,19 +30,39 @@ const PANEL_Y = 90;
 const PANEL_W = 620;
 const ROW_H = 92;
 const ROWS_TOP = 210; // 面板内第一行的画面 y
-
-// 行 → 卡的目标位（画布左侧区域）
-const TARGETS = [
-  { x: 150, y: 150, rot: -2 },
-  { x: 480, y: 420, rot: 1.5 },
-  { x: 180, y: 660, rot: 2 },
-];
 const CARD_W = 480;
 const CARD_H = 240;
 
-const CHECK_FRAMES = [12, 22, 32]; // 三个复选框打勾时刻
-const BUTTON_FRAME = 46; // 按钮按下
-const FLY_START = [54, 60, 66]; // 三行错峰起飞
+const CHECK_FIRST = 12; // 首框打勾帧
+const CHECK_GAP = 10;   // 打勾间隔（随数量自适应收缩）
+const FLY_AFTER = 30;   // 打勾后起飞帧差
+
+// 行 → 卡的目标位：画布左侧自适应网格（数量随 cards/rows 变化）
+const computeTargets = (n: number) => {
+  if (n <= 0) return [];
+  const areaX = 120, areaY = 120, areaW = 620, areaH = 760, gut = 50;
+  const cols = Math.min(2, n);
+  const rows = Math.ceil(n / cols);
+  const cw = Math.min(CARD_W, (areaW - (cols - 1) * gut) / cols);
+  const ch = Math.min(CARD_H, (areaH - (rows - 1) * gut) / rows);
+  const gridW = cols * cw + (cols - 1) * gut;
+  const gridH = rows * ch + (rows - 1) * gut;
+  const startX = areaX + (areaW - gridW) / 2;
+  const startY = areaY + (areaH - gridH) / 2;
+  return Array.from({ length: n }, (_, i) => {
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+    return { x: startX + col * (cw + gut), y: startY + row * (ch + gut), rot: i % 2 === 0 ? -2 : 1.5 };
+  });
+};
+
+// 动画帧：打勾/起飞逐张错峰，随数量自适应（避免末张超出时长）
+const computeTiming = (n: number) => {
+  const gap = Math.max(6, Math.min(CHECK_GAP, Math.floor((150 - CHECK_FIRST) / Math.max(1, n))));
+  const checks = Array.from({ length: n }, (_, i) => CHECK_FIRST + i * gap);
+  const flies = checks.map((c) => c + FLY_AFTER);
+  return { checks, flies };
+};
 
 export interface PanelToCanvasMaterializeProps {
   panelTitle?: string; // 面板标题
@@ -69,8 +89,15 @@ export const PanelToCanvasMaterialize: React.FC<PanelToCanvasMaterializeProps> =
 }) => {
   const frame = useShotFrame(SHOT_TIME);
   const { fps } = useVideoConfig();
+  const n = Math.max(cards.length, rows.length);
+  const targets = computeTargets(n);
+  const { checks, flies } = computeTiming(n);
+  const buttonFrame = Math.max(46, (checks[n - 1] ?? 12) + 4);
+  const rowOf = (i: number) => rows[i % Math.max(1, rows.length)] ?? { icon: '', title: '', value: '' };
+  const cardOf = (i: number) =>
+    cards[i % Math.max(1, cards.length)] ?? { title: '', rows: [] as { label: string; value: string }[], name: '' };
 
-  const btnPress = interpolate(frame, [BUTTON_FRAME, BUTTON_FRAME + 3, BUTTON_FRAME + 9], [0, 1, 0], {
+  const btnPress = interpolate(frame, [buttonFrame, buttonFrame + 3, buttonFrame + 9], [0, 1, 0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
@@ -109,9 +136,9 @@ export const PanelToCanvasMaterialize: React.FC<PanelToCanvasMaterializeProps> =
           <span style={{ fontFamily: FONT_STACK, fontSize: 18, fontWeight: 700, color: G.ink }}>事项</span>
           <span style={{ marginLeft: 'auto', fontFamily: FONT_STACK, fontSize: 18, fontWeight: 700, color: G.ink }}>状态</span>
         </div>
-        {/* 行槽位（行飞走后留白） */}
-        {[0, 1, 2].map((i) => (
-          <RowSlot key={i} idx={i} frame={frame} fps={fps} row={rows[i % rows.length]} />
+        {/* 行槽位（行飞走后留白）——数量随 n */}
+        {Array.from({ length: n }).map((_, i) => (
+          <RowSlot key={i} idx={i} frame={frame} fps={fps} row={rowOf(i)} checkF={checks[i] ?? null} flyF={flies[i] ?? null} />
         ))}
         {/* 面板底部按钮 */}
         <div
@@ -135,13 +162,13 @@ export const PanelToCanvasMaterialize: React.FC<PanelToCanvasMaterializeProps> =
         </div>
       </div>
 
-      {/* 飞行中/落位的三张卡（行→卡形态插值） */}
-      {[0, 1, 2].map((i) => (
-        <FlyingCard key={i} idx={i} frame={frame} fps={fps} row={rows[i % rows.length]} card={cards[i % cards.length]} />
+      {/* 飞行中/落位的卡（行→卡形态插值）——数量随 n */}
+      {Array.from({ length: n }).map((_, i) => (
+        <FlyingCard key={i} idx={i} frame={frame} fps={fps} row={rowOf(i)} card={cardOf(i)} tgt={targets[i]} flyF={flies[i] ?? 0} />
       ))}
 
       {/* 光标 */}
-      <Cursor frame={frame} />
+      <Cursor frame={frame} buttonFrame={buttonFrame} />
     </AbsoluteFill>
   );
 };
@@ -152,12 +179,14 @@ const RowSlot: React.FC<{
   frame: number;
   fps: number;
   row: { icon: string; title: string; value: string };
-}> = ({ idx, frame, fps, row }) => {
-  const checkF = CHECK_FRAMES[idx];
-  const flyF = FLY_START[idx];
-  const checked = frame >= checkF;
-  const checkPop = spring({ frame: frame - checkF, fps, config: { damping: 10, stiffness: 260 } });
-  const flown = frame >= flyF;
+  checkF: number | null;
+  flyF: number | null;
+}> = ({ idx, frame, fps, row, checkF, flyF }) => {
+  const checked = checkF != null && frame >= checkF;
+  const checkPop = spring({ frame: frame - (checkF ?? 0), fps, config: { damping: 10, stiffness: 260 } });
+  const flown = flyF != null && frame >= flyF;
+  const title = row?.title ?? '';
+  const value = row?.value ?? '';
 
   return (
     <div
@@ -198,8 +227,8 @@ const RowSlot: React.FC<{
               </svg>
             )}
           </div>
-          <div style={{ fontFamily: FONT_STACK, fontSize: 24, fontWeight: 600, color: G.ink }}>{row.title}</div>
-          <div style={{ marginLeft: 'auto', fontFamily: FONT_STACK, fontSize: 20, fontWeight: 700, color: G.accent }}>{row.value}</div>
+          <div style={{ fontFamily: FONT_STACK, fontSize: 24, fontWeight: 600, color: G.ink }}>{title}</div>
+          <div style={{ marginLeft: 'auto', fontFamily: FONT_STACK, fontSize: 20, fontWeight: 700, color: G.accent }}>{value}</div>
         </>
       )}
     </div>
@@ -213,8 +242,9 @@ const FlyingCard: React.FC<{
   fps: number;
   row: { icon: string; title: string; value: string };
   card: { title: string; rows: { label: string; value: string }[]; name: string };
-}> = ({ idx, frame, fps, row, card }) => {
-  const flyF = FLY_START[idx];
+  tgt: { x: number; y: number; rot: number };
+  flyF: number;
+}> = ({ idx, frame, fps, row, card, tgt, flyF }) => {
   if (frame < flyF) return null;
 
   const t = spring({ frame: frame - flyF, fps, config: { damping: 16, stiffness: 60 }, durationInFrames: 34 });
@@ -224,23 +254,32 @@ const FlyingCard: React.FC<{
   const sy = ROWS_TOP + idx * ROW_H;
   const sw = PANEL_W - 60;
   const sh = ROW_H - 12;
-  const tgt = TARGETS[idx];
+  const tx = tgt?.x ?? 150;
+  const ty = tgt?.y ?? 300;
+  const trot = tgt?.rot ?? 0;
 
   // 弧线：中点向上抬，像被"倒"出来
-  const mx = (sx + tgt.x) / 2;
-  const my = Math.min(sy, tgt.y) - 170;
+  const mx = (sx + tx) / 2;
+  const my = Math.min(sy, ty) - 170;
   const u = t;
-  const x = (1 - u) * (1 - u) * sx + 2 * (1 - u) * u * mx + u * u * tgt.x;
-  const y = (1 - u) * (1 - u) * sy + 2 * (1 - u) * u * my + u * u * tgt.y;
+  const x = (1 - u) * (1 - u) * sx + 2 * (1 - u) * u * mx + u * u * tx;
+  const y = (1 - u) * (1 - u) * sy + 2 * (1 - u) * u * my + u * u * ty;
 
   const w = sw + (CARD_W - sw) * u;
   const h = sh + (CARD_H - sh) * u;
-  const rot = tgt.rot * u;
+  const rot = trot * u;
   const radius = 10 + 8 * u;
   const shadow = interpolate(u, [0, 1], [0.08, 0.16]);
   // 行内容(单行水平) → 卡内容(标题+行+footer) 交叉淡化
   const rowOp = Math.max(0, 1 - u * 2.2);
   const cardOp = Math.max(0, (u - 0.45) / 0.55);
+
+  // 字段容错：行/卡内容缺省兜底，杜绝 map 崩溃
+  const rowsC = card?.rows ?? [];
+  const cardTitle = card?.title ?? '';
+  const cardName = card?.name ?? '';
+  const rIcon = row?.icon ?? '';
+  const rTitle = row?.title ?? '';
 
   return (
     <div
@@ -262,42 +301,42 @@ const FlyingCard: React.FC<{
     >
       {/* 行形态内容 */}
       <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', gap: 18, padding: '0 20px', opacity: rowOp }}>
-        <div style={{ width: 30, height: 30, borderRadius: 8, background: G.ink, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, fontWeight: 800, color: G.card }}>{row.icon}</div>
-        <div style={{ fontFamily: FONT_STACK, fontSize: 22, fontWeight: 600, color: G.ink }}>{row.title}</div>
+        <div style={{ width: 30, height: 30, borderRadius: 8, background: G.ink, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, fontWeight: 800, color: G.card }}>{rIcon}</div>
+        <div style={{ fontFamily: FONT_STACK, fontSize: 22, fontWeight: 600, color: G.ink }}>{rTitle}</div>
       </div>
       {/* 卡形态内容 */}
       <div style={{ position: 'absolute', inset: 0, padding: 24, display: 'flex', flexDirection: 'column', gap: 12, opacity: cardOp, boxSizing: 'border-box' }}>
-        <div style={{ fontFamily: FONT_STACK, fontSize: 26, fontWeight: 700, color: G.ink }}>{card.title}</div>
-        {card.rows.map((r, ri) => (
+        <div style={{ fontFamily: FONT_STACK, fontSize: 26, fontWeight: 700, color: G.ink }}>{cardTitle}</div>
+        {rowsC.map((r, ri) => (
           <div key={ri} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <span style={{ fontFamily: FONT_STACK, fontSize: 18, fontWeight: 600, color: G.ink }}>{r.label}</span>
-            <span style={{ marginLeft: 'auto', fontFamily: FONT_STACK, fontSize: 18, fontWeight: 700, color: G.accent }}>{r.value}</span>
+            <span style={{ fontFamily: FONT_STACK, fontSize: 18, fontWeight: 600, color: G.ink }}>{r?.label ?? ''}</span>
+            <span style={{ marginLeft: 'auto', fontFamily: FONT_STACK, fontSize: 18, fontWeight: 700, color: G.accent }}>{r?.value ?? ''}</span>
           </div>
         ))}
         <div style={{ marginTop: 'auto', display: 'flex', gap: 10, alignItems: 'center' }}>
-          <div style={{ width: 28, height: 28, borderRadius: 14, background: G.mid, color: G.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 800 }}>{card.name[0]}</div>
-          <div style={{ fontFamily: FONT_STACK, fontSize: 16, fontWeight: 600, color: G.mid }}>{card.name}</div>
+          <div style={{ width: 28, height: 28, borderRadius: 14, background: G.mid, color: G.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 800 }}>{cardName.charAt(0)}</div>
+          <div style={{ fontFamily: FONT_STACK, fontSize: 16, fontWeight: 600, color: G.mid }}>{cardName}</div>
         </div>
       </div>
     </div>
   );
 };
 
-const Cursor: React.FC<{ frame: number }> = ({ frame }) => {
+const Cursor: React.FC<{ frame: number; buttonFrame: number }> = ({ frame, buttonFrame }) => {
   // 光标：从画面中部移到按钮上并停留按下
   const bx = PANEL_X + PANEL_W / 2;
   const by = PANEL_Y + 900 - 60;
-  const x = interpolate(frame, [8, BUTTON_FRAME - 4], [900, bx], {
+  const x = interpolate(frame, [8, buttonFrame - 4], [900, bx], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
     easing: Easing.inOut(Easing.quad),
   });
-  const y = interpolate(frame, [8, BUTTON_FRAME - 4], [560, by], {
+  const y = interpolate(frame, [8, buttonFrame - 4], [560, by], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
     easing: Easing.inOut(Easing.quad),
   });
-  const press = interpolate(frame, [BUTTON_FRAME, BUTTON_FRAME + 3, BUTTON_FRAME + 8], [1, 0.78, 1], {
+  const press = interpolate(frame, [buttonFrame, buttonFrame + 3, buttonFrame + 8], [1, 0.78, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });

@@ -82,12 +82,39 @@ function splitTopLevel(body) {
   return parts;
 }
 
+// 从 body 提取「JSDoc → 紧跟字段名」的元信息（description + showWhen）
+function extractJsDocMeta(body) {
+  const map = {};
+  const re = /\/\*\*\s*([\s\S]*?)\s*\*\/\s*([A-Za-z_]\w*)/g;
+  let m;
+  while ((m = re.exec(body)) !== null) {
+    const comment = m[1].trim();
+    const fname = m[2];
+    const showM = comment.match(/type=\s*(\w+)/);
+    const isFile = /[\|｜]\s*file\b/.test(comment);
+    const isInternal = /@internal/.test(comment);
+    const desc = comment
+      .replace(/\s*[\|｜]\s*type=.*$/, '')
+      .replace(/\s*[\|｜]\s*file\s*$/, '')
+      .replace(/\s*@internal\s*$/, '')
+      .trim();
+    const meta = {};
+    if (desc) meta.description = desc;
+    if (showM) meta.showWhen = { field: 'type', value: showM[1] };
+    if (isFile) meta.file = true;
+    if (isInternal) meta.internal = true;
+    map[fname] = meta;
+  }
+  return map;
+}
+
 function parseFieldsBody(body) {
   const fields = [];
+  const meta = extractJsDocMeta(body);
   for (const raw of splitTopLevel(stripComments(body))) {
     const fm = raw.match(/^\s*(\w+)(\??)\s*:\s*(.+?)\s*$/);
     if (!fm || fm[1] === 'id') continue;
-    fields.push({ name: fm[1], type: fm[3].trim(), optional: fm[2] === '?' });
+    fields.push({ ...(meta[fm[1]] ?? {}), name: fm[1], type: fm[3].trim(), optional: fm[2] === '?' });
   }
   return fields;
 }

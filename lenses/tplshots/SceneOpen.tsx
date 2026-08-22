@@ -58,7 +58,11 @@ const BEAM_CORE = 'rgba(255,248,232,0.98)';
  * the soft page texture; the card springs up off the plane and hovers ~54f
  * while a beam runs two laps around its rounded outline; then it settles flush
  * back into its slot (lock→touchdown ≈ 3.3s). */
-export const SceneOpen: React.FC<{ start?: number }> = ({ start = 0 }) => {
+export const SceneOpen: React.FC<{ start?: number; wordmark?: string; kicker?: string }> = ({
+  start = 0,
+  wordmark = WORDMARK,
+  kicker = KICKER,
+}) => {
   const frame = useCurrentFrame() + start;
   const duration = AIFL_SHOTS.morning.duration; // 220
 
@@ -75,7 +79,7 @@ export const SceneOpen: React.FC<{ start?: number }> = ({ start = 0 }) => {
   const perChar = 0.7;
   const kickStart = 28;
   const kickChars = Math.floor(Math.max(0, frame - kickStart) / perChar);
-  const kickDone = kickStart + KICKER.length * perChar; // ~43.4
+const kickDone = kickStart + kicker.length * perChar; // ~43.4
   const cursorOn = (() => {
     if (frame < kickStart) return false;
     if (frame < kickDone) return true;
@@ -464,7 +468,7 @@ export const SceneOpen: React.FC<{ start?: number }> = ({ start = 0 }) => {
                 display: 'inline-flex', alignItems: 'flex-end',
               }}
             >
-              {WORDMARK.split('').map((ch, i) => {
+              {wordmark.split('').map((ch, i) => {
                 const delay = 10 + i * 3;
                 const t = interpolate(frame, [delay, delay + 12], [0, 1], {
                   extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
@@ -513,7 +517,7 @@ export const SceneOpen: React.FC<{ start?: number }> = ({ start = 0 }) => {
                 display: 'flex', justifyContent: 'center', alignItems: 'center',
               }}
             >
-              <span style={{ whiteSpace: 'pre' }}>{KICKER.slice(0, kickChars)}</span>
+              <span style={{ whiteSpace: 'pre' }}>{kicker.slice(0, kickChars)}</span>
               <span
                 style={{
                   display: 'inline-block',

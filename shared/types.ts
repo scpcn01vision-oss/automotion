@@ -10,6 +10,10 @@ export interface PropField {
   type: string; // 类型标注（原始文本）
   optional: boolean; // 是否可选（接口里带 ?）
   default?: unknown; // 组件签名中的默认值（generate-registry 从组件解构提取）
+  description?: string; // 字段说明（工作台灰色小字提示；来自组件接口字段前的 JSDoc 注释）
+  showWhen?: { field: string; value: string }; // 条件显示：当同层级字段 field === value 时才显示本字段（来自 JSDoc 「type=xxx 时显示」）
+  file?: boolean; // 字段为「选择图片」类（工作台渲染文件选择器按钮；来自 JSDoc 「｜file」）
+  internal?: boolean; // 内部字段（工作台不作为可调参数显示；来自 JSDoc 「@internal」，如口播锚点 cueSec）
   fields?: PropField[]; // 嵌套对象/数组元素字段（递归提取，供列表行编辑）
 }
 

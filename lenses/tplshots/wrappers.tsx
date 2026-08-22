@@ -20,7 +20,13 @@ import { SceneWbr } from "./SceneWbr";
 import { SceneOutroLive } from "./SceneOutroLive";
 
 // brand-ink-open：墨线十字准星 → 字标逐字压印 → 打字机副标 → 1s 静止 → 上浮消散（0–83）
-export const BrandInkOpen: React.FC = () => <SceneOpen start={0} />;
+export interface BrandInkOpenProps {
+  wordmark?: string;   // 中央大字标（品牌名），缺省 'AI Foundation Lab'
+  kicker?: string;     // 下方打字机副标，缺省 'TEAM RESEARCH CONSOLE'
+}
+export const BrandInkOpen: React.FC<BrandInkOpenProps> = ({ wordmark, kicker }) => (
+  <SceneOpen start={0} wordmark={wordmark} kicker={kicker} />
+);
 
 // spotlight-hero-card：暖光巡视 dashboard → 锁定单卡 → 推近摇摆 → 悬停光束两圈 → 归位（82–220）
 export const SpotlightHeroCard: React.FC = () => <SceneOpen start={82} />;
