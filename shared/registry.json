@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generatedAt": "2026-08-13T13:19:53.226Z",
+    "generatedAt": "2026-08-22T02:35:12.687Z",
     "count": 122,
     "source": "Root.preview.tsx + docs/lens-names.md + 组件 XxxProps 接口（同文件/跨文件/内联对象字段）+ docs/lens-scenes-draft.md"
   },
@@ -172,6 +172,11 @@
           "type": "string",
           "optional": true,
           "default": "原文引用"
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -224,6 +229,11 @@
               "optional": true
             }
           ]
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -318,6 +328,11 @@
           "type": "string",
           "optional": true,
           "default": "Paper Notes"
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -409,6 +424,11 @@
               "optional": true
             }
           ]
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -528,6 +548,11 @@
               "optional": true
             }
           ]
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -594,6 +619,11 @@
           "type": "string",
           "optional": true,
           "default": "我"
+        },
+        {
+          "name": "cueSec",
+          "type": "number[]",
+          "optional": true
         }
       ],
       "scenes": [
@@ -731,6 +761,11 @@
               "optional": true
             }
           ]
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -938,6 +973,11 @@
           "type": "number",
           "optional": true,
           "default": 16
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -1072,6 +1112,11 @@
           "type": "number",
           "optional": true,
           "default": 92
+        },
+        {
+          "name": "cueSec",
+          "type": "number[]",
+          "optional": true
         }
       ],
       "scenes": [
@@ -1609,6 +1654,11 @@
               "optional": false
             }
           ]
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -2043,6 +2093,11 @@
               "optional": false
             }
           ]
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -2141,6 +2196,11 @@
           "type": "string",
           "optional": true,
           "default": "Next"
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -2239,6 +2299,21 @@
           "type": "string",
           "optional": true,
           "default": "VS"
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
+        },
+        {
+          "name": "sceneAAtSec",
+          "type": "number",
+          "optional": true
+        },
+        {
+          "name": "sceneBAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -2456,6 +2531,11 @@
               "optional": true
             }
           ]
+        },
+        {
+          "name": "cueSec",
+          "type": "number[]",
+          "optional": true
         }
       ],
       "scenes": [
@@ -2634,6 +2714,11 @@
               "optional": false
             }
           ]
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -2759,6 +2844,11 @@
               "optional": true
             }
           ]
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -2844,6 +2934,11 @@
               "optional": false
             }
           ]
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -2884,6 +2979,11 @@
           "type": "string",
           "optional": true,
           "default": "MOTION SYSTEM"
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -3111,6 +3211,11 @@
           "type": "string",
           "optional": true,
           "default": "inkmark"
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -3153,6 +3258,11 @@
         {
           "name": "words",
           "type": "string[]",
+          "optional": true
+        },
+        {
+          "name": "cueSec",
+          "type": "number[]",
           "optional": true
         }
       ],
@@ -3221,6 +3331,11 @@
           "type": "string",
           "optional": true,
           "default": "7 项检查完成 · 可开始构建"
+        },
+        {
+          "name": "cueSec",
+          "type": "number[]",
+          "optional": true
         }
       ],
       "scenes": [
@@ -3691,7 +3806,7 @@
         },
         {
           "name": "commands",
-          "type": "{ icon: string; label: string; kbd: string; exitAt: number }[]",
+          "type": "{ icon: string; label: string; kbd: string }[]",
           "optional": true,
           "fields": [
             {
@@ -3708,13 +3823,13 @@
               "name": "kbd",
               "type": "string",
               "optional": false
-            },
-            {
-              "name": "exitAt",
-              "type": "number",
-              "optional": false
             }
           ]
+        },
+        {
+          "name": "cueSec",
+          "type": "number[]",
+          "optional": true
         }
       ],
       "scenes": [
@@ -3777,6 +3892,11 @@
           "name": "lines",
           "type": "[string, string]",
           "optional": true
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -3818,6 +3938,11 @@
         {
           "name": "body",
           "type": "string[]",
+          "optional": true
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
           "optional": true
         }
       ],
@@ -3980,6 +4105,11 @@
           "type": "string",
           "optional": true,
           "default": "GLOW"
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -4157,6 +4287,23 @@
           "type": "string",
           "optional": true,
           "default": "实时更新"
+        },
+        {
+          "name": "bars",
+          "type": "ParticleSandBar[]",
+          "optional": true,
+          "fields": [
+            {
+              "name": "value",
+              "type": "number",
+              "optional": false
+            },
+            {
+              "name": "label",
+              "type": "string",
+              "optional": true
+            }
+          ]
         }
       ],
       "scenes": [
@@ -4357,6 +4504,11 @@
               "optional": false
             }
           ]
+        },
+        {
+          "name": "cueSec",
+          "type": "number[]",
+          "optional": true
         }
       ],
       "scenes": [
@@ -4514,6 +4666,11 @@
               ]
             }
           ]
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -4582,6 +4739,11 @@
           "default": "搜索"
         },
         {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
+        },
+        {
           "name": "actions",
           "type": "string[]",
           "optional": true
@@ -4634,6 +4796,28 @@
           "type": "string",
           "optional": true,
           "default": "TIMELINE"
+        },
+        {
+          "name": "ticks",
+          "type": "TimelineTick[]",
+          "optional": true,
+          "fields": [
+            {
+              "name": "label",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "cardTitle",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "cardValue",
+              "type": "string",
+              "optional": true
+            }
+          ]
         }
       ],
       "scenes": [
@@ -4690,6 +4874,23 @@
           "type": "string",
           "optional": true,
           "default": "Features"
+        },
+        {
+          "name": "cards",
+          "type": "BentoCard[]",
+          "optional": true,
+          "fields": [
+            {
+              "name": "title",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "name": "sub",
+              "type": "string",
+              "optional": true
+            }
+          ]
         }
       ],
       "scenes": [
@@ -4743,6 +4944,11 @@
               "optional": true
             }
           ]
+        },
+        {
+          "name": "cueSec",
+          "type": "number[]",
+          "optional": true
         }
       ],
       "scenes": [
@@ -4796,6 +5002,11 @@
               "optional": true
             }
           ]
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -4845,6 +5056,11 @@
           "type": "string",
           "optional": true,
           "default": ""
+        },
+        {
+          "name": "cueSec",
+          "type": "number[]",
+          "optional": true
         }
       ],
       "scenes": [
@@ -5284,6 +5500,11 @@
               "optional": true
             }
           ]
+        },
+        {
+          "name": "cueSec",
+          "type": "number[]",
+          "optional": true
         }
       ],
       "scenes": [
@@ -5366,6 +5587,11 @@
               "optional": true
             }
           ]
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -5445,6 +5671,11 @@
               "optional": false
             }
           ]
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [

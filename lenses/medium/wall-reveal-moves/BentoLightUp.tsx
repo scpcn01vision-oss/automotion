@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 钩子,展开
+// props: title（顶部标题）、cards（卡片数组，含 title/sub，缺省 DEFAULT_CARDS；每排最多 3 张、整排居中、数量自适应）
 // === 时间特性 ===
 // 策略: 弹刚 ShotTime（整段弹性）
 // 刚性（不可压缩）: 无
@@ -30,20 +31,29 @@ const SHOT_TIME: ShotTime = {
 const BG = G.side;
 const AMBER = G.accent;
 const FIRST = 20; // 首格激活帧
-const GAP = 12; // 格间节拍
-const CELL_W = 480;
 const CELL_H = 330;
 const GUT = 44;
-const LEFT = (1920 - (CELL_W * 3 + GUT * 2)) / 2;
-const TOP = (1080 - (CELL_H * 2 + GUT)) / 2 + 30;
+const MAX_CARD_W = 480;
+const SIDE_MARGIN = 48;
 
-const Cell: React.FC<{ i: number; frame: number }> = ({ i, frame }) => {
-  const start = FIRST + i * GAP;
-  const col = i % 3;
-  const row = Math.floor(i / 3);
-  const x = LEFT + col * (CELL_W + GUT);
-  const y = TOP + row * (CELL_H + GUT);
+export interface BentoCard {
+  title?: string; // 卡片主标题
+  sub?: string;   // 卡片副文案（可省略，仅一行时不占位）
+}
 
+export interface BentoLightUpProps {
+  title?: string;
+  cards?: BentoCard[];
+}
+
+// 缺省卡片示例（不传 cards 时的默认画面）
+const DEFAULT_CARDS: BentoCard[] = [
+  { title: '要点一', sub: '说明一' },
+  { title: '要点二', sub: '说明二' },
+  { title: '要点三', sub: '说明三' },
+];
+
+const Cell: React.FC<{ frame: number; idx: number; title?: string; sub?: string; left: number; top: number; cardW: number; start: number }> = ({ frame, idx, title, sub, left, top, cardW, start }) => {
   // ① 边框流光：pathLength=100 的 dashoffset 描边，8f 走完一圈
   const draw = interpolate(frame, [start, start + 8], [0, 1], {
     extrapolateLeft: 'clamp',
@@ -71,11 +81,11 @@ const Cell: React.FC<{ i: number; frame: number }> = ({ i, frame }) => {
   const opacity = 0.18 + 0.82 * lit;
   const ty = 20 * (1 - rise);
   // seed 正弦哈希做每格微差（点亮瞬间的辉光强度略有随机感）
-  const jitter = Math.abs(Math.sin(i * 127.3) * 43758.5453 % 1);
+  const jitter = Math.abs(Math.sin(idx * 127.3) * 43758.5453 % 1);
   const glow = lit * (1 - lit) * 4 * (14 + jitter * 6); // 点亮中段最亮的辉光脉冲
 
   return (
-    <div style={{ position: 'absolute', left: x, top: y, width: CELL_W, height: CELL_H }}>
+    <div style={{ position: 'absolute', left, top, width: cardW, height: CELL_H }}>
       {/* 暗态卡 + 点亮后的内容（同一张卡，靠 opacity/translateY 提亮浮出） */}
       <div
         style={{
@@ -87,7 +97,7 @@ const Cell: React.FC<{ i: number; frame: number }> = ({ i, frame }) => {
       >
         <div
           style={{
-            width: CELL_W,
+            width: cardW,
             height: CELL_H,
             background: G.card,
             border: `2px solid ${G.border}`,
@@ -100,23 +110,31 @@ const Cell: React.FC<{ i: number; frame: number }> = ({ i, frame }) => {
             gap: 8,
           }}
         >
-          <div style={{ fontFamily: FONT_STACK, fontSize: 22, fontWeight: 800, color: G.ink }}>
-            功能 {i + 1}
-          </div>
+          {/* 卡片内容：字段各自独立可选——只填一个则单行垂直居中，不为缺省字段留占位 */}
+          {title && (
+            <div style={{ fontFamily: FONT_STACK, fontSize: 22, fontWeight: 800, color: G.ink, textAlign: 'center' }}>
+              {title}
+            </div>
+          )}
+          {sub && (
+            <div style={{ fontFamily: FONT_STACK, fontSize: 16, fontWeight: 600, color: G.mid, textAlign: 'center' }}>
+              {sub}
+            </div>
+          )}
         </div>
       </div>
       {/* 边框流光：SVG rect 描边一圈 */}
       {draw > 0 && (
         <svg
-          width={CELL_W}
+          width={cardW}
           height={CELL_H}
-          viewBox={`0 0 ${CELL_W} ${CELL_H}`}
+          viewBox={`0 0 ${cardW} ${CELL_H}`}
           style={{ position: 'absolute', left: 0, top: ty, overflow: 'visible' }}
         >
           <rect
             x={2}
             y={2}
-            width={CELL_W - 4}
+            width={cardW - 4}
             height={CELL_H - 4}
             rx={14}
             fill="none"
@@ -134,14 +152,41 @@ const Cell: React.FC<{ i: number; frame: number }> = ({ i, frame }) => {
   );
 };
 
-export interface BentoLightUpProps {
-  title?: string;
-}
-
 export const BentoLightUp: React.FC<BentoLightUpProps> = ({
   title = 'Features',
+  cards = DEFAULT_CARDS,
 }) => {
   const frame = useShotFrame(SHOT_TIME);
+  const n = cards.length;
+  const colCount = Math.min(3, Math.max(1, n));
+  const rowCount = Math.ceil(n / colCount);
+  const cardW = Math.min(MAX_CARD_W, (1920 - SIDE_MARGIN * 2 - (colCount - 1) * GUT) / colCount);
+  const gridW = colCount * cardW + (colCount - 1) * GUT;
+  const gridH = rowCount * CELL_H + (rowCount - 1) * GUT;
+  const topBase = (1080 - gridH) / 2 + 30;
+  // 格间节拍随数量自适应，避免末格点亮超出时长
+  const gap = Math.round(Math.max(4, Math.min(12, (180 - FIRST - 46) / Math.max(1, n - 1))));
+
+  // 按行分组：每行最多 colCount 张，整行内居中（行的 x 随该行实际数量再居中）
+  const placed: { idx: number; title?: string; sub?: string; left: number; top: number; start: number }[] = [];
+  let gi = 0;
+  for (let row = 0; row < rowCount; row++) {
+    const chunk = cards.slice(row * colCount, (row + 1) * colCount);
+    const m = chunk.length;
+    const rowLeft = (1920 - (m * cardW + (m - 1) * GUT)) / 2;
+    const y = topBase + row * (CELL_H + GUT);
+    chunk.forEach((c, ci) => {
+      placed.push({
+        idx: gi,
+        title: c.title,
+        sub: c.sub,
+        left: rowLeft + ci * (cardW + GUT),
+        top: y,
+        start: FIRST + gi * gap,
+      });
+      gi++;
+    });
+  }
 
   // ③ 六格全亮(~96f)后整体缓推 scale 1→1.04，25f 收住，之后真静止
   const push = interpolate(frame, [96, 121], [1, 1.04], {
@@ -167,11 +212,11 @@ export const BentoLightUp: React.FC<BentoLightUpProps> = ({
           transformOrigin: '960px 540px',
         }}
       >
-        <div style={{ position: 'absolute', left: LEFT, top: TOP - 110, opacity: titleLit, filter: 'invert(1)', fontFamily: FONT_STACK, fontWeight: 800, fontSize: 64, color: G.ink, letterSpacing: -1 }}>
+        <div style={{ position: 'absolute', left: 0, width: '100%', top: topBase - 110, opacity: titleLit, filter: 'invert(1)', fontFamily: FONT_STACK, fontWeight: 800, fontSize: 64, color: G.ink, letterSpacing: -1, textAlign: 'center' }}>
           {title}
         </div>
-        {Array.from({ length: 6 }).map((_, i) => (
-          <Cell key={i} i={i} frame={frame} />
+        {placed.map((p) => (
+          <Cell key={p.idx} frame={frame} idx={p.idx} title={p.title} sub={p.sub} left={p.left} top={p.top} cardW={cardW} start={p.start} />
         ))}
       </div>
     </AbsoluteFill>

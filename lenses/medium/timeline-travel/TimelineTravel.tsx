@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 展开,举证
+// props: title（顶部大标题）、ticks（刻度数组，含 label/cardTitle/cardValue 内容字段，位置自动等距，缺省 DEFAULT_TICKS）
 // === 时间特性 ===
 // 策略: 弹刚 ShotTime（整段弹性）
 // 刚性（不可压缩）: 无
@@ -30,13 +31,27 @@ const SHOT_TIME: ShotTime = {
 const W = 1920;
 const AXIS_Y = 700;
 const TICK_GAP = 1400; // 刻度间距（世界坐标）
-const TICKS = [
-  { label: 'v1.0', x: 960 },
-  { label: 'v2.0', x: 960 + TICK_GAP },
-  { label: 'v3.0', x: 960 + TICK_GAP * 2 },
-  { label: 'Today', x: 960 + TICK_GAP * 3 },
+const MINOR_STEP = TICK_GAP / 5; // 次刻度步长
+
+// 刻度实体：画面里的刻度 + 弹立的卡片，归 ticks 参数化（缺省 DEFAULT_TICKS 保证无参数可渲染）
+export interface TimelineTick {
+  label: string;        // 刻度标签（轴下方文字）
+  cardTitle?: string;   // 卡片上行小标题（可省略）
+  cardValue?: string;   // 卡片下行强调值（可省略）
+}
+
+export interface TimelineTravelProps {
+  title?: string;
+  ticks?: TimelineTick[];
+}
+
+// 缺省刻度示例（不传 ticks 时的默认画面）
+const DEFAULT_TICKS: TimelineTick[] = [
+  { label: 'v1.0', cardTitle: '阶段 1', cardValue: 'Day 7' },
+  { label: 'v2.0', cardTitle: '阶段 2', cardValue: 'Day 14' },
+  { label: 'v3.0', cardTitle: '阶段 3', cardValue: 'Day 21' },
+  { label: 'Today', cardTitle: '阶段 4', cardValue: 'Day 28' },
 ];
-const WORLD_W = 960 + TICK_GAP * 3 + 960;
 
 const TRAVEL_START = 12;
 const TRAVEL_END = 104; // 急停帧
@@ -44,8 +59,7 @@ const ZOOM_END = 114;
 
 // 相机 X：in-out 但前段慢后段快（poly(3) in 为主，末端 out 急收）
 // 用两段拼：0–0.82 加速段（Easing.in(poly(2.2))），0.82–1 急刹段
-const camXAt = (f: number): number => {
-  const total = TICKS[3].x - 960; // 需要位移的世界距离
+const camXAt = (f: number, startX: number, endX: number): number => {
   const t = interpolate(f, [TRAVEL_START, TRAVEL_END], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
@@ -54,14 +68,14 @@ const camXAt = (f: number): number => {
   const eased = interpolate(t, [0, 0.15, 0.88, 1], [0, 0.055, 0.9, 1], {
     easing: Easing.inOut(Easing.quad),
   });
-  return eased * total;
+  return startX + eased * (endX - startX);
 };
 
 // 每张卡的弹立帧：相机中心扫过该刻度的时刻（数值上预先求好，避免逐帧求逆）
 // 通过 camXAt 反查：找到 camX == tick.x - 960 的帧
-const popFrameOf = (tickX: number): number => {
+const popFrameOf = (tickX: number, startX: number, endX: number, firstX: number): number => {
   for (let f = TRAVEL_START; f <= TRAVEL_END; f++) {
-    if (camXAt(f) >= tickX - 960) return f;
+    if (camXAt(f, startX, endX) >= startX + (tickX - firstX)) return f;
   }
   return TRAVEL_END;
 };
@@ -69,9 +83,8 @@ const popFrameOf = (tickX: number): number => {
 const CARD_W = 360;
 const CARD_H = 240;
 
-const TickStop: React.FC<{ i: number; frame: number }> = ({ i, frame }) => {
-  const tick = TICKS[i];
-  const pop = popFrameOf(tick.x) - 6; // 提前 6f 起弹，掠过时正好立起
+const TickStop: React.FC<{ frame: number; tick: TimelineTick; startX: number; endX: number; firstX: number }> = ({ frame, tick, startX, endX, firstX }) => {
+  const pop = popFrameOf(tick.x!, startX, endX, firstX) - 6; // 提前 6f 起弹，掠过时正好立起
   const s = spring({
     frame: frame - pop,
     fps: 30,
@@ -115,12 +128,17 @@ const TickStop: React.FC<{ i: number; frame: number }> = ({ i, frame }) => {
               gap: 10,
             }}
           >
-            <div style={{ fontFamily: FONT_STACK, fontSize: 22, fontWeight: 800, color: G.ink }}>
-              阶段 {i + 1}
-            </div>
-            <div style={{ fontFamily: FONT_STACK, fontSize: 30, fontWeight: 800, color: G.accent }}>
-              Day {(i + 1) * 7}
-            </div>
+            {/* 卡片内容：字段各自独立可选——只填一个则单行垂直居中，不为缺省字段留占位 */}
+            {tick.cardTitle && (
+              <div style={{ fontFamily: FONT_STACK, fontSize: 22, fontWeight: 800, color: G.ink }}>
+                {tick.cardTitle}
+              </div>
+            )}
+            {tick.cardValue && (
+              <div style={{ fontFamily: FONT_STACK, fontSize: 30, fontWeight: 800, color: G.accent }}>
+                {tick.cardValue}
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -128,15 +146,19 @@ const TickStop: React.FC<{ i: number; frame: number }> = ({ i, frame }) => {
   );
 };
 
-export interface TimelineTravelProps {
-  title?: string;
-}
-
 export const TimelineTravel: React.FC<TimelineTravelProps> = ({
   title = 'TIMELINE',
+  ticks = DEFAULT_TICKS,
 }) => {
   const frame = useShotFrame(SHOT_TIME);
-  const camX = camXAt(frame);
+  // 刻度位置自动等距（不暴露给使用者：首刻度恒 960 居中起点，往后 +TICK_GAP）
+  const resolvedTicks = ticks.map((t, i) => ({ ...t, x: 960 + i * TICK_GAP }));
+  const firstX = resolvedTicks[0]?.x ?? 960;
+  const lastX = resolvedTicks[resolvedTicks.length - 1]?.x ?? 960;
+  const startX = firstX - 960; // 相机起点：让首个刻度居中
+  const endX = lastX - 960;    // 相机终点：让末个刻度居中
+  const worldW = lastX + 960;
+  const camX = camXAt(frame, startX, endX);
 
   // 急停后推近末刻度：scale 1 → 1.28，中心对准 Today 刻度
   const zoom = interpolate(frame, [TRAVEL_END, ZOOM_END], [1, 1.28], {
@@ -150,15 +172,15 @@ export const TimelineTravel: React.FC<TimelineTravelProps> = ({
       {/* 推近层：以画面中央偏下（末刻度落点）为原点放大 */}
       <div style={{ width: W, height: 1080, transform: `scale(${zoom})`, transformOrigin: '50% 62%' }}>
         {/* 世界层：唯一横移的容器 */}
-        <div style={{ position: 'absolute', left: 0, top: 0, width: WORLD_W, height: 1080, transform: `translateX(${-camX}px)` }}>
+        <div style={{ position: 'absolute', left: 0, top: 0, width: worldW, height: 1080, transform: `translateX(${-camX}px)` }}>
           {/* 主轴线 */}
-          <div style={{ position: 'absolute', left: 200, top: AXIS_Y - 3, width: WORLD_W - 400, height: 6, background: G.bar, borderRadius: 3 }} />
+          <div style={{ position: 'absolute', left: 200, top: AXIS_Y - 3, width: worldW - 400, height: 6, background: G.bar, borderRadius: 3 }} />
           {/* 次刻度（小点，增强速度感） */}
-          {Array.from({ length: 22 }).map((_, i) => (
-            <div key={i} style={{ position: 'absolute', left: 960 + i * (TICK_GAP / 5) - 2, top: AXIS_Y - 12, width: 4, height: 24, background: G.bar, borderRadius: 2 }} />
+          {Array.from({ length: Math.max(0, Math.ceil((worldW - firstX) / MINOR_STEP)) }).map((_, i) => (
+            <div key={i} style={{ position: 'absolute', left: firstX + i * MINOR_STEP - 2, top: AXIS_Y - 12, width: 4, height: 24, background: G.bar, borderRadius: 2 }} />
           ))}
-          {TICKS.map((_, i) => (
-            <TickStop key={i} i={i} frame={frame} />
+          {resolvedTicks.map((t, i) => (
+            <TickStop key={i} frame={frame} tick={t} startX={startX} endX={endX} firstX={firstX} />
           ))}
         </div>
       </div>

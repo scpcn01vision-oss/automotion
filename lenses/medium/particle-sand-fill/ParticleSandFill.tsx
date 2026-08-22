@@ -2,6 +2,7 @@
 // DURATION: 180（总帧数，可调；弹性段随 DURATION 等比缩放）
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 举证
+// props: label（顶部主标题）、cardTitle（图表卡标题）、cardSubtitle（图表卡副标题）、bars（柱数组，含 value/label，缺省 DEFAULT_BARS；柱高按 value/maxValue 归一化、数量/柱位自适应）
 // === 时间特性 ===
 // 策略: 弹刚 ShotTime（整段弹性）
 // 刚性（不可压缩）: 无
@@ -42,28 +43,55 @@ const GRAV = 1.6; // px/f²
 const STAGGER = 6; // 各柱错峰启动
 const RATE = 0.28; // 颗间出发间隔（帧）——最高柱 216 颗需 ~60f 发完，全局 f120 内收束
 
-const BARS = [
-  { cx: CARD.x + 175, h: 238, label: '238' },
-  { cx: CARD.x + 395, h: 336, label: '336' },
-  { cx: CARD.x + 615, h: 182, label: '182' },
-  { cx: CARD.x + 835, h: 294, label: '294' },
-].map((b) => ({ ...b, layers: Math.round(b.h / GRAIN), n: Math.round(b.h / GRAIN) * PER_LAYER }));
-
 const fallTime = (dist: number) => Math.sqrt((2 * dist) / GRAV);
 const departOf = (bar: number, i: number) => 8 + bar * STAGGER + i * RATE + rnd(i, bar * 7 + 1) * 1.5;
+
+export interface ParticleSandBar {
+  value: number;  // 柱数据值（柱高按 value/maxValue 归一化）
+  label?: string; // 顶部标注（缺省显示 value）
+}
 
 export interface ParticleSandFillProps {
   label?: string; // 顶部主标题
   cardTitle?: string; // 图表卡标题
   cardSubtitle?: string; // 图表卡副标题
+  bars?: ParticleSandBar[];
 }
+
+// 缺省柱示例（不传 bars 时的默认画面）
+const DEFAULT_BARS: ParticleSandBar[] = [
+  { value: 238, label: '238' },
+  { value: 336, label: '336' },
+  { value: 182, label: '182' },
+  { value: 294, label: '294' },
+];
+
+const MAX_BAR_H = 340; // 柱高上限（归一化后最大值；保证顶部标签不与卡标题重叠）
+const MIN_BAR_H = 24;  // 柱高下限（保证小值柱可见）
+const PAD = 90;        // 卡内左右留白（柱位等距计算基准）
 
 export const ParticleSandFill: React.FC<ParticleSandFillProps> = ({
   label = 'FILL',
   cardTitle = '指标概览',
   cardSubtitle = '实时更新',
+  bars = DEFAULT_BARS,
 }) => {
   const frame = useShotFrame(SHOT_TIME);
+  const values = bars.map((b) => b.value);
+  const maxVal = Math.max(1, ...values);
+  const highlightIdx = bars.length ? values.indexOf(Math.max(...values)) : -1;
+  const slotW = bars.length ? (CARD.w - PAD * 2) / bars.length : 0;
+  const resolved = bars.map((b, i) => {
+    const h = Math.round(Math.max(MIN_BAR_H, Math.min(MAX_BAR_H, (b.value / maxVal) * MAX_BAR_H)));
+    return {
+      idx: i,
+      cx: CARD.x + PAD + slotW * (i + 0.5),
+      h,
+      label: b.label ?? String(b.value),
+      n: Math.round(h / GRAIN) * PER_LAYER,
+      isHi: i === highlightIdx,
+    };
+  });
 
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
@@ -83,7 +111,7 @@ export const ParticleSandFill: React.FC<ParticleSandFillProps> = ({
       {/* 基线 */}
       <div style={{ position: 'absolute', left: CARD.x + 40, top: PLOT_BOTTOM, width: CARD.w - 80, height: 3, background: G.line }} />
 
-      {BARS.map((bar, b) => {
+      {resolved.map((bar, b) => {
         const left = bar.cx - BAR_W / 2;
         // 末颗落地帧（闭式）：末颗落点在堆顶，坠距仍 ≈DROP_FROM
         const lastLand = departOf(b, bar.n - 1) + fallTime(DROP_FROM);
@@ -99,15 +127,16 @@ export const ParticleSandFill: React.FC<ParticleSandFillProps> = ({
             {solidOp > 0 && (
               <div style={{
                 position: 'absolute', left, top: PLOT_BOTTOM - bar.h,
-                width: BAR_W, height: bar.h, background: b === 1 ? AMBER : G.bar,
+                width: BAR_W, height: bar.h, background: bar.isHi ? AMBER : G.bar,
                 borderRadius: '6px 6px 0 0', opacity: solidOp,
               }} />
             )}
             {labelScale > 0 && (
               <div style={{
-                position: 'absolute', left: bar.cx - 70, top: PLOT_BOTTOM - bar.h - 62, width: 140,
+                position: 'absolute', left: bar.cx - 100, top: PLOT_BOTTOM - bar.h - 62, width: 200,
                 textAlign: 'center', fontFamily: FONT_STACK, fontWeight: 800,
-                fontSize: 46, color: b === 1 ? AMBER : G.ink,
+                fontSize: 46, color: bar.isHi ? AMBER : G.ink,
+                whiteSpace: 'nowrap',
                 transform: `scale(${labelScale})`,
               }}>
                 {bar.label}
@@ -132,7 +161,7 @@ export const ParticleSandFill: React.FC<ParticleSandFillProps> = ({
                 const bounce = ba < 6 ? Math.sin((ba / 6) * Math.PI) * GRAIN * 2 * 0.15 * (1 + rnd(i, b * 13 + 9)) : 0;
                 top = targetTop - bounce;
               }
-              const amber = b === 1 || rnd(i, b * 13 + 7) < 0.18;
+              const amber = bar.isHi || rnd(i, b * 13 + 7) < 0.18;
               return (
                 <div key={i} style={{
                   position: 'absolute', left: left + col * GRAIN + 1, top, width: GRAIN - 2, height: GRAIN - 2,
