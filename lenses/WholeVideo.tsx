@@ -10,67 +10,38 @@ import {
   type ResolvedSubtitleStyle,
 } from '../shared/subtitleDefaults';
 
-// ---------- 镜头组件映射（lensId → 组件；新增镜头时补 import + 映射） ----------
-import { MarkerUnderlineTitle } from './native/marker-underline-title/MarkerUnderlineTitle';
-import { SmearMultiples } from './minimal/smear-multiples/SmearMultiples';
-import { TextAsMask } from './light/text-as-mask/TextAsMask';
-import { MaskingTapeSlap } from './native/paper-craft-moves/MaskingTapeSlap';
-import { BeatStepListThemeCycle } from './minimal/beat-step-list-theme-cycle/BeatStepListThemeCycle';
-import { StreamResponse } from './medium/ai-stream-response/StreamResponse';
-import { CelFlashStomp } from './typography/cel-flash-stomp/CelFlashStomp';
-import { RedHeadFileQuote } from './native/redhead-file-quote/RedHeadFileQuote';
-import { VersusSlam } from './minimal/transition-hidden-cut/VersusSlam';
-import { LightLeakBurn } from './minimal/transition-hidden-cut/LightLeakBurn';
-import { BarnDoorSplit } from './native/page-turn-transitions/BarnDoorSplit';
-import { CardFlipReveal } from './light/card-flip-reveal/CardFlipReveal';
-import { PopupBookRise } from './native/paper-craft-moves/PopupBookRise';
-import { CornerSpotlightReveal } from './medium/spotlight-sweep-moves/CornerSpotlightReveal';
-import { OdometerDigitRoll } from './medium/odometer-digit-roll/OdometerDigitRoll';
-import { HashtagToPillMaterialize } from './medium/hashtag-to-pill-materialize/HashtagToPillMaterialize';
-import { InkBleedReveal } from './native/print-texture-transitions/InkBleedReveal';
-import { GridWaveFlip } from './medium/wall-reveal-moves/GridWaveFlip';
-import { CommandPaletteSummon } from './medium/command-palette-summon/CommandPaletteSummon';
-import { TitleDemoteToLabel } from './light/title-demote-to-label/TitleDemoteToLabel';
-import { SplitTextStagger } from './light/type-assembly-moves/SplitTextStagger';
-import { OscilloscopeStream } from './data/oscilloscope-stream/OscilloscopeStream';
-import { TypewriterErrorRetype } from './native/typewriter-moves/TypewriterErrorRetype';
-import { InvisibleCut } from './minimal/transition-hidden-cut/InvisibleCut';
-import { IntegrationHubMap } from './ui-entrance/integration-hub-map/IntegrationHubMap';
-import { UiStripAwayOutro } from './light/ui-strip-away-outro/UiStripAwayOutro';
-import { IconFlipBloomLogo } from './light/ui-to-brand-morph/IconFlipBloomLogo';
-import { OutroGroupPhotoLaunch } from './tplshots/wrappers';
-import { PaperTitleCard } from './opening/paper-title-card/PaperTitleCard';
+// ---------- 镜头组件加载（与 registry 同源，消除手工映射表） ----------
+// 旧机制：整片用一份手写 LENS_MAP（仅 29 个），而匹配/工作台开放全部 122 个镜头，
+// 未登记镜头被静默渲染成空白（Comp ? 渲染 : null），造成"工作台调好、整片缺镜头"。
+// 新机制：webpack require.context 按 registry.file 动态解析组件——渲染面自动等于镜头库，
+// 新增镜头进 registry 即自动可渲染；缺文件/缺导出/不在 registry 直接抛错，绝不静默。
+declare namespace NodeJS {
+  interface Require {
+    context(
+      directory: string,
+      useSubdirectories: boolean,
+      regExp: RegExp,
+    ): (key: string) => Record<string, unknown>;
+  }
+}
 
-export const LENS_MAP: Record<string, React.FC<any>> = {
-  MarkerUnderlineTitle,
-  SmearMultiples,
-  TextAsMask,
-  MaskingTapeSlap,
-  BeatStepListThemeCycle,
-  StreamResponse,
-  CelFlashStomp,
-  RedHeadFileQuote,
-  VersusSlam,
-  LightLeakBurn,
-  BarnDoorSplit,
-  CardFlipReveal,
-  PopupBookRise,
-  CornerSpotlightReveal,
-  OdometerDigitRoll,
-  HashtagToPillMaterialize,
-  InkBleedReveal,
-  GridWaveFlip,
-  CommandPaletteSummon,
-  TitleDemoteToLabel,
-  SplitTextStagger,
-  OscilloscopeStream,
-  TypewriterErrorRetype,
-  InvisibleCut,
-  IntegrationHubMap,
-  UiStripAwayOutro,
-  IconFlipBloomLogo,
-  OutroGroupPhotoLaunch,
-  PaperTitleCard,
+const lensContext = require.context('./', true, /\.tsx$/);
+const registryJson = require('../shared/registry.json') as {
+  entries: { id: string; file: string }[];
+};
+const registryById = new Map(registryJson.entries.map((e) => [e.id, e]));
+
+const lensCache: Record<string, React.FC<any>> = {};
+const getLensComponent = (id: string, file: string): React.FC<any> => {
+  if (lensCache[id]) return lensCache[id];
+  const key = './' + file.replace(/^lenses\//, '');
+  const mod = lensContext(key);
+  const comp = mod?.[id];
+  if (typeof comp !== 'function') {
+    throw new Error(`[整片] 镜头未找到或导出缺失：${id}（${file}）`);
+  }
+  lensCache[id] = comp;
+  return comp;
 };
 
 // ---------- 字幕层（样式映射自工作台保存的 subtitleStyle） ----------
@@ -161,21 +132,33 @@ export const WholeVideo: React.FC<{
   audioSrc?: string;
 }> = ({ storyboard, subtitles, audioSrc }) => {
   const style = storyboard.meta.subtitleStyle ?? {};
+  // 段边界定位：绝对时间戳（seg.startSec，转录阶段写入），禁止用 durationSec 累计——
+  // 累计会丢弃段间停顿与前导静音，偏差逐段累积（2026-08-22 教训：seg-04 早 ~1s、片尾早 ~5.6s）。
+  // 第一段从 0 开始（片头覆盖前导静音）；旧数据缺 startSec 时回退累计并告警。
   let cumSec = 0;
   return (
     <AbsoluteFill style={{ background: '#faf7f2' }}>
       {audioSrc ? <Audio src={audioSrc} /> : null}
-      {storyboard.segments.map((seg) => {
-        // 精确帧边界：逐段 round，避免累积漂移；帧边界由真实秒数派生
-        const startFrame = Math.round(cumSec * 30);
-        const endFrame = Math.round((cumSec + seg.durationSec) * 30);
+      {storyboard.segments.map((seg, i) => {
+        const hasAbs = typeof seg.startSec === 'number';
+        if (!hasAbs) {
+          console.warn(`[whole] 段 ${seg.id} 缺 startSec（旧数据），回退累计定位`);
+        }
+        const startSec = i === 0 ? 0 : (hasAbs ? (seg.startSec as number) : cumSec);
+        // 帧边界逐段 round（绝对时间戳 → 帧），禁止累计 cursor（会漂移）
+        const startFrame = Math.round(startSec * 30);
+        const endFrame = Math.round((startSec + seg.durationSec) * 30);
         const dur = Math.max(1, endFrame - startFrame);
-        const Comp = LENS_MAP[seg.lensId];
-        const el = Comp ? (
+        const entry = registryById.get(seg.lensId);
+        if (!entry) {
+          throw new Error(`[整片] storyboard 镜头不在 registry：${seg.lensId}`);
+        }
+        const Comp = getLensComponent(entry.id, entry.file);
+        const el = (
           <Sequence key={seg.id} from={startFrame} durationInFrames={dur}>
             <Comp {...(seg.params as any)} />
           </Sequence>
-        ) : null;
+        );
         cumSec += seg.durationSec;
         return el;
       })}

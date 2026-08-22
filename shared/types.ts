@@ -73,6 +73,8 @@ export interface StoryboardSegment {
   keywords: string[];
   phraseRange: [number, number]; // 词级转录中的起止词序号
   durationSec: number; // 段真实时长（转录确定）
+  startSec?: number; // 段在音频时间轴上的绝对开始时间（转录阶段写入；整片定位唯一依据）
+  endSec?: number; // 段在音频时间轴上的绝对结束时间（= startSec + durationSec）
   lensId: string; // 选定镜头
   params: Record<string, unknown>; // 镜头参数（项目侧）
   role?: string; // 角色牌：段在视频中的叙事作用（钩子/承接/转折/展开/宣告/举证/收束；与镜头场景标签同套）

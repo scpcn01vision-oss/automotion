@@ -717,15 +717,27 @@ if __name__ == "__main__":
     for s in segments:
         t = seg_times.get(s["id"])
         if t:
-            real = round(max(x[1] for x in t) - min(x[0] for x in t), 3)
-            if abs(real - s.get("durationSec", 0)) > 0.001:
-                print(f"    seg {s['id']}: durationSec {s.get('durationSec')} → {real}")
+            start_sec = round(min(x[0] for x in t), 3)
+            end_sec = round(max(x[1] for x in t), 3)
+            real = round(end_sec - start_sec, 3)
+            if (
+                abs(real - s.get("durationSec", 0)) > 0.001
+                or s.get("startSec") != start_sec
+                or s.get("endSec") != end_sec
+            ):
+                print(
+                    f"    seg {s['id']}: [{start_sec},{end_sec}] "
+                    f"durationSec {s.get('durationSec')} → {real}"
+                )
                 s["durationSec"] = real
+                s["startSec"] = start_sec
+                s["endSec"] = end_sec
                 updated += 1
     if updated:
         STORYBOARD.write_text(
             json.dumps(storyboard, ensure_ascii=False, indent=2), encoding="utf-8")
-        print(f"    storyboard.durationSec 已更新 {updated} 段（真实转录时长）")
+        print(f"    storyboard 段时间边界已更新 {updated} 段"
+              f"（startSec/endSec/durationSec，绝对时间戳）")
 
     print(f"\n完成！转录 {len(whisper_words)} 词 → 字幕 {len(subtitles['entries'])} 条")
     print(f"  {OUT_TRANSCRIPT}")
