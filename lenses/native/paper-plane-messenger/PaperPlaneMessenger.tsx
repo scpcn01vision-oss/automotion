@@ -14,7 +14,7 @@
 // （俯仰角跟随切线），镜头伴飞穿过多层视差漂浮的灰阶道具，
 // 飞抵窗口 B 前落定，窗口 B 放大接管全屏。发送语义实体化成转场信使。
 import React from 'react';
-import { AbsoluteFill, interpolate, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, Easing, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
 
@@ -125,6 +125,8 @@ export interface PaperPlaneMessengerProps {
   windowA?: MessengerWindowContent;
   windowB?: MessengerWindowContent;
   sendLabel?: string;
+  /** 口播锚点（对齐流程用 generate_cues.py 自动生成，非用户可调）@internal */
+  revealAtSec?: number;
 }
 
 export const PaperPlaneMessenger: React.FC<PaperPlaneMessengerProps> = ({
@@ -145,8 +147,15 @@ export const PaperPlaneMessenger: React.FC<PaperPlaneMessengerProps> = ({
     ],
   },
   sendLabel = '发送',
+  revealAtSec,
 }) => {
-  const frame = useShotFrame(SHOT_TIME);
+  const shotFrame = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  // 锚点=纸飞机起飞（FLY[0]=34）：转场动画从锚点帧以固定速度平移起跑，过程不变；
+  // 锚点前停在窗口 A（等待），B 在飞完后按原速接管；无锚点 → 弹刚
+  const cueMode = revealAtSec !== undefined;
+  const anchor = cueMode ? Math.max(0, Math.round((revealAtSec as number) * 30)) : 0;
+  const frame = cueMode ? Math.max(0, realFrame - (anchor - FLY[0])) : shotFrame;
 
   // 飞行进度（整体 ease-in-out：起飞加速、落定减速）
   const tFly = interpolate(frame, [FLY[0], FLY[1]], [0, 1], {

@@ -29,7 +29,8 @@ export interface RedHeadFileQuoteProps {
   docNo?: string; // 文号/条款号（如「第 37 句」）
   body?: string[]; // 正文行
   tag?: string; // 底部来源角标
-  revealAtSec?: number; // 口播对齐：引用卡开始浮现的段内秒；提供后整体浮现序列平移到该时刻
+  /** 口播锚点：正文逐行浮现的段内秒（与 body 一一对应）；提供后卡框架/红头/标题在段开头浮现、正文行踩点浮现 */
+  cueSec?: number[];
 }
 
 export const RedHeadFileQuote: React.FC<RedHeadFileQuoteProps> = ({
@@ -38,42 +39,39 @@ export const RedHeadFileQuote: React.FC<RedHeadFileQuoteProps> = ({
   docNo = '第 37 句',
   body = ['鼓励创新主体从 Token 消耗量计费转向价值计费。'],
   tag = '原文引用',
-  revealAtSec,
+  cueSec,
 }) => {
   const frameShot = useShotFrame(SHOT_TIME);
   const realFrame = useCurrentFrame();
-  const cueMode = revealAtSec !== undefined;
+  const cues = cueSec && cueSec.length === body.length ? cueSec.map((s) => Math.round(s * 30)) : null;
+  const cueMode = !!cues;
   const frame = cueMode ? realFrame : frameShot;
-  const OFFSET = cueMode ? Math.round(revealAtSec * 30) : 0;
+  // 卡框架/红头/标题：段开头固定浮现（不随锚点平移，避免前段空白）；正文逐行按 cueSec 踩点浮现；无 cueSec 回落弹刚
 
   // 卡片浮现
-  const cardT = interpolate(frame, [0 + OFFSET, 14 + OFFSET], [0, 1], {
+  const cardT = interpolate(frame, [0, 14], [0, 1], {
     extrapolateRight: 'clamp',
     easing: Easing.out(Easing.cubic),
   });
   // 红头：机关名 + 双红线
-  const headT = interpolate(frame, [12 + OFFSET, 28 + OFFSET], [0, 1], {
+  const headT = interpolate(frame, [12, 28], [0, 1], {
     extrapolateRight: 'clamp',
     easing: Easing.out(Easing.cubic),
   });
-  const lineW = interpolate(frame, [18 + OFFSET, 34 + OFFSET], [0, 1], {
+  const lineW = interpolate(frame, [18, 34], [0, 1], {
     extrapolateRight: 'clamp',
     easing: Easing.out(Easing.cubic),
   });
   // 标题 + 文号
-  const titleT = interpolate(frame, [30 + OFFSET, 44 + OFFSET], [0, 1], {
+  const titleT = interpolate(frame, [30, 44], [0, 1], {
     extrapolateRight: 'clamp',
     easing: Easing.out(Easing.cubic),
   });
   // 正文逐行
-  const bodyStart = 46 + OFFSET;
+  const bodyStart = 46; // 无 cue 时正文起点（弹刚）
   // 来源角标
-  const tagT = interpolate(
-    frame,
-    [bodyStart + body.length * 12 + 8, bodyStart + body.length * 12 + 20],
-    [0, 1],
-    { extrapolateRight: 'clamp' },
-  );
+  const lastStart = cues ? cues[cues.length - 1] : bodyStart + (body.length - 1) * 12;
+  const tagT = interpolate(frame, [lastStart + 8, lastStart + 20], [0, 1], { extrapolateRight: 'clamp' });
 
   return (
     <AbsoluteFill style={{ background: G.bg, justifyContent: 'center', alignItems: 'center' }}>
@@ -131,7 +129,7 @@ export const RedHeadFileQuote: React.FC<RedHeadFileQuoteProps> = ({
           {body.map((line, i) => {
             const bt = interpolate(
               frame,
-              [bodyStart + i * 12, bodyStart + i * 12 + 10],
+              [cues ? cues[i] : bodyStart + i * 12, (cues ? cues[i] : bodyStart + i * 12) + 10],
               [0, 1],
               { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) },
             );

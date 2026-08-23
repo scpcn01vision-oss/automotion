@@ -16,7 +16,7 @@
 // 结尾全部粒子条件卸载、只剩实体柱 + 标签，真静止 ≥35f。
 // 帧确定性：sin 散列派生每颗出发帧抖动/起点错高，落地帧由高度差闭式反解。
 import React from 'react';
-import { interpolate, Easing } from 'remotion';
+import { interpolate, Easing, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
 
@@ -56,6 +56,8 @@ export interface ParticleSandFillProps {
   cardTitle?: string; // 图表卡标题
   cardSubtitle?: string; // 图表卡副标题
   bars?: ParticleSandBar[];
+  /** 口播锚点（对齐流程用 generate_cues.py 自动生成，非用户可调）@internal */
+  revealAtSec?: number;
 }
 
 // 缺省柱示例（不传 bars 时的默认画面）
@@ -75,8 +77,15 @@ export const ParticleSandFill: React.FC<ParticleSandFillProps> = ({
   cardTitle = '指标概览',
   cardSubtitle = '实时更新',
   bars = DEFAULT_BARS,
+  revealAtSec,
 }) => {
-  const frame = useShotFrame(SHOT_TIME);
+  const shotFrame = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  // 锚点=沙粒开始落（首粒出发帧≈8）：整段填充动画从锚点帧以固定速度平移起跑，过程不变；
+  // 锚点前画面停在空图表卡（等待），完成后真静止；无锚点 → 弹刚
+  const cueMode = revealAtSec !== undefined;
+  const anchor = cueMode ? Math.max(0, Math.round((revealAtSec as number) * 30)) : 0;
+  const frame = cueMode ? Math.max(0, realFrame - (anchor - 8)) : shotFrame;
   const values = bars.map((b) => b.value);
   const maxVal = Math.max(1, ...values);
   const highlightIdx = bars.length ? values.indexOf(Math.max(...values)) : -1;

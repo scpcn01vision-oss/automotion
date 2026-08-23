@@ -73,7 +73,8 @@ export const MarkerUnderlineTitle: React.FC<MarkerUnderlineTitleProps> = ({
 
   // 标题落定：整块从下方 30px 弹入（ease-out），24 帧内完成；
   // 口播对齐模式：入场压缩到 revealAtSec 前（保持比例）
-  const enterF = cueMode ? Math.min(1, (realFrame / 30) / (revealAtSec ?? 1)) * 22 : frame;
+  // 口播对齐：标题升起固定短时长（一进段就升起完），划线在锚点时刻描画，两者间是静态等待（可长）
+  const enterF = cueMode ? realFrame : frame;
   const enter = interpolate(enterF, [0, 22], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });

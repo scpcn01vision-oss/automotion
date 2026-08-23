@@ -15,13 +15,15 @@ import {
 // 未登记镜头被静默渲染成空白（Comp ? 渲染 : null），造成"工作台调好、整片缺镜头"。
 // 新机制：webpack require.context 按 registry.file 动态解析组件——渲染面自动等于镜头库，
 // 新增镜头进 registry 即自动可渲染；缺文件/缺导出/不在 registry 直接抛错，绝不静默。
-declare namespace NodeJS {
-  interface Require {
-    context(
-      directory: string,
-      useSubdirectories: boolean,
-      regExp: RegExp,
-    ): (key: string) => Record<string, unknown>;
+declare global {
+  namespace NodeJS {
+    interface Require {
+      context(
+        directory: string,
+        useSubdirectories: boolean,
+        regExp: RegExp,
+      ): (key: string) => Record<string, unknown>;
+    }
   }
 }
 
@@ -40,8 +42,8 @@ const getLensComponent = (id: string, file: string): React.FC<any> => {
   if (typeof comp !== 'function') {
     throw new Error(`[整片] 镜头未找到或导出缺失：${id}（${file}）`);
   }
-  lensCache[id] = comp;
-  return comp;
+  lensCache[id] = comp as React.FC<any>;
+  return comp as React.FC<any>;
 };
 
 // ---------- 字幕层（样式映射自工作台保存的 subtitleStyle） ----------
@@ -152,6 +154,22 @@ export const WholeVideo: React.FC<{
         const entry = registryById.get(seg.lensId);
         if (!entry) {
           throw new Error(`[整片] storyboard 镜头不在 registry：${seg.lensId}`);
+        }
+        // 统一 dev 提示：镜头声明了口播锚点但 params 未提供 → 静默退化弹刚，画面与口播脱节
+        const anchorProp = ((entry as any).props || []).find((p: any) =>
+          p.name === 'cueSec' || p.name === 'revealAtSec',
+        );
+        if (anchorProp) {
+          const needCue = anchorProp.name === 'cueSec';
+          const provided = needCue
+            ? Array.isArray((seg.params as any)?.cueSec)
+            : typeof (seg.params as any)?.revealAtSec === 'number';
+          if (!provided) {
+            console.warn(
+              `[整片] ${seg.id} ${seg.lensId} 声明了口播锚点(${anchorProp.name})但 params 未提供——` +
+                '画面内容将不与口播对齐，请运行 scripts/generate-cues.py 后过 scripts/check-cues.py',
+            );
+          }
         }
         const Comp = getLensComponent(entry.id, entry.file);
         const el = (

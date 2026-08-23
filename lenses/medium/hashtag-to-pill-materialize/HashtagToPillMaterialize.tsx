@@ -124,7 +124,8 @@ export const HashtagToPillMaterialize: React.FC<HashtagToPillMaterializeProps> =
   const cueMode = revealAtSec !== undefined;
   const frame = cueMode ? realFrame : frameShot;
   const MORPH_F = cueMode ? Math.round(revealAtSec * 30) : MORPH;
-  const preF = cueMode ? Math.min(1, (realFrame / 30) / (revealAtSec ?? 1)) * MORPH : frame;
+  // 口播对齐：打字固定节奏（不因 revealAtSec 拉长/压缩，避免跳动）；实体化发生在 revealAtSec 时刻
+  const preF = cueMode ? realFrame : frame;
   const MOVE_START_F = MORPH_F + (MOVE_START - MORPH);
   const MOVE_END_F = MORPH_F + (MOVE_END - MORPH);
   const REVEAL_F = MORPH_F + (REVEAL - MORPH);

@@ -10,7 +10,7 @@
 // === 适配注意 ===
 // 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 import React from 'react';
-import { AbsoluteFill, Easing, interpolate } from 'remotion';
+import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
 
@@ -44,6 +44,8 @@ export interface BentoCard {
 export interface BentoLightUpProps {
   title?: string;
   cards?: BentoCard[];
+  /** 口播锚点（对齐流程用 generate_cues.py 自动生成，非用户可调）@internal */
+  cueSec?: number[];
 }
 
 // 缺省卡片示例（不传 cards 时的默认画面）
@@ -155,13 +157,17 @@ const Cell: React.FC<{ frame: number; idx: number; title?: string; sub?: string;
 export const BentoLightUp: React.FC<BentoLightUpProps> = ({
   title = 'Features',
   cards = DEFAULT_CARDS,
+  cueSec,
 }) => {
-  const frame = useShotFrame(SHOT_TIME);
   const n = cards.length;
+  const shotFrame = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  // 有锚点(cueSec 长度=卡片数) → 用真实帧逐卡对齐；无锚点 → 弹刚等比缩放
+  const cueMode = !!cueSec && cueSec.length === n;
+  const frame = cueMode ? realFrame : shotFrame;
   const colCount = Math.min(3, Math.max(1, n));
   const rowCount = Math.ceil(n / colCount);
   const cardW = Math.min(MAX_CARD_W, (1920 - SIDE_MARGIN * 2 - (colCount - 1) * GUT) / colCount);
-  const gridW = colCount * cardW + (colCount - 1) * GUT;
   const gridH = rowCount * CELL_H + (rowCount - 1) * GUT;
   const topBase = (1080 - gridH) / 2 + 30;
   // 格间节拍随数量自适应，避免末格点亮超出时长
@@ -182,21 +188,23 @@ export const BentoLightUp: React.FC<BentoLightUpProps> = ({
         sub: c.sub,
         left: rowLeft + ci * (cardW + GUT),
         top: y,
-        start: FIRST + gi * gap,
+        start: cueMode ? Math.round((cueSec as number[])[gi] * 30) : FIRST + gi * gap,
       });
       gi++;
     });
   }
 
   // ③ 六格全亮(~96f)后整体缓推 scale 1→1.04，25f 收住，之后真静止
-  const push = interpolate(frame, [96, 121], [1, 1.04], {
+  const pushStart = cueMode ? Math.round((cueSec as number[])[n - 1] * 30) + 24 : 96;
+  const push = interpolate(frame, [pushStart, pushStart + 25], [1, 1.04], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
     easing: Easing.bezier(0.33, 0, 0.2, 1),
   });
 
   // 标题随首格点亮微微提亮，交代场景
-  const titleLit = interpolate(frame, [FIRST, FIRST + 20], [0.25, 0.75], {
+  const titleStart = cueMode ? Math.round((cueSec as number[])[0] * 30) : FIRST;
+  const titleLit = interpolate(frame, [titleStart, titleStart + 20], [0.25, 0.75], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
     easing: Easing.out(Easing.quad),

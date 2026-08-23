@@ -17,7 +17,7 @@
 // 112–124f 框闭合后 B 卡内容淡入 12f。124–160f 真静止 36f ≥ 35f。
 // 帧确定，无随机；笔头墨点 118f 起条件卸载（摘罩判例）。
 import React from 'react';
-import { AbsoluteFill, interpolate, Easing } from 'remotion';
+import { AbsoluteFill, interpolate, Easing, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContentData } from '../../_system/scene-content';
 import { FONT_STACK } from '../../_system/typography';
@@ -60,6 +60,8 @@ const tipAt = (drawn: number): [number, number] => {
 export interface LineCarryTransitionProps {
   sceneA?: SceneContentData;
   sceneB?: SceneContentData;
+  /** 口播锚点（对齐流程用 generate_cues.py 自动生成，非用户可调）@internal */
+  revealAtSec?: number;
 }
 
 const SideScene: React.FC<{ content: SceneContentData; titleOnly?: boolean }> = ({ content, titleOnly }) => {
@@ -115,8 +117,16 @@ export const LineCarryTransition: React.FC<LineCarryTransitionProps> = ({
       { label: '可用性', value: '99.98%' },
     ],
   },
+  revealAtSec,
 }) => {
-  const frame = useShotFrame(SHOT_TIME);
+  const shotFrame = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  // 有锚点(revealAtSec) → 锚点=线开始划起的时刻：动画从锚点帧以固定速度平移起跑，
+  // 前段静止在 A 态、后段停在 B 态，过程（画线/横移/淡入）帧数不变（不缩放）；无锚点 → 弹刚
+  const cueMode = revealAtSec !== undefined;
+  const anchor = cueMode ? Math.max(0, Math.round((revealAtSec as number) * 30)) : 0;
+  // "线开始划"标称帧 = 0（设计时间轴起点）；frame = realFrame - anchor，锚点前 clamp 到 0（A 态静止）
+  const frame = cueMode ? Math.max(0, realFrame - anchor) : shotFrame;
 
   // 镜头：34–94f 左移 1920px，inOut cubic
   const cam = interpolate(frame, [34, 94], [0, 1920], {

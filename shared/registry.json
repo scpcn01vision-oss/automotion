@@ -208,8 +208,9 @@
           "default": "原文引用"
         },
         {
-          "name": "revealAtSec",
-          "type": "number",
+          "description": "口播锚点（正文逐行浮现，与 body 一一对应）@internal",
+          "name": "cueSec",
+          "type": "number[]",
           "optional": true,
           "internal": true
         }
@@ -810,6 +811,13 @@
           "type": "string",
           "optional": true,
           "default": "发送"
+        },
+        {
+          "description": "口播锚点（对齐流程用 generate_cues.py 自动生成，非用户可调）@internal",
+          "internal": true,
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -1688,6 +1696,13 @@
               }
             }
           ]
+        },
+        {
+          "description": "口播锚点（对齐流程用 generate_cues.py 自动生成，非用户可调）@internal",
+          "internal": true,
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -4982,6 +4997,13 @@
               "optional": true
             }
           ]
+        },
+        {
+          "description": "口播锚点（对齐流程用 generate_cues.py 自动生成，非用户可调）@internal",
+          "internal": true,
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -5572,6 +5594,13 @@
               "optional": true
             }
           ]
+        },
+        {
+          "description": "口播锚点（对齐流程用 generate_cues.py 自动生成，非用户可调）@internal",
+          "internal": true,
+          "name": "cueSec",
+          "type": "number[]",
+          "optional": true
         }
       ],
       "scenes": [

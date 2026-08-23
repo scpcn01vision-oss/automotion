@@ -10,7 +10,6 @@
 // 调 DURATION 时只动弹性段 interpolate 关键帧，刚性核心帧区间保持固定帧数。
 import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
-import { CameraMotionBlur } from '@remotion/motion-blur';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
 import { FONT_STACK } from '../../_system/typography';
@@ -168,8 +167,4 @@ export const InvisibleCut: React.FC<InvisibleCutProps> = ({
   },
   card = { label: '指标', value: '+18%' },
   revealAtSec,
-}) => (
-  <CameraMotionBlur shutterAngle={300} samples={12}>
-    <Scene sceneA={sceneA} sceneB={sceneB} card={card} revealAtSec={revealAtSec} />
-  </CameraMotionBlur>
-);
+}) => <Scene sceneA={sceneA} sceneB={sceneB} card={card} revealAtSec={revealAtSec} />;

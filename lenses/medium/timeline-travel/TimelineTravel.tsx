@@ -38,6 +38,7 @@ export interface TimelineTick {
   label: string;        // 刻度标签（轴下方文字）
   cardTitle?: string;   // 卡片上行小标题（可省略）
   cardValue?: string;   // 卡片下行强调值（可省略）
+  x?: number;           // 内部：刻度落点（由 resolvedTicks 等距填充，非用户可填）
 }
 
 export interface TimelineTravelProps {

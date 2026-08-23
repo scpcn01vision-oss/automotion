@@ -19,12 +19,48 @@ const SHOT_TIME: ShotTime = {
   segments: [{ from: 0, to: 180, mode: 'elastic', minFrames: 20 }],
   minFrames: 20,
 };
-import { SceneContent, SceneContentData } from '../../_system/scene-content';
+import { SceneContentData } from '../../_system/scene-content';
 import { FONT_STACK } from '../../_system/typography';
 
 // versus-slam 对撞开屏：左右两个半屏画面（带 78° 斜切边）从画外加速对冲，
 // 沿斜缝砰地撞合；撞击帧白闪 + 整机震屏指数衰减 + "VS" 字块盖章压出，结尾静止 hold。
 const IMPACT = 30; // 撞击帧（前 20f 建立 hold + 10f ease-in 对冲）
+const ENTER0 = 6; // 口播对齐（单锚点）下两半屏开头的入场起点帧：尽早把 title 放上画面
+
+// 两半屏内容（title 先行、下方卡片延迟升起的分层入场；复刻 SceneContent 的 rows 布局）
+const VsScene: React.FC<{ content: SceneContentData; f: number; t: number }> = ({ content, f, t }) => {
+  const titleOp = interpolate(f, [t, t + 14], [0, 1], {
+    extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.cubic),
+  });
+  const titleTy = (1 - titleOp) * 26;
+  const panelOp = interpolate(f, [t + 16, t + 40], [0, 1], {
+    extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.cubic),
+  });
+  const panelTy = (1 - panelOp) * 18;
+  return (
+    <div
+      style={{
+        width: '100%', height: '100%', background: G.bg, position: 'relative', overflow: 'hidden',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        gap: 48, boxSizing: 'border-box',
+      }}
+    >
+      {content.title ? (
+        <div style={{ opacity: titleOp, transform: `translateY(${titleTy}px)`, fontSize: 46, fontWeight: 800, color: G.ink, textAlign: 'center', overflowWrap: 'break-word', maxWidth: '90%' }}>
+          {content.title}
+        </div>
+      ) : null}
+      <div style={{ opacity: panelOp, transform: `translateY(${panelTy}px)`, width: 720, maxWidth: '90%', background: G.card, border: `2px solid ${G.border}`, borderRadius: 24, padding: '40px 56px', display: 'flex', flexDirection: 'column' }}>
+        {(content.rows ?? []).map((r, i) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'center', padding: '22px 0', borderBottom: i < (content.rows ?? []).length - 1 ? `1px solid ${G.line}` : 'none' }}>
+            <span style={{ fontSize: 34, color: G.ink, fontWeight: 600 }}>{r.label}</span>
+            <span style={{ marginLeft: 'auto', fontSize: 36, color: G.accent, fontWeight: 800 }}>{r.value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 // 斜缝几何：78° 斜边 → 1080 高度上水平偏移 1080/tan(78°) ≈ 230px，中线 x=960 ±115
 const SEAM_TOP_X = 1075; // 缝顶端 x
@@ -83,9 +119,10 @@ export const VersusSlam: React.FC<VersusSlamProps> = ({
         easing: Easing.in(Easing.cubic),
       })
     : cueMode
-      ? interpolate(f, [0, IMPACT_F], [-1200, 0], {
+      ? interpolate(f, [ENTER0, ENTER0 + 20], [-1200, 0], {
           extrapolateLeft: 'clamp',
           extrapolateRight: 'clamp',
+          easing: Easing.in(Easing.cubic),
         })
       : interpolate(f, [20, IMPACT], [-1200, 0], {
           extrapolateLeft: 'clamp',
@@ -146,7 +183,7 @@ export const VersusSlam: React.FC<VersusSlamProps> = ({
           transform: `translateX(${leftX}px)`,
           clipPath: `polygon(0px 0px, ${SEAM_TOP_X}px 0px, ${SEAM_BOT_X}px 1080px, 0px 1080px)`,
         }}>
-          <SceneContent content={sceneA} titleSize={46} panelWidth={720} />
+          <VsScene content={sceneA} f={f} t={ENTER0 + 20} />
         </div>
         {/* 右半屏：FakeDashboard B 裁右半 */}
         <div style={{
@@ -155,7 +192,7 @@ export const VersusSlam: React.FC<VersusSlamProps> = ({
           // clip-path 坐标相对元素自身（右半 div 宽 960）：缝线屏幕坐标 1075/845 → 相对 115/-115
           clipPath: `polygon(${SEAM_TOP_X - 960}px 0px, 960px 0px, 960px 1080px, ${SEAM_BOT_X - 960}px 1080px)`,
         }}>
-          <SceneContent content={sceneB} titleSize={46} panelWidth={720} />
+          <VsScene content={sceneB} f={f} t={ENTER0 + 20} />
         </div>
         {/* 撞合后的实体斜缝条 */}
         {impacted && (
