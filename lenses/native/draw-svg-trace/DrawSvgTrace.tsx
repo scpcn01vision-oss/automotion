@@ -71,7 +71,7 @@ const CardContent: React.FC<{ content: DrawSvgTraceContent }> = ({ content }) =>
       <div style={{ height: 6 }} />
       {type === 'image' && image ? (
         <Img
-          src={staticFile(image)}
+          src={/^https?:\/\//.test(image) ? image : staticFile(image)}
           style={{
             flex: 1, width: '100%', objectFit: 'cover', borderRadius: 8,
             border: `1px solid ${G.border}`,

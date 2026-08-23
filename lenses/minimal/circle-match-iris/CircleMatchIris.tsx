@@ -76,7 +76,7 @@ const DetailBlock: React.FC<{ content: SceneContentData }> = ({ content }) => {
         <div style={{ fontFamily: FONT_STACK, fontWeight: 800, fontSize: 46, color: G.card, letterSpacing: -1 }}>{title}</div>
       ) : null}
       {type === 'image' && image ? (
-        <Img src={staticFile(image)} style={{ width: 760, aspectRatio: '16 / 9', objectFit: 'cover', borderRadius: 20, border: `2px solid ${G.border}`, boxShadow: '0 8px 32px rgba(0,0,0,0.35)', maxWidth: '90%' }} />
+        <Img src={/^https?:\/\//.test(image) ? image : staticFile(image)} style={{ width: 760, aspectRatio: '16 / 9', objectFit: 'cover', borderRadius: 20, border: `2px solid ${G.border}`, boxShadow: '0 8px 32px rgba(0,0,0,0.35)', maxWidth: '90%' }} />
       ) : (
         <div style={{ width: 760, maxWidth: '90%', background: G.card, border: `2px solid ${G.border}`, borderRadius: 20, padding: '30px 42px', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}>
           {(rows ?? []).map((r, i) => (

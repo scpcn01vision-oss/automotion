@@ -149,7 +149,7 @@ const CardContent: React.FC<{ card: MaskingTapeCard }> = ({ card }) => {
       ) : null}
       {type === 'image' && image ? (
         <Img
-          src={staticFile(image)}
+          src={/^https?:\/\//.test(image) ? image : staticFile(image)}
           style={{ width: '100%', flex: 1, objectFit: 'cover', borderRadius: 10, border: `1px solid ${G.line}` }}
         />
       ) : (

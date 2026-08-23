@@ -52,7 +52,7 @@ export const SceneContent: React.FC<{
       ) : null}
       {type === 'image' && image ? (
         <Img
-          src={staticFile(image)}
+          src={/^https?:\/\//.test(image) ? image : staticFile(image)}
           style={{
             width: `min(${panelWidth}px, 90%)`,
             aspectRatio: '16 / 9',

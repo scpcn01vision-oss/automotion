@@ -62,7 +62,7 @@ const NewScene: React.FC<{ scene: InkBleedRevealNewScene }> = ({ scene }) => {
       ) : null}
       {type === 'image' && image ? (
         <Img
-          src={staticFile(image)}
+          src={/^https?:\/\//.test(image) ? image : staticFile(image)}
           style={{
             width: 1200, height: 675, objectFit: 'cover', borderRadius: 24,
             border: `2px solid ${G.border}`, boxShadow: '0 8px 32px rgba(0,0,0,0.12)',

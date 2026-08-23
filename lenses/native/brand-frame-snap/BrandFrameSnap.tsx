@@ -68,7 +68,7 @@ const ContentRenderer: React.FC<{ content: BrandFrameSnapContent; cardWidth: num
       ) : null}
       {type === 'image' && image ? (
         <Img
-          src={staticFile(image)}
+          src={/^https?:\/\//.test(image) ? image : staticFile(image)}
           style={{
             width: cardWidth, height: Math.round(cardWidth * 0.562), objectFit: 'cover', borderRadius: 20,
             border: `2px solid ${G.border}`, boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
