@@ -3,6 +3,7 @@
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 展开,承接
 // === 时间特性 ===
+// 策略: 弹刚 ShotTime（刚弹分段）
 // 刚性（不可压缩）: 刚性:sweep 110f,reveal 125f
 // 弹性（可伸缩）: 其余段（入场/过渡/收尾/hold）可等比缩放
 // === 适配注意 ===
