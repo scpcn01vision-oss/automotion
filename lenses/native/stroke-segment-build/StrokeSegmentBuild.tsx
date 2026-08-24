@@ -4,9 +4,9 @@
 // 功能: 钩子,宣告
 // props: segments（笔画段坐标数组，默认内置 SHIP 16 段，可自定义字形）
 // === 时间特性 ===
-// 策略: 弹刚 ShotTime（整段弹性）
+// 策略: 弹刚 ShotTime（整段弹性）+ 口播锚点（revealAtSec 单事件）
 // 刚性（不可压缩）: 无
-// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
+// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）；提供 revealAtSec 时末段落位（字可读）锚定口播时刻
 // === 适配注意 ===
 // 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // stroke-segment-build —— 断笔成字（《异形》式）
@@ -16,7 +16,7 @@
 // 每段入场：opacity 0→1 + 沿笔画方向 12px 滑入（out 缓动），6f。
 // f0–14 静置空场；末段落位于 f104，脉冲至 f112，真静止 ≥38f（150f 总长）。
 import React from 'react';
-import { interpolate, Easing } from 'remotion';
+import { interpolate, Easing, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 
 import { useShotFrame } from '../../../engine/useShotFrame';
@@ -79,12 +79,23 @@ const OY = (1080 - H) / 2 + 20;
 
 export interface StrokeSegmentBuildProps {
   segments?: Seg[];
+  revealAtSec?: number; // 口播对齐：末段线落位、整字可读的段内秒；提供后断笔过程压缩到该时刻前完成
 }
 
 export const StrokeSegmentBuild: React.FC<StrokeSegmentBuildProps> = ({
   segments = SEGS,
+  revealAtSec,
 }) => {
-  const frame = useShotFrame(SHOT_TIME);
+  const frameShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const cueMode = revealAtSec !== undefined;
+  const EVT = LAST_LAND; // 末段落位（字可读）帧
+  const revealF = cueMode ? Math.max(1, Math.round(revealAtSec * 30)) : 0;
+  const frame = cueMode
+    ? realFrame <= revealF
+      ? (realFrame / revealF) * EVT
+      : EVT + (realFrame - revealF)
+    : frameShot;
 
   // 末段落位：整字脉冲 1 → 1.06 → 1（8f）
   const pulse = interpolate(

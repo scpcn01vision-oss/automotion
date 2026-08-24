@@ -4,13 +4,13 @@
 // 功能: 钩子,宣告
 // props: text（翻牌文本，大写 A-Z/0-9/#$%&）、backdrop（背景压暗内容承载）
 // === 时间特性 ===
-// 策略: 弹刚 ShotTime（整段弹性）
+// 策略: 弹刚 ShotTime（整段弹性）+ 口播锚点（revealAtSec 单事件）
 // 刚性（不可压缩）: 无
-// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
+// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）；提供 revealAtSec 时整词翻完锚定口播时刻，其后静止
 // === 适配注意 ===
 // 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 import React from 'react';
-import { AbsoluteFill, Easing, interpolate } from 'remotion';
+import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
 
@@ -81,14 +81,15 @@ const Half: React.FC<{ ch: string; part: 'top' | 'bottom' }> = ({ ch, part }) =>
   </div>
 );
 
-const FlapCell: React.FC<{ target: string; i: number; frame: number }> = ({
+const FlapCell: React.FC<{ target: string; i: number; frame: number; start: number }> = ({
   target,
   i,
   frame,
+  start,
 }) => {
   // 该格的字符序列：2 个乱码 → 1 个乱码 → 目标字（首态也是乱码，建立段可见）
   const seq = [garble(i, 0), garble(i, 1), garble(i, 2), target];
-  const local = frame - (START + i * STAGGER);
+  const local = frame - (start + i * STAGGER);
   const done = local >= NFLIP * FLIP;
 
   // 停定咔哒：整格下沉回弹（1px 肉眼无感，放大到 6px 才有"咔哒"）
@@ -187,13 +188,23 @@ const FlapCell: React.FC<{ target: string; i: number; frame: number }> = ({
 export interface SplitFlapFlipProps {
   text?: string; // 翻牌文本（任意字符串）
   previewLabel?: string; // 翻牌板上方预览字样
+  revealAtSec?: number; // 口播对齐：整词翻完（全部字符停定）的段内秒；提供后级联压缩到该时刻前完成
 }
 
 export const SplitFlapFlip: React.FC<SplitFlapFlipProps> = ({
   text = 'READY GO',
   previewLabel = '预览',
+  revealAtSec,
 }) => {
-  const frame = useShotFrame(SHOT_TIME);
+  const frameShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const cueMode = revealAtSec !== undefined;
+  const frame = cueMode ? realFrame : frameShot;
+  // 级联完成时长 = 首字符起翻到末字符停定（随文字长度）
+  const nChars = text.split('').filter((c) => c !== ' ').length;
+  const cascadeDur = (nChars - 1) * STAGGER + NFLIP * FLIP;
+  // 口播对齐：末字符停定帧 = revealAtSec*30，级联起点前移，核心翻牌节奏不变
+  const start = cueMode ? Math.max(1, Math.round(revealAtSec * 30) - cascadeDur) : START;
   let letterIdx = 0;
   return (
     <AbsoluteFill style={{ background: G.bg, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
@@ -206,7 +217,7 @@ export const SplitFlapFlip: React.FC<SplitFlapFlipProps> = ({
               return <div key={idx} style={{ width: 52 }} />;
             }
             const i = letterIdx++;
-            return <FlapCell key={idx} target={ch} i={i} frame={frame} />;
+            return <FlapCell key={idx} target={ch} i={i} frame={frame} start={start} />;
           })}
         </div>
       </div>

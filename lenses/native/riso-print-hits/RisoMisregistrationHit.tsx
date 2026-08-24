@@ -3,9 +3,9 @@
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 宣告,举证
 // === 时间特性 ===
-// 策略: 弹刚 ShotTime（整段弹性）
+// 策略: 弹刚 ShotTime（整段弹性）+ 口播锚点（revealAtSec 单事件）
 // 刚性（不可压缩）: 无
-// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
+// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）；提供 revealAtSec 时套准合一锚定口播时刻
 // === 适配注意 ===
 // 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // 套印错位冲击帧（riso-misregistration-hit）——标题撞停瞬间裂成两份单色"印版"
@@ -15,7 +15,7 @@
 // 结构：0–19f 空场 hold（只有底部装饰线）；20–28f 标题从右画外 Easing.in(cubic)
 // 撞入屏心（帧 28 命中）；28–71f 双版错位震荡；72–75f 套准脉冲；76–119f 真静止 44f。
 import React from 'react';
-import { interpolate, Easing } from 'remotion';
+import { interpolate, Easing, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
 
@@ -65,10 +65,23 @@ const Plate: React.FC<{ color: string; dx: number; dy: number; text: string }> =
 
 export interface RisoMisregistrationHitProps {
   text?: string;
+  revealAtSec?: number; // 口播对齐：标题套准合一（重影归单）的段内秒；提供后撞入+震荡压缩到该时刻前完成
 }
 
-export const RisoMisregistrationHit: React.FC<RisoMisregistrationHitProps> = ({ text = 'IMPACT' }) => {
-  const frame = useShotFrame(SHOT_TIME);
+export const RisoMisregistrationHit: React.FC<RisoMisregistrationHitProps> = ({
+  text = 'IMPACT',
+  revealAtSec,
+}) => {
+  const frameShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const cueMode = revealAtSec !== undefined;
+  const EVT = SNAP; // 套准合一帧
+  const revealF = cueMode ? Math.max(1, Math.round(revealAtSec * 30)) : 0;
+  const frame = cueMode
+    ? realFrame <= revealF
+      ? (realFrame / revealF) * EVT
+      : EVT + (realFrame - revealF)
+    : frameShot;
 
   // 阶段判定
   const entering = frame >= 20 && frame < HIT; // 撞入

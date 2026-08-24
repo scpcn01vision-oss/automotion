@@ -4,9 +4,9 @@
 // 功能: 钩子,宣告
 // props: word（字标内容，仅内置字形 S/U/P/E/R/H/M/A/N，未收录字母渲染为圆点）
 // === 时间特性 ===
-// 策略: 弹刚 ShotTime（刚弹分段）
+// 策略: 弹刚 ShotTime（刚弹分段）+ 口播锚点（revealAtSec 单事件）
 // 刚性（不可压缩）: 全字符描画 16–68f（52f 起画齐收，核心动作固定）
-// 弹性（可伸缩）: 前段空场 hold 0–16 / 后段静止 68–180
+// 弹性（可伸缩）: 前段空场 hold 0–16 / 后段静止 68–180；提供 revealAtSec 时描画齐收锚定口播时刻，前后空场吸收
 // === 适配注意 ===
 // 描画段固定不随段长伸缩；段长不足 68f（8+52+8）时回退原始帧。
 // letterspace-materialize v3 —— 按批次 11 用户意见修正（截图 superhuman，4 张）：
@@ -15,7 +15,7 @@
 // ② 所有字母同时开始同时完成：去掉 v2 的逐字错峰（PER/jitter），全字符同一帧起笔、
 //    pathLength 归一保证不同笔画长度的字母在同一帧齐收（截图 2/3 的全行并行半截态）。
 import React from 'react';
-import { AbsoluteFill, interpolate } from 'remotion';
+import { AbsoluteFill, interpolate, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 
 import { useShotFrame } from '../../../engine/useShotFrame';
@@ -49,21 +49,28 @@ const DUR = 52;     // 全字符统一画完帧数（pathLength 归一→同帧�
 
 export interface LetterspaceMaterializeProps {
   word?: string;
+  revealAtSec?: number; // 口播对齐：全字符描画齐收的段内秒；提供后刚性描画段终点锚到该时刻，前后空场吸收
 }
 
 export const LetterspaceMaterialize: React.FC<LetterspaceMaterializeProps> = ({
   word = 'SUPREME',
+  revealAtSec,
 }) => {
-  const frame = useShotFrame(SHOT_TIME);
+  const frameShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const cueMode = revealAtSec !== undefined;
+  const frame = cueMode ? realFrame : frameShot;
+  // 口播对齐：描画段时长 DUR 固定，只挪终点到 revealAtSec*30（起画点随之前移），前后空场伸缩吸收
+  const startEff = cueMode ? Math.max(0, Math.round(revealAtSec * 30) - DUR) : START;
 
   // 全字符共享同一进度：同时开始、同时完成
-  const p = interpolate(frame, [START, START + DUR], [0, 1], {
+  const p = interpolate(frame, [startEff, startEff + DUR], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
   // easeInOut：起笔缓→中段匀速→收笔缓（手写感）
   const e = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
   // 画完瞬间轻微提亮回落（结晶收束）——全字符同帧发生
-  const doneGlow = interpolate(frame, [START + DUR, START + DUR + 8], [1, 0], {
+  const doneGlow = interpolate(frame, [startEff + DUR, startEff + DUR + 8], [1, 0], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
   const glowAmt = p >= 1 ? doneGlow : p > 0.7 ? (p - 0.7) / 0.3 : 0;

@@ -4,9 +4,9 @@
 // 功能: 宣告,展开
 // props: word（漂移合拢的字标，默认 ASSEMBLE）
 // === 时间特性 ===
-// 策略: 弹刚 ShotTime（整段弹性）
+// 策略: 弹刚 ShotTime（整段弹性）+ 口播锚点（revealAtSec 单事件）
 // 刚性（不可压缩）: 无
-// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
+// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）；提供 revealAtSec 时整词合拢完成锚定口播时刻
 // === 适配注意 ===
 // 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // 字形漂移合拢（letterform-drift-assembly）——Stranger Things 片头式入场。
@@ -20,7 +20,7 @@
 // 锁定帧 i*3+45 起 8f 加深脉冲（最后一字 69–77）→ 80–104 整词呼吸 →
 // 104–150 全静止（46f，无逐帧滤镜）。
 import React from 'react';
-import { interpolate, interpolateColors, Easing } from 'remotion';
+import { interpolate, interpolateColors, Easing, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
 
@@ -43,13 +43,24 @@ const STAG = 3; // 错峰间隔
 
 export interface LetterformDriftAssemblyProps {
   word?: string;
+  revealAtSec?: number; // 口播对齐：整词合拢（末字符漂入锁定）的段内秒；提供后漂入压缩到该时刻前完成
 }
 
 export const LetterformDriftAssembly: React.FC<LetterformDriftAssemblyProps> = ({
   word = 'ASSEMBLE',
+  revealAtSec,
 }) => {
-  const frame = useShotFrame(SHOT_TIME);
   const chars = word.split('');
+  const frameShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const cueMode = revealAtSec !== undefined;
+  const EVT = (chars.length - 1) * STAG + TRAVEL; // 末字符漂入锁定帧
+  const revealF = cueMode ? Math.max(1, Math.round(revealAtSec * 30)) : 0;
+  const frame = cueMode
+    ? realFrame <= revealF
+      ? (realFrame / revealF) * EVT
+      : EVT + (realFrame - revealF)
+    : frameShot;
 
   // 整词收束呼吸：80–92 放大到 1.04，92–104 回落，之后恒 1 → 帧确定
   const breath =

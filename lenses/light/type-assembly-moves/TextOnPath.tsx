@@ -4,9 +4,9 @@
 // 功能: 宣告,展开
 // props: text（沿曲线流入的标题）
 // === 时间特性 ===
-// 策略: 弹刚 ShotTime（整段弹性）
+// 策略: 弹刚 ShotTime（整段弹性）+ 口播锚点（revealAtSec 单事件）
 // 刚性（不可压缩）: 无
-// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
+// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）；提供 revealAtSec 时全标题落在水平基线的时刻锚定口播
 // === 适配注意 ===
 // 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // 文字沿曲线流入（text-on-path）——字符沿一条上升贝塞尔曲线（像图表增长线）
@@ -15,7 +15,7 @@
 // 关键帧：字符 i 于 i*2 起跑、45f 沿线到达 t_i（out cubic）→ 到达后停 8f →
 // 12f 摆正到水平基线（y 拉平、rotate→0）→ 全部落定约 f103 → 103–150 真静止。
 import React from 'react';
-import { interpolate, Easing } from 'remotion';
+import { interpolate, Easing, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
 
@@ -54,13 +54,24 @@ const FINAL_Y = 300; // 水平基线（标题最终落位）
 
 export interface TextOnPathProps {
   text?: string;
+  revealAtSec?: number; // 口播对齐：全部字符落位到水平基线的段内秒；提供后沿线流入压缩到该时刻前完成
 }
 
 export const TextOnPath: React.FC<TextOnPathProps> = ({
   text = 'GROWTH ALL THE WAY',
+  revealAtSec,
 }) => {
-  const frame = useShotFrame(SHOT_TIME);
   const n = text.length;
+  const frameShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const cueMode = revealAtSec !== undefined;
+  const EVT = (n - 1) * 2 + 65; // 末字符摆正到水平基线帧
+  const revealF = cueMode ? Math.max(1, Math.round(revealAtSec * 30)) : 0;
+  const frame = cueMode
+    ? realFrame <= revealF
+      ? (realFrame / revealF) * EVT
+      : EVT + (realFrame - revealF)
+    : frameShot;
   const finalX0 = 960 - (n * CHAR_W) / 2;
   // 曲线 evolve：随最前字符推进同步生长
   const evolve = interpolate(frame, [0, 82], [0, 1], {

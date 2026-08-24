@@ -4,9 +4,9 @@
 // 功能: 宣告,展开
 // props: word（字距展开的主词）、subtitle（副标题）
 // === 时间特性 ===
-// 策略: 弹刚 ShotTime（整段弹性）
+// 策略: 弹刚 ShotTime（整段弹性）+ 口播锚点（revealAtSec 单事件）
 // 刚性（不可压缩）: 无
-// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
+// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）；提供 revealAtSec 时主词展开完成锚定口播时刻，副标题随其后
 // === 适配注意 ===
 // 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // 字距呼吸展开（tracking-expand-reveal）——电影片头字幕惯用的 letter-spacing 入场。
@@ -18,7 +18,7 @@
 // 关键帧：0–50 展开（Easing.out(poly(5)))＋去糊提亮 → 35–58 副标题淡入（≈主词展开 70% 时点）
 // → 58–130 全静止（≥72f，滤镜彻底摘除）。
 import React from 'react';
-import { interpolate, Easing } from 'remotion';
+import { interpolate, Easing, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
 
@@ -38,13 +38,25 @@ const GAP_DELTA = -0.56 * FS;
 export interface TrackingExpandRevealProps {
   word?: string;
   subtitle?: string;
+  revealAtSec?: number; // 口播对齐：主词字距展开完成的段内秒；提供后展开压缩到该时刻前，副标题随后淡入
 }
 
 export const TrackingExpandReveal: React.FC<TrackingExpandRevealProps> = ({
   word = 'BREATHE',
   subtitle = 'SYSTEM',
+  revealAtSec,
 }) => {
-  const frame = useShotFrame(SHOT_TIME);
+  const frameShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const cueMode = revealAtSec !== undefined;
+  // 主词展开完成 = 50f；口播对齐压缩到 revealAtSec 前完成，其后静止
+  const EVT = 50;
+  const revealF = cueMode ? Math.max(1, Math.round(revealAtSec * 30)) : 0;
+  const frame = cueMode
+    ? realFrame <= revealF
+      ? (realFrame / revealF) * EVT
+      : EVT + (realFrame - revealF)
+    : frameShot;
   // 展开进度 0→1（0–50f，out poly(5)）
   const p = interpolate(frame, [0, 50], [0, 1], {
     extrapolateLeft: 'clamp',

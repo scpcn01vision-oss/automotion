@@ -4,9 +4,9 @@
 // 功能: 展开
 // props: command（终端命令）、history（历史行）、result（回车后全屏内容承载）
 // === 时间特性 ===
-// 策略: 弹刚 ShotTime（整段弹性）
+// 策略: 弹刚 ShotTime（整段弹性）+ 口播锚点（revealAtSec 单事件）
 // 刚性（不可压缩）: 无
-// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
+// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）；提供 revealAtSec 时回车 result 呈现锚定口播时刻
 // === 适配注意 ===
 // 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // terminal-typewriter —— 终端打字机触发
@@ -15,7 +15,7 @@
 // Easing.in(cubic) 急推 scale 1→3.2 向命令行推入（末 2f 加 blur）硬切到
 // result 内容全屏，1.06→1 回稳 4f 落定。收尾真静止 ≥40f。
 import React from 'react';
-import { interpolate, Easing } from 'remotion';
+import { interpolate, Easing, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
@@ -87,6 +87,7 @@ export interface TerminalTypewriterProps {
   history?: string;
   result?: SceneContentData;
   windowTitle?: string; // 终端窗口标题
+  revealAtSec?: number; // 口播对齐：回车后 result 内容呈现的段内秒；提供后打字+回车压缩到该时刻前完成
 }
 
 export const TerminalTypewriter: React.FC<TerminalTypewriterProps> = ({
@@ -102,8 +103,19 @@ export const TerminalTypewriter: React.FC<TerminalTypewriterProps> = ({
       { label: '指标三', value: '96.4%' },
     ],
   },
+  revealAtSec,
 }) => {
-  const frame = useShotFrame(SHOT_TIME);
+  const frameShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const cueMode = revealAtSec !== undefined;
+  // result 呈现（回车硬切推完）= 28 + command.length*2；口播对齐压缩到 revealAtSec 前完成
+  const EVT = 28 + command.length * 2;
+  const revealF = cueMode ? Math.max(1, Math.round(revealAtSec * 30)) : 0;
+  const frame = cueMode
+    ? realFrame <= revealF
+      ? (realFrame / revealF) * EVT
+      : EVT + (realFrame - revealF)
+    : frameShot;
 
   // 时间轴随命令长度动态：10 起敲（2f/字符）→ 敲完停 12f → 6f 急推硬切 → 4f 落定
   const typeStart = 10;

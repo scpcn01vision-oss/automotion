@@ -3,9 +3,9 @@
 // 色彩: 走纸墨 G 色板（src/_fixtures/Fixtures.tsx）——文字 G.ink / 背景 G.bg / 强调 G.accent
 // 功能: 宣告,对比
 // === 时间特性 ===
-// 策略: 弹刚 ShotTime（刚弹分段）
+// 策略: 弹刚 ShotTime（刚弹分段）+ 口播锚点（revealAtSec 单事件）
 // 刚性（不可压缩）: 合拢 100–136f（唯一一次合拢 36f ≈1.2s，固定时长）
-// 弹性（可伸缩）: 前段开场+词轮换 0–100 / 后段静止 hold 136–180
+// 弹性（可伸缩）: 前段开场+词轮换 0–100 / 后段静止 hold 136–180；提供 revealAtSec 时合拢锚定口播时刻，词轮换压缩到之前
 // === 适配注意 ===
 // 合拢段固定不随段长伸缩；段长不足 52f（8+36+8）时回退原始帧。
 // text-column-converge —— raycast-teams（实测素材 28–36s 段）重做版：
@@ -15,7 +15,7 @@
 // （左缘 412→554 / 右缘 867→725），"NEW RAYCAST" 以屏幕中线居中定格；
 // 定格后约 0.6s，斜体 "COMING 2026" 在下方近乎硬切浮现。
 import React from 'react';
-import { AbsoluteFill, Easing, interpolate } from 'remotion';
+import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 
 import { useShotFrame } from '../../../engine/useShotFrame';
@@ -62,16 +62,28 @@ export interface TextColumnConvergeProps {
   leftWord?: string;
   rightWords?: { word: string; dur: number }[];
   subtitle?: string;
+  revealAtSec?: number; // 口播对齐：唯一一次合拢落定的段内秒；提供后合拢锚定该时刻，词轮换压缩到合拢前
 }
 
 export const TextColumnConverge: React.FC<TextColumnConvergeProps> = ({
   leftWord = 'NEW',
   rightWords = DEFAULT_STEPS,
   subtitle = 'COMING 2026',
+  revealAtSec,
 }) => {
-  const f = useShotFrame(SHOT_TIME);
-  const t = f - START;
   const STEPS = rightWords;
+  const fShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const cueMode = revealAtSec !== undefined;
+  const f = cueMode ? realFrame : fShot;
+  const revealF = cueMode ? Math.max(1, Math.round(revealAtSec * 30)) : 0;
+  // 词轮换（末词之前）总时长：帧 = 各步骤 dur 之和，末词停稳后 CONVERGE_DELAY 起、CONVERGE_DUR 合拢
+  const ROT_TOTAL = STEPS.slice(0, -1).reduce((a, s) => a + s.dur, 0);
+  // 口播对齐：末词停稳帧 = revealF - CONVERGE_DELAY - CONVERGE_DUR，词轮换压缩到该帧前；合拢时长不变
+  const lastStop = cueMode ? revealF - CONVERGE_DELAY - CONVERGE_DUR : START + ROT_TOTAL;
+  const t = cueMode
+    ? Math.min(ROT_TOTAL, (realFrame / Math.max(1, lastStop)) * ROT_TOTAL)
+    : f - START;
 
   // 合拢终点按实际字符数动态计算（左词 + 空格 + 末词）
   const ADV = 0.6 * FS + LSP; // 每字符步进
@@ -94,7 +106,9 @@ export const TextColumnConverge: React.FC<TextColumnConvergeProps> = ({
   const local = t - stepStart;
 
   // 唯一一次合拢：RAYCAST 停稳 CONVERGE_DELAY 帧后，ease-in-out 连续滑动
-  const cvT = isLast ? local - CONVERGE_DELAY : -1;
+  const cvT = cueMode
+    ? realFrame - lastStop - CONVERGE_DELAY
+    : isLast ? local - CONVERGE_DELAY : -1;
   const cv = interpolate(cvT, [0, CONVERGE_DUR], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
     easing: Easing.inOut(Easing.cubic),

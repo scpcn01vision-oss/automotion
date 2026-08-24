@@ -4,9 +4,9 @@
 // 功能: 钩子,宣告
 // props: word（坠落堆积的字标）
 // === 时间特性 ===
-// 策略: 弹刚 ShotTime（整段弹性）
+// 策略: 弹刚 ShotTime（整段弹性）+ 口播锚点（revealAtSec 单事件）
 // 刚性（不可压缩）: 无
-// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
+// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）；提供 revealAtSec 时齐整回正锚定口播时刻
 // === 适配注意 ===
 // 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // 字符坠落堆积（letter-drop-physics）——FallingLetterAnimation。
@@ -17,7 +17,7 @@
 // ③ 帧 110 一拍：6f ease-out 全体齐整回正（rotate→0、偏移→0、scale 1.06→1），
 //    帧 116–150 真静止（≥25f）收尾。
 import React from 'react';
-import { Easing } from 'remotion';
+import { Easing, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
 
@@ -68,12 +68,23 @@ const dropY = (t: number): number => {
 
 export interface LetterDropPhysicsProps {
   word?: string;
+  revealAtSec?: number; // 口播对齐：整词齐整回正（落定）的段内秒；提供后入场压缩到该时刻前完成
 }
 
 export const LetterDropPhysics: React.FC<LetterDropPhysicsProps> = ({
   word = 'GRAVITY',
+  revealAtSec,
 }) => {
-  const frame = useShotFrame(SHOT_TIME);
+  const frameShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const cueMode = revealAtSec !== undefined;
+  // 口播对齐：把原始入场(0→SNAP)压缩到 [0, revealAtSec*30]，SNAP 时刻落在锚点；锚后 SNAP+6 帧回正后静止
+  const revealF = cueMode ? Math.max(1, Math.round(revealAtSec * 30)) : 0;
+  const frame = cueMode
+    ? realFrame <= revealF
+      ? (realFrame / revealF) * SNAP
+      : SNAP + (realFrame - revealF)
+    : frameShot;
   const wordW = word.length * SLOT_W;
   const left = (1920 - wordW) / 2;
   // 帧 110 起的齐整回正进度

@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generatedAt": "2026-08-22T11:56:27.000Z",
+    "generatedAt": "2026-08-24T12:59:50.473Z",
     "count": 122,
     "source": "Root.preview.tsx + docs/lens-names.md + 组件 XxxProps 接口（同文件/跨文件/内联对象字段）+ docs/lens-scenes-draft.md"
   },
@@ -42,18 +42,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -70,23 +64,12 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         },
@@ -98,18 +81,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -126,23 +103,12 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         },
@@ -208,11 +174,10 @@
           "default": "原文引用"
         },
         {
-          "description": "口播锚点（正文逐行浮现，与 body 一一对应）@internal",
+          "description": "口播锚点：正文逐行浮现的段内秒（与 body 一一对应）；提供后卡框架/红头/标题在段开头浮现、正文行踩点浮现",
           "name": "cueSec",
           "type": "number[]",
-          "optional": true,
-          "internal": true
+          "optional": true
         }
       ],
       "scenes": [
@@ -235,18 +200,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -263,31 +222,19 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         },
         {
           "name": "revealAtSec",
           "type": "number",
-          "optional": true,
-          "internal": true
+          "optional": true
         }
       ],
       "scenes": [
@@ -308,6 +255,11 @@
           "type": "string",
           "optional": true,
           "default": "SUPREME"
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -386,8 +338,7 @@
         {
           "name": "revealAtSec",
           "type": "number",
-          "optional": true,
-          "internal": true
+          "optional": true
         }
       ],
       "scenes": [
@@ -410,18 +361,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -438,23 +383,12 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         },
@@ -466,18 +400,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -494,31 +422,19 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         },
         {
           "name": "revealAtSec",
           "type": "number",
-          "optional": true,
-          "internal": true
+          "optional": true
         }
       ],
       "scenes": [
@@ -606,27 +522,16 @@
           "optional": true,
           "fields": [
             {
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）",
               "name": "type",
               "type": "'rows' | 'image'",
               "optional": true
             },
             {
-              "description": "rows 用：卡标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              },
               "name": "title",
               "type": "string",
               "optional": true
             },
             {
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              },
               "name": "rows",
               "type": "{ label: string; value: string }[]",
               "optional": true,
@@ -644,12 +549,6 @@
               ]
             },
             {
-              "description": "推荐插入 16:9 的图片",
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              },
-              "file": true,
               "name": "image",
               "type": "string",
               "optional": true
@@ -659,8 +558,7 @@
         {
           "name": "revealAtSec",
           "type": "number",
-          "optional": true,
-          "internal": true
+          "optional": true
         }
       ],
       "scenes": [
@@ -731,8 +629,7 @@
         {
           "name": "cueSec",
           "type": "number[]",
-          "optional": true,
-          "internal": true
+          "optional": true
         }
       ],
       "scenes": [
@@ -813,7 +710,7 @@
           "default": "发送"
         },
         {
-          "description": "口播锚点（对齐流程用 generate_cues.py 自动生成，非用户可调）@internal",
+          "description": "口播锚点（对齐流程用 generate_cues.py 自动生成，非用户可调）",
           "internal": true,
           "name": "revealAtSec",
           "type": "number",
@@ -847,18 +744,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -875,31 +766,19 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         },
         {
           "name": "revealAtSec",
           "type": "number",
-          "optional": true,
-          "internal": true
+          "optional": true
         }
       ],
       "scenes": [
@@ -920,6 +799,11 @@
           "type": "string",
           "optional": true,
           "default": "IMPACT"
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -946,6 +830,11 @@
           "type": "string",
           "optional": true,
           "default": "预览"
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -987,6 +876,11 @@
               "optional": false
             }
           ]
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -1022,18 +916,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -1050,23 +938,12 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         },
@@ -1075,6 +952,11 @@
           "type": "string",
           "optional": true,
           "default": "未命名终端"
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -1128,8 +1010,7 @@
         {
           "name": "revealAtSec",
           "type": "number",
-          "optional": true,
-          "internal": true
+          "optional": true
         }
       ],
       "scenes": [
@@ -1152,18 +1033,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -1180,23 +1055,12 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         },
@@ -1208,18 +1072,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -1236,23 +1094,12 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         }
@@ -1302,8 +1149,7 @@
         {
           "name": "cueSec",
           "type": "number[]",
-          "optional": true,
-          "internal": true
+          "optional": true
         }
       ],
       "scenes": [
@@ -1390,18 +1236,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -1418,23 +1258,12 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         }
@@ -1593,18 +1422,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -1621,23 +1444,12 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         },
@@ -1649,18 +1461,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -1677,28 +1483,17 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         },
         {
-          "description": "口播锚点（对齐流程用 generate_cues.py 自动生成，非用户可调）@internal",
+          "description": "口播锚点（对齐流程用 generate_cues.py 自动生成，非用户可调）",
           "internal": true,
           "name": "revealAtSec",
           "type": "number",
@@ -1779,18 +1574,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -1807,23 +1596,12 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         }
@@ -1920,8 +1698,7 @@
         {
           "name": "revealAtSec",
           "type": "number",
-          "optional": true,
-          "internal": true
+          "optional": true
         }
       ],
       "scenes": [
@@ -1945,18 +1722,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -1973,23 +1744,12 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         }
@@ -2174,18 +1934,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -2202,23 +1956,12 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         },
@@ -2304,18 +2047,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -2332,23 +2069,12 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         },
@@ -2360,18 +2086,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -2388,23 +2108,12 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         },
@@ -2428,8 +2137,7 @@
         {
           "name": "revealAtSec",
           "type": "number",
-          "optional": true,
-          "internal": true
+          "optional": true
         }
       ],
       "scenes": [
@@ -2453,18 +2161,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -2481,23 +2183,12 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         },
@@ -2509,18 +2200,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -2537,23 +2222,12 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         },
@@ -2566,8 +2240,7 @@
         {
           "name": "revealAtSec",
           "type": "number",
-          "optional": true,
-          "internal": true
+          "optional": true
         }
       ],
       "scenes": [
@@ -2591,18 +2264,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -2619,23 +2286,12 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         },
@@ -2647,18 +2303,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -2675,23 +2325,12 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         },
@@ -2704,8 +2343,7 @@
         {
           "name": "revealAtSec",
           "type": "number",
-          "optional": true,
-          "internal": true
+          "optional": true
         },
         {
           "name": "sceneAAtSec",
@@ -2739,18 +2377,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -2767,23 +2399,12 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         },
@@ -2795,18 +2416,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -2823,23 +2438,12 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         }
@@ -2866,18 +2470,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -2894,23 +2492,12 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         },
@@ -2922,18 +2509,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -2950,23 +2531,12 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         }
@@ -3005,8 +2575,7 @@
         {
           "name": "cueSec",
           "type": "number[]",
-          "optional": true,
-          "internal": true
+          "optional": true
         }
       ],
       "scenes": [
@@ -3154,6 +2723,11 @@
               "optional": false
             }
           ]
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -3189,8 +2763,7 @@
         {
           "name": "revealAtSec",
           "type": "number",
-          "optional": true,
-          "internal": true
+          "optional": true
         }
       ],
       "scenes": [
@@ -3286,18 +2859,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -3314,31 +2881,19 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         },
         {
           "name": "revealAtSec",
           "type": "number",
-          "optional": true,
-          "internal": true
+          "optional": true
         }
       ],
       "scenes": [
@@ -3382,6 +2937,11 @@
           "type": "string",
           "optional": true,
           "default": "COMING 2026"
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -3428,8 +2988,7 @@
         {
           "name": "revealAtSec",
           "type": "number",
-          "optional": true,
-          "internal": true
+          "optional": true
         }
       ],
       "scenes": [
@@ -3450,6 +3009,11 @@
           "type": "string",
           "optional": true,
           "default": "ASSEMBLE"
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -3474,8 +3038,7 @@
         {
           "name": "revealAtSec",
           "type": "number",
-          "optional": true,
-          "internal": true
+          "optional": true
         }
       ],
       "scenes": [
@@ -3496,6 +3059,11 @@
           "type": "string",
           "optional": true,
           "default": "GROWTH ALL THE WAY"
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -3522,6 +3090,11 @@
           "type": "string",
           "optional": true,
           "default": "SYSTEM"
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -3542,6 +3115,11 @@
           "type": "string",
           "optional": true,
           "default": "GRAVITY"
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -3562,6 +3140,11 @@
           "type": "string",
           "optional": true,
           "default": "DECODE SPEED"
+        },
+        {
+          "name": "revealAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -3597,18 +3180,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -3625,23 +3202,12 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         },
@@ -3724,8 +3290,7 @@
         {
           "name": "revealAtSec",
           "type": "number",
-          "optional": true,
-          "internal": true
+          "optional": true
         }
       ],
       "scenes": [
@@ -3904,8 +3469,7 @@
         {
           "name": "cueSec",
           "type": "number[]",
-          "optional": true,
-          "internal": true
+          "optional": true
         }
       ],
       "scenes": [
@@ -3952,18 +3516,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -3980,23 +3538,12 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         },
@@ -4008,18 +3555,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -4036,23 +3577,12 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         }
@@ -4078,18 +3608,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -4106,23 +3630,12 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         },
@@ -4134,18 +3647,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -4162,23 +3669,12 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         }
@@ -4399,18 +3895,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -4427,23 +3917,12 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         },
@@ -4484,8 +3963,7 @@
         {
           "name": "cueSec",
           "type": "number[]",
-          "optional": true,
-          "internal": true
+          "optional": true
         }
       ],
       "scenes": [
@@ -4552,8 +4030,7 @@
         {
           "name": "revealAtSec",
           "type": "number",
-          "optional": true,
-          "internal": true
+          "optional": true
         }
       ],
       "scenes": [
@@ -4600,8 +4077,7 @@
         {
           "name": "revealAtSec",
           "type": "number",
-          "optional": true,
-          "internal": true
+          "optional": true
         }
       ],
       "scenes": [
@@ -4637,18 +4113,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -4665,23 +4135,12 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         }
@@ -4725,18 +4184,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -4753,23 +4206,12 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         }
@@ -4801,8 +4243,7 @@
         {
           "name": "revealAtSec",
           "type": "number",
-          "optional": true,
-          "internal": true
+          "optional": true
         }
       ],
       "scenes": [
@@ -4999,7 +4440,7 @@
           ]
         },
         {
-          "description": "口播锚点（对齐流程用 generate_cues.py 自动生成，非用户可调）@internal",
+          "description": "口播锚点（对齐流程用 generate_cues.py 自动生成，非用户可调）",
           "internal": true,
           "name": "revealAtSec",
           "type": "number",
@@ -5208,8 +4649,7 @@
         {
           "name": "cueSec",
           "type": "number[]",
-          "optional": true,
-          "internal": true
+          "optional": true
         }
       ],
       "scenes": [
@@ -5371,8 +4811,7 @@
         {
           "name": "revealAtSec",
           "type": "number",
-          "optional": true,
-          "internal": true
+          "optional": true
         }
       ],
       "scenes": [
@@ -5443,8 +4882,7 @@
         {
           "name": "revealAtSec",
           "type": "number",
-          "optional": true,
-          "internal": true
+          "optional": true
         },
         {
           "name": "actions",
@@ -5518,6 +4956,11 @@
             {
               "name": "cardValue",
               "type": "string",
+              "optional": true
+            },
+            {
+              "name": "x",
+              "type": "number",
               "optional": true
             }
           ]
@@ -5596,7 +5039,7 @@
           ]
         },
         {
-          "description": "口播锚点（对齐流程用 generate_cues.py 自动生成，非用户可调）@internal",
+          "description": "口播锚点（对齐流程用 generate_cues.py 自动生成，非用户可调）",
           "internal": true,
           "name": "cueSec",
           "type": "number[]",
@@ -5624,18 +5067,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -5652,31 +5089,19 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         },
         {
           "name": "cueSec",
           "type": "number[]",
-          "optional": true,
-          "internal": true
+          "optional": true
         }
       ],
       "scenes": [
@@ -5700,18 +5125,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -5728,31 +5147,19 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         },
         {
           "name": "revealAtSec",
           "type": "number",
-          "optional": true,
-          "internal": true
+          "optional": true
         }
       ],
       "scenes": [
@@ -5806,8 +5213,7 @@
         {
           "name": "cueSec",
           "type": "number[]",
-          "optional": true,
-          "internal": true
+          "optional": true
         }
       ],
       "scenes": [
@@ -6251,8 +5657,7 @@
         {
           "name": "cueSec",
           "type": "number[]",
-          "optional": true,
-          "internal": true
+          "optional": true
         }
       ],
       "scenes": [
@@ -6305,18 +5710,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -6333,31 +5732,19 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         },
         {
           "name": "revealAtSec",
           "type": "number",
-          "optional": true,
-          "internal": true
+          "optional": true
         }
       ],
       "scenes": [
@@ -6380,18 +5767,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -6408,23 +5789,12 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         },
@@ -6458,8 +5828,7 @@
         {
           "name": "revealAtSec",
           "type": "number",
-          "optional": true,
-          "internal": true
+          "optional": true
         }
       ],
       "scenes": [
@@ -6482,18 +5851,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -6510,23 +5873,12 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         },
@@ -6538,18 +5890,12 @@
             {
               "name": "title",
               "type": "string",
-              "optional": true,
-              "description": "rows 用：标题（image 卡无标题）",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              "optional": true
             },
             {
               "name": "type",
               "type": "'rows' | 'image'",
-              "optional": true,
-              "description": "卡类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）"
+              "optional": true
             },
             {
               "name": "rows",
@@ -6566,23 +5912,12 @@
                   "type": "string",
                   "optional": false
                 }
-              ],
-              "description": "rows 用：行",
-              "showWhen": {
-                "field": "type",
-                "value": "rows"
-              }
+              ]
             },
             {
               "name": "image",
               "type": "string",
-              "optional": true,
-              "description": "推荐插入 16:9 的图片",
-              "file": true,
-              "showWhen": {
-                "field": "type",
-                "value": "image"
-              }
+              "optional": true
             }
           ]
         }

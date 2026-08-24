@@ -4,9 +4,9 @@
 // 功能: 钩子,宣告
 // props: text（乱码解码的标题）
 // === 时间特性 ===
-// 策略: 弹刚 ShotTime（整段弹性）
+// 策略: 弹刚 ShotTime（整段弹性）+ 口播锚点（revealAtSec 单事件）
 // 刚性（不可压缩）: 无
-// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
+// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）；提供 revealAtSec 时整词解码完成锚定口播时刻
 // === 适配注意 ===
 // 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // 乱码解码字（scramble-decode）——终端黑客感文字入场。
@@ -15,6 +15,7 @@
 // （G.ink 色块白字 2f）随即恢复。跳动期字符 G.mid，锁定后 G.ink。
 // 关键帧：0–20f 全员乱跳 → 20–86f 从左到右逐个锁定 → 87–130f 完全静止收尾。
 import React from 'react';
+import { useCurrentFrame } from 'remotion';
 
 import { G } from '../../_fixtures/Fixtures';
 
@@ -40,13 +41,26 @@ const h = (n: number) => {
 
 export interface ScrambleDecodeProps {
   text?: string;
+  revealAtSec?: number; // 口播对齐：整词解码完成（首尾字符全部锁定）的段内秒；提供后解码进度压缩到该时刻前完成
 }
 
 export const ScrambleDecode: React.FC<ScrambleDecodeProps> = ({
   text = 'DECODE SPEED',
+  revealAtSec,
 }) => {
-  const frame = useShotFrame(SHOT_TIME);
   const chars = text.split('');
+  const frameShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const cueMode = revealAtSec !== undefined;
+  // 解码完成（末字符锁定）= LOCK_START + (n-1)*LOCK_STEP；口播对齐压缩到 revealAtSec 前完成
+  const nNonSpace = chars.filter((c) => c !== ' ').length;
+  const EVT = LOCK_START + (nNonSpace - 1) * LOCK_STEP;
+  const revealF = cueMode ? Math.max(1, Math.round(revealAtSec * 30)) : 0;
+  const frame = cueMode
+    ? realFrame <= revealF
+      ? (realFrame / revealF) * EVT
+      : EVT + (realFrame - revealF)
+    : frameShot;
   const lockedCount = chars.filter((c, i) => c === ' ' || frame >= LOCK_START + i * LOCK_STEP).length;
   const allLocked = lockedCount === chars.length;
 

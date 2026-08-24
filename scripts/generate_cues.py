@@ -62,6 +62,17 @@ ANCHOR_SCHEMA = {
     "LineCarryTransition": {"align": "event", "fields": ["sceneB.rows.0.value", "sceneB.rows.0.label", "sceneB.title"]},
     "ParticleSandFill": {"align": "event", "fields": ["label", "cardTitle"]},
     "PaperPlaneMessenger": {"align": "event", "fields": ["windowB.rows.0.value", "windowB.title", "windowB.rows.0.label"]},
+    "SplitFlapFlip": {"align": "event", "fields": ["text"]},
+    "LetterDropPhysics": {"align": "event", "fields": ["word"]},
+    "ScrambleDecode": {"align": "event", "fields": ["text"]},
+    "LetterspaceMaterialize": {"align": "event", "fields": ["word"]},
+    "LetterformDriftAssembly": {"align": "event", "fields": ["word"]},
+    "TextOnPath": {"align": "event", "fields": ["text"]},
+    "TrackingExpandReveal": {"align": "event", "fields": ["word", "subtitle"]},
+    "TextColumnConverge": {"align": "event", "fields": ["leftWord", "subtitle"]},
+    "TerminalTypewriter": {"align": "event", "fields": ["command"]},
+    "RisoMisregistrationHit": {"align": "event", "fields": ["text"]},
+    "MorphFromPrimitive": {"align": "event", "fields": ["card.label"]},
 }
 
 

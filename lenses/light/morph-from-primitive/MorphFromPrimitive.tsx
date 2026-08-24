@@ -4,16 +4,16 @@
 // 功能: 钩子,展开
 // props: card（变形卡内容）
 // === 时间特性 ===
-// 策略: 弹刚 ShotTime（整段弹性）
+// 策略: 弹刚 ShotTime（整段弹性）+ 口播锚点（revealAtSec 单事件）
 // 刚性（不可压缩）: 无
-// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）
+// 弹性（可伸缩）: 全程可等比缩放（时长适配语音）；提供 revealAtSec 时卡片变形+内容淡入完成锚定口播时刻
 // === 适配注意 ===
 // 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 // morph-from-primitive｜原型变形
 // 正圆呼吸一拍(anticipation) → path d 逐数值插值变形成 520×300 圆角矩形卡片轮廓
 // → 卡片内部灰阶内容条淡入。全部帧驱动、确定性。
 import React from 'react';
-import { interpolate, Easing } from 'remotion';
+import { interpolate, Easing, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
 
@@ -149,12 +149,23 @@ const morphPath = (t: number): string => {
 // | 56–68 内容条淡入 12f | 68–140 真静止 72f
 export interface MorphFromPrimitiveProps {
   card?: { label: string; value: string };
+  revealAtSec?: number; // 口播对齐：卡片变形完成、内容淡入的段内秒；提供后变形+内容压缩到该时刻前完成
 }
 
 export const MorphFromPrimitive: React.FC<MorphFromPrimitiveProps> = ({
   card = { label: '指标一', value: '+18%' },
+  revealAtSec,
 }) => {
-  const frame = useShotFrame(SHOT_TIME);
+  const frameShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
+  const cueMode = revealAtSec !== undefined;
+  const EVT = 68; // 卡片变形完成 + 内容淡入完成帧
+  const revealF = cueMode ? Math.max(1, Math.round(revealAtSec * 30)) : 0;
+  const frame = cueMode
+    ? realFrame <= revealF
+      ? (realFrame / revealF) * EVT
+      : EVT + (realFrame - revealF)
+    : frameShot;
 
   const breath = interpolate(frame, [10, 20, 30], [1, 1.12, 1], {
     easing: Easing.inOut(Easing.cubic),
