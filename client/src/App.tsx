@@ -241,14 +241,9 @@ export const App = () => {
                 component={LensComp}
                 inputProps={params}
                 durationInFrames={
-                  // 口播对齐镜头（cueSec/revealAtSec）的事件可能晚于镜头默认时长：
-                  // 预览时长取 镜头默认 与 当前段真实时长 的较大值，保证事件在预览里可见
-                  Math.max(
-                    entry.durationInFrames,
-                    Math.round(
-                      (storyboard?.segments.find((s) => s.id === currentSegmentId)?.durationSec ?? 0) * 30,
-                    ),
-                  )
+                  // 预览循环用镜头自身设计时长：避免剪切的固定帧镜头（如 BrandInkOpen）
+                  // 在段比镜头长时出现长定格尾巴；口播锚点走 generate_cues.py，不依赖预览时长
+                  entry.durationInFrames
                 }
                 fps={30}
                 compositionWidth={1920}
