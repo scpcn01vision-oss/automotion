@@ -126,19 +126,41 @@ const Doodle: React.FC<{ boil: number }> = ({ boil }) => {
 // ——— 骨架/内容消息行 ———
 const AVA = ['#5a5a58', '#7a7a78', '#4a4a48', '#8f8f8d'];
 
+export interface SkeletonMenuItem {
+  /** 左侧栏图标（可空） */
+  icon?: string;
+  /** 左侧栏文字 */
+  label: string;
+}
+
+export interface SkeletonMessage {
+  /** 名字（标题） */
+  name: string;
+  /** 内容 */
+  text: string;
+  /** 时间戳（缺省 9:0{i+1} AM） */
+  time?: string;
+  /** 徽标字（缺省取 name 首字符） */
+  avatar?: string;
+  /** 徽标底色（缺省纸墨灰阶） */
+  avatarColor?: string;
+}
+
 const Row: React.FC<{
   i: number; dev: number; wordAt: (w: number, n: number) => number;
-  msg: { name: string; text: string };
-  time: string; avatar: string;
+  msg: SkeletonMessage;
 }> = ({
-  i, dev, wordAt, msg, time, avatar,
+  i, dev, wordAt, msg,
 }) => {
   const words = msg.text.split(' ');
+  const time = msg.time ?? `9:0${i + 1} AM`;
+  const avatarChar = (msg.avatar ?? '').trim() || msg.name[0];
+  const avatarBg = msg.avatarColor ?? AVA[i % AVA.length];
   return (
     <div style={{ position: 'relative', height: 96 }}>
       {/* 骨架层 */}
       <div style={{ position: 'absolute', inset: 0, display: 'flex', gap: 22, opacity: 1 - dev }}>
-        <div style={{ width: 72, height: 72, borderRadius: 16, background: '#e8e8e6', color: '#b5b5b2', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, fontWeight: 800 }}>{msg.name[0]}</div>
+        <div style={{ width: 72, height: 72, borderRadius: 16, background: '#e8e8e6', color: '#b5b5b2', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, fontWeight: 800 }}>{avatarChar}</div>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10, paddingTop: 2 }}>
           <div style={{ fontSize: 26, fontWeight: 800, color: '#c9c9c7' }}>{msg.name}</div>
           <div style={{ fontSize: 27, color: '#d5d5d3' }}>{msg.text}</div>
@@ -148,13 +170,13 @@ const Row: React.FC<{
       <div style={{ position: 'absolute', inset: 0, display: 'flex', gap: 22, opacity: dev > 0.02 ? 1 : 0 }}>
         <div
           style={{
-            width: 72, height: 72, borderRadius: 16, background: avatar,
+            width: 72, height: 72, borderRadius: 16, background: avatarBg,
             color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 32, fontWeight: 800, opacity: dev,
             transform: `scale(${0.7 + 0.3 * dev})`,
           }}
         >
-          {msg.name[0]}
+          {avatarChar}
         </div>
         <div style={{ flex: 1, paddingTop: 2 }}>
           <div style={{ fontSize: 26, fontWeight: 800, color: INK, opacity: dev }}>
@@ -186,29 +208,27 @@ const Row: React.FC<{
 };
 
 export interface SkeletonRevealProps {
-  messages?: { name: string; text: string }[];
   /** 窗口顶栏标题 */
   windowTitle?: string;
-  /** 左侧栏菜单项 */
-  menuItems?: string[];
-  /** 每条消息的时间戳（与 messages 一一对应）；缺省 9:0{i+1} AM */
-  timestamps?: string[];
-  /** 头像颜色（按行取余）；缺省纸墨灰阶 */
-  avatarColors?: string[];
+  /** 左侧栏菜单项（可增删） */
+  menuItems?: SkeletonMenuItem[];
+  /** 中间消息列表（可增删） */
+  messages?: SkeletonMessage[];
   cueSec?: number[]; // 口播对齐：每条消息显影的段内秒（与 messages 一一对应）；提供后忽略固定错峰
 }
 
 export const SkeletonReveal: React.FC<SkeletonRevealProps> = ({
-  messages = [
-    { name: 'Ana', text: 'Morning! Kicking off the rebrand today' },
-    { name: 'Ben', text: 'Logo drafts are ready for review' },
-    { name: 'Kai', text: 'Nice — shipping the deck this afternoon' },
-    { name: 'Mia', text: 'Love it. Can we make it pink?' },
-  ],
   windowTitle = '项目工作区',
-  menuItems = ['仪表盘', '任务', '文档', '成员', '设置', '通知', '帮助'],
-  timestamps,
-  avatarColors,
+  menuItems = [
+    { label: '仪表盘' }, { label: '任务' }, { label: '文档' }, { label: '成员' },
+    { label: '设置' }, { label: '通知' }, { label: '帮助' },
+  ],
+  messages = [
+    { name: 'Ana', text: 'Morning! Kicking off the rebrand today', time: '9:01 AM', avatar: 'A' },
+    { name: 'Ben', text: 'Logo drafts are ready for review', time: '9:02 AM', avatar: 'B' },
+    { name: 'Kai', text: 'Nice — shipping the deck this afternoon', time: '9:03 AM', avatar: 'K' },
+    { name: 'Mia', text: 'Love it. Can we make it pink?', time: '9:04 AM', avatar: 'M' },
+  ],
   cueSec,
 }) => {
   const f = useShotFrame(SHOT_TIME);
@@ -285,7 +305,10 @@ export const SkeletonReveal: React.FC<SkeletonRevealProps> = ({
             <div style={{ width: 300, background: '#3a3a3a', padding: '30px 26px', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: 22 }}>
               <div style={{ width: 46, height: 46, borderRadius: 12, background: '#4a4a48', color: '#9a9a98', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}>✦</div>
               {menuItems.map((m, i) => (
-                <div key={i} style={{ fontSize: 15, fontWeight: 600, color: i === 0 ? '#d5d5d3' : '#7a7a78' }}>{m}</div>
+                <div key={i} style={{ fontSize: 15, fontWeight: 600, color: i === 0 ? '#d5d5d3' : '#7a7a78', display: 'flex', alignItems: 'center', gap: 8 }}>
+                  {m.icon ? <span style={{ width: 16, textAlign: 'center' }}>{m.icon}</span> : null}
+                  <span>{m.label}</span>
+                </div>
               ))}
             </div>
             {/* 主区 */}
@@ -294,15 +317,11 @@ export const SkeletonReveal: React.FC<SkeletonRevealProps> = ({
                 <div style={{ fontSize: 18, fontWeight: 700, color: '#a8a8a5' }}>{windowTitle}</div>
               </div>
               <div style={{ flex: 1, padding: '30px 40px', display: 'flex', flexDirection: 'column', gap: 32, overflow: 'hidden' }}>
-                {Array.from({ length: nRows }).map((_, i) => {
-                  const time = timestamps?.[i] ?? `9:0${i + 1} AM`;
-                  const avatar = avatarColors?.[i % avatarColors.length] ?? AVA[i % AVA.length];
-                  return (
-                    <div key={i} style={{ transform: `translateY(${rowSlide(i)}px)`, opacity: rowSlide(i) > 500 ? 0 : 1 }}>
-                      <Row i={i} dev={devAt(i)} wordAt={wordAt(i)} msg={messages[i % messages.length]} time={time} avatar={avatar} />
-                    </div>
-                  );
-                })}
+                {messages.map((msg, i) => (
+                  <div key={i} style={{ transform: `translateY(${rowSlide(i)}px)`, opacity: rowSlide(i) > 500 ? 0 : 1 }}>
+                    <Row i={i} dev={devAt(i)} wordAt={wordAt(i)} msg={msg} />
+                  </div>
+                ))}
               </div>
             </div>
           </div>

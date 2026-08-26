@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generatedAt": "2026-08-26T08:53:55.970Z",
+    "generatedAt": "2026-08-26T11:50:55.758Z",
     "count": 122,
     "source": "Root.preview.tsx + docs/lens-names.md + 组件 XxxProps 接口（同文件/跨文件/内联对象字段）+ docs/lens-scenes-draft.md"
   },
@@ -5129,23 +5129,6 @@
       "durationInFrames": 180,
       "props": [
         {
-          "name": "messages",
-          "type": "{ name: string; text: string }[]",
-          "optional": true,
-          "fields": [
-            {
-              "name": "name",
-              "type": "string",
-              "optional": false
-            },
-            {
-              "name": "text",
-              "type": "string",
-              "optional": false
-            }
-          ]
-        },
-        {
           "description": "窗口顶栏标题",
           "name": "windowTitle",
           "type": "string",
@@ -5153,22 +5136,62 @@
           "default": "项目工作区"
         },
         {
-          "description": "左侧栏菜单项",
+          "description": "左侧栏菜单项（可增删）",
           "name": "menuItems",
-          "type": "string[]",
-          "optional": true
+          "type": "SkeletonMenuItem[]",
+          "optional": true,
+          "fields": [
+            {
+              "description": "左侧栏图标（可空）",
+              "name": "icon",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "description": "左侧栏文字",
+              "name": "label",
+              "type": "string",
+              "optional": false
+            }
+          ]
         },
         {
-          "description": "每条消息的时间戳（与 messages 一一对应）；缺省 9:0{i+1} AM",
-          "name": "timestamps",
-          "type": "string[]",
-          "optional": true
-        },
-        {
-          "description": "头像颜色（按行取余）；缺省纸墨灰阶",
-          "name": "avatarColors",
-          "type": "string[]",
-          "optional": true
+          "description": "中间消息列表（可增删）",
+          "name": "messages",
+          "type": "SkeletonMessage[]",
+          "optional": true,
+          "fields": [
+            {
+              "description": "名字（标题）",
+              "name": "name",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "description": "内容",
+              "name": "text",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "description": "时间戳（缺省 9:0{i+1} AM）",
+              "name": "time",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "description": "徽标字（缺省取 name 首字符）",
+              "name": "avatar",
+              "type": "string",
+              "optional": true
+            },
+            {
+              "description": "徽标底色（缺省纸墨灰阶）",
+              "name": "avatarColor",
+              "type": "string",
+              "optional": true
+            }
+          ]
         },
         {
           "name": "cueSec",
