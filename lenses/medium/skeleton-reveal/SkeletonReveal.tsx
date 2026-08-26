@@ -129,8 +129,9 @@ const AVA = ['#5a5a58', '#7a7a78', '#4a4a48', '#8f8f8d'];
 const Row: React.FC<{
   i: number; dev: number; wordAt: (w: number, n: number) => number;
   msg: { name: string; text: string };
+  time: string; avatar: string;
 }> = ({
-  i, dev, wordAt, msg,
+  i, dev, wordAt, msg, time, avatar,
 }) => {
   const words = msg.text.split(' ');
   return (
@@ -147,7 +148,7 @@ const Row: React.FC<{
       <div style={{ position: 'absolute', inset: 0, display: 'flex', gap: 22, opacity: dev > 0.02 ? 1 : 0 }}>
         <div
           style={{
-            width: 72, height: 72, borderRadius: 16, background: AVA[i],
+            width: 72, height: 72, borderRadius: 16, background: avatar,
             color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 32, fontWeight: 800, opacity: dev,
             transform: `scale(${0.7 + 0.3 * dev})`,
@@ -158,7 +159,7 @@ const Row: React.FC<{
         <div style={{ flex: 1, paddingTop: 2 }}>
           <div style={{ fontSize: 26, fontWeight: 800, color: INK, opacity: dev }}>
             {msg.name}
-            <span style={{ fontWeight: 400, fontSize: 19, color: '#9a9a98', marginLeft: 12 }}>9:0{i + 1} AM</span>
+            <span style={{ fontWeight: 400, fontSize: 19, color: '#9a9a98', marginLeft: 12 }}>{time}</span>
           </div>
           <div style={{ fontSize: 27, color: '#3c3c3a', marginTop: 8 }}>
             {words.map((w, wi) => {
@@ -186,6 +187,14 @@ const Row: React.FC<{
 
 export interface SkeletonRevealProps {
   messages?: { name: string; text: string }[];
+  /** 窗口顶栏标题 */
+  windowTitle?: string;
+  /** 左侧栏菜单项 */
+  menuItems?: string[];
+  /** 每条消息的时间戳（与 messages 一一对应）；缺省 9:0{i+1} AM */
+  timestamps?: string[];
+  /** 头像颜色（按行取余）；缺省纸墨灰阶 */
+  avatarColors?: string[];
   cueSec?: number[]; // 口播对齐：每条消息显影的段内秒（与 messages 一一对应）；提供后忽略固定错峰
 }
 
@@ -196,11 +205,16 @@ export const SkeletonReveal: React.FC<SkeletonRevealProps> = ({
     { name: 'Kai', text: 'Nice — shipping the deck this afternoon' },
     { name: 'Mia', text: 'Love it. Can we make it pink?' },
   ],
+  windowTitle = '项目工作区',
+  menuItems = ['仪表盘', '任务', '文档', '成员', '设置', '通知', '帮助'],
+  timestamps,
+  avatarColors,
   cueSec,
 }) => {
   const f = useShotFrame(SHOT_TIME);
   const { fps } = useVideoConfig();
   const cueMode = !!cueSec && cueSec.length === messages.length;
+  const nRows = messages.length;
 
   const SWAP = 32; // 涂鸦 → 骨架的那一拍
 
@@ -239,7 +253,7 @@ export const SkeletonReveal: React.FC<SkeletonRevealProps> = ({
 
   // 逐词进场；最后一行最后一个词晚半拍（+14 帧）
   const wordAt = (row: number) => (w: number, n: number) => {
-    const isLastWordOfLastRow = row === 3 && w === n - 1;
+    const isLastWordOfLastRow = row === nRows - 1 && w === n - 1;
     const start = 82 + row * 13 + w * 2.5 + (isLastWordOfLastRow ? 14 : 0);
     return interpolate(f, [start, start + 9], [0, 1], {
       extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
@@ -270,21 +284,25 @@ export const SkeletonReveal: React.FC<SkeletonRevealProps> = ({
             {/* 侧栏 */}
             <div style={{ width: 300, background: '#3a3a3a', padding: '30px 26px', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: 22 }}>
               <div style={{ width: 46, height: 46, borderRadius: 12, background: '#4a4a48', color: '#9a9a98', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}>✦</div>
-              {['仪表盘', '任务', '文档', '成员', '设置', '通知', '帮助'].map((m, i) => (
+              {menuItems.map((m, i) => (
                 <div key={i} style={{ fontSize: 15, fontWeight: 600, color: i === 0 ? '#d5d5d3' : '#7a7a78' }}>{m}</div>
               ))}
             </div>
             {/* 主区 */}
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
               <div style={{ height: 72, borderBottom: '2px solid #e4e4e2', display: 'flex', alignItems: 'center', padding: '0 34px' }}>
-                <div style={{ fontSize: 18, fontWeight: 700, color: '#a8a8a5' }}>项目工作区</div>
+                <div style={{ fontSize: 18, fontWeight: 700, color: '#a8a8a5' }}>{windowTitle}</div>
               </div>
               <div style={{ flex: 1, padding: '30px 40px', display: 'flex', flexDirection: 'column', gap: 32, overflow: 'hidden' }}>
-                {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} style={{ transform: `translateY(${rowSlide(i)}px)`, opacity: rowSlide(i) > 500 ? 0 : 1 }}>
-                    <Row i={i} dev={devAt(i)} wordAt={wordAt(i)} msg={messages[i % messages.length]} />
-                  </div>
-                ))}
+                {Array.from({ length: nRows }).map((_, i) => {
+                  const time = timestamps?.[i] ?? `9:0${i + 1} AM`;
+                  const avatar = avatarColors?.[i % avatarColors.length] ?? AVA[i % AVA.length];
+                  return (
+                    <div key={i} style={{ transform: `translateY(${rowSlide(i)}px)`, opacity: rowSlide(i) > 500 ? 0 : 1 }}>
+                      <Row i={i} dev={devAt(i)} wordAt={wordAt(i)} msg={messages[i % messages.length]} time={time} avatar={avatar} />
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>

@@ -95,7 +95,7 @@ const Pill: React.FC<{ bg: string; iconColor: string; textColor: string; text: s
     display: 'flex', alignItems: 'center', paddingLeft: 96, boxSizing: 'border-box', gap: 66,
   }}>
     <SimpleIcon ch={icon} color={iconColor} />
-    <span style={{ fontSize: FS, fontWeight: 500, color: textColor, letterSpacing: 2 }}>{text}</span>
+    <span style={{ fontSize: FS, fontWeight: 500, color: textColor, letterSpacing: 2, whiteSpace: 'nowrap', flexShrink: 0 }}>{text}</span>
   </div>
 );
 
@@ -134,10 +134,12 @@ export const HashtagToPillMaterialize: React.FC<HashtagToPillMaterializeProps> =
   const TYPE_AT = typeAt(TEXT);
 
   // 胶囊自适应宽度 + 落位中心 x（左缘对齐标题，短文本接近原版 361）
-  const pillW = Math.max(
-    PILL_W,
-    96 + 66 + 104 + [...pillText].reduce((s, c) => s + (isFullW(c) ? FS : FS * 0.55), 0) + 64,
-  );
+  // 胶囊宽度按文本实测估算（isFullW：全角按 FS、半角按 0.6×FS，另加字距 2/字与右内边距 80）
+  // 配合 span 的 whiteSpace:nowrap，保证文字在胶囊内不折行
+  const pillTextW =
+    [...pillText].reduce((s, c) => s + (isFullW(c) ? FS : FS * 0.6), 0) +
+    pillText.length * 2;
+  const pillW = Math.max(PILL_W, 96 + 66 + 104 + pillTextW + 80);
   const slotX = ALIGN_X + (pillW * END_SCALE) / 2;
 
   // ---- 打字 ----

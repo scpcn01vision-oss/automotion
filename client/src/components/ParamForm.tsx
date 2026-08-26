@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef } from 'react';
 import type { PropField } from '../../../shared/types';
 import type { AnyLensProps } from '../playback';
+import { ColorField } from './ColorField';
 
 const isArray = (t: string) => t.includes('[]');
 const isNumber = (t: string) => t === 'number' || /^-?\d+(?:\s*\|\s*-?\d+)+$/.test(t);
@@ -289,6 +290,10 @@ function FieldEditor({
         onChange={(e) => onChange(e.target.value)}
       />
     );
+  }
+  // 颜色字段（名字含 color）：渲染取色盘（ColorField）
+  if (field.type === 'string' && /color|colour/i.test(field.name)) {
+    return <ColorField label="" value={String(value ?? '')} onChange={(hex) => onChange(hex)} />;
   }
   // 深层未定类型（对象/元组/ReactNode 等）→ JSON 兜底
   if (looksStructured(field.type, value)) {

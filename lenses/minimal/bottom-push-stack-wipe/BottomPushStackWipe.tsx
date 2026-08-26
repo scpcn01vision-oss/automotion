@@ -17,6 +17,7 @@ import React from 'react';
 import { AbsoluteFill, interpolate, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
+import { SceneContent, SceneContentData } from '../../_system/scene-content';
 
 import { useShotFrame } from '../../../engine/useShotFrame';
 import type { ShotTime } from '../../../engine/time';
@@ -37,11 +38,10 @@ const heavyEaseOut = Easing.bezier(0.12, 0.9, 0.2, 1); // 快进慢停
 
 const ChapterScene: React.FC<{
   color: string;
-  label: string;
-  value: string;
+  content: SceneContentData;
   chapter: number;
   windowTitle: string;
-}> = ({ color, label, value, chapter, windowTitle }) => {
+}> = ({ color, content, chapter, windowTitle }) => {
   return (
     <AbsoluteFill style={{ background: color, justifyContent: 'center', alignItems: 'center' }}>
       {/* 底色上的淡装饰条，让"底色也在动"更可读 */}
@@ -60,28 +60,16 @@ const ChapterScene: React.FC<{
           ))}
           <div style={{ marginLeft: 18, fontFamily: FONT_STACK, fontSize: 15, fontWeight: 700, color: G.ink }}>{windowTitle}</div>
         </div>
-        <div
-          style={{
-            width: 860,
-            height: 430,
-            background: G.card,
-            borderRadius: '0 0 18px 18px',
-            padding: 34,
-            boxSizing: 'border-box',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            gap: 16,
-            border: `2px solid ${G.border}`,
-            borderTop: 'none',
-          }}
-        >
-          <div style={{ fontFamily: FONT_STACK, fontSize: 44, fontWeight: 800, color: G.ink, overflowWrap: 'break-word' }}>
-            {label}
-          </div>
-          <div style={{ fontFamily: FONT_STACK, fontSize: 60, fontWeight: 800, color: G.accent }}>
-            {value}
-          </div>
+        <div style={{
+          width: 860,
+          height: 430,
+          borderRadius: '0 0 18px 18px',
+          overflow: 'hidden',
+          border: `2px solid ${G.border}`,
+          borderTop: 'none',
+          boxSizing: 'border-box',
+        }}>
+          <SceneContent content={content} titleSize={64} panelWidth={720} />
         </div>
       </div>
     </AbsoluteFill>
@@ -89,9 +77,10 @@ const ChapterScene: React.FC<{
 };
 
 export interface PushChapter {
-  color: string;
-  label: string;
-  value: string;
+  /** 章节整屏底色 */
+  color?: string;
+  /** 章节窗口卡内容（rows/image 可切换） */
+  content?: SceneContentData;
 }
 
 export interface BottomPushStackWipeProps {
@@ -101,10 +90,10 @@ export interface BottomPushStackWipeProps {
 
 export const BottomPushStackWipe: React.FC<BottomPushStackWipeProps> = ({
   chapters = [
-    { color: G.bg, label: '概览', value: '准备中' },
-    { color: G.accent, label: '指标一', value: '+18%' },
-    { color: G.mid, label: '指标二', value: '2.1×' },
-    { color: G.side, label: '指标三', value: '96.4%' },
+    { color: G.bg, content: { title: '概览', rows: [{ label: '状态', value: '准备中' }] } },
+    { color: G.accent, content: { title: '指标一', rows: [{ label: '达成', value: '+18%' }] } },
+    { color: G.mid, content: { title: '指标二', rows: [{ label: '倍率', value: '2.1×' }] } },
+    { color: G.side, content: { title: '指标三', rows: [{ label: '占比', value: '96.4%' }] } },
   ],
   windowTitle = '概览',
 }) => {
@@ -125,7 +114,7 @@ export const BottomPushStackWipe: React.FC<BottomPushStackWipeProps> = ({
         if (y <= -H || y >= H) return null;
         return (
           <AbsoluteFill key={i} style={{ transform: `translateY(${y}px)` }}>
-            <ChapterScene color={c.color} label={c.label} value={c.value} chapter={i} windowTitle={windowTitle} />
+            <ChapterScene color={c.color} content={c.content ?? {}} chapter={i} windowTitle={windowTitle} />
             {/* 推入时上缘接缝阴影，强化"顶出"的物理感 */}
             {i > 0 && (
               <div style={{ position: 'absolute', top: -40, left: 0, right: 0, height: 40, background: 'linear-gradient(to top, rgba(0,0,0,0.30), rgba(0,0,0,0))', opacity: pushedIn < 1 ? 1 : 0 }} />

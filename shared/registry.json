@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generatedAt": "2026-08-26T07:46:13.924Z",
+    "generatedAt": "2026-08-26T08:53:55.970Z",
     "count": 122,
     "source": "Root.preview.tsx + docs/lens-names.md + 组件 XxxProps 接口（同文件/跨文件/内联对象字段）+ docs/lens-scenes-draft.md"
   },
@@ -1301,19 +1301,63 @@
           "optional": true,
           "fields": [
             {
+              "description": "章节整屏底色",
               "name": "color",
               "type": "string",
-              "optional": false
+              "optional": true
             },
             {
-              "name": "label",
-              "type": "string",
-              "optional": false
-            },
-            {
-              "name": "value",
-              "type": "string",
-              "optional": false
+              "description": "章节窗口卡内容（rows/image 可切换）",
+              "name": "content",
+              "type": "SceneContentData",
+              "optional": true,
+              "fields": [
+                {
+                  "description": "标题",
+                  "name": "title",
+                  "type": "string",
+                  "optional": true
+                },
+                {
+                  "description": "内容类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows）",
+                  "name": "type",
+                  "type": "'rows' | 'image'",
+                  "optional": true
+                },
+                {
+                  "description": "rows 用：行",
+                  "showWhen": {
+                    "field": "type",
+                    "value": "rows"
+                  },
+                  "name": "rows",
+                  "type": "{ label: string; value: string }[]",
+                  "optional": true,
+                  "fields": [
+                    {
+                      "name": "label",
+                      "type": "string",
+                      "optional": false
+                    },
+                    {
+                      "name": "value",
+                      "type": "string",
+                      "optional": false
+                    }
+                  ]
+                },
+                {
+                  "description": "推荐插入 16:9 的图片",
+                  "showWhen": {
+                    "field": "type",
+                    "value": "image"
+                  },
+                  "file": true,
+                  "name": "image",
+                  "type": "string",
+                  "optional": true
+                }
+              ]
             }
           ]
         },
@@ -5100,6 +5144,31 @@
               "optional": false
             }
           ]
+        },
+        {
+          "description": "窗口顶栏标题",
+          "name": "windowTitle",
+          "type": "string",
+          "optional": true,
+          "default": "项目工作区"
+        },
+        {
+          "description": "左侧栏菜单项",
+          "name": "menuItems",
+          "type": "string[]",
+          "optional": true
+        },
+        {
+          "description": "每条消息的时间戳（与 messages 一一对应）；缺省 9:0{i+1} AM",
+          "name": "timestamps",
+          "type": "string[]",
+          "optional": true
+        },
+        {
+          "description": "头像颜色（按行取余）；缺省纸墨灰阶",
+          "name": "avatarColors",
+          "type": "string[]",
+          "optional": true
         },
         {
           "name": "cueSec",
