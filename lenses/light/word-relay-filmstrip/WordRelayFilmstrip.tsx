@@ -90,7 +90,7 @@ export const WordRelayFilmstrip: React.FC<WordRelayFilmstripProps> = ({
   list.forEach((it, i) => {
     const top = CARD_TOP + i * STEP - scroll;
     if (top > 1080 || top < -CARD_H - 120) return;
-    if (it.type === 'image') {
+    if (it.type === 'image' && it.image) {
       // image 卡：图框随图片尺寸收缩（高度 530、宽等比），在列宽内水平居中，无白底，
       // 并加回与卡片墙一致的圆角裁切 + 投影 + 细边框
       cards.push(
@@ -104,6 +104,13 @@ export const WordRelayFilmstrip: React.FC<WordRelayFilmstripProps> = ({
               style={{ height: CARD_H, width: 'auto', display: 'block', objectFit: 'cover' }}
             />
           </div>
+        </div>,
+      );
+    } else if (it.type === 'image') {
+      // 图片模式但还没选图：渲染占位卡，避免 staticFile(undefined) 崩溃
+      cards.push(
+        <div key={i} style={{ position: 'absolute', left: CARD_LEFT, top, width: CARD_W, height: CARD_H, borderRadius: 12, overflow: 'hidden', boxSizing: 'border-box', border: '2px dashed rgba(30,26,20,0.25)', background: 'rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ fontSize: 26, color: G.mid }}>未选择图片</div>
         </div>,
       );
     } else {
