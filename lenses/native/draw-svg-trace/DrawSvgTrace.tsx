@@ -39,9 +39,13 @@ const CY = (1080 - CH) / 2; // 350
 const PEN = 0.045; // 笔头 dash 长度（占整圈比例）
 
 export interface DrawSvgTraceContent {
+  /** 标题 */
   title?: string;
+  /** 内容类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows） */
   type?: 'rows' | 'image';
+  /** rows 用：行｜type=rows 时显示 */
   rows?: { label: string; value: string }[];
+  /** 推荐插入 16:9 的图片｜type=image 时显示｜file */
   image?: string;
 }
 

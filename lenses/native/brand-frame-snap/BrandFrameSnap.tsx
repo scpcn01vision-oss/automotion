@@ -33,9 +33,13 @@ const clamp01 = (t: number) => Math.min(1, Math.max(0, t));
 const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
 
 export interface BrandFrameSnapContent {
+  /** 标题 */
   title?: string;
+  /** 内容类型：rows 文字卡 / image 图片卡（下拉选择，缺省 rows） */
   type?: 'rows' | 'image';
+  /** rows 用：行｜type=rows 时显示 */
   rows?: { label: string; value: string }[];
+  /** 推荐插入 16:9 的图片｜type=image 时显示｜file */
   image?: string;
 }
 
