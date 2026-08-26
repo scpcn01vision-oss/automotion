@@ -58,12 +58,14 @@ const BEAM_CORE = 'rgba(255,248,232,0.98)';
  * the soft page texture; the card springs up off the plane and hovers ~54f
  * while a beam runs two laps around its rounded outline; then it settles flush
  * back into its slot (lock→touchdown ≈ 3.3s). */
-export const SceneOpen: React.FC<{ start?: number; wordmark?: string; kicker?: string }> = ({
+export const SceneOpen: React.FC<{ start?: number; wordmark?: string; kicker?: string; clampFrame?: number }> = ({
   start = 0,
   wordmark = WORDMARK,
   kicker = KICKER,
+  clampFrame,
 }) => {
-  const frame = useCurrentFrame() + start;
+  const rawFrame = useCurrentFrame() + start;
+  const frame = clampFrame !== undefined ? Math.min(rawFrame, clampFrame) : rawFrame;
   const duration = AIFL_SHOTS.morning.duration; // 220
 
   // --- crosshair draw-on (SVG pathLength = 100) ---

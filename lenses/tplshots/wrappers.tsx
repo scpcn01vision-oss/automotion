@@ -25,28 +25,28 @@ export interface BrandInkOpenProps {
   kicker?: string;     // 下方打字机副标，缺省 'TEAM RESEARCH CONSOLE'
 }
 export const BrandInkOpen: React.FC<BrandInkOpenProps> = ({ wordmark, kicker }) => (
-  <SceneOpen start={0} wordmark={wordmark} kicker={kicker} />
+  <SceneOpen start={0} wordmark={wordmark} kicker={kicker} clampFrame={82} />
 );
 
 // spotlight-hero-card：暖光巡视 dashboard → 锁定单卡 → 推近摇摆 → 悬停光束两圈 → 归位（82–220）
-export const SpotlightHeroCard: React.FC = () => <SceneOpen start={82} />;
+export const SpotlightHeroCard: React.FC = () => <SceneOpen start={82} clampFrame={219} />;
 
 // deck-deal-flyin：实体牌堆加速甩进网格（0–127）
 
 
 // row-embed：内容行逐条飞入嵌入 + 强调色缝（0–100）
-export const RowEmbed: React.FC = () => <SceneDetail start={0} />;
+export const RowEmbed: React.FC = () => <SceneDetail start={0} clampFrame={99} />;
 
 // list-stack-press：论文卡逐张落入堆叠 + 计数（0–105）
-export const ListStackPress: React.FC = () => <ScenePapers start={0} />;
+export const ListStackPress: React.FC = () => <ScenePapers start={0} clampFrame={104} />;
 
 // document-typewriter-reveal：整页文档打字机写入 + 侧栏历史条目（0–110）
-export const DocumentTypewriterReveal: React.FC = () => <SceneWbr start={0} />;
+export const DocumentTypewriterReveal: React.FC = () => <SceneWbr start={0} clampFrame={109} />;
 
 // outro-group-photo-launch：元素聚拢 + 字标 + 金粉收尾（0–145）
 export interface OutroGroupPhotoLaunchProps {
   wordmark?: string;
 }
 export const OutroGroupPhotoLaunch: React.FC<OutroGroupPhotoLaunchProps> = ({ wordmark }) => (
-  <SceneOutroLive start={0} wordmark={wordmark} />
+  <SceneOutroLive start={0} wordmark={wordmark} clampFrame={144} />
 );

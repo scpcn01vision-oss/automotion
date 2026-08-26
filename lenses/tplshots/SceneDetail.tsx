@@ -18,8 +18,9 @@ const detailSrc = staticFile('textures/live/detail-full.png');
 
 /** Open on the nano-lab detail page, then pan down while the
  * research-question rows fly in from the air and embed into their slots. */
-export const SceneDetail: React.FC<{ start?: number }> = ({ start = 0 }) => {
-  const frame = useCurrentFrame() + start;
+export const SceneDetail: React.FC<{ start?: number; clampFrame?: number }> = ({ start = 0, clampFrame }) => {
+  const rawFrame = useCurrentFrame() + start;
+  const frame = clampFrame !== undefined ? Math.min(rawFrame, clampFrame) : rawFrame;
   const df = frame;
 
   return (

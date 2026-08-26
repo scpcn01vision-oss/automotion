@@ -62,8 +62,9 @@ const memberH2 = new Set<number>();
  * wipes left→right behind an amber caret), member names get an @-mention amber
  * wash, then the week list (left) and comment sidebar (right) wipe on stage —
  * the whole page, both rails included, settles into frame. */
-export const SceneWbr: React.FC<{ start?: number }> = ({ start = 0 }) => {
-  const frame = useCurrentFrame() + start;
+export const SceneWbr: React.FC<{ start?: number; clampFrame?: number }> = ({ start = 0, clampFrame }) => {
+  const rawFrame = useCurrentFrame() + start;
+  const frame = clampFrame !== undefined ? Math.min(rawFrame, clampFrame) : rawFrame;
 
   // screen-space kicker stamps in
   const kick = interpolate(frame, [8, 16], [0, 1], {

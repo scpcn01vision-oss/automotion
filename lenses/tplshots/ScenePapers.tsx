@@ -32,8 +32,9 @@ const CAM_KEYS: CamKey[] = [
 /** Paper radar: daily paper cards stack up into place one by one (the list-stack
  * motif), each landing pressing the settled stack down and bouncing back, with
  * an amber highlight sweeping the linked-project name and a screen-space counter. */
-export const ScenePapers: React.FC<{ start?: number }> = ({ start = 0 }) => {
-  const frame = useCurrentFrame() + start;
+export const ScenePapers: React.FC<{ start?: number; clampFrame?: number }> = ({ start = 0, clampFrame }) => {
+  const rawFrame = useCurrentFrame() + start;
+  const frame = clampFrame !== undefined ? Math.min(rawFrame, clampFrame) : rawFrame;
 
   // how many cards have already landed (t reached 1) — drives the counter
   const landedCount = CUES.filter((c) => frame >= c + DUR).length;

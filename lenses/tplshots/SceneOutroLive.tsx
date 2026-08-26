@@ -75,11 +75,13 @@ const DUST = Array.from({ length: 20 }, (_, i) => ({
  * Launch-event treatment: a crane-in camera on the whole photo layer, ghost
  * trails + landing glows on the fly-ins, a stage light behind the wordmark,
  * gold dust and a single opening light sweep for atmosphere. */
-export const SceneOutroLive: React.FC<{ start?: number; wordmark?: string }> = ({
+export const SceneOutroLive: React.FC<{ start?: number; wordmark?: string; clampFrame?: number }> = ({
   start = 0,
   wordmark = 'AUTOMOTION',
+  clampFrame,
 }) => {
-  const frame = useShotFrame(OUTRO_SHOT_TIME) + start;
+  const rawFrame = useShotFrame(OUTRO_SHOT_TIME) + start;
+  const frame = clampFrame !== undefined ? Math.min(rawFrame, clampFrame) : rawFrame;
   const LETTERS = wordmark.split('');
   const duration = AIFL_SHOTS.outro.duration; // 115
 
