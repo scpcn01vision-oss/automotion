@@ -2,7 +2,7 @@
 // 用法：props 传入 { storyboard, subtitles }（项目侧数据），时长 = 段 durationSec（真实转录）
 // 预览/导出：remotion render 本组件 + --props（项目侧数据不进仓库）
 import React from 'react';
-import { AbsoluteFill, Audio, Sequence, useCurrentFrame } from 'remotion';
+import { AbsoluteFill, Audio, Sequence, interpolate, useCurrentFrame } from 'remotion';
 import type { Storyboard, Subtitles, SubtitleStyle } from '../shared/types';
 import {
   DEFAULT_SUBTITLE_STYLE,
@@ -127,6 +127,22 @@ const SubtitleLayer: React.FC<{ subtitles: Subtitles; style: SubtitleStyle }> = 
 };
 
 // ---------- 整片 ----------
+// 镜头间过渡：淡入淡出（A 方案——淡到纸底再淡入下一段），每段首尾各 0.4s（12 帧）
+const FADE_FRAMES = 12;
+const ShotTransition: React.FC<{ dur: number; children: React.ReactNode }> = ({ dur, children }) => {
+  const frame = useCurrentFrame(); // Sequence 内相对帧（0..dur-1）
+  const fadeIn = interpolate(frame, [0, FADE_FRAMES], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+  const fadeOut = interpolate(frame, [dur - FADE_FRAMES, dur - 1], [1, 0], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+  const opacity = Math.min(fadeIn, fadeOut);
+  return <AbsoluteFill style={{ opacity }}>{children}</AbsoluteFill>;
+};
+
 // audioSrc：项目侧录音的 http 地址（由 server 音频路由服务，浏览器才能加载）
 export const WholeVideo: React.FC<{
   storyboard: Storyboard;
@@ -174,7 +190,9 @@ export const WholeVideo: React.FC<{
         const Comp = getLensComponent(entry.id, entry.file);
         const el = (
           <Sequence key={seg.id} from={startFrame} durationInFrames={dur}>
-            <Comp {...(seg.params as any)} />
+            <ShotTransition dur={dur}>
+              <Comp {...(seg.params as any)} />
+            </ShotTransition>
           </Sequence>
         );
         cumSec += seg.durationSec;
