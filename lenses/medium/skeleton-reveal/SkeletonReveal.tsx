@@ -13,7 +13,7 @@
 // 灰条骨架 UI 窗口替换 → 骨架消息列表滚入，镜头推近时灰条逐行"显影"成
 // 头像+文字内容（最后一行末词晚半拍到）。
 import React from 'react';
-import { AbsoluteFill, useVideoConfig, interpolate, spring, Easing } from 'remotion';
+import { AbsoluteFill, useVideoConfig, useCurrentFrame, interpolate, spring, Easing } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
 
@@ -231,10 +231,12 @@ export const SkeletonReveal: React.FC<SkeletonRevealProps> = ({
   ],
   cueSec,
 }) => {
-  const f = useShotFrame(SHOT_TIME);
+  const frameShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const cueMode = !!cueSec && cueSec.length === messages.length;
   const nRows = messages.length;
+  const f = cueMode ? realFrame : frameShot;
 
   const SWAP = 32; // 涂鸦 → 骨架的那一拍
 
@@ -274,7 +276,8 @@ export const SkeletonReveal: React.FC<SkeletonRevealProps> = ({
   // 逐词进场；最后一行最后一个词晚半拍（+14 帧）
   const wordAt = (row: number) => (w: number, n: number) => {
     const isLastWordOfLastRow = row === nRows - 1 && w === n - 1;
-    const start = 82 + row * 13 + w * 2.5 + (isLastWordOfLastRow ? 14 : 0);
+    const base = cueMode ? Math.round(cueSec[row] * 30) : 82 + row * 13;
+    const start = base + w * 2.5 + (isLastWordOfLastRow ? 14 : 0);
     return interpolate(f, [start, start + 9], [0, 1], {
       extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
       easing: Easing.out(Easing.cubic),

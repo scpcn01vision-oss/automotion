@@ -11,7 +11,7 @@
 // === 适配注意 ===
 // 段长不足 60f 时回退原始帧（动画按原速、可能被截断）。
 import React from 'react';
-import { AbsoluteFill, interpolate, staticFile } from 'remotion';
+import { AbsoluteFill, interpolate, staticFile, useCurrentFrame } from 'remotion';
 import { G } from '../../_fixtures/Fixtures';
 import { FONT_STACK } from '../../_system/typography';
 
@@ -65,12 +65,14 @@ export const WordRelayFilmstrip: React.FC<WordRelayFilmstripProps> = ({
   items = DEFAULT_ITEMS,
   cueSec,
 }) => {
-  const frame = useShotFrame(SHOT_TIME);
+  const frameShot = useShotFrame(SHOT_TIME);
+  const realFrame = useCurrentFrame();
   const n = Math.max(0, Math.min(5, items.length)); // 2–5（防御：0/超出也安全）
   const list = items.slice(0, n);
 
   // 切词帧：长度为 n，词 0 为 0（起始态），后续按 cueSec 或自动等距——长度恒 = n，根治 NaN
   const cueMode = !!cueSec && cueSec.length === n;
+  const frame = cueMode ? realFrame : frameShot;
   const autoGap = Math.max(24, Math.min(48, Math.floor(150 / Math.max(1, n - 1))));
   const SW = cueMode
     ? cueSec.map((s) => Math.round(s * 30))
