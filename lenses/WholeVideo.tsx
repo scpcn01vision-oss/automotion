@@ -127,8 +127,8 @@ const SubtitleLayer: React.FC<{ subtitles: Subtitles; style: SubtitleStyle }> = 
 };
 
 // ---------- 整片 ----------
-// 镜头间过渡：淡入淡出（A 方案——淡到纸底再淡入下一段），每段首尾各 0.4s（12 帧）
-const FADE_FRAMES = 12;
+// 镜头间过渡：淡入淡出（A 方案——淡到纸底再淡入下一段），每段首尾各 0.2s（6 帧）
+const FADE_FRAMES = 6;
 const ShotTransition: React.FC<{ dur: number; children: React.ReactNode }> = ({ dur, children }) => {
   const frame = useCurrentFrame(); // Sequence 内相对帧（0..dur-1）
   const fadeIn = interpolate(frame, [0, FADE_FRAMES], [0, 1], {
