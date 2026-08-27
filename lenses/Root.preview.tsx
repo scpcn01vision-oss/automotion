@@ -44,6 +44,8 @@ import { BeatCutAccelerando } from "./minimal/beat-cut-moves/BeatCutAccelerando.
 
 import { BeatStepListThemeCycle } from "./minimal/beat-step-list-theme-cycle/BeatStepListThemeCycle.tsx";
 
+import { PlainPaper } from "./minimal/plain-paper/PlainPaper.tsx";
+
 import { BottomPushStackWipe } from "./minimal/bottom-push-stack-wipe/BottomPushStackWipe.tsx";
 
 import { CircleMatchIris } from "./minimal/circle-match-iris/CircleMatchIris.tsx";
@@ -276,8 +278,9 @@ export const RemotionRoot: React.FC = () => {
       <Composition id="TerminalTypewriter" component={TerminalTypewriter} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="TypewriterErrorRetype" component={TypewriterErrorRetype} width={1920} height={1080} fps={30} durationInFrames={180} />
       {/* === 极轻（风格中性）=== */}
-      <Composition id="BeatCutAccelerando" component={BeatCutAccelerando} width={1920} height={1080} fps={30} durationInFrames={180} />
-      <Composition id="BeatStepListThemeCycle" component={BeatStepListThemeCycle} width={1920} height={1080} fps={30} durationInFrames={180} />
+<Composition id="BeatCutAccelerando" component={BeatCutAccelerando} width={1920} height={1080} fps={30} durationInFrames={180} />
+<Composition id="BeatStepListThemeCycle" component={BeatStepListThemeCycle} width={1920} height={1080} fps={30} durationInFrames={180} />
+<Composition id="PlainPaper" component={PlainPaper} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="BottomPushStackWipe" component={BottomPushStackWipe} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="CircleMatchIris" component={CircleMatchIris} width={1920} height={1080} fps={30} durationInFrames={180} />
       <Composition id="CraneRiseReveal" component={CraneRiseReveal} width={1920} height={1080} fps={30} durationInFrames={180} />

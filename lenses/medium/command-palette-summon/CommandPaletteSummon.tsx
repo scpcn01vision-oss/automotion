@@ -48,9 +48,11 @@ const PaletteRow: React.FC<{
   frame: number;
   cue: number; // 入场帧（口播对齐 cueSec 或固定错峰）
   rows: { icon: string; label: string; kbd: string }[];
-}> = ({ i, frame, cue, rows }) => {
+  hl?: number; // 高亮首条的帧（不设用默认 HL）
+}> = ({ i, frame, cue, rows, hl }) => {
   const { icon, label, kbd } = rows[i];
   const inStart = cue;
+  const hlFrame = hl ?? HL;
 
   const inOp = interpolate(frame, [inStart, inStart + 8], [0, 1], CL);
   const inY = interpolate(frame, [inStart, inStart + 8], [12, 0], {
@@ -59,7 +61,7 @@ const PaletteRow: React.FC<{
   });
 
   // 高亮首条
-  const hl = i === 0 ? interpolate(frame, [HL, HL + 10], [0, 1], CL) : 0;
+  const hlOn = i === 0 ? interpolate(frame, [hlFrame, hlFrame + 10], [0, 1], CL) : 0;
 
   return (
     <div
@@ -73,8 +75,8 @@ const PaletteRow: React.FC<{
         style={{
           height: ROW_H,
           borderRadius: 12,
-          background: hl > 0 ? `rgba(228,228,226,${hl})` : 'transparent',
-          boxShadow: hl > 0 ? `inset 4px 0 0 rgba(47,47,47,${hl})` : 'none',
+          background: hlOn > 0 ? `rgba(228,228,226,${hlOn})` : 'transparent',
+          boxShadow: hlOn > 0 ? `inset 4px 0 0 rgba(47,47,47,${hlOn})` : 'none',
           display: 'flex',
           alignItems: 'center',
           gap: 20,
@@ -97,6 +99,8 @@ export interface CommandPaletteSummonProps {
   placeholder?: string; // 输入提示
   commands?: { icon: string; label: string; kbd: string }[]; // 候选命令
   cueSec?: number[]; // 口播对齐：每条候选命令入场的段内秒（与 commands 一一对应）；提供后忽略固定错峰
+  /** 命令面板/压暗出现的段内秒（帧/30）；不设则用默认 12f */
+  summonAtSec?: number;
 }
 
 export const CommandPaletteSummon: React.FC<CommandPaletteSummonProps> = ({
@@ -119,41 +123,51 @@ export const CommandPaletteSummon: React.FC<CommandPaletteSummonProps> = ({
     { icon: '◆', label: '运行命令', kbd: '⌘S' },
   ],
   cueSec,
+  summonAtSec,
 }) => {
   const frameShot = useShotFrame(SHOT_TIME);
   const realFrame = useCurrentFrame();
   const cueMode = !!cueSec && cueSec.length === commands.length;
   const frame = cueMode ? realFrame : frameShot;
 
+  // 面板/压暗出现的基准帧（summonAtSec 提供时整体后移，保持各阶段相对节奏）
+  const base = summonAtSec !== undefined ? Math.round(summonAtSec * 30) : DIM0;
+  const dimStart = base;
+  const dimEnd = base + (DIM1 - DIM0);
+  const panelIn = base + (PANEL_IN - DIM0);
+  const rowsStart = base + (ROWS_START - DIM0);
+  const hlFrame = base + (HL - DIM0);
+  const blinkEnd = base + (BLINK_END - DIM0);
+
   // 背景压暗 + blur
-  const dim = interpolate(frame, [DIM0, DIM1], [0, 0.45], CL);
-  const blur = interpolate(frame, [DIM0, DIM1], [0, 10], CL);
+  const dim = interpolate(frame, [dimStart, dimEnd], [0, 0.45], CL);
+  const blur = interpolate(frame, [dimStart, dimEnd], [0, 10], CL);
 
   // 面板弹落：上方 20px → 过冲 +8px → 落回 0
   const panelY =
-    frame < PANEL_IN + 9
-      ? interpolate(frame, [PANEL_IN, PANEL_IN + 9], [-20, 8], {
+    frame < panelIn + 9
+      ? interpolate(frame, [panelIn, panelIn + 9], [-20, 8], {
           easing: Easing.out(Easing.cubic),
           ...CL,
         })
-      : interpolate(frame, [PANEL_IN + 9, PANEL_IN + 15], [8, 0], {
+      : interpolate(frame, [panelIn + 9, panelIn + 15], [8, 0], {
           easing: Easing.inOut(Easing.cubic),
           ...CL,
         });
-  const panelOp = interpolate(frame, [PANEL_IN, PANEL_IN + 7], [0, 1], CL);
+  const panelOp = interpolate(frame, [panelIn, panelIn + 7], [0, 1], CL);
 
   // 光标闪烁（周期 16f），BLINK_END 后常亮保证收尾静止
-  const cursorOn = frame >= BLINK_END ? true : (frame - PANEL_IN) % 16 < 8;
+  const cursorOn = frame >= blinkEnd ? true : (frame - panelIn) % 16 < 8;
 
   return (
     <div style={{ width: 1920, height: 1080, background: G.bg, position: 'relative', overflow: 'hidden' }}>
       {/* 背景 SceneContent：整体下移 130px，视觉重心下沉（Y 轴重新排版） */}
-      <div style={{ filter: frame < DIM0 ? undefined : `blur(${blur}px)`, transform: 'translateY(130px)' }}>
+      <div style={{ filter: frame < dimStart ? undefined : `blur(${blur}px)`, transform: 'translateY(130px)' }}>
         <SceneContent content={scene} />
       </div>
       <div style={{ position: 'absolute', inset: 0, background: `rgba(20,20,20,${dim})` }} />
 
-      {frame >= PANEL_IN && (
+      {frame >= panelIn && (
         <div
           style={{
             position: 'absolute',
@@ -201,8 +215,9 @@ export const CommandPaletteSummon: React.FC<CommandPaletteSummonProps> = ({
                 key={i}
                 i={i}
                 frame={frame}
-                cue={cueMode ? Math.round(cueSec[i] * 30) : ROWS_START + i * 4}
+                cue={cueMode ? Math.round(cueSec[i] * 30) : rowsStart + i * 4}
                 rows={commands}
+                hl={hlFrame}
               />
             ))}
           </div>

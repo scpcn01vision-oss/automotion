@@ -59,6 +59,7 @@
 |---|---|
 | BeatCutAccelerando | 节拍加速切 |
 | BeatStepListThemeCycle | 拍点列词 |
+| PlainPaper | 纯色纸底 |
 | BottomPushStackWipe | 底推换景 |
 | CircleMatchIris | 圆心虹膜 |
 | CraneRiseReveal | 吊臂升起 |

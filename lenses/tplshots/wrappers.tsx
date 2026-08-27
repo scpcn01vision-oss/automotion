@@ -18,15 +18,28 @@ import { SceneDetail } from "./SceneDetail";
 import { ScenePapers } from "./ScenePapers";
 import { SceneWbr } from "./SceneWbr";
 import { SceneOutroLive } from "./SceneOutroLive";
+import { AbsoluteFill, Sequence, useCurrentFrame } from "remotion";
 
 // brand-ink-open：墨线十字准星 → 字标逐字压印 → 打字机副标 → 1s 静止 → 上浮消散（0–83）
 export interface BrandInkOpenProps {
   wordmark?: string;   // 中央大字标（品牌名），缺省 'AI Foundation Lab'
   kicker?: string;     // 下方打字机副标，缺省 'TEAM RESEARCH CONSOLE'
+  /** 品牌开场延迟（段内秒）；之前显示纯色底 #faf7f2 */
+  startAtSec?: number;
 }
-export const BrandInkOpen: React.FC<BrandInkOpenProps> = ({ wordmark, kicker }) => (
-  <SceneOpen start={0} wordmark={wordmark} kicker={kicker} clampFrame={82} />
-);
+export const BrandInkOpen: React.FC<BrandInkOpenProps> = ({ wordmark, kicker, startAtSec }) => {
+  const frame = useCurrentFrame();
+  const startFrame = Math.round((startAtSec ?? 0) * 30);
+  return (
+    <AbsoluteFill style={{ background: '#faf7f2' }}>
+      {frame >= startFrame && (
+        <Sequence from={startFrame}>
+          <SceneOpen start={0} wordmark={wordmark} kicker={kicker} clampFrame={82} />
+        </Sequence>
+      )}
+    </AbsoluteFill>
+  );
+};
 
 // spotlight-hero-card：暖光巡视 dashboard → 锁定单卡 → 推近摇摆 → 悬停光束两圈 → 归位（82–220）
 export const SpotlightHeroCard: React.FC = () => <SceneOpen start={82} clampFrame={219} />;

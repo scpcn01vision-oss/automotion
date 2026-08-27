@@ -1,7 +1,7 @@
 {
   "meta": {
-    "generatedAt": "2026-08-26T11:50:55.758Z",
-    "count": 122,
+    "generatedAt": "2026-08-27T02:51:06.597Z",
+    "count": 123,
     "source": "Root.preview.tsx + docs/lens-names.md + 组件 XxxProps 接口（同文件/跨文件/内联对象字段）+ docs/lens-scenes-draft.md"
   },
   "entries": [
@@ -1287,6 +1287,18 @@
         "节奏"
       ],
       "usage": "多个关键词/形容词的连打轮换（多主题、多气质体量展示，节奏密集）"
+    },
+    {
+      "id": "PlainPaper",
+      "name": "纯色纸底",
+      "file": "lenses/minimal/plain-paper/PlainPaper.tsx",
+      "group": "minimal",
+      "durationInFrames": 180,
+      "props": [],
+      "scenes": [
+        "背景"
+      ],
+      "usage": "纯色纸墨底（#faf7f2），用于「只要背景、不要内容」的段；无任何内容，配合字幕与口播"
     },
     {
       "id": "BottomPushStackWipe",
@@ -4437,6 +4449,12 @@
           "name": "cueSec",
           "type": "number[]",
           "optional": true
+        },
+        {
+          "description": "命令面板/压暗出现的段内秒（帧/30）；不设则用默认 12f",
+          "name": "summonAtSec",
+          "type": "number",
+          "optional": true
         }
       ],
       "scenes": [
@@ -6708,6 +6726,12 @@
         {
           "name": "kicker",
           "type": "string",
+          "optional": true
+        },
+        {
+          "description": "品牌开场延迟（段内秒）；之前显示纯色底 #faf7f2",
+          "name": "startAtSec",
+          "type": "number",
           "optional": true
         }
       ],
